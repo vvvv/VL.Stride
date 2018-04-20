@@ -1,0 +1,47 @@
+//@author: vux
+//@help: template for geometry fx
+//@tags: geometry
+//@credits:
+
+SamplerState linearSampler: IMMUTABLE
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+struct vs2gs
+{
+	float3 PosO: POSITION;
+	float3 Normal: NORMAL;
+	float2 UV: TEXCOORD0;
+};
+
+vs2gs VS(
+	float3 PosO: POSITION,
+	float3 Normal: NORMAL,
+	float2 UV: TEXCOORD0,
+	uint InstanceID: SV_VertexID)
+{
+	vs2gs Out;
+	
+	Out.PosO = PosO;
+	Out.Normal = Normal;
+	Out.UV = UV;
+	
+    return Out;
+}
+
+
+GeometryShader StreamOutGS = ConstructGSWithSO( CompileShader( vs_4_0, VS() ), "POSITION.xyz;NORMAL.xyz;TEXCOORD.xy", NULL,NULL,NULL,-1 );
+//if the above does not work, try this line instead
+//GeometryShader StreamOutGS = ConstructGSWithSO( CompileShader( vs_4_0, VS() ), "POSITION.xyz;NORMAL.xyz;TEXCOORD.xy" );
+
+technique10 PassMesh
+{
+    pass PP2
+    {
+        SetVertexShader( CompileShader( vs_4_0, VS() ) );
+        SetGeometryShader( StreamOutGS );
+    }  
+}
