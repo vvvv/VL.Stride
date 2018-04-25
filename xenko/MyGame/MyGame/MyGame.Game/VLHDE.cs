@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SiliconStudio.Core.Mathematics;
-using SiliconStudio.Xenko.Input;
 using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Rendering;
-using SiliconStudio.Core.Collections;
 using SiliconStudio.Xenko.Graphics;
-using SiliconStudio.Xenko.Rendering.Materials;
-using SiliconStudio.Xenko.Audio;
 
 namespace VL.Xenko
 {
