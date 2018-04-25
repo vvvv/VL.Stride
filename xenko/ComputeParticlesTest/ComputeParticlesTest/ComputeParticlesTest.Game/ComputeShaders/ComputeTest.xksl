@@ -1,0 +1,43 @@
+﻿// Copyright (c) 2014-2017 Silicon Studio Corp. All rights reserved. (https://www.siliconstudio.co.jp)
+// See LICENSE.md for full license information.
+
+namespace ComputeParticlesTest
+{
+    
+    /// <summary>
+    /// A test compute shader
+    /// </summary>
+    shader ComputeTest: ComputeShaderBase, Global
+    {    
+        //stage RWStructuredBuffer<float4> output;
+
+        stage StructuredBuffer<float> Random;
+
+        struct particle
+        {
+	        float4 pos;
+	        float4 vel;
+	        float4 info; // lifeT, 0,0,0
+	        float4 col;
+        };
+        stage RWStructuredBuffer<particle> output;
+
+        stage float3 Gravity = float3(0.01f,0,0);
+        stage float VelMult = 0.95f;
+
+        override void Compute()
+        {
+            particle Out = output[streams.DispatchThreadId.x];
+
+            Out.vel += float4(Gravity,0);
+            //Out.vel += float4(0.1,0,0,0);
+            Out.vel *= VelMult;
+            //Out.pos += Out.vel;
+            Out.info.x += Global.TimeStep;
+            Out.pos = float4(streams.DispatchThreadId.x, Random[streams.DispatchThreadId.x % 20], 0, 0);
+
+            output[streams.DispatchThreadId.x] = Out;
+            
+        }
+    };
+}
