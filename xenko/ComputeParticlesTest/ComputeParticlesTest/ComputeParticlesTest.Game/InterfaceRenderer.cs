@@ -37,7 +37,15 @@ namespace ComputeParticlesTest
 
         protected override void DrawCore(RenderContext context, RenderDrawContext drawContext)
         {
-            Renderer?.Draw(context, drawContext, drawContext.CommandList);
+            try
+            {
+                Renderer?.Draw(context, drawContext, drawContext.CommandList);
+            }
+            catch (Exception)
+            {
+
+               //
+            }
         }
     }
 }

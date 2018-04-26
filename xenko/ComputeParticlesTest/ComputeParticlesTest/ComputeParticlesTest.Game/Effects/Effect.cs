@@ -19,5 +19,6 @@ namespace SiliconStudio.Xenko.Rendering
     public static partial class EffectKeys
     {
         public static readonly ValueParameterKey<Vector2> Center = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<float> test = ParameterKeys.NewValue<float>();
     }
 }

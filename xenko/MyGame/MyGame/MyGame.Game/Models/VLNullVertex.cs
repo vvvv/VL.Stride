@@ -20,8 +20,13 @@ namespace MyGame
         /// <summary>
         /// The vertex layout of this struct.
         /// </summary>
-        public static readonly VertexDeclaration Layout = new VertexDeclaration(new VertexElement[0], 1, 4);
+        public static readonly VertexDeclaration Layout;
 
+        static VLNullVertex()
+        {
+            var vertexElement = new VertexElement("POSITION", 0, PixelFormat.None);
+            Layout = new VertexDeclaration(new VertexElement[] { vertexElement }, 1, 4);
+        }
 
         public bool Equals(VLNullVertex other)
         {

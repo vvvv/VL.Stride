@@ -14,13 +14,11 @@ using SiliconStudio.Xenko.Shaders;
 using SiliconStudio.Core.Mathematics;
 using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
 
-namespace ComputeParticlesTest
+namespace CustomParticlesTest
 {
-    public static partial class ComputeTestKeys
+    public static partial class CustomDrawShaderKeys
     {
-        public static readonly ObjectParameterKey<Buffer> Random = ParameterKeys.NewObject<Buffer>();
-        public static readonly ObjectParameterKey<Buffer> output = ParameterKeys.NewObject<Buffer>();
-        public static readonly ValueParameterKey<Vector3> Gravity = ParameterKeys.NewValue<Vector3>(new Vector3(0.01f,0,0));
-        public static readonly ValueParameterKey<float> VelMult = ParameterKeys.NewValue<float>(0.95f);
+        public static readonly ValueParameterKey<Matrix> WorldViewProjection = ParameterKeys.NewValue<Matrix>();
+        public static readonly ObjectParameterKey<Buffer> Data = ParameterKeys.NewObject<Buffer>();
     }
 }

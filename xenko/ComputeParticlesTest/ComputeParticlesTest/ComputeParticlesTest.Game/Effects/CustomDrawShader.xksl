@@ -1,0 +1,30 @@
+﻿namespace CustomParticlesTest
+{   
+    shader CustomDrawShader
+    {
+        // Default COLOR outputs for PS shader
+        stage stream float4 ColorTarget : SV_Target0;
+
+        // Default InstanceId for VS/GS shaders
+        stage stream uint VertexID : SV_VertexID;
+        stage stream uint InstanceID : SV_InstanceID;
+
+        stage stream float4 ShadingPosition : SV_Position;
+        stage stream float4 Position : POSITION;
+        stage float4x4 WorldViewProjection;
+
+        stage StructuredBuffer<float4> Data;
+
+        // Declare Vertex shader main method
+        stage void VSMain() 
+        {
+            streams.ShadingPosition = mul(Data[streams.VertexID], WorldViewProjection);
+        }
+
+        // Declare Pixel shader main method
+        stage void PSMain()
+        {
+            streams.ColorTarget = float4(1, 1, 1, 1);
+        }
+    };
+}
