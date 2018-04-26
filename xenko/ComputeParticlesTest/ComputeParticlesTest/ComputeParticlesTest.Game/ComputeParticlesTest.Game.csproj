@@ -34,7 +34,7 @@
     <IntermediateOutputPath>obj\Windows\Debug\</IntermediateOutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -113,6 +113,10 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>VLComputeTest.cs</LastGenOutput>
     </None>
+    <None Include="Effects\Effect.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>Effect.cs</LastGenOutput>
+    </None>
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -129,7 +133,15 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>VLComputeTest.xkfx</DependentUpon>
     </Compile>
+    <Compile Include="Effects\Effect.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Effect.xksl</DependentUpon>
+    </Compile>
+    <Compile Include="InterfaceRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DelegateRenderer.cs" />
     <Compile Include="VL.Xenko.Utils\AudioUtils.cs" />
     <Compile Include="VL.Xenko.Utils\CameraUtils.cs" />
     <Compile Include="VL.Xenko.Utils\CollectionUtils.cs" />

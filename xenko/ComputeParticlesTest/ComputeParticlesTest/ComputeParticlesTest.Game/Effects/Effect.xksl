@@ -1,0 +1,19 @@
+﻿// Copyright (c) 2011-2017 Silicon Studio Corp. All rights reserved. (https://www.siliconstudio.co.jp)
+// See LICENSE.md for full license information.
+
+shader Effect : Sprite3DBase
+{
+    stage float2 Center;
+
+    stage override float4 Shading()
+    {
+
+        // Calculates new mapping coordinates based on the frequency, center, and amplitude.
+        float2 uv2 = streams.TexCoord.xy + Center * 0.5f;
+        
+        // Resamples the image based on the new coordinates.
+        float4 color = Texture0.Sample(Sampler, uv2);
+        
+        return color;
+    }
+};
