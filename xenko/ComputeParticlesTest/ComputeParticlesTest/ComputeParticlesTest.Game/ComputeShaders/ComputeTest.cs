@@ -19,6 +19,7 @@ namespace ComputeParticlesTest
     public static partial class ComputeTestKeys
     {
         public static readonly ObjectParameterKey<Buffer> Random = ParameterKeys.NewObject<Buffer>();
+        public static readonly ValueParameterKey<int> RandomCount = ParameterKeys.NewValue<int>(1);
         public static readonly ObjectParameterKey<Buffer> output = ParameterKeys.NewObject<Buffer>();
         public static readonly ValueParameterKey<Vector3> Gravity = ParameterKeys.NewValue<Vector3>(new Vector3(0.01f,0,0));
         public static readonly ValueParameterKey<float> VelMult = ParameterKeys.NewValue<float>(0.95f);
