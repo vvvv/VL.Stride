@@ -35,7 +35,9 @@ namespace ComputeParticlesTest
             Out.vel *= VelMult;
             //Out.pos += Out.vel;
             Out.info.x += Global.TimeStep;
+            float anim = sin(Out.info.x + streams.DispatchThreadId.x * 0.12f);
             Out.pos = float4(Random[streams.DispatchThreadId.x % RandomCount], 1);
+            Out.pos.y += anim*0.3;
 
             output[streams.DispatchThreadId.x] = Out;
             

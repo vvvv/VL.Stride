@@ -1,6 +1,6 @@
 ﻿namespace CustomParticlesTest
 {   
-    shader CustomDrawShader
+    shader CustomDrawShader : Transformation
     {
         // Default COLOR outputs for PS shader
         stage stream float4 ColorTarget : SV_Target0;
@@ -11,15 +11,45 @@
 
         stage stream float4 ShadingPosition : SV_Position;
         stage stream float4 Position : POSITION;
-        stage float4x4 WorldViewProjection;
+        stream float4 PositionW;
 
+        stream float2 uv;
         stage StructuredBuffer<float4> Data;
 
         // Declare Vertex shader main method
         stage void VSMain() 
         {
-            streams.ShadingPosition = mul(Data[streams.VertexID], WorldViewProjection);
+            //streams.ShadingPosition = mul(Data[streams.VertexID], WorldViewProjection);
+            streams.PositionW = Data[streams.VertexID];
         }
+
+
+        // Declare Geometry shader main method
+        static const float3 g_positions[4] = {
+            float3(-1, 1,0),
+            float3( 1, 1,0),
+            float3(-1, -1,0),
+            float3( 1, -1,0),
+        };
+        [maxvertexcount(4)]
+        void GSMain(point Input input[1], inout TriangleStream<Output> triangleStream)
+        {
+
+            //float2 g_texcoords[4] = {{0,0},{1,0},{0,1},{1,1}};
+            
+            streams = input[0];
+	        for(int i=0;i<4;i++){
+		        //Out.TexCd=g_texcoords[i];
+		        //streams.uv = float4((g_texcoords[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
+
+		       streams.ShadingPosition = mul(float4(streams.PositionW.xyz+ 0.05 *mul(g_positions[i],(float3x3)ViewInverse),1),ViewProjection);
+		        //streams.ShadingPosition = mul(float4(streams.PositionW.xyz+ 0.01 * g_positions[i],1),ViewProjection);
+
+		        triangleStream.Append(streams);
+	        }
+
+        }
+
 
         // Declare Pixel shader main method
         stage void PSMain()
@@ -28,3 +58,4 @@
         }
     };
 }
+

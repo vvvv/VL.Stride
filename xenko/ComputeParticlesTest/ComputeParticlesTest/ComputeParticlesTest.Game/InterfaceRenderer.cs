@@ -41,9 +41,9 @@ namespace ComputeParticlesTest
             {
                 Renderer?.Draw(context, drawContext, drawContext.CommandList);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                var m = e.Message;
                //
             }
         }

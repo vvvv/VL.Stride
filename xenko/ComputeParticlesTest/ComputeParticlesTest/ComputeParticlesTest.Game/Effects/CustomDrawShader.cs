@@ -18,7 +18,6 @@ namespace CustomParticlesTest
 {
     public static partial class CustomDrawShaderKeys
     {
-        public static readonly ValueParameterKey<Matrix> WorldViewProjection = ParameterKeys.NewValue<Matrix>();
         public static readonly ObjectParameterKey<Buffer> Data = ParameterKeys.NewObject<Buffer>();
     }
 }
