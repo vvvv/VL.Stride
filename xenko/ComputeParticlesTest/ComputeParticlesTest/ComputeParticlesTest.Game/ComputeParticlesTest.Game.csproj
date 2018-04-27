@@ -105,59 +105,71 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="ComputeShaders\ComputeTest.xksl">
+    <None Include="Shaders\ComputeSimulation.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>ComputeTest.cs</LastGenOutput>
+      <LastGenOutput>ComputeSimulation1.cs</LastGenOutput>
     </None>
-    <None Include="ComputeShaders\VLComputeTest.xkfx">
+    <None Include="Shaders\Attractors.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>VLComputeTest.cs</LastGenOutput>
+      <LastGenOutput>Attractors1.cs</LastGenOutput>
     </None>
-    <None Include="Effects\CustomDrawShader.xksl">
+    <None Include="Effects\ComputeSimulationEffect.xkfx">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>ComputeSimulationEffect.cs</LastGenOutput>
+    </None>
+    <None Include="Shaders\ParticleStruct.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>ParticleStruct.cs</LastGenOutput>
+    </None>
+    <None Include="Shaders\CustomDrawShader.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>CustomDrawShader.cs</LastGenOutput>
-    </None>
-    <None Include="Effects\Effect.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>Effect.cs</LastGenOutput>
     </None>
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicCameraController.cs" />
-    <Compile Include="ComputeShaders\ComputeTest.cs">
+    <Compile Include="CSharpStructs\AttractorsStruct.cs" />
+    <Compile Include="Shaders\Attractors1.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ComputeTest.xksl</DependentUpon>
+      <DependentUpon>Attractors.xksl</DependentUpon>
     </Compile>
-    <Compile Include="ComputeShaders\VLComputeTest.cs">
+    <Compile Include="Shaders\ComputeSimulation1.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>VLComputeTest.xkfx</DependentUpon>
+      <DependentUpon>ComputeSimulation.xksl</DependentUpon>
+    </Compile>
+    <Compile Include="CSharpStructs\ComputeSimulationStruct.cs" />
+    <Compile Include="Effects\ComputeSimulationEffect.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ComputeSimulationEffect.xkfx</DependentUpon>
     </Compile>
     <None Include="Effects\CustomDrawEffect.xkfx">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>CustomDrawEffect1.cs</LastGenOutput>
     </None>
+    <Compile Include="Shaders\ParticleStruct.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ParticleStruct.xksl</DependentUpon>
+    </Compile>
     <Compile Include="Effects\CustomDrawEffect1.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>CustomDrawEffect.xkfx</DependentUpon>
     </Compile>
-    <Compile Include="Effects\CustomDrawShader.cs">
+    <Compile Include="Shaders\CustomDrawShader.cs">
       <DependentUpon>CustomDrawShader.xksl</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Effects\Effect.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Effect.xksl</DependentUpon>
     </Compile>
     <Compile Include="InterfaceRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -169,6 +181,12 @@
     <Compile Include="VL.Xenko.Utils\ModelUtils.cs" />
     <Compile Include="VLHDE.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SharpDX.Mathematics">
+      <HintPath>..\ComputeParticlesTest.Windows\Dependencies\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SiliconStudioPackageProps)" Condition="Exists('$(SiliconStudioPackageProps)')" />
   <Import Project="$(SiliconStudioXenkoDir)\Targets\SiliconStudio.Common.targets" Condition="Exists('$(SiliconStudioXenkoDir)\Targets\SiliconStudio.Common.targets')" />

@@ -22,6 +22,7 @@ namespace ComputeParticlesTest
             var startupDoc = VLDirectory + "Main.vl";
             HDE.Main(new string[0], startupDoc);
             var runtimeHost = HDE.HDEContext.Session.RuntimeHost as VL.Lang.Platforms.CIL.RuntimeHost;
+            //runtimeHost.Mode = VL.Lang.Symbols.RunMode.Stopped;
             if (runtimeHost != null)
                 runtimeHost.UseInternalTimer = false;
         }

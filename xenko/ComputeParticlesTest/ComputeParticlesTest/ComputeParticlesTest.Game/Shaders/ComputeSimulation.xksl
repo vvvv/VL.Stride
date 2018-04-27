@@ -1,0 +1,64 @@
+﻿
+    
+/// <summary>
+/// A test compute shader
+/// </summary>
+shader ComputeSimulation: ComputeShaderBase, Global, Attractors, ParticleStruct
+{    
+    stage RWStructuredBuffer<Particle> ParticlesBuffer;
+
+    stage struct SimulationSettings
+    {   
+        float4 Gravity;
+        float VelDamp_delta;
+        float VelDamp_min;
+        float VelDamp_gamma;
+        float Target_Enable;
+        float Target_Strength; 
+        row_major float4x4 Target_T; 
+        float Bounce_Enable;
+        float Bounce_Friction;
+        float Bounce_Damp;
+    };
+
+    stage StructuredBuffer<SimulationSettings> SimulationSettingsBuffer;
+
+    stage StructuredBuffer<float3> RandomBuffer;
+
+    override void Compute()
+    {
+        SimulationSettings s = SimulationSettingsBuffer[0];
+        int id = streams.DispatchThreadId.x;
+        Particle POut = ParticlesBuffer[id];
+
+ 	    float3 p = POut.pos.xyz;
+	    float3 v = POut.vel.xyz;
+
+	    //// VELOCITY DAMPING:
+	    float damping = pow(abs(RandomBuffer[id].z), s.VelDamp_gamma);
+	    damping *= s.VelDamp_delta;
+	    damping += s.VelDamp_min;	
+	    v *= damping;
+
+        // TARGET FORCE:
+	    float3 trgPos = mul(float4(RandomBuffer[id].xy-0.5,0, 1), s.Target_T).xyz;
+	    float3 trgF = (trgPos - p) * s.Target_Strength;
+	    v += trgF;
+
+   	    // ATTRACTORS:
+	    v += attrVel(p);
+
+
+        POut.vel.xyz = v + s.Gravity.xyz;
+        POut.pos.xyz = p + v;
+        ////LifeT:
+        POut.info.x += Global.TimeStep;
+        POut.info.y = id;
+
+        // if(id>128)
+        // POut.pos.y += sin(POut.info.x);
+
+        ParticlesBuffer[id] = POut;
+    }
+};
+

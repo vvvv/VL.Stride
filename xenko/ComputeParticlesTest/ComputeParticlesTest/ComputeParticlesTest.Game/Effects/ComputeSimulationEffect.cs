@@ -14,26 +14,39 @@ using SiliconStudio.Xenko.Shaders;
 using SiliconStudio.Core.Mathematics;
 using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
 
-namespace MyGame
+namespace CustomParticlesTest
 {
-    [DataContract]public partial class ComputeShaderTestParams : ShaderMixinParameters
-    {
-        public static readonly PermutationParameterKey<int> NbOfIterations = ParameterKeys.NewPermutation<int>();
-    };
     internal static partial class ShaderMixins
     {
-        internal partial class VLComputeTest  : IShaderMixinBuilder
+        internal partial class ComputeSimulationEffect  : IShaderMixinBuilder
         {
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
-                context.Mixin(mixin, "ComputeTest");
+                context.Mixin(mixin, "ComputeSimulation");
             }
 
             [ModuleInitializer]
             internal static void __Initialize__()
 
             {
-                ShaderMixinManager.Register("VLComputeTest", new VLComputeTest());
+                ShaderMixinManager.Register("ComputeSimulationEffect", new ComputeSimulationEffect());
+            }
+        }
+    }
+    internal static partial class ShaderMixins
+    {
+        internal partial class VLComputeEmission  : IShaderMixinBuilder
+        {
+            public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
+            {
+                context.Mixin(mixin, "ComputeEmission");
+            }
+
+            [ModuleInitializer]
+            internal static void __Initialize__()
+
+            {
+                ShaderMixinManager.Register("VLComputeEmission", new VLComputeEmission());
             }
         }
     }

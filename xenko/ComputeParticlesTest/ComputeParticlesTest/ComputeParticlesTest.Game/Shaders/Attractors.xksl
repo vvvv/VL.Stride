@@ -1,0 +1,39 @@
+﻿
+shader Attractors
+{
+    struct AttrSettings
+    {
+        float4 pos;
+        float radius;
+        float strength;
+        float gamma;
+        row_major float4x4 vecT;
+        float pad;
+    };
+    stage StructuredBuffer<AttrSettings> AttractorsBuffer;
+
+   //Multiple attractors
+    float3 attrVel(float3 p)
+    {
+	    float3 vel = 0;
+	    uint count,dummy;
+	    AttractorsBuffer.GetDimensions(count,dummy);
+	    for(uint i=0 ; i<count; i++)
+	    {
+            AttrSettings s = AttractorsBuffer[i];
+		    float3 attrVec = s.pos.xyz - p;
+		    float attrRadius = s.radius;
+		    float attrStrength = s.strength;
+
+		    float attrForce = length(attrVec) / attrRadius;
+		    attrForce = 1 - attrForce;
+		    attrForce = saturate(attrForce);
+		    attrForce = pow(attrForce, s.gamma);
+		    attrVec = attrVec * attrForce * attrStrength;
+		    //transform attraction vector:
+		    attrVec = mul(float4(attrVec,1), s.vecT).xyz;
+		    vel += attrVec;
+	    }
+	    return vel;
+    }
+};
