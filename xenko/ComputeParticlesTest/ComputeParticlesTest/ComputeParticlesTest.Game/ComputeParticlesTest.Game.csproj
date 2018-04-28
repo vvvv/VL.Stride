@@ -105,6 +105,18 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="Shaders\PointcloudDrawer.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>PointcloudDrawer.cs</LastGenOutput>
+    </None>
+    <None Include="Shaders\PointStruct.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>PointStruct.cs</LastGenOutput>
+    </None>
+    <None Include="Shaders\PointcloudProcessor.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>PointcloudProcessor.cs</LastGenOutput>
+    </None>
     <None Include="Shaders\H_Perlin.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>H_Perlin1.cs</LastGenOutput>
@@ -141,6 +153,24 @@
       <DependentUpon>CustomDrawEffect.xkfx</DependentUpon>
     </Compile>
     <Compile Include="GameProfiler.cs" />
+    <Compile Include="Shaders\PointcloudDrawer.cs">
+      <DependentUpon>PointcloudDrawer.xksl</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Shaders\PointcloudProcessor.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PointcloudProcessor.xksl</DependentUpon>
+    </Compile>
+    <Compile Include="Shaders\PointStruct.cs">
+      <DependentUpon>PointStruct.xksl</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Shaders\ComputeSimulation.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

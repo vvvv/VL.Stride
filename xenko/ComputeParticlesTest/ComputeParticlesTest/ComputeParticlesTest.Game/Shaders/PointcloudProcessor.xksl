@@ -1,0 +1,89 @@
+﻿
+    
+/// <summary>
+/// A test compute shader
+/// </summary>
+shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Transformation
+{    
+    AppendStructuredBuffer<Point> PointsBuffer;
+
+    //StructuredBuffer<float3> RandomBuffer;
+    Texture2DMS<float4> Pointcloud_PosCol;
+    Texture2DMS<float> Pointcloud_Custom;
+
+    struct ProcessorSettings
+    {   
+	    float Points_Size;
+        float Culling_DotThreshold;
+        row_major float4x4 Pointcloud_T;
+        float pad1;
+        float pad2;
+    };
+    StructuredBuffer<ProcessorSettings> ProcessorSettingsBuffer;
+
+    // FUNCTIONS ==============================================================
+
+    float4 BitsToColor(float f)
+    {
+	    uint u = asuint( f );
+	    float4 c;
+	    c = float4(
+	    (u>>0)%256,
+	    (u>>8)%256,
+	    (u>>16)%256,
+	    (u>>24)%256
+	    )/255.0;
+	    return c;
+    }
+
+    bool DotCulling(float3 pos, float CullingThreshold)
+    {
+	    float3 vec = pos - Eye;
+	    float dotValue = dot(normalize(vec), EyeMS);
+	
+	    return dotValue > CullingThreshold;
+    }
+
+    // CS =====================================================================
+
+    override void Compute()
+    {
+        ProcessorSettings s = ProcessorSettingsBuffer[0];
+        int id = streams.DispatchThreadId.x;
+        Point PointOut;
+
+        uint sizeX,sizeY, Dummy;
+        Pointcloud_PosCol.GetDimensions(sizeX, sizeY, Dummy);
+        uint2 PixelCoords = int2(id%sizeX, id/sizeX);
+        float4 PointcloudTexData1 = Pointcloud_PosCol.Load(PixelCoords,0);
+
+        // Point position:
+        PointOut.Pos.xyz = PointcloudTexData1.xzy * 0.01; // UNREAL AXIS AND SCALE SYSTEM!!!!
+
+        // CULLING:
+        if(DotCulling(PointOut.Pos.xyz, s.Culling_DotThreshold))
+        {
+	        // NOISE FORCE:
+         //   PerlinSettings pSet;
+         //   pSet.Octaves = 1;
+         //   pSet.Frequency = 0.3;
+         //   pSet.Lacunarity= 1.666;
+         //   pSet.Persistence= 0.666;
+
+	        //float3 noiseF = float3(	fBm(float4(p+float3(51,2.36,-5), s.PerlinForce_Time), pSet),
+					    //		    fBm(float4(p+float3(98.2,-9,-36), s.PerlinForce_Time), pSet),
+					    //		    fBm(float4(p+float3(0,10.69,6), s.PerlinForce_Time), pSet));
+	        //v += noiseF * s.PerlinForce_Amount;
+
+            float PointcloudTexData2 = Pointcloud_Custom.Load(PixelCoords,0);
+
+            // Point color:
+            PointOut.ColSize.xyz = BitsToColor(PointcloudTexData1.w);
+            // Point size:
+            PointOut.ColSize.w = s.Points_Size;
+
+            PointsBuffer.Append(PointOut);
+        }
+    }
+};
+
