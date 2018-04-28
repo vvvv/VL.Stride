@@ -22,8 +22,10 @@ namespace ComputeParticlesTest
         float Bounce_Enable;
         float Bounce_Friction;
         float Bounce_Damp;
+        float PerlinForce_Time;
+        float PerlinForce_Amount;
 
-        public SimulationSettings(Vector4 gravity, float velDamp_delta, float velDamp_min, float velDamp_gamma, float target_Enable, float target_Strength, Matrix target_T, float bounce_Enable, float bounce_Friction, float bounce_Damp)
+        public SimulationSettings(Vector4 gravity, float velDamp_delta, float velDamp_min, float velDamp_gamma, float target_Enable, float target_Strength, Matrix target_T, float bounce_Enable, float bounce_Friction, float bounce_Damp, float perlinForce_Time, float perlinForce_Amount)
         {
             Gravity = gravity;
             VelDamp_delta = velDamp_delta;
@@ -35,6 +37,8 @@ namespace ComputeParticlesTest
             Bounce_Enable = bounce_Enable;
             Bounce_Friction = bounce_Friction;
             Bounce_Damp = bounce_Damp;
+            PerlinForce_Time = perlinForce_Time;
+            PerlinForce_Amount = perlinForce_Amount;
         }
     }
 }

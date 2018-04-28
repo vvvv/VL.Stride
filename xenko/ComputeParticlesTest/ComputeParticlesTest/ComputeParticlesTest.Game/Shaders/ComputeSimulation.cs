@@ -21,5 +21,6 @@ namespace SiliconStudio.Xenko.Rendering
         public static readonly ObjectParameterKey<Buffer> ParticlesBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> SimulationSettingsBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> RandomBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ObjectParameterKey<Texture> Pointcloud_PosCol = ParameterKeys.NewObject<Texture>();
     }
 }

@@ -21,7 +21,8 @@ shader CustomDrawShader : Transformation, ParticleStruct
     {
         //streams.ShadingPosition = mul(Data[streams.VertexID], WorldViewProjection);
         streams.PositionW = Data[streams.VertexID].pos;
-        streams.col = Data[streams.VertexID].vel*10 + 0.5;
+       // streams.col = Data[streams.VertexID].vel*10 + 0.5;
+        streams.col = float4(Data[streams.VertexID].info.yzw, 1);
     }
 
 
@@ -32,6 +33,13 @@ shader CustomDrawShader : Transformation, ParticleStruct
         float3(-1, -1,0),
         float3( 1, -1,0),
     };
+    static const float2 g_texcoords[4] = {
+        float2(0,1), 
+        float2(1,1),
+        float2(0,0),
+        float2(1,0)
+    };
+
     [maxvertexcount(4)]
     void GSMain(point Input input[1], inout TriangleStream<Output> triangleStream)
     {
@@ -41,7 +49,7 @@ shader CustomDrawShader : Transformation, ParticleStruct
         streams = input[0];
 	    for(int i=0;i<4;i++){
 		    //Out.TexCd=g_texcoords[i];
-		    //streams.uv = float4((g_texcoords[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
+		    streams.uv = float4((g_texcoords[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
 
 		    streams.ShadingPosition = mul(float4(streams.PositionW.xyz+ 0.01 *mul(g_positions[i],(float3x3)ViewInverse),1),ViewProjection);
 		    //streams.ShadingPosition = mul(float4(streams.PositionW.xyz+ 0.01 * g_positions[i],1),ViewProjection);
@@ -55,6 +63,7 @@ shader CustomDrawShader : Transformation, ParticleStruct
     // Declare Pixel shader main method
     stage void PSMain()
     {
+	    if(length(streams.uv-.5)>.5){discard;}
         streams.ColorTarget = streams.col;//float4(1, 1, 1, 1);
     }
 };

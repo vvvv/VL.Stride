@@ -16,8 +16,11 @@ using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
 
 namespace SiliconStudio.Xenko.Rendering
 {
-    public static partial class AttractorsKeys
+    public static partial class H_PerlinKeys
     {
-        public static readonly ObjectParameterKey<Buffer> AttractorsBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ObjectParameterKey<Texture> permTexture = ParameterKeys.NewObject<Texture>();
+        public static readonly ObjectParameterKey<Texture> permTexture2d = ParameterKeys.NewObject<Texture>();
+        public static readonly ObjectParameterKey<Texture> permGradTexture = ParameterKeys.NewObject<Texture>();
+        public static readonly ObjectParameterKey<Texture> gradTexture4d = ParameterKeys.NewObject<Texture>();
     }
 }
