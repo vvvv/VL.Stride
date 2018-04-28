@@ -13,11 +13,11 @@ shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Tr
 
     struct ProcessorSettings
     {   
+        uint Points_Count;
 	    float Points_Size;
         float Culling_DotThreshold;
         row_major float4x4 Pointcloud_T;
-        float pad1;
-        float pad2;
+        float pad;
     };
     StructuredBuffer<ProcessorSettings> ProcessorSettingsBuffer;
 
@@ -38,8 +38,8 @@ shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Tr
 
     bool DotCulling(float3 pos, float CullingThreshold)
     {
-	    float3 vec = pos - Eye;
-	    float dotValue = dot(normalize(vec), EyeMS);
+	    float3 vec = pos - Eye.xyz;
+	    float dotValue = dot(normalize(vec), EyeMS.xyz);
 	
 	    return dotValue > CullingThreshold;
     }
@@ -49,19 +49,25 @@ shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Tr
     override void Compute()
     {
         ProcessorSettings s = ProcessorSettingsBuffer[0];
-        int id = streams.DispatchThreadId.x;
+        uint id = streams.DispatchThreadId.x;
+
+        if(id>=s.Points_Count) return;
+
         Point PointOut;
 
         uint sizeX,sizeY, Dummy;
         Pointcloud_PosCol.GetDimensions(sizeX, sizeY, Dummy);
-        uint2 PixelCoords = int2(id%sizeX, id/sizeX);
+        uint2 PixelCoords = int2(id % 4096, id / 4096);
         float4 PointcloudTexData1 = Pointcloud_PosCol.Load(PixelCoords,0);
 
         // Point position:
         PointOut.Pos.xyz = PointcloudTexData1.xzy * 0.01; // UNREAL AXIS AND SCALE SYSTEM!!!!
+        PointOut.Pos.w=1;
 
         // CULLING:
-        if(DotCulling(PointOut.Pos.xyz, s.Culling_DotThreshold))
+        //bool Cull = DotCulling(PointOut.Pos.xyz, s.Culling_DotThreshold);
+       // if(!Cull) return;
+        if(true)
         {
 	        // NOISE FORCE:
          //   PerlinSettings pSet;
@@ -75,10 +81,10 @@ shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Tr
 					    //		    fBm(float4(p+float3(0,10.69,6), s.PerlinForce_Time), pSet));
 	        //v += noiseF * s.PerlinForce_Amount;
 
-            float PointcloudTexData2 = Pointcloud_Custom.Load(PixelCoords,0);
+            //float PointcloudTexData2 = Pointcloud_Custom.Load(PixelCoords,0).x;
 
             // Point color:
-            PointOut.ColSize.xyz = BitsToColor(PointcloudTexData1.w);
+            PointOut.ColSize.xyz = BitsToColor(PointcloudTexData1.w).xyz;
             // Point size:
             PointOut.ColSize.w = s.Points_Size;
 
