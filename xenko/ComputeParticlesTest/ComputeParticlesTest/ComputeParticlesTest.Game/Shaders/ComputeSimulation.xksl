@@ -3,7 +3,7 @@
 /// <summary>
 /// A test compute shader
 /// </summary>
-shader ComputeSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStruct, H_Perlin
+shader ComputeSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStruct, H_Perlin, ShaderUtils
 {    
     RWStructuredBuffer<Particle> ParticlesBuffer;
 
@@ -27,19 +27,6 @@ shader ComputeSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStruc
 
     StructuredBuffer<float3> RandomBuffer;
     Texture2DMS<float4> Pointcloud_PosCol;
-
-    float4 BitsToColor(float f)
-    {
-	    uint u = asuint( f );
-	    float4 c;
-	    c = float4(
-	    (u>>0)%256,
-	    (u>>8)%256,
-	    (u>>16)%256,
-	    (u>>24)%256
-	    )/255.0;
-	    return c;
-    }
 
     override void Compute()
     {

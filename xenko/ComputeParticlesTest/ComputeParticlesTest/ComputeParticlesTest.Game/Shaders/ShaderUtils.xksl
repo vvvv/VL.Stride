@@ -1,0 +1,30 @@
+﻿
+shader ShaderUtils
+{
+    static const float3 QuadPositions[4] = {
+        float3(-1, 1,0),
+        float3( 1, 1,0),
+        float3(-1, -1,0),
+        float3( 1, -1,0),
+    };
+
+    static const float2 QuadUV[4] = {
+        float2(0,1), 
+        float2(1,1),
+        float2(0,0),
+        float2(1,0)
+    };
+
+    float4 BitsToColor(float f)
+    {
+	    uint u = asuint( f );
+	    float4 c;
+	    c = float4(
+	    (u>>0)%256,
+	    (u>>8)%256,
+	    (u>>16)%256,
+	    (u>>24)%256
+	    )/255.0;
+	    return c;
+    }
+};

@@ -3,7 +3,7 @@
 /// <summary>
 /// A test compute shader
 /// </summary>
-shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Transformation
+shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Transformation, ShaderUtils
 {    
     AppendStructuredBuffer<Point> PointsBuffer;
 
@@ -22,19 +22,6 @@ shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Tr
     StructuredBuffer<ProcessorSettings> ProcessorSettingsBuffer;
 
     // FUNCTIONS ==============================================================
-
-    float4 BitsToColor(float f)
-    {
-	    uint u = asuint( f );
-	    float4 c;
-	    c = float4(
-	    (u>>0)%256,
-	    (u>>8)%256,
-	    (u>>16)%256,
-	    (u>>24)%256
-	    )/255.0;
-	    return c;
-    }
 
     bool DotCulling(float3 pos, float CullingThreshold)
     {

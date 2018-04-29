@@ -1,4 +1,5 @@
 using SiliconStudio.Xenko.Engine;
+using SiliconStudio.Xenko.Graphics;
 using System;
 using VL.Applications;
 using VL.Xenko;
@@ -13,6 +14,7 @@ namespace ComputeParticlesTest
             using (var game = new Game())
             {
                 game.WindowCreated += Game_WindowCreated;
+                
                 game.Run();
             }
         }
@@ -20,11 +22,34 @@ namespace ComputeParticlesTest
         static void HDEStart()
         {
             var startupDoc = VLDirectory + "Main.vl";
-            HDE.Main(new string[0], startupDoc);
+
+
+#if DEBUG
+            var openEditor = true;
+#else            
+            var openEditor = false; 
+#endif
+
+
+            HDE.Main(new string[0], startupDoc, openEditor);
             var runtimeHost = HDE.HDEContext.Session.RuntimeHost as VL.Lang.Platforms.CIL.RuntimeHost;
             //runtimeHost.Mode = VL.Lang.Symbols.RunMode.Stopped;
             if (runtimeHost != null)
                 runtimeHost.UseInternalTimer = false;
+
+#if !DEBUG
+            var gfxOutput = GraphicsAdapterFactory.Adapters[0].Outputs;
+            var displayMode = gfxOutput[0].CurrentDisplayMode;
+            var screenWidth = Math.Min(displayMode.Width, 1920);
+            var screenHeight = Math.Min(displayMode.Height, 1080);
+
+            var game = VLHDE.GameInstance;
+            game.GraphicsDeviceManager.PreferredBackBufferWidth = screenWidth;
+            game.GraphicsDeviceManager.PreferredBackBufferHeight = screenHeight;
+            game.GraphicsDeviceManager.IsFullScreen = true;
+            game.GraphicsDeviceManager.ApplyChanges(); 
+#endif
+
         }
 
         static void HDEUpdate()

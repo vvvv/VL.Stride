@@ -50,4 +50,21 @@ namespace CustomParticlesTest
             }
         }
     }
+    internal static partial class ShaderMixins
+    {
+        internal partial class PointcloudTextureDrawEffect  : IShaderMixinBuilder
+        {
+            public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
+            {
+                context.Mixin(mixin, "PointcloudTextureDraw");
+            }
+
+            [ModuleInitializer]
+            internal static void __Initialize__()
+
+            {
+                ShaderMixinManager.Register("PointcloudTextureDrawEffect", new PointcloudTextureDrawEffect());
+            }
+        }
+    }
 }

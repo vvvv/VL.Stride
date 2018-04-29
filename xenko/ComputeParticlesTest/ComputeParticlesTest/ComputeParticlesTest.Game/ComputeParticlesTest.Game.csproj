@@ -105,6 +105,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="Shaders\PointcloudTextureDraw.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>PointcloudTextureDraw.cs</LastGenOutput>
+    </None>
     <None Include="Shaders\PointcloudDrawer.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>PointcloudDrawer.cs</LastGenOutput>
@@ -142,6 +146,10 @@
       <LastGenOutput>CustomDrawShader.cs</LastGenOutput>
     </None>
     <None Include="project.json" />
+    <None Include="Shaders\ShaderUtils.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>ShaderUtils.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicCameraController.cs" />
@@ -154,6 +162,12 @@
       <DependentUpon>CustomDrawEffect.xkfx</DependentUpon>
     </Compile>
     <Compile Include="GameProfiler.cs" />
+    <Compile Include="Shaders\PointcloudTextureDraw.cs">
+      <DependentUpon>PointcloudTextureDraw.xksl</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Shaders\PointcloudDrawer.cs">
       <DependentUpon>PointcloudDrawer.xksl</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -216,6 +230,12 @@
     <Compile Include="InterfaceRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DelegateRenderer.cs" />
+    <Compile Include="Shaders\ShaderUtils.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ShaderUtils.xksl</DependentUpon>
+    </Compile>
     <Compile Include="VL.Xenko.Utils\AudioUtils.cs" />
     <Compile Include="VL.Xenko.Utils\BufferUtils.cs" />
     <Compile Include="VL.Xenko.Utils\CameraUtils.cs" />

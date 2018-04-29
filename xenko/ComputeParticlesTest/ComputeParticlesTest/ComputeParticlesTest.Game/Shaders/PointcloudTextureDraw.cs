@@ -16,8 +16,8 @@ using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
 
 namespace SiliconStudio.Xenko.Rendering
 {
-    public static partial class CustomDrawShaderKeys
+    public static partial class PointcloudTextureDrawKeys
     {
-        public static readonly ObjectParameterKey<Buffer> Data = ParameterKeys.NewObject<Buffer>();
+        public static readonly ObjectParameterKey<Texture> Pointcloud_PosCol = ParameterKeys.NewObject<Texture>();
     }
 }
