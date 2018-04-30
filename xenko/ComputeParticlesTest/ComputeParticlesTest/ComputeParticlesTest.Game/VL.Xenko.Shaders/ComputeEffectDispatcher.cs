@@ -14,8 +14,6 @@ namespace VL.Xenko.Shaders
         private MutablePipelineState pipelineState;
         private bool pipelineStateDirty = true;
         private EffectBytecode previousBytecode;
-        private FieldInfo nativeDeviceContextFi;
-        private FieldInfo unorderedAccessViewsFi;
 
         public ComputeEffectDispatcher(RenderContext context)
             : base(context, null)
@@ -33,12 +31,6 @@ namespace VL.Xenko.Shaders
             ThreadGroupCounts = new Int3(1);
 
             SetDefaultParameters();
-
-            //get filedinfos
-            var type = VLHDE.GameInstance.GraphicsContext.CommandList.GetType();
-            var fieldInfos = type.GetRuntimeFields();
-            nativeDeviceContextFi = fieldInfos.Where(fi => fi.Name == "nativeDeviceContext").First();
-            unorderedAccessViewsFi = fieldInfos.Where(fi => fi.Name == "unorderedAccessViews").First();
         }
 
         /// <summary>
@@ -113,11 +105,9 @@ namespace VL.Xenko.Shaders
 
             // Apply the effect
             EffectInstance.Apply(context.GraphicsContext);
+
             if (ResetCounter)
-            {
-                var uavs = (SharpDX.Direct3D11.UnorderedAccessView[])unorderedAccessViewsFi.GetValue(commandList);
-                commandList.ComputeShaderSetUnorderedAccessView(0, uavs[0], CounterValue);
-            }
+                commandList.ComputeShaderReApplyUnorderedAccessView(0, CounterValue);
 
             // Dispatch compute shader
             commandList.Dispatch(ThreadGroupCounts.X, ThreadGroupCounts.Y, ThreadGroupCounts.Z);
