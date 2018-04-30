@@ -31,6 +31,14 @@ shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Tr
 	    return dotValue > CullingThreshold;
     }
 
+    float DotCullingDbg(float3 pos, float CullingThreshold)
+    {
+	    float3 vec = pos - Eye.xyz;
+	    float dotValue = dot(normalize(vec), EyeMS.xyz);
+	
+	    return dotValue;
+    }
+
     // CS =====================================================================
 
     override void Compute()
@@ -38,23 +46,24 @@ shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Tr
         ProcessorSettings s = ProcessorSettingsBuffer[0];
         uint id = streams.DispatchThreadId.x;
 
-        if(id>=s.Points_Count) return;
+        //if(id>=s.Points_Count) return;
 
         Point PointOut;
 
-        uint sizeX,sizeY, Dummy;
+        uint sizeX, sizeY, Dummy;
         Pointcloud_PosCol.GetDimensions(sizeX, sizeY, Dummy);
         uint2 PixelCoords = int2(id % 4096, id / 4096);
-        float4 PointcloudTexData1 = Pointcloud_PosCol.Load(PixelCoords,0);
+        float4 PointcloudTexData1 = Pointcloud_PosCol.Load(PixelCoords, 0);
 
         // Point position:
         PointOut.Pos.xyz = PointcloudTexData1.xzy * 0.01; // UNREAL AXIS AND SCALE SYSTEM!!!!
-        PointOut.Pos.w=1;
+        PointOut.Pos.w = 1;
 
         // CULLING:
-        //bool Cull = DotCulling(PointOut.Pos.xyz, s.Culling_DotThreshold);
+        bool cull = DotCulling(PointOut.Pos.xyz, s.Culling_DotThreshold);
+        //float dotValue = DotCullingDbg(PointOut.Pos.xyz, s.Culling_DotThreshold);
        // if(!Cull) return;
-        if(true)
+        if(cull)
         {
 	        // NOISE FORCE:
          //   PerlinSettings pSet;
