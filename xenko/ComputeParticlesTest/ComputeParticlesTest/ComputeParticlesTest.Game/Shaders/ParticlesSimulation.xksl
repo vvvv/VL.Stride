@@ -3,7 +3,7 @@
 /// <summary>
 /// A test compute shader
 /// </summary>
-shader ComputeSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStruct, H_Perlin, ShaderUtils
+shader ParticlesSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStruct, H_Perlin, ShaderUtils
 {    
     RWStructuredBuffer<Particle> ParticlesBuffer;
 
@@ -44,27 +44,28 @@ shader ComputeSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStruc
 	    v *= damping;
 
 	    // NOISE FORCE:
-     //   PerlinSettings pSet;
-     //   pSet.Octaves = 1;
-     //   pSet.Frequency = 0.3;
-     //   pSet.Lacunarity= 1.666;
-     //   pSet.Persistence= 0.666;
+        PerlinSettings pSet;
+        pSet.Octaves = 1;
+        pSet.Frequency = 0.3;
+        pSet.Lacunarity= 1.666;
+        pSet.Persistence= 0.666;
 
-	    //float3 noiseF = float3(	fBm(float4(p+float3(51,2.36,-5), s.PerlinForce_Time), pSet),
-					//		    fBm(float4(p+float3(98.2,-9,-36), s.PerlinForce_Time), pSet),
-					//		    fBm(float4(p+float3(0,10.69,6), s.PerlinForce_Time), pSet));
-	    //v += noiseF * s.PerlinForce_Amount;
+	    float3 noiseF = float3(	fBm(float4(p+float3(51,2.36,-5), s.PerlinForce_Time), pSet),
+							    fBm(float4(p+float3(98.2,-9,-36), s.PerlinForce_Time), pSet),
+							    fBm(float4(p+float3(0,10.69,6), s.PerlinForce_Time), pSet));
+	    v += noiseF * s.PerlinForce_Amount;
 
         // TARGET FORCE:
 
-        float4 PointcloudTrg = Pointcloud_PosCol.Load(int2(id%4096, id/4096),0);
-	    //float3 trgPos = mul(float4(RandomBuffer[id].xy-0.5,0, 1), s.Target_T).xyz;
-	    //float3 trgPos = mul(PointcloudTrg, s.Target_T).xyz;
-	    float3 trgF = (PointcloudTrg.xzy * 0.01 + float3(5,-0.2,2) - p) * s.Target_Strength;
+        //float4 PointcloudTrg = Pointcloud_PosCol.Load(int2(id%4096, id/4096),0);
+	    //float3 trgPos = mul(float4(PointcloudTrg.xzy*0.01,1), s.Target_T).xyz;
+	    //float3 trgF = (trgPos - p) * s.Target_Strength;
+	    float3 trgPos = mul(float4(RandomBuffer[id].xy-0.5,0, 1), s.Target_T).xyz;
+	    float3 trgF = (trgPos - p) * s.Target_Strength;
 	    v += trgF;
 
    	    // ATTRACTORS:
-	    //v += attrVel(p);
+	    v += attrVel(p);
 
 
         POut.vel.xyz = v + s.Gravity.xyz;
@@ -72,7 +73,8 @@ shader ComputeSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStruc
 
         //POut.pos.x += pSet.Octaves;
 
-        POut.info.yzw = BitsToColor(PointcloudTrg.w).xyz;
+        //POut.info.yzw = BitsToColor(PointcloudTrg.w).xyz;
+        POut.info.yzw = POut.vel.xyz * 20 + 0.5;
         POut.info.x += Global.TimeStep;
 
         ParticlesBuffer[id] = POut;

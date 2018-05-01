@@ -1,5 +1,5 @@
 ﻿
-shader PointcloudDrawer : Transformation, PointStruct, ShaderUtils
+shader ParticlesDraw : Transformation, ParticleStruct, ShaderUtils
 {
     // Default COLOR outputs for PS shader
     stage stream float4 ColorTarget : SV_Target0;
@@ -10,33 +10,36 @@ shader PointcloudDrawer : Transformation, PointStruct, ShaderUtils
 
     stage stream float4 ShadingPosition : SV_Position;
     stage stream float4 Position : POSITION;
-    stage stream float4 ColSize;
+    stage stream float4 col;
     stream float4 PositionW;
 
     stream float2 uv;
-    stage StructuredBuffer<Point> Data;
+    stage StructuredBuffer<Particle> Data;
 
     // Declare Vertex shader main method
     stage void VSMain() 
     {
         //streams.ShadingPosition = mul(Data[streams.VertexID], WorldViewProjection);
-        streams.PositionW = Data[streams.VertexID].Pos;
+        streams.PositionW = Data[streams.VertexID].pos;
        // streams.col = Data[streams.VertexID].vel*10 + 0.5;
-        streams.ColSize = Data[streams.VertexID].ColSize;
+        streams.col = float4(Data[streams.VertexID].info.yzw, 1);
     }
 
 
     // Declare Geometry shader main method
+
     [maxvertexcount(4)]
     void GSMain(point Input input[1], inout TriangleStream<Output> triangleStream)
     {
+
+        //float2 g_texcoords[4] = {{0,0},{1,0},{0,1},{1,1}};
+            
         streams = input[0];
-	    for(int i=0;i<4;i++)
-        {
+	    for(int i=0;i<4;i++){
 		    //Out.TexCd=g_texcoords[i];
 		    streams.uv = float4((QuadUV[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
 
-		    streams.ShadingPosition = mul(float4(streams.PositionW.xyz + streams.ColSize.w * mul(QuadPositions[i],(float3x3)ViewInverse),1),ViewProjection);
+		    streams.ShadingPosition = mul(float4(streams.PositionW.xyz+ 0.01 *mul(QuadPositions[i],(float3x3)ViewInverse),1),ViewProjection);
 		    //streams.ShadingPosition = mul(float4(streams.PositionW.xyz+ 0.01 * g_positions[i],1),ViewProjection);
 
 		    triangleStream.Append(streams);
@@ -49,7 +52,7 @@ shader PointcloudDrawer : Transformation, PointStruct, ShaderUtils
     stage void PSMain()
     {
 	    if(length(streams.uv-.5)>.5){discard;}
-        streams.ColorTarget = float4(streams.ColSize.xyz,1);//float4(1, 1, 1, 1);
+        streams.ColorTarget = streams.col;//float4(1, 1, 1, 1);
     }
 };
 

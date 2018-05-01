@@ -1,0 +1,37 @@
+﻿
+    
+/// <summary>
+/// A test compute shader
+/// </summary>
+shader RingBufferSet: ComputeShaderBase, Global, ParticleStruct, ShaderUtils
+{    
+    StructuredBuffer<Particle> ParticlesBuffer;
+
+    struct RingBufferSettings
+    {   
+        int ParticlesCount;
+        int RingLength;
+        int RingBufferPhase;
+        int EmissionIndexOffset;
+    };
+    StructuredBuffer<RingBufferSettings> RingBufferSettingsBuffer;
+
+    RWStructuredBuffer<float4> RingBuffer : BACKBUFFER;
+
+    // =====================================================================
+    // CS ==================================================================
+    // =====================================================================
+
+    override void Compute()
+    {
+        RingBufferSettings s = RingBufferSettingsBuffer[0];
+        int id = streams.DispatchThreadId.x;
+
+	    if (id >= (uint)s.ParticlesCount) return;
+	
+	    uint bufferID = (id * s.RingLength) + s.RingBufferPhase ;
+	
+	    RingBuffer[bufferID] = float4(ParticlesBuffer[id].pos.xyz, id);
+    }
+};
+
