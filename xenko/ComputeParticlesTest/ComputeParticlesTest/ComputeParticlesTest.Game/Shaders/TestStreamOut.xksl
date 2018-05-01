@@ -1,0 +1,44 @@
+﻿
+shader TestStreamOut : Transformation, ShaderUtils
+{
+    // Default InstanceId for VS/GS shaders
+    stream uint VertexID : SV_VertexID;
+    stream uint InstanceID : SV_InstanceID;
+
+    stage stream float4 ShadingPosition : SV_Position;
+    stage stream float4 Position : POSITION;
+    //stage stream float4 ColSize;
+    stream float4 PositionW;
+
+    //stream float2 uv;
+    Texture2DMS<float4> Pointcloud_PosCol;
+
+    // Declare Vertex shader main method
+    stage void VSMain()
+    {
+        int2 pixelCoords = int2(streams.VertexID, streams.InstanceID);
+        float4 PointcloudTexData = Pointcloud_PosCol.Load(pixelCoords, 0);
+
+        //streams.ShadingPosition = mul(Data[streams.VertexID], WorldViewProjection);
+        streams.PositionW = float4(PointcloudTexData.xzy * 0.01, 1);
+
+       // streams.col = Data[streams.VertexID].vel*10 + 0.5;
+       // streams.ColSize = BitsToColor(PointcloudTexData.w);
+    }
+
+    [StreamOutput("0:SV_Position.xyzw")]
+    [maxvertexcount(4)]
+    void GSMain(point Input input[1], inout TriangleStream<Output> triangleStream)
+    {
+        streams = input[0];
+	    for(int i = 0; i < 4; i++)
+        {
+		    //Out.TexCd=g_texcoords[i];
+		    //streams.uv = float4((QuadUV[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
+
+		    streams.ShadingPosition = mul(float4(streams.PositionW.xyz + 0.01 * mul(QuadPositions[i], (float3x3)ViewInverse), 1), ViewProjection);
+
+		    triangleStream.Append(streams);
+	    }
+    }
+};
