@@ -1,58 +1,53 @@
 ﻿
-shader ParticlesDraw : Transformation, ParticleStruct, ShaderUtils
+shader ParticlesDraw : Transformation, ParticlesUtils_PosVelInfoCol, ShaderUtils
 {
-    // Default COLOR outputs for PS shader
-    stage stream float4 ColorTarget : SV_Target0;
+    stream float4 Col;
+    //stream float4 PosO : POSITION;
+    stream float4 PosW;
+    stream float4 PosWVP : SV_Position;
+    stream float2 uv;
+
+    float ParticleSize = 0.01f;
 
     // Default InstanceId for VS/GS shaders
-    stage stream uint VertexID : SV_VertexID;
-    stage stream uint InstanceID : SV_InstanceID;
+    stream uint VertexID : SV_VertexID;
 
-    stage stream float4 ShadingPosition : SV_Position;
-    stage stream float4 Position : POSITION;
-    stage stream float4 col;
-    stream float4 PositionW;
+    // Default COLOR outputs for PS shader
+    stream float4 ColorTarget : SV_Target0;
 
-    stream float2 uv;
-    stage StructuredBuffer<Particle> Data;
 
-    // Declare Vertex shader main method
+    // VS ==============================================================================
+
     stage void VSMain() 
     {
-        //streams.ShadingPosition = mul(Data[streams.VertexID], WorldViewProjection);
-        streams.PositionW = Data[streams.VertexID].pos;
-       // streams.col = Data[streams.VertexID].vel*10 + 0.5;
-        streams.col = float4(Data[streams.VertexID].info.yzw, 1);
+        Particle p = ParticlesData[streams.VertexID];
+        streams.PosW = p.Pos;
+        streams.Col = p.Vel * 10 + 0.5;
     }
 
 
-    // Declare Geometry shader main method
+    // GS ==============================================================================
 
     [maxvertexcount(4)]
     void GSMain(point Input input[1], inout TriangleStream<Output> triangleStream)
     {
-
-        //float2 g_texcoords[4] = {{0,0},{1,0},{0,1},{1,1}};
-            
         streams = input[0];
-	    for(int i=0;i<4;i++){
-		    //Out.TexCd=g_texcoords[i];
+	    for(int i=0;i<4;i++)
+        {
 		    streams.uv = float4((QuadUV[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
-
-		    streams.ShadingPosition = mul(float4(streams.PositionW.xyz+ 0.01 *mul(QuadPositions[i],(float3x3)ViewInverse),1),ViewProjection);
-		    //streams.ShadingPosition = mul(float4(streams.PositionW.xyz+ 0.01 * g_positions[i],1),ViewProjection);
+		    streams.PosWVP = mul(float4(streams.PosW.xyz+ ParticleSize * mul(QuadPositions[i],(float3x3)ViewInverse),1),ViewProjection);
 
 		    triangleStream.Append(streams);
 	    }
 
     }
 
+    // PS ==============================================================================
 
-    // Declare Pixel shader main method
-    stage void PSMain()
+    void PSMain()
     {
 	    if(length(streams.uv-.5)>.5){discard;}
-        streams.ColorTarget = streams.col;//float4(1, 1, 1, 1);
+        streams.ColorTarget = streams.Col;
     }
 };
 

@@ -21,24 +21,7 @@ shader PointcloudProcessor: ComputeShaderBase, Global, H_Perlin, PointStruct, Tr
     };
     StructuredBuffer<ProcessorSettings> ProcessorSettingsBuffer;
 
-    // FUNCTIONS ==============================================================
-
-    bool DotCulling(float3 pos, float CullingThreshold)
-    {
-	    float3 vec = pos - Eye.xyz;
-	    float dotValue = dot(normalize(vec), EyeMS.xyz);
-	
-	    return dotValue > CullingThreshold;
-    }
-
-    float DotCullingDbg(float3 pos, float CullingThreshold)
-    {
-	    float3 vec = pos - Eye.xyz;
-	    float dotValue = dot(normalize(vec), EyeMS.xyz);
-	
-	    return dotValue;
-    }
-
+   
     // CS =====================================================================
 
     override void Compute()

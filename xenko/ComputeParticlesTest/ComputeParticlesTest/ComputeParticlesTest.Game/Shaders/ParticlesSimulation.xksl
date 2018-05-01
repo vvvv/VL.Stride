@@ -3,7 +3,7 @@
 /// <summary>
 /// A test compute shader
 /// </summary>
-shader ParticlesSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStruct, H_Perlin, ShaderUtils
+shader ParticlesSimulation: ComputeShaderBase, Global, H_Attractors, ParticlesUtils_PosVelInfoCol, H_Perlin, ShaderUtils
 {    
     RWStructuredBuffer<Particle> ParticlesBuffer;
 
@@ -34,8 +34,8 @@ shader ParticlesSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStr
         int id = streams.DispatchThreadId.x;
         Particle POut = ParticlesBuffer[id];
 
- 	    float3 p = POut.pos.xyz;
-	    float3 v = POut.vel.xyz;
+ 	    float3 p = POut.Pos.xyz;
+	    float3 v = POut.Vel.xyz;
 
 	    //// VELOCITY DAMPING:
 	    float damping = pow(abs(RandomBuffer[id].z), s.VelDamp_gamma);
@@ -68,14 +68,14 @@ shader ParticlesSimulation: ComputeShaderBase, Global, H_Attractors, ParticleStr
 	    v += attrVel(p);
 
 
-        POut.vel.xyz = v + s.Gravity.xyz;
-        POut.pos.xyz = p + v;
+        POut.Vel.xyz = v + s.Gravity.xyz;
+        POut.Pos.xyz = p + v;
 
         //POut.pos.x += pSet.Octaves;
 
         //POut.info.yzw = BitsToColor(PointcloudTrg.w).xyz;
-        POut.info.yzw = POut.vel.xyz * 20 + 0.5;
-        POut.info.x += Global.TimeStep;
+        POut.Info.yzw = POut.Vel.xyz * 20 + 0.5;
+        POut.Info.x += Global.TimeStep;
 
         ParticlesBuffer[id] = POut;
     }

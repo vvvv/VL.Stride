@@ -1,0 +1,365 @@
+﻿
+shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//, TessellationBase
+{
+    stage StructuredBuffer<float4> RingBuffer;
+    
+
+    struct StreamsDrawStaticSettings
+    {   
+        int TubeShapeRes;// = 7;
+	    int RingBuffer_BinSize;// = 4; // Ctrl Points per Filament
+	    int GeomPatch_BinSize;// = 1;
+	    float GeomPatch_BinSizeInv;// = 1;
+	    float LengthMult;// = 1;
+	    float2 TessFactor_DistMinMax;// = float2(100, 600);
+	    float2 TessFactor_MinMaxValue;// = float2(64, 2);
+	    float Stripes_NormLerp;// = 1;
+	    float DotCullingThresholdValue;// = 0.61f;
+	    float4 Col_mapVel;// = float4(0,1,0,1);
+    };
+    StructuredBuffer<StreamsDrawStaticSettings> StreamsDrawStaticSettingsBuffer;
+
+    struct StreamsDrawRareUpdateSettings
+    {   
+	    float2 FogMinMaxDist;// : FOG_MINMAXDISTANCE ;
+	    float Thickness;// = 0.1;
+	    float ColMult;// = 1;
+	    float UcoordDeathValue;// = 1;
+	    float4 Col_mapVel;// = float4(0,1,0,1);
+    };
+    StructuredBuffer<StreamsDrawRareUpdateSettings> StreamsDrawRareUpdateSettingsBuffer;
+
+    struct StreamsDrawDynamicSettings
+    {   
+	    float4x4 ViewProjectionInverse;// : CULL_VIEWPROJECTIONINVERSE ;
+	    int RingBufferShift;
+	    float InfraFrame_Cycle;
+    };
+    StructuredBuffer<StreamsDrawDynamicSettings> StreamsDrawDynamicSettingsBuffer;
+
+    StructuredBuffer<float4> RndBuffer;
+    Texture2D<float4> ColRampTex;
+    Texture2D<float> CtrlTex;
+    SamplerState LinearSampler
+    {
+        Filter = MIN_MAG_MIP_LINEAR;
+        AddressU = clamp;
+    };
+
+    // =====================================================================
+
+    stream float iv;
+	stream float TessFactor;
+	stream uint2 IDs;
+	stream float LocalUcoord;
+	stream float4 Col;
+	stream float tubeLength;
+    stream uint VertexID : SV_VertexID;
+
+    // constants readed from settings buffers and passed through stages:
+	stream float GeomPatch_BinSizeInv;
+	stream int RingBuffer_BinSize;
+	stream float Stripes_NormLerp;
+	stream float LengthMult;
+	stream float RingBufferShift;
+	stream float4x4 ViewProjectionInverse;
+
+
+    // =====================================================================
+    // VS ==================================================================
+    // =====================================================================
+
+    void VSMain() 
+    {	
+        StreamsDrawStaticSettings StaticB = StreamsDrawStaticSettingsBuffer[0];
+        StreamsDrawStaticSettings RareUpdateB = StreamsDrawRareUpdateSettingsBuffer[0];
+        StreamsDrawStaticSettings DynamicB = StreamsDrawDynamicSettingsBuffer[0];
+
+        streams.GeomPatch_BinSizeInv = StaticB.GeomPatch_BinSizeInv;
+        streams.RingBuffer_BinSize = StaticB.RingBuffer_BinSize;
+        streams.LengthMult = StaticB.LengthMult;
+        streams.Stripes_NormLerp = StaticB.Stripes_NormLerp;
+        streams.RingBufferShift = DynamicB.RingBufferShift;
+        streams.ViewProjectionInverse = DynamicB.ViewProjectionInverse;
+        
+
+
+        float4 Rnd = RndBuffer[streams.iv%256];
+
+	    // Filament Index
+	    uint FilamentID = streams.iv / StaticB.GeomPatch_BinSize;
+	
+	    // Patch ID in Segment Group
+	    uint PatchGroupID = streams.iv % StaticB.GeomPatch_BinSize;
+	
+	    streams.IDs = uint2(FilamentID, PatchGroupID);
+	
+	    // Filament U coord
+	    streams.LocalUcoord = PatchGroupID;//*0.9999;
+	    streams.LocalUcoord *= StaticB.LengthMult * (Rnd.x*0.9+0.1);
+	    streams.LocalUcoord -= DynamicB.InfraFrame_Cycle;
+		
+	    int2 CtrlPointsID = floor(streams.LocalUcoord) + int2(-1,2);
+	    CtrlPointsID = clamp(CtrlPointsID,0, StaticB.RingBuffer_BinSize-1);
+	    int2 CtrlPointsIDBuffer = (CtrlPointsID+(uint)DynamicB.RingBufferShift) % StaticB.RingBuffer_BinSize + (FilamentID * StaticB.RingBuffer_BinSize);// + PingPongShift;
+
+	    // Filament Start-End Buffer Ctrl Points Indices
+	    uint A_index = FilamentID * StaticB.RingBuffer_BinSize + DynamicB.RingBufferShift;
+	    uint B_index = FilamentID * StaticB.RingBuffer_BinSize + (StaticB.RingBuffer_BinSize-1 + (uint)DynamicB.RingBufferShift) % StaticB.RingBuffer_BinSize;
+	
+	    // Filament Start-End Buffer Ctrl Points PosW
+	    float3 CtrlA_Pos = RingBuffer[A_index].xyz;
+	    float3 CtrlB_Pos = RingBuffer[B_index].xyz;
+	
+		
+	    // VIEW CULL
+	    float3 vecA = CtrlA_Pos - Eye;
+	    float3 vecB = CtrlB_Pos - Eye;
+	    float dotValueA = dot(normalize(vecA), EyeMS);
+	    float dotValueB = dot(normalize(vecB), EyeMS);	
+	    bool Cull_ViewDot = (dotValueA > StaticB.DotCullingThresholdValue) || (dotValueB > StaticB.DotCullingThresholdValue);
+
+		// PARTICLES DATA
+        Particle p = ParticlesData[streams.iv];
+        float2 uv =p.Ucoord;
+	
+	    if(Cull_ViewDot && uv.x < RareUpdateB.UcoordDeathValue)
+	    {			
+		    // DISTANCE TESSELLATION FACTOR
+		    float MeanDist = distance((CtrlA_Pos+CtrlB_Pos)*0.5, Eye);
+	
+		    float distFactor = smoothstep(StaticB.TessFactor_DistMinMax.x, StaticB.TessFactor_DistMinMax.y, MeanDist);
+		    distFactor = pow(distFactor, 2);
+		    distFactor = lerp(StaticB.TessFactor_MinMaxValue.x, StaticB.TessFactor_MinMaxValue.y, distFactor);
+		
+		    // CULL FAR
+		    bool Cull_Far = MeanDist < RareUpdateB.FogMinMaxDist.y;
+		
+		    // FINAL CULL
+		    bool Cull = Cull_ViewDot && Cull_Far;// && Cull_MinMaxLength;
+
+		
+		    float2 mappedUV = uv;
+		    mappedUV.x = CtrlTex.SampleLevel(LinearSampler, float2(mappedUV.x,0), 0).x;
+		    mappedUV.x = lerp(mappedUV.x*0.5, 3, pow(abs(uv.x),100));
+		    float3 col = ColRampTex.SampleLevel(LinearSampler, mappedUV.yx, 0).xyz;
+		
+		    streams.TessFactor =  distFactor * (float)Cull ;
+
+		    float velComponent = length(p.Vel);
+		    velComponent = smoothstep(StaticB.Col_mapVel.x, StaticB.Col_mapVel.y, velComponent);
+		    velComponent = lerp(StaticB.Col_mapVel.z, StaticB.Col_mapVel.w, velComponent);
+		
+		    float rootFog = smoothstep(-250,0,CtrlA_Pos.z);
+		
+		    streams.Col = col * velComponent * rootFog * RareUpdateB.ColMult;
+		    streams.Col *= (Rnd.xwz*0.5+.75);
+				
+		    streams.tubeLength = 1 - pow(saturate(uv.x / StaticB.UcoordDeathValue),100);
+	    }
+    }
+
+
+    // =====================================================================
+    // HS_CONSTANT =========================================================
+    // =====================================================================
+
+    #ifndef InputControlPointCount
+    # define InputControlPointCount 2
+    #endif
+
+    #ifndef OutputControlPointCount
+    # define OutputControlPointCount 2
+    #endif
+
+    patchstream float tessFactor[2] : SV_TessFactor;
+    patchstream float insideTessFactor : SV_InsideTessFactor;
+
+    void HSConstantMain(InputPatch<Input, InputControlPointCount> input, const OutputPatch<Input2, 2> output, out Constants constants) 
+    {
+        streams.tessFactor[0] = 1;
+        streams.tessFactor[1] = streams.TessFactor;
+    }
+
+
+    // =====================================================================
+    // HS ==================================================================
+    // =====================================================================
+
+    [domain("isoline")]
+    // "integer" / "fractional_even" / "fractional_odd"
+    [partitioning("fractional_odd")]
+    [outputtopology("line")]
+    [outputcontrolpoints(1)]
+    [patchconstantfunc("HSConstantMain")]
+    void HSMain(InputPatch<Input, 1 > input, out Output output, uint uCPID : SV_OutputControlPointID)
+    {
+        streams = input[uCPID];
+
+	    streams.iv = input.iv;
+	    streams.IDs = input.IDs;
+	    streams.LocalUcoord = input.LocalUcoord;
+	    streams.Col = input.Col;
+	    streams.tubeLength = input.tubeLength;
+
+        output = streams;
+    }
+
+    // =====================================================================
+    // DS ==================================================================
+    // =====================================================================
+
+    stream float4 PosW;
+	stream float4 TangW;
+	stream float Thickness;
+	stream uint tubeID;
+	stream float NormalizedUcoord;
+
+    [domain("isoline")]
+    void DSMain(const OutputPatch<Input, OutputControlPointCount> input, out Output output, in Constants constants, float3 uv : SV_DomainLocation)    
+   // DS_OUTPUT DS(HS_CONSTANT_OUTPUT input, OutputPatch<HS_OUTPUT, 1> op, float2 uv : SV_DomainLocation)
+    {
+        streams input = input[0];
+	
+	    // Filament Index
+	    uint FilamentID = input.IDs.x;
+	
+	    // Patch ID in Segment Group
+	    uint PatchGroupID = input.IDs.y;
+	
+	    // Normalized U Coord
+	    streams.NormalizedUcoord = (PatchGroupID + uv.x) * streams.GeomPatch_BinSizeInv;
+	
+	    // Filament U coord
+	    float LocalUcoord = input.LocalUcoord;
+	    // Start Filament Ctrl Point offset:
+	    //test += 1;
+	
+        float4 Rnd = RndBuffer[FilamentID%256];
+
+	    float tessUcoord = uv.x * input.tubeLength * streams.LengthMult * (Rnd.x * 0.666 + 0.333);
+
+	    int4 CtrlPointsID = floor(LocalUcoord + tessUcoord) + int4(-1,0,1,2);
+	    CtrlPointsID = clamp(CtrlPointsID, 0, streams.RingBuffer_BinSize-1);
+	    int4 CtrlPointsIDBuffer = (CtrlPointsID+(uint)streams.RingBufferShift) % streams.RingBuffer_BinSize + (FilamentID * streams.RingBuffer_BinSize);
+	
+	
+	    float4 c1 = RingBuffer[CtrlPointsIDBuffer.x];
+	    float3 c2 = RingBuffer[CtrlPointsIDBuffer.y].xyz;
+	    float3 c3 = RingBuffer[CtrlPointsIDBuffer.z].xyz;
+	    float3 c4 = RingBuffer[CtrlPointsIDBuffer.w].xyz;
+
+	    float BSplineCubicUcoord = input.LocalUcoord + tessUcoord;
+
+	    SplinePosTan3 curve = BSplineCubic3PT(c1.xyz,c2,c3,c4, BSplineCubicUcoord);
+
+        streams.PosW = curve.Pos;
+	    streams.TangW = -normalize(curve.Tang);
+	
+	    // Closeup FadeOut:
+	    float CloseFade = saturate(distance(curve.Pos, Eye)*0.02-0.4);
+	    streams.Thickness = streams.Thickness * (Rnd.y*0.5+0.5) * CloseFade;
+
+	    streams.tubeID = FilamentID;
+	    float z = streams.PosW.z ; 
+	    float selfGradient = pow(1-streams.NormalizedUcoord, 4);
+	    streams.Col = input.Col;
+    }
+
+
+
+
+
+
+
+    // =====================================================================
+    // GS ==================================================================
+    // =====================================================================
+
+    stream float4 PosWVP : SV_Position;
+    stream float4 NormW;
+
+    [maxvertexcount(4)]
+    void GS_Stripes(line Input input[2], inout TriangleStream<Output> trangleStream)
+    {
+        streams input0 = input[0];
+        streams input1 = input[1];
+
+	    float3 Col_0 = input0.Col;
+	    float3 Col_1 = input1.Col;
+	
+	    // ORIGINAL POSITION
+	    float3 p0_w = input0.PosW;
+	    float3 p1_w = input1.PosW;
+	
+	    // ORIGINAL DIRECTION	
+        float3 tang0_w = input0.TangW;
+        float3 tang1_w = input1.TangW;	
+	
+	    // PROJECTION POINTS FROM DIRECTION:
+	    float3 proj0_w = p0_w + tang0_w;
+	    float3 proj1_w = p1_w + tang1_w;
+	
+	    // WORDVIEWPROJECTION POSITION
+	    float4 p0 = mul(float4(p0_w,1), ViewProjection);
+	    float4 p1 = mul(float4(p1_w,1), ViewProjection);
+	    float4 proj0 = mul(float4(proj0_w,1), ViewProjection);
+	    float4 proj1 = mul(float4(proj1_w,1), ViewProjection);
+	
+	    // SCREEN POSITION
+	    float2 p0_screen = p0.xy / p0.w;
+	    float2 p1_screen = p1.xy / p1.w;
+	    float2 proj0_screen = proj0.xy / proj0.w;
+	    float2 proj1_screen = proj1.xy / proj1.w;
+
+
+	    // SCREENSPACE DIRECTION
+	    float2 v0_screen = normalize(proj0_screen - p0_screen);
+	    float2 v1_screen = normalize(proj1_screen - p1_screen);
+	
+	    // SCREENSPACE NORMALS
+	    float2 n0 = float2(-v0_screen.y, v0_screen.x);
+	    float2 n1 = float2(-v1_screen.y, v1_screen.x);
+
+	
+	    float3 addNorm = mul(float4(0,0,-.5,0), ViewInverse).xyz;
+	
+	    streams.PosW = mul(float4((p0.xy + n0 * input0.Thickness), p0.zw ), streams.ViewProjectionInverse);
+	    streams.PosWVP = mul(streams.PosW, ViewProjection);
+	    streams.NormW = lerp(tang0_w, streams.PosW - p0_w + addNorm, streams.Stripes_NormLerp);
+	    streams.Col = Col_0;
+	    trangleStream.Append(streams);
+	
+	    streams.PosW = mul(float4((p0.xy - n0 * input0.Thickness), p0.zw ),  streams.ViewProjectionInverse);
+	    streams.PosWVP = mul(streams.PosW, ViewProjection);
+	    streams.NormW = lerp(tang0_w, streams.PosW - p0_w + addNorm, streams.Stripes_NormLerp);
+	    streams.Col = Col_0;
+	    trangleStream.Append(streams);
+	
+	    streams.PosW = mul(float4((p1.xy + n1 * input1.Thickness), p1.zw ),  streams.ViewProjectionInverse);
+	    streams.PosWVP = mul(streams.PosW, ViewProjection);
+	    streams.NormW = lerp(tang1_w, streams.PosW - p1_w + addNorm, streams.Stripes_NormLerp);
+	    streams.Col = Col_1;
+	    trangleStream.Append(streams);
+	
+	    streams.PosW = mul(float4((p1.xy - n1 * input1.Thickness), p1.zw ),  streams.ViewProjectionInverse);
+	    streams.PosWVP = mul(streams.PosW, ViewProjection);
+	    streams.NormW = lerp(tang1_w, streams.PosW - p1_w + addNorm, streams.Stripes_NormLerp);
+	    streams.Col = Col_1;
+	    trangleStream.Append(streams);
+	
+	    trangleStream.RestartStrip();	
+    }
+
+    // =====================================================================
+    // PS ==================================================================
+    // =====================================================================
+
+    stream float4 ColorTarget : SV_Target0;
+
+    void PSMain()
+    {
+	    //if(length(streams.uv-.5)>.5){discard;}
+        streams.ColorTarget = streams.Col;//float4(1, 1, 1, 1);
+    }
+};

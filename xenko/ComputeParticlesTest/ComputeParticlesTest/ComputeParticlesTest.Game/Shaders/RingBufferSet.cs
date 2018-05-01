@@ -18,7 +18,6 @@ namespace SiliconStudio.Xenko.Rendering
 {
     public static partial class RingBufferSetKeys
     {
-        public static readonly ObjectParameterKey<Buffer> ParticlesBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> RingBufferSettingsBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> RingBuffer = ParameterKeys.NewObject<Buffer>();
     }

@@ -105,6 +105,14 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="Shaders\ParticlesUtils_PosVelUVcoord.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>ParticlesUtils_PosVelUVcoord.cs</LastGenOutput>
+    </None>
+    <None Include="Shaders\StreamsDraw.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>StreamsDraw.cs</LastGenOutput>
+    </None>
     <None Include="Shaders\RingBufferSet.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>RingBufferSet.cs</LastGenOutput>
@@ -145,9 +153,9 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>ComputeEffects.cs</LastGenOutput>
     </None>
-    <None Include="Shaders\ParticleStruct.xksl">
+    <None Include="Shaders\ParticlesUtils_PosVelInfoCol.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>ParticleStruct.cs</LastGenOutput>
+      <LastGenOutput>ParticlesUtils_PosVelInfoCol.cs</LastGenOutput>
     </None>
     <None Include="Shaders\ParticlesDraw.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -168,6 +176,7 @@
     <Compile Include="CSharpStructs\AttractorsStruct.cs" />
     <Compile Include="CSharpStructs\ComputeRingBufferStruct.cs" />
     <Compile Include="CSharpStructs\PointcloudProcessorSettingsStruct.cs" />
+    <Compile Include="CSharpStructs\StreamsDrawSettingsStruct.cs" />
     <Compile Include="Effects\DrawEffects.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -185,6 +194,19 @@
       <DependentUpon>TestStreamOutEffect.xkfx</DependentUpon>
     </Compile>
     <Compile Include="GameProfiler.cs" />
+    <Compile Include="ShaderParameterSetter\StreamsDrawParmeterSetter.cs" />
+    <Compile Include="Shaders\ParticlesUtils_PosVelUVcoord.cs">
+      <DependentUpon>ParticlesUtils_PosVelUVcoord.xksl</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Shaders\StreamsDraw.cs">
+      <DependentUpon>StreamsDraw.xksl</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Shaders\RingBufferSet.cs">
       <DependentUpon>RingBufferSet.xksl</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -250,11 +272,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>H_Perlin.xksl</DependentUpon>
     </Compile>
-    <Compile Include="Shaders\ParticleStruct.cs">
+    <Compile Include="Shaders\ParticlesUtils_PosVelInfoCol.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ParticleStruct.xksl</DependentUpon>
+      <DependentUpon>ParticlesUtils_PosVelInfoCol.xksl</DependentUpon>
     </Compile>
     <Compile Include="Shaders\ParticlesDraw.cs">
       <DependentUpon>ParticlesDraw.xksl</DependentUpon>
