@@ -105,13 +105,21 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="Shaders\RingBufferSet.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>RingBufferSet.cs</LastGenOutput>
+    </None>
+    <None Include="Shaders\RingBufferDraw.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>RingBufferDraw.cs</LastGenOutput>
+    </None>
     <None Include="Shaders\PointcloudTextureDraw.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>PointcloudTextureDraw.cs</LastGenOutput>
     </None>
-    <None Include="Shaders\PointcloudDrawer.xksl">
+    <None Include="Shaders\PointcloudDraw.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>PointcloudDrawer.cs</LastGenOutput>
+      <LastGenOutput>PointcloudDraw.cs</LastGenOutput>
     </None>
     <None Include="Shaders\PointStruct.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -125,25 +133,25 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>H_Perlin1.cs</LastGenOutput>
     </None>
-    <None Include="Shaders\ComputeSimulation.xksl">
+    <None Include="Shaders\ParticlesSimulation.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>ComputeSimulation.cs</LastGenOutput>
+      <LastGenOutput>ParticlesSimulation.cs</LastGenOutput>
     </None>
     <None Include="Shaders\H_Attractors.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>H_Attractors1.cs</LastGenOutput>
     </None>
-    <None Include="Effects\ComputeSimulationEffect.xkfx">
+    <None Include="Effects\ComputeEffects.xkfx">
       <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>ComputeSimulationEffect.cs</LastGenOutput>
+      <LastGenOutput>ComputeEffects.cs</LastGenOutput>
     </None>
     <None Include="Shaders\ParticleStruct.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>ParticleStruct.cs</LastGenOutput>
     </None>
-    <None Include="Shaders\CustomDrawShader.xksl">
+    <None Include="Shaders\ParticlesDraw.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>CustomDrawShader.cs</LastGenOutput>
+      <LastGenOutput>ParticlesDraw.cs</LastGenOutput>
     </None>
     <None Include="project.json" />
     <None Include="Shaders\ShaderUtils.xksl">
@@ -154,22 +162,35 @@
   <ItemGroup>
     <Compile Include="BasicCameraController.cs" />
     <Compile Include="CSharpStructs\AttractorsStruct.cs" />
+    <Compile Include="CSharpStructs\ComputeRingBufferStruct.cs" />
     <Compile Include="CSharpStructs\PointcloudProcessorSettingsStruct.cs" />
-    <Compile Include="Effects\CustomDrawEffect1.cs">
+    <Compile Include="Effects\DrawEffects.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>CustomDrawEffect.xkfx</DependentUpon>
+      <DependentUpon>DrawEffects.xkfx</DependentUpon>
     </Compile>
     <Compile Include="GameProfiler.cs" />
+    <Compile Include="Shaders\RingBufferSet.cs">
+      <DependentUpon>RingBufferSet.xksl</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Shaders\RingBufferDraw.cs">
+      <DependentUpon>RingBufferDraw.xksl</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Shaders\PointcloudTextureDraw.cs">
       <DependentUpon>PointcloudTextureDraw.xksl</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Shaders\PointcloudDrawer.cs">
-      <DependentUpon>PointcloudDrawer.xksl</DependentUpon>
+    <Compile Include="Shaders\PointcloudDraw.cs">
+      <DependentUpon>PointcloudDraw.xksl</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DesignTime>True</DesignTime>
@@ -186,11 +207,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Shaders\ComputeSimulation.cs">
+    <Compile Include="Shaders\ParticlesSimulation.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ComputeSimulation.xksl</DependentUpon>
+      <DependentUpon>ParticlesSimulation.xksl</DependentUpon>
     </Compile>
     <Compile Include="Shaders\H_Attractors1.cs">
       <AutoGen>True</AutoGen>
@@ -199,15 +220,15 @@
       <DependentUpon>H_Attractors.xksl</DependentUpon>
     </Compile>
     <Compile Include="CSharpStructs\ComputeSimulationStruct.cs" />
-    <Compile Include="Effects\ComputeSimulationEffect.cs">
+    <Compile Include="Effects\ComputeEffects.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ComputeSimulationEffect.xkfx</DependentUpon>
+      <DependentUpon>ComputeEffects.xkfx</DependentUpon>
     </Compile>
-    <None Include="Effects\CustomDrawEffect.xkfx">
+    <None Include="Effects\DrawEffects.xkfx">
       <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>CustomDrawEffect1.cs</LastGenOutput>
+      <LastGenOutput>DrawEffects.cs</LastGenOutput>
     </None>
     <Compile Include="Shaders\H_Perlin1.cs">
       <AutoGen>True</AutoGen>
@@ -221,8 +242,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ParticleStruct.xksl</DependentUpon>
     </Compile>
-    <Compile Include="Shaders\CustomDrawShader.cs">
-      <DependentUpon>CustomDrawShader.xksl</DependentUpon>
+    <Compile Include="Shaders\ParticlesDraw.cs">
+      <DependentUpon>ParticlesDraw.xksl</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DesignTime>True</DesignTime>

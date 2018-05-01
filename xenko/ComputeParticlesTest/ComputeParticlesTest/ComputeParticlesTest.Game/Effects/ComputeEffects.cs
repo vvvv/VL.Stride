@@ -18,35 +18,18 @@ namespace CustomParticlesTest
 {
     internal static partial class ShaderMixins
     {
-        internal partial class ComputeSimulationEffect  : IShaderMixinBuilder
+        internal partial class ParticlesSimulationEffect  : IShaderMixinBuilder
         {
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
-                context.Mixin(mixin, "ComputeSimulation");
+                context.Mixin(mixin, "ParticlesSimulation");
             }
 
             [ModuleInitializer]
             internal static void __Initialize__()
 
             {
-                ShaderMixinManager.Register("ComputeSimulationEffect", new ComputeSimulationEffect());
-            }
-        }
-    }
-    internal static partial class ShaderMixins
-    {
-        internal partial class VLComputeEmission  : IShaderMixinBuilder
-        {
-            public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
-            {
-                context.Mixin(mixin, "ComputeEmission");
-            }
-
-            [ModuleInitializer]
-            internal static void __Initialize__()
-
-            {
-                ShaderMixinManager.Register("VLComputeEmission", new VLComputeEmission());
+                ShaderMixinManager.Register("ParticlesSimulationEffect", new ParticlesSimulationEffect());
             }
         }
     }
@@ -64,6 +47,23 @@ namespace CustomParticlesTest
 
             {
                 ShaderMixinManager.Register("PointcloudProcessorEffect", new PointcloudProcessorEffect());
+            }
+        }
+    }
+    internal static partial class ShaderMixins
+    {
+        internal partial class RingBufferSetEffect  : IShaderMixinBuilder
+        {
+            public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
+            {
+                context.Mixin(mixin, "RingBufferSet");
+            }
+
+            [ModuleInitializer]
+            internal static void __Initialize__()
+
+            {
+                ShaderMixinManager.Register("RingBufferSetEffect", new RingBufferSetEffect());
             }
         }
     }

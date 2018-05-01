@@ -43,9 +43,20 @@ namespace ComputeParticlesTest
             }
             catch (Exception e)
             {
-                var m = e.Message;
+                var inner = e.InnerException;
+                while (inner != null)
+                {
+                    e = inner;
+                    inner = e.InnerException;
+                }
+
+                System.Diagnostics.Debug.WriteLine(e.Message);
                //
             }
         }
+
+        
     }
 }
+
+
