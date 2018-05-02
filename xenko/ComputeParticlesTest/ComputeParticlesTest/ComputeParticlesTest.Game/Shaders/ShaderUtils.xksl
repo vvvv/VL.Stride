@@ -12,6 +12,15 @@ shader ShaderUtils : Transformation
 
     // SPRITES UTILS ==============================================================
  
+    void CircleSpriteDiscard(float2 uv)
+    {
+        if(length(uv - 0.5f) > 0.5f)
+        {
+            discard;
+        }
+    }
+
+
     static const float3 QuadPositions[4] = {
         float3(-1, 1,0),
         float3( 1, 1,0),

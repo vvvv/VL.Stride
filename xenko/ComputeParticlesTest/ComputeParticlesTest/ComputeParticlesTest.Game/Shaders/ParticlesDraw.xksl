@@ -1,54 +1,24 @@
 ﻿
-shader ParticlesDraw : Transformation, ParticlesUtils_PosVelInfoCol, ShaderUtils
+shader ParticlesDraw : Transformation, ParticlesUtils_PosVelInfoCol, ShaderUtils, GS_Sprites
 {
     stream float4 Col;
-    //stream float4 PosO : POSITION;
-    stream float4 PosW;
-    stream float4 PosWVP : SV_Position;
-    stream float2 uv;
-
-    float ParticleSize = 0.01f;
-
-    // Default InstanceId for VS/GS shaders
-    stream uint VertexID : SV_VertexID;
-
-    // Default COLOR outputs for PS shader
-    stream float4 ColorTarget : SV_Target0;
-
 
     // VS ==============================================================================
 
     stage void VSMain() 
     {
         Particle p = ParticlesData[streams.VertexID];
-        streams.PosW = p.Pos;
+        streams.PositionWS = p.Pos;
         streams.Col = p.Vel * 10 + 0.5;
     }
 
 
-    // GS ==============================================================================
-
-    [maxvertexcount(4)]
-    void GSMain(point Input input[1], inout TriangleStream<Output> triangleStream)
-    {
-        streams = input[0];
-	    for(int i=0;i<4;i++)
-        {
-		    streams.uv = float4((QuadUV[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
-		    streams.PosWVP = mul(float4(streams.PosW.xyz+ ParticleSize * mul(QuadPositions[i],(float3x3)ViewInverse),1),ViewProjection);
-
-		    triangleStream.Append(streams);
-	    }
-
-    }
-
     // PS ==============================================================================
 
-    void PSMain()
+    stage void PSMain()
     {
-	    if(length(streams.uv-.5)>.5){discard;}
+        CircleSpriteDiscard(streams.TexCoord);       
         streams.ColorTarget = streams.Col;
     }
+
 };
-
-

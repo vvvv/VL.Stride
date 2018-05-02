@@ -16,9 +16,8 @@ using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
 
 namespace SiliconStudio.Xenko.Rendering
 {
-    public static partial class TestTessellationBezier3dKeys
+    public static partial class GS_SpritesKeys
     {
-        public static readonly ValueParameterKey<float> tessFactorMult = ParameterKeys.NewValue<float>(1);
-        public static readonly ObjectParameterKey<Buffer> CtrlPointsPosBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ValueParameterKey<float> ParticleSize = ParameterKeys.NewValue<float>();
     }
 }

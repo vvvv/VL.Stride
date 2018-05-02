@@ -3,13 +3,8 @@ shader TestTessellationBezier3d : Transformation, ParticlesUtils_PosVelInfoCol, 
 {
     float tessFactorMult = 1;
 
-    //stream float4 Col;
-    //stream float4 PosO : POSITION;
     stream float4 PosW : CPOINT;
     stream float4 PosWVP : SV_Position;
-   // stream float2 uv;
-
-    float ParticleSize = 0.01f;
 
     // Default InstanceId for VS/GS shaders
     stream uint VertexID : SV_VertexID;
@@ -26,7 +21,6 @@ shader TestTessellationBezier3d : Transformation, ParticlesUtils_PosVelInfoCol, 
     {
         float3 p = CtrlPointsPosBuffer[streams.VertexID];
         streams.PosW = float4(p, 1);
-        //streams.Col = p.Vel * 10 + 0.5;
     }
 
 
@@ -77,29 +71,11 @@ shader TestTessellationBezier3d : Transformation, ParticlesUtils_PosVelInfoCol, 
         output = streams;
     }
 
-
-    //// GS ==============================================================================
-
-    //[maxvertexcount(4)]
-    //void GSMain(point Input input[1], inout TriangleStream<Output> triangleStream)
-    //{
-    //    streams = input[0];
-	   // for(int i=0;i<4;i++)
-    //    {
-		  //  streams.uv = float4((QuadUV[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
-		  //  streams.PosWVP = mul(float4(streams.PosW.xyz+ ParticleSize * mul(QuadPositions[i],(float3x3)ViewInverse),1),ViewProjection);
-
-		  //  triangleStream.Append(streams);
-	   // }
-
-    //}
-
     // PS ==============================================================================
 
     void PSMain()
     {
-	    //if(length(streams.uv-.5)>.5){discard;}
-        streams.ColorTarget = float4(1,1,1,1);//streams.Col;
+        streams.ColorTarget = float4(1,1,1,1);
     }
 };
 
