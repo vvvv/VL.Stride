@@ -31,7 +31,7 @@ shader TestStreamOut : Transformation, ShaderUtils
     stage void GSMain(point Input input[1], inout PointStream<Output> pointsStream)
     {
         streams = input[0];
-	    streams.ShadingPosition = streams.PositionW + float4(0, 1, 0, 0);
+	    streams.ShadingPosition = streams.PositionW;
         pointsStream.Append(streams);
     }
 };
