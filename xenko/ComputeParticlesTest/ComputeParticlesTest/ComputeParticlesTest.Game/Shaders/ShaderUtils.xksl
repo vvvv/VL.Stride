@@ -105,23 +105,26 @@ shader ShaderUtils : Transformation
 
     float3 RGBtoHSL(in float3 RGB)
     {
-	    float3 HSL = 0;
-	    float U, V;
-	    U = -min(RGB.r, min(RGB.g, RGB.b));
-	    V = max(RGB.r, max(RGB.g, RGB.b));
-	    HSL.z = (V - U) * 0.5;
-	    float C = V + U;
-	    if (C != 0){
-		    float3 Delta = (V - RGB) / C;
-		    Delta.rgb -= Delta.brg;
-		    Delta.rgb += float3(2,4,6);
-		    Delta.brg = step(V, RGB) * Delta.brg;
-		    HSL.x = max(Delta.r, max(Delta.g, Delta.b));
-		    HSL.x = frac(HSL.x / 6);
-		    HSL.y = C / (1 - abs(2 * HSL.z - 1));
-	    }
+        float3 HSL = 0;
+        float U, V;
+        U = -min(RGB.r, min(RGB.g, RGB.b));
+        V = max(RGB.r, max(RGB.g, RGB.b));
+        HSL.z = (V - U) * 0.5;
+        float C = V + U;
+        if (C != 0)
+        {
+            float3 Delta = (V - RGB) / C;
+            Delta.rgb -= Delta.brg;
+            Delta.rgb += float3(2,4,6);
+            Delta.brg = step(V, RGB) * Delta.brg;
+            HSL.x = max(Delta.r, max(Delta.g, Delta.b));
+            HSL.x = frac(HSL.x / 6);
+            HSL.y = C / (1 - abs(2 * HSL.z - 1));
+        }
+
 	    return HSL;
     }
+
 
 
     ////////////////////////////////////////////////////////////////
@@ -135,33 +138,33 @@ shader ShaderUtils : Transformation
         float mu = frac(range);
         float a0 = p4 - p3*3 + p2*3 - p1;
         float a1 = p3*3 - p2*6 + p1*3.;
-      float a2 = p3*3 - p1*3;
+        float a2 = p3*3 - p1*3;
         float a3 = p3 + p2*4 + p1;
-  
-      return (a3+mu*(a2+mu*(a1+mu*a0)))/6.;
+        return (a3+mu*(a2+mu*(a1+mu*a0)))/6.;
     }
+
 
     float2 BSplineCubic(float2 p1, float2 p2, float2 p3, float2 p4, float range) 
     {
         float mu = frac(range);
         float2 a0 = p4 - p3*3 + p2*3 - p1;
         float2 a1 = p3*3 - p2*6 + p1*3.;
-      float2 a2 = p3*3 - p1*3;
+        float2 a2 = p3*3 - p1*3;
         float2 a3 = p3 + p2*4 + p1;
-  
-      return (a3+mu*(a2+mu*(a1+mu*a0)))/6.;
+        return (a3+mu*(a2+mu*(a1+mu*a0)))/6.;
     }
+
 
     float3 BSplineCubic(float3 p1, float3 p2, float3 p3, float3 p4, float range) 
     {
         float mu = frac(range);
         float3 a0 = p4 - p3*3 + p2*3 - p1;
         float3 a1 = p3*3 - p2*6 + p1*3.;
-      float3 a2 = p3*3 - p1*3;
+        float3 a2 = p3*3 - p1*3;
         float3 a3 = p3 + p2*4 + p1;
-  
-      return (a3+mu*(a2+mu*(a1+mu*a0)))/6.;
+        return (a3+mu*(a2+mu*(a1+mu*a0)))/6.;
     }
+
 
     struct SplinePosTan3
     {
@@ -171,18 +174,17 @@ shader ShaderUtils : Transformation
 
     SplinePosTan3 BSplineCubic3PT(float3 p1, float3 p2, float3 p3, float3 p4, float range) 
     {
-      SplinePosTan3 Out = (SplinePosTan3)0;
-
+        SplinePosTan3 Out = (SplinePosTan3)0;
         float mu = frac(range);
         float3 a0 = p4 - p3*3 + p2*3 - p1;
         float3 a1 = p3*3 - p2*6 + p1*3.;
-      float3 a2 = p3*3 - p1*3;
+        float3 a2 = p3*3 - p1*3;
         float3 a3 = p3 + p2*4 + p1;
-  
-      Out.Pos = (a3+mu*(a2+mu*(a1+mu*a0)))/6.;
-      Out.Tang = normalize((mu*(2*a0*mu+a1)+mu*(a0*mu+a1)+a2)/6.);
-      return Out;
+        Out.Pos = (a3+mu*(a2+mu*(a1+mu*a0)))/6.;
+        Out.Tang = normalize((mu*(2*a0*mu+a1)+mu*(a0*mu+a1)+a2)/6.);
+        return Out;
     }
+
 
 
 };
