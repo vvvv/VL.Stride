@@ -27,18 +27,11 @@ shader TestStreamOut : Transformation, ShaderUtils
     }
 
     [StreamOutput("0:SV_Position.xyzw")]
-    [maxvertexcount(4)]
-    void GSMain(point Input input[1], inout TriangleStream<Output> triangleStream)
+    [maxvertexcount(1)]
+    stage void GSMain(point Input input[1], inout PointStream<Output> pointsStream)
     {
         streams = input[0];
-	    for(int i = 0; i < 4; i++)
-        {
-		    //Out.TexCd=g_texcoords[i];
-		    //streams.uv = float4((QuadUV[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
-
-		    streams.ShadingPosition = mul(float4(streams.PositionW.xyz + 0.01 * mul(QuadPositions[i], (float3x3)ViewInverse), 1), ViewProjection);
-
-		    triangleStream.Append(streams);
-	    }
+	    streams.ShadingPosition = streams.PositionW + float4(0, 1, 0, 0);
+        pointsStream.Append(streams);
     }
 };

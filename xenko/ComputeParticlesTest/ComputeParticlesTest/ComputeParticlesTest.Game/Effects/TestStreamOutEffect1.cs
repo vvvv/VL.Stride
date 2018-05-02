@@ -14,20 +14,40 @@ using SiliconStudio.Xenko.Shaders;
 using SiliconStudio.Core.Mathematics;
 using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
 
-internal static partial class ShaderMixins
+namespace CustomParticlesTest
 {
-    internal partial class TestStreamOutEffect  : IShaderMixinBuilder
+    internal static partial class ShaderMixins
     {
-        public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
+        internal partial class TestStreamOutEffect  : IShaderMixinBuilder
         {
-            context.Mixin(mixin, "TestStreamOut");
+            public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
+            {
+                context.Mixin(mixin, "TestStreamOut");
+            }
+
+            [ModuleInitializer]
+            internal static void __Initialize__()
+
+            {
+                ShaderMixinManager.Register("TestStreamOutEffect", new TestStreamOutEffect());
+            }
         }
-
-        [ModuleInitializer]
-        internal static void __Initialize__()
-
+    }
+    internal static partial class ShaderMixins
+    {
+        internal partial class TestStreamOutDrawEffect  : IShaderMixinBuilder
         {
-            ShaderMixinManager.Register("TestStreamOutEffect", new TestStreamOutEffect());
+            public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
+            {
+                context.Mixin(mixin, "TestStreamOutDraw");
+            }
+
+            [ModuleInitializer]
+            internal static void __Initialize__()
+
+            {
+                ShaderMixinManager.Register("TestStreamOutDrawEffect", new TestStreamOutDrawEffect());
+            }
         }
     }
 }
