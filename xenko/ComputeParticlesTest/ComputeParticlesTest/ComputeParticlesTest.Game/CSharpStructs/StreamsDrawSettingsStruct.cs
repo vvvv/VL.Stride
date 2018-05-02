@@ -44,15 +44,13 @@ namespace ComputeParticlesTest
         float Thickness;// = 0.1;
         float ColMult;// = 1;
         float UcoordDeathValue;// = 1;
-        Vector4 Col_mapVel;// = float4(0,1,0,1);
 
-        public StreamsDrawRareUpdateSettings(Vector2 fogMinMaxDist, float thickness, float colMult, float ucoordDeathValue, Vector4 col_mapVel)
+        public StreamsDrawRareUpdateSettings(Vector2 fogMinMaxDist, float thickness, float colMult, float ucoordDeathValue)
         {
             FogMinMaxDist = fogMinMaxDist;
             Thickness = thickness;
             ColMult = colMult;
             UcoordDeathValue = ucoordDeathValue;
-            Col_mapVel = col_mapVel;
         }
     }
 

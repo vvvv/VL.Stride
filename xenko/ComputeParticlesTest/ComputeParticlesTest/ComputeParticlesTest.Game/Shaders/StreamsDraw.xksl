@@ -31,30 +31,32 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 
     struct StreamsDrawDynamicSettings
     {   
-	    float4x4 ViewProjectionInverse;// : CULL_VIEWPROJECTIONINVERSE ;
+	    row_major float4x4 ViewProjectionInverse;// : CULL_VIEWPROJECTIONINVERSE ;
 	    int RingBufferShift;
 	    float InfraFrame_Cycle;
     };
     StructuredBuffer<StreamsDrawDynamicSettings> StreamsDrawDynamicSettingsBuffer;
 
     StructuredBuffer<float4> RndBuffer;
-    Texture2D<float4> ColRampTex;
-    Texture2D<float> CtrlTex;
-    SamplerState LinearSampler
-    {
-        Filter = MIN_MAG_MIP_LINEAR;
-        AddressU = clamp;
-    };
+    //Texture2D<float4> ColRampTex;
+    //Texture2D<float> CtrlTex;
+    //SamplerState LinearSampler
+    //{
+    //    Filter = MIN_MAG_MIP_LINEAR;
+    //    AddressU = clamp;
+    //};
 
     // =====================================================================
+    //stream float4 PosW;
+    stream float4 PosWVP : SV_Position;
+    stream float2 uv;
 
-    stream float iv;
+    stream uint iv : SV_VertexID;
 	stream float TessFactor;
 	stream uint2 IDs;
 	stream float LocalUcoord;
 	stream float4 Col;
-	stream float tubeLength;
-    stream uint VertexID : SV_VertexID;
+	stream float TubeLength;
 
     // constants readed from settings buffers and passed through stages:
 	stream float GeomPatch_BinSizeInv;
@@ -63,17 +65,18 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 	stream float LengthMult;
 	stream float RingBufferShift;
 	stream float4x4 ViewProjectionInverse;
+    stream float3 Rnd;
 
 
     // =====================================================================
     // VS ==================================================================
     // =====================================================================
 
-    void VSMain() 
+    stage void VSMain() 
     {	
         StreamsDrawStaticSettings StaticB = StreamsDrawStaticSettingsBuffer[0];
-        StreamsDrawStaticSettings RareUpdateB = StreamsDrawRareUpdateSettingsBuffer[0];
-        StreamsDrawStaticSettings DynamicB = StreamsDrawDynamicSettingsBuffer[0];
+        StreamsDrawRareUpdateSettings RareUpdateB = StreamsDrawRareUpdateSettingsBuffer[0];
+        StreamsDrawDynamicSettings DynamicB = StreamsDrawDynamicSettingsBuffer[0];
 
         streams.GeomPatch_BinSizeInv = StaticB.GeomPatch_BinSizeInv;
         streams.RingBuffer_BinSize = StaticB.RingBuffer_BinSize;
@@ -81,10 +84,8 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
         streams.Stripes_NormLerp = StaticB.Stripes_NormLerp;
         streams.RingBufferShift = DynamicB.RingBufferShift;
         streams.ViewProjectionInverse = DynamicB.ViewProjectionInverse;
-        
 
-
-        float4 Rnd = RndBuffer[streams.iv%256];
+        streams.Rnd = RndBuffer[streams.iv%256];
 
 	    // Filament Index
 	    uint FilamentID = streams.iv / StaticB.GeomPatch_BinSize;
@@ -96,7 +97,7 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 	
 	    // Filament U coord
 	    streams.LocalUcoord = PatchGroupID;//*0.9999;
-	    streams.LocalUcoord *= StaticB.LengthMult * (Rnd.x*0.9+0.1);
+	    streams.LocalUcoord *= StaticB.LengthMult * (streams.Rnd.x*0.9+0.1);
 	    streams.LocalUcoord -= DynamicB.InfraFrame_Cycle;
 		
 	    int2 CtrlPointsID = floor(streams.LocalUcoord) + int2(-1,2);
@@ -121,9 +122,9 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 
 		// PARTICLES DATA
         Particle p = ParticlesData[streams.iv];
-        float2 uv =p.Ucoord;
+        float2 uv = 0.5;//p.Ucoord;        //TEMPORARY
 	
-	    if(Cull_ViewDot && uv.x < RareUpdateB.UcoordDeathValue)
+	    //if(Cull_ViewDot && uv.x < RareUpdateB.UcoordDeathValue)        //TEMPORARY
 	    {			
 		    // DISTANCE TESSELLATION FACTOR
 		    float MeanDist = distance((CtrlA_Pos+CtrlB_Pos)*0.5, Eye);
@@ -140,11 +141,11 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 
 		
 		    float2 mappedUV = uv;
-		    mappedUV.x = CtrlTex.SampleLevel(LinearSampler, float2(mappedUV.x,0), 0).x;
-		    mappedUV.x = lerp(mappedUV.x*0.5, 3, pow(abs(uv.x),100));
-		    float3 col = ColRampTex.SampleLevel(LinearSampler, mappedUV.yx, 0).xyz;
+	//	    mappedUV.x = CtrlTex.SampleLevel(LinearSampler, float2(mappedUV.x,0), 0).x;         // TEMPORARY DISABLED. WE NEED DYNAMIC TEXTURES
+	//	    mappedUV.x = lerp(mappedUV.x*0.5, 3, pow(abs(uv.x),100));                           // TEMPORARY DISABLED. WE NEED DYNAMIC TEXTURES
+		    float3 col = 1;//ColRampTex.SampleLevel(LinearSampler, mappedUV.yx, 0).xyz;         // TEMPORARY DISABLED. WE NEED DYNAMIC TEXTURES
 		
-		    streams.TessFactor =  distFactor * (float)Cull ;
+		    streams.TessFactor =  1;//distFactor;// * (float)Cull ;        //TEMPORARY
 
 		    float velComponent = length(p.Vel);
 		    velComponent = smoothstep(StaticB.Col_mapVel.x, StaticB.Col_mapVel.y, velComponent);
@@ -152,11 +153,13 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 		
 		    float rootFog = smoothstep(-250,0,CtrlA_Pos.z);
 		
-		    streams.Col = col * velComponent * rootFog * RareUpdateB.ColMult;
-		    streams.Col *= (Rnd.xwz*0.5+.75);
+		    streams.Col = float4(col * velComponent * rootFog * RareUpdateB.ColMult, 1);
+		    streams.Col *= float4((streams.Rnd.xzy*0.5+.75),1);
 				
-		    streams.tubeLength = 1 - pow(saturate(uv.x / StaticB.UcoordDeathValue),100);
+		    streams.TubeLength = 1;//1 - pow(saturate(uv.x / RareUpdateB.UcoordDeathValue),100);        //TEMPORARY
 	    }
+
+        //streams.PosW = p.Pos;
     }
 
 
@@ -164,21 +167,14 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
     // HS_CONSTANT =========================================================
     // =====================================================================
 
-    #ifndef InputControlPointCount
-    # define InputControlPointCount 2
-    #endif
-
-    #ifndef OutputControlPointCount
-    # define OutputControlPointCount 2
-    #endif
-
     patchstream float tessFactor[2] : SV_TessFactor;
-    patchstream float insideTessFactor : SV_InsideTessFactor;
+    //patchstream float insideTessFactor : SV_InsideTessFactor;
 
-    void HSConstantMain(InputPatch<Input, InputControlPointCount> input, const OutputPatch<Input2, 2> output, out Constants constants) 
+    void HSConstantMain(InputPatch<Input, 1> input, const OutputPatch<Input2, 1> output, out Constants constants) 
     {
-        streams.tessFactor[0] = 1;
-        streams.tessFactor[1] = streams.TessFactor;
+        constants.tessFactor[0] = 1;
+        constants.tessFactor[1] = input[0].TessFactor;
+        //constants.insideTessFactor = constants.tessFactor[1];
     }
 
 
@@ -196,12 +192,6 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
     {
         streams = input[uCPID];
 
-	    streams.iv = input.iv;
-	    streams.IDs = input.IDs;
-	    streams.LocalUcoord = input.LocalUcoord;
-	    streams.Col = input.Col;
-	    streams.tubeLength = input.tubeLength;
-
         output = streams;
     }
 
@@ -216,32 +206,32 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 	stream float NormalizedUcoord;
 
     [domain("isoline")]
-    void DSMain(const OutputPatch<Input, OutputControlPointCount> input, out Output output, in Constants constants, float3 uv : SV_DomainLocation)    
+    void DSMain(const OutputPatch<Input, 1> input, out Output output, in Constants constants, float2 uv : SV_DomainLocation)    
    // DS_OUTPUT DS(HS_CONSTANT_OUTPUT input, OutputPatch<HS_OUTPUT, 1> op, float2 uv : SV_DomainLocation)
     {
-        streams input = input[0];
+        streams = input[0];
 	
 	    // Filament Index
-	    uint FilamentID = input.IDs.x;
+	    uint FilamentID = streams.IDs.x;
 	
 	    // Patch ID in Segment Group
-	    uint PatchGroupID = input.IDs.y;
+	    uint PatchGroupID = streams.IDs.y;
 	
 	    // Normalized U Coord
 	    streams.NormalizedUcoord = (PatchGroupID + uv.x) * streams.GeomPatch_BinSizeInv;
 	
 	    // Filament U coord
-	    float LocalUcoord = input.LocalUcoord;
+//	    float LocalUcoord = streams.LocalUcoord;
 	    // Start Filament Ctrl Point offset:
 	    //test += 1;
 	
-        float4 Rnd = RndBuffer[FilamentID%256];
+        //float4 Rnd = RndBuffer[FilamentID%256];
 
-	    float tessUcoord = uv.x * input.tubeLength * streams.LengthMult * (Rnd.x * 0.666 + 0.333);
+	    float tessUcoord = uv.x * streams.TubeLength * streams.LengthMult * (streams.Rnd.x * 0.666 + 0.333);
 
-	    int4 CtrlPointsID = floor(LocalUcoord + tessUcoord) + int4(-1,0,1,2);
+	    int4 CtrlPointsID = floor(streams.LocalUcoord + tessUcoord) + int4(-1,0,1,2);
 	    CtrlPointsID = clamp(CtrlPointsID, 0, streams.RingBuffer_BinSize-1);
-	    int4 CtrlPointsIDBuffer = (CtrlPointsID+(uint)streams.RingBufferShift) % streams.RingBuffer_BinSize + (FilamentID * streams.RingBuffer_BinSize);
+	    int4 CtrlPointsIDBuffer = (CtrlPointsID + (uint)streams.RingBufferShift) % streams.RingBuffer_BinSize + (FilamentID * streams.RingBuffer_BinSize);
 	
 	
 	    float4 c1 = RingBuffer[CtrlPointsIDBuffer.x];
@@ -249,21 +239,23 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 	    float3 c3 = RingBuffer[CtrlPointsIDBuffer.z].xyz;
 	    float3 c4 = RingBuffer[CtrlPointsIDBuffer.w].xyz;
 
-	    float BSplineCubicUcoord = input.LocalUcoord + tessUcoord;
+	    float BSplineCubicUcoord = streams.LocalUcoord + tessUcoord;
 
 	    SplinePosTan3 curve = BSplineCubic3PT(c1.xyz,c2,c3,c4, BSplineCubicUcoord);
 
-        streams.PosW = curve.Pos;
-	    streams.TangW = -normalize(curve.Tang);
+        streams.PosW = float4(curve.Pos,1);
+	    streams.TangW = float4(-normalize(curve.Tang),0);
 	
 	    // Closeup FadeOut:
 	    float CloseFade = saturate(distance(curve.Pos, Eye)*0.02-0.4);
-	    streams.Thickness = streams.Thickness * (Rnd.y*0.5+0.5) * CloseFade;
+	    streams.Thickness = streams.Thickness;// * (streams.Rnd.y*0.5+0.5) * CloseFade;         //TEMPORARY
 
 	    streams.tubeID = FilamentID;
 	    float z = streams.PosW.z ; 
 	    float selfGradient = pow(1-streams.NormalizedUcoord, 4);
-	    streams.Col = input.Col;
+	    //streams.Col = streams.Col;
+
+        output = streams;
     }
 
 
@@ -272,83 +264,98 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 
 
 
-    // =====================================================================
-    // GS ==================================================================
-    // =====================================================================
+//    // =====================================================================
+//    // GS ==================================================================
+//    // =====================================================================
 
-    stream float4 PosWVP : SV_Position;
-    stream float4 NormW;
+
+//    stream float4 NormW;
+
+//    [maxvertexcount(4)]
+//    stage void GSMain(line Input input[2], inout TriangleStream<Output> trangleStream)
+//    {
+//        Input input0 = input[0];
+//        Input input1 = input[1];
+
+//	    float4 Col_0 = input0.Col;
+//	    float4 Col_1 = input1.Col;
+	
+//	    // ORIGINAL POSITION
+//	    float3 p0_w = input0.PosW.xyz;
+//	    float3 p1_w = input1.PosW.xyz;
+	
+//	    // ORIGINAL DIRECTION	
+//        float3 tang0_w = input0.TangW.xyz;
+//        float3 tang1_w = input1.TangW.xyz;	
+	
+//	    // PROJECTION POINTS FROM DIRECTION:
+//	    float3 proj0_w = p0_w + tang0_w;
+//	    float3 proj1_w = p1_w + tang1_w;
+	
+//	    // WORDVIEWPROJECTION POSITION
+//	    float4 p0 = mul(float4(p0_w,1), ViewProjection);
+//	    float4 p1 = mul(float4(p1_w,1), ViewProjection);
+//	    float4 proj0 = mul(float4(proj0_w,1), ViewProjection);
+//	    float4 proj1 = mul(float4(proj1_w,1), ViewProjection);
+	
+//	    // SCREEN POSITION
+//	    float2 p0_screen = p0.xy / p0.w;
+//	    float2 p1_screen = p1.xy / p1.w;
+//	    float2 proj0_screen = proj0.xy / proj0.w;
+//	    float2 proj1_screen = proj1.xy / proj1.w;
+
+
+//	    // SCREENSPACE DIRECTION
+//	    float2 v0_screen = normalize(proj0_screen - p0_screen);
+//	    float2 v1_screen = normalize(proj1_screen - p1_screen);
+	
+//	    // SCREENSPACE NORMALS
+//	    float2 n0 = float2(-v0_screen.y, v0_screen.x);
+//	    float2 n1 = float2(-v1_screen.y, v1_screen.x);
+
+	
+//	    float3 addNorm = mul(float4(0,0,-.5,0), ViewInverse).xyz;
+	
+//	    streams.PosW = mul(float4((p0.xy + n0 * input0.Thickness), p0.zw ), streams.ViewProjectionInverse);
+//	    streams.PosWVP = mul(streams.PosW, ViewProjection);
+//	    streams.NormW = float4(lerp(tang0_w, streams.PosW - p0_w + addNorm, streams.Stripes_NormLerp), 0);
+//	    streams.Col = Col_0;
+//	    trangleStream.Append(streams);
+	
+//	    streams.PosW = mul(float4((p0.xy - n0 * input0.Thickness), p0.zw ),  streams.ViewProjectionInverse);
+//	    streams.PosWVP = mul(streams.PosW, ViewProjection);
+//	    streams.NormW = float4(lerp(tang0_w, streams.PosW - p0_w + addNorm, streams.Stripes_NormLerp), 0);
+//	    streams.Col = Col_0;
+//	    trangleStream.Append(streams);
+	
+//	    streams.PosW = mul(float4((p1.xy + n1 * input1.Thickness), p1.zw ),  streams.ViewProjectionInverse);
+//	    streams.PosWVP = mul(streams.PosW, ViewProjection);
+//	    streams.NormW = float4(lerp(tang1_w, streams.PosW - p1_w + addNorm, streams.Stripes_NormLerp), 0);
+//	    streams.Col = Col_1;
+//	    trangleStream.Append(streams);
+	
+//	    streams.PosW = mul(float4((p1.xy - n1 * input1.Thickness), p1.zw ),  streams.ViewProjectionInverse);
+//	    streams.PosWVP = mul(streams.PosW, ViewProjection);
+//	    streams.NormW = float4(lerp(tang1_w, streams.PosW - p1_w + addNorm, streams.Stripes_NormLerp), 0);
+//	    streams.Col = Col_1;
+//	    trangleStream.Append(streams);
+	
+//	    trangleStream.RestartStrip();	
+//    }
+
 
     [maxvertexcount(4)]
-    void GS_Stripes(line Input input[2], inout TriangleStream<Output> trangleStream)
+    void GSMain(point Input input[1], inout TriangleStream<Output> triangleStream)
     {
-        streams input0 = input[0];
-        streams input1 = input[1];
+        streams = input[0];
+	    for(int i=0;i<4;i++)
+        {
+		    streams.uv = float4((QuadUV[i].xy*2-1)*float2(1,-1),0,1).xy*float2(1,-1)*.5+.5;
+		    streams.PosWVP = mul(float4(streams.PosW.xyz + 0.05 * mul(QuadPositions[i],(float3x3)ViewInverse),1),ViewProjection);
 
-	    float3 Col_0 = input0.Col;
-	    float3 Col_1 = input1.Col;
-	
-	    // ORIGINAL POSITION
-	    float3 p0_w = input0.PosW;
-	    float3 p1_w = input1.PosW;
-	
-	    // ORIGINAL DIRECTION	
-        float3 tang0_w = input0.TangW;
-        float3 tang1_w = input1.TangW;	
-	
-	    // PROJECTION POINTS FROM DIRECTION:
-	    float3 proj0_w = p0_w + tang0_w;
-	    float3 proj1_w = p1_w + tang1_w;
-	
-	    // WORDVIEWPROJECTION POSITION
-	    float4 p0 = mul(float4(p0_w,1), ViewProjection);
-	    float4 p1 = mul(float4(p1_w,1), ViewProjection);
-	    float4 proj0 = mul(float4(proj0_w,1), ViewProjection);
-	    float4 proj1 = mul(float4(proj1_w,1), ViewProjection);
-	
-	    // SCREEN POSITION
-	    float2 p0_screen = p0.xy / p0.w;
-	    float2 p1_screen = p1.xy / p1.w;
-	    float2 proj0_screen = proj0.xy / proj0.w;
-	    float2 proj1_screen = proj1.xy / proj1.w;
+		    triangleStream.Append(streams);
+	    }
 
-
-	    // SCREENSPACE DIRECTION
-	    float2 v0_screen = normalize(proj0_screen - p0_screen);
-	    float2 v1_screen = normalize(proj1_screen - p1_screen);
-	
-	    // SCREENSPACE NORMALS
-	    float2 n0 = float2(-v0_screen.y, v0_screen.x);
-	    float2 n1 = float2(-v1_screen.y, v1_screen.x);
-
-	
-	    float3 addNorm = mul(float4(0,0,-.5,0), ViewInverse).xyz;
-	
-	    streams.PosW = mul(float4((p0.xy + n0 * input0.Thickness), p0.zw ), streams.ViewProjectionInverse);
-	    streams.PosWVP = mul(streams.PosW, ViewProjection);
-	    streams.NormW = lerp(tang0_w, streams.PosW - p0_w + addNorm, streams.Stripes_NormLerp);
-	    streams.Col = Col_0;
-	    trangleStream.Append(streams);
-	
-	    streams.PosW = mul(float4((p0.xy - n0 * input0.Thickness), p0.zw ),  streams.ViewProjectionInverse);
-	    streams.PosWVP = mul(streams.PosW, ViewProjection);
-	    streams.NormW = lerp(tang0_w, streams.PosW - p0_w + addNorm, streams.Stripes_NormLerp);
-	    streams.Col = Col_0;
-	    trangleStream.Append(streams);
-	
-	    streams.PosW = mul(float4((p1.xy + n1 * input1.Thickness), p1.zw ),  streams.ViewProjectionInverse);
-	    streams.PosWVP = mul(streams.PosW, ViewProjection);
-	    streams.NormW = lerp(tang1_w, streams.PosW - p1_w + addNorm, streams.Stripes_NormLerp);
-	    streams.Col = Col_1;
-	    trangleStream.Append(streams);
-	
-	    streams.PosW = mul(float4((p1.xy - n1 * input1.Thickness), p1.zw ),  streams.ViewProjectionInverse);
-	    streams.PosWVP = mul(streams.PosW, ViewProjection);
-	    streams.NormW = lerp(tang1_w, streams.PosW - p1_w + addNorm, streams.Stripes_NormLerp);
-	    streams.Col = Col_1;
-	    trangleStream.Append(streams);
-	
-	    trangleStream.RestartStrip();	
     }
 
     // =====================================================================
@@ -357,9 +364,9 @@ shader StreamsDraw : Transformation, ShaderUtils, ParticlesUtils_PosVelInfoCol//
 
     stream float4 ColorTarget : SV_Target0;
 
-    void PSMain()
+    stage void PSMain()
     {
 	    //if(length(streams.uv-.5)>.5){discard;}
-        streams.ColorTarget = streams.Col;//float4(1, 1, 1, 1);
+        streams.ColorTarget = float4(1, 1, 1, 1);
     }
 };

@@ -23,8 +23,5 @@ namespace SiliconStudio.Xenko.Rendering
         public static readonly ObjectParameterKey<Buffer> StreamsDrawRareUpdateSettingsBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> StreamsDrawDynamicSettingsBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> RndBuffer = ParameterKeys.NewObject<Buffer>();
-        public static readonly ObjectParameterKey<Texture> ColRampTex = ParameterKeys.NewObject<Texture>();
-        public static readonly ObjectParameterKey<Texture> CtrlTex = ParameterKeys.NewObject<Texture>();
-        public static readonly ObjectParameterKey<SamplerState> LinearSampler = ParameterKeys.NewObject<SamplerState>();
     }
 }

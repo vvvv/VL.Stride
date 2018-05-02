@@ -84,4 +84,21 @@ namespace CustomParticlesTest
             }
         }
     }
+    internal static partial class ShaderMixins
+    {
+        internal partial class StreamsDrawEffect  : IShaderMixinBuilder
+        {
+            public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
+            {
+                context.Mixin(mixin, "StreamsDraw");
+            }
+
+            [ModuleInitializer]
+            internal static void __Initialize__()
+
+            {
+                ShaderMixinManager.Register("StreamsDrawEffect", new StreamsDrawEffect());
+            }
+        }
+    }
 }
