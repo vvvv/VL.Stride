@@ -101,4 +101,21 @@ namespace CustomParticlesTest
             }
         }
     }
+    internal static partial class ShaderMixins
+    {
+        internal partial class TestTessellationBezier3dEffect  : IShaderMixinBuilder
+        {
+            public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
+            {
+                context.Mixin(mixin, "TestTessellationBezier3d");
+            }
+
+            [ModuleInitializer]
+            internal static void __Initialize__()
+
+            {
+                ShaderMixinManager.Register("TestTessellationBezier3dEffect", new TestTessellationBezier3dEffect());
+            }
+        }
+    }
 }
