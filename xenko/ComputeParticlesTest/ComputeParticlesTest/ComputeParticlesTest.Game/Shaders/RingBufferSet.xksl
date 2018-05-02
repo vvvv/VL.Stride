@@ -3,10 +3,8 @@
 /// <summary>
 /// A test compute shader
 /// </summary>
-shader RingBufferSet: ComputeShaderBase, Global, ParticleStruct, ShaderUtils
+shader RingBufferSet: ComputeShaderBase, Global, ParticlesUtils_PosVelInfoCol, ShaderUtils
 {    
-    StructuredBuffer<Particle> ParticlesBuffer;
-
     struct RingBufferSettings
     {   
         int ParticlesCount;
@@ -31,7 +29,7 @@ shader RingBufferSet: ComputeShaderBase, Global, ParticleStruct, ShaderUtils
 	
 	    uint bufferID = (id * s.RingLength) + s.RingBufferPhase ;
 	
-	    RingBuffer[bufferID] = float4(ParticlesBuffer[id].pos.xyz, id);
+	    RingBuffer[bufferID] = float4(ParticlesData[id].Pos.xyz, id);
     }
 };
 

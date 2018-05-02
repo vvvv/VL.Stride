@@ -16,8 +16,8 @@ using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
 
 namespace SiliconStudio.Xenko.Rendering
 {
-    public static partial class ParticlesDrawKeys
+    public static partial class ParticlesUtils_PosVelInfoColKeys
     {
-        public static readonly ValueParameterKey<float> ParticleSize = ParameterKeys.NewValue<float>(0.01f);
+        public static readonly ObjectParameterKey<Buffer> ParticlesData = ParameterKeys.NewObject<Buffer>();
     }
 }

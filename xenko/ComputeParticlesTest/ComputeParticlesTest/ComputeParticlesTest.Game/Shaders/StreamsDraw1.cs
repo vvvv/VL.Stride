@@ -16,9 +16,12 @@ using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
 
 namespace SiliconStudio.Xenko.Rendering
 {
-    public static partial class RingBufferSetKeys
+    public static partial class StreamsDrawKeys
     {
-        public static readonly ObjectParameterKey<Buffer> RingBufferSettingsBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> RingBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ObjectParameterKey<Buffer> StreamsDrawStaticSettingsBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ObjectParameterKey<Buffer> StreamsDrawRareUpdateSettingsBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ObjectParameterKey<Buffer> StreamsDrawDynamicSettingsBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ObjectParameterKey<Buffer> RndBuffer = ParameterKeys.NewObject<Buffer>();
     }
 }
