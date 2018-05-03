@@ -1,7 +1,6 @@
 ﻿
 shader HappyStructuredBufferUtils
 {
-    #define SBUFFER_FXH
 
     ////////////////////////////////////////////////////////////////
     //
@@ -10,28 +9,28 @@ shader HappyStructuredBufferUtils
     ////////////////////////////////////////////////////////////////
 
     // Buffersize
-    uint sbSize (StructuredBuffer<float> sBuffer)
+    uint sbSize1 (StructuredBuffer<float> sBuffer)
     {
 	    uint count, dummy;	
 	    sBuffer.GetDimensions(count,dummy);
 	    return count;
     }
 
-    uint sbSize (StructuredBuffer<float2> sBuffer)
+    uint sbSize2 (StructuredBuffer<float2> sBuffer)
     {
 	    uint count, dummy;	
 	    sBuffer.GetDimensions(count,dummy);
 	    return count;
     }
 
-    uint sbSize (StructuredBuffer<float3> sBuffer)
+    uint sbSize3 (StructuredBuffer<float3> sBuffer)
     {
 	    uint count, dummy;	
 	    sBuffer.GetDimensions(count,dummy);
 	    return count;
     }
 
-    uint sbSize (StructuredBuffer<float4> sBuffer)
+    uint sbSize4 (StructuredBuffer<float4> sBuffer)
     {
 	    uint count, dummy;	
 	    sBuffer.GetDimensions(count,dummy);
@@ -45,7 +44,7 @@ shader HappyStructuredBufferUtils
 	   // return count;
     //}
 
-    uint sbSize (StructuredBuffer<uint> sBuffer)
+    uint sbSizeU (StructuredBuffer<uint> sBuffer)
     {
 	    uint count, dummy;	
 	    sBuffer.GetDimensions(count,dummy);
@@ -57,7 +56,7 @@ shader HappyStructuredBufferUtils
     float sbLoad(StructuredBuffer<float> sBuffer, float defaultValue, uint dtid)
     {
 	    float value = defaultValue;
-	    uint count = sbSize(sBuffer);
+	    uint count = sbSize1(sBuffer);
 	    if (count > 0) value = sBuffer[dtid.x % count];
 	    return value;
     }
@@ -65,7 +64,7 @@ shader HappyStructuredBufferUtils
     float2 sbLoad(StructuredBuffer<float2> sBuffer, float2 defaultValue, uint dtid)
     {
 	    float2 value = defaultValue;
-	    uint count = sbSize(sBuffer);
+	    uint count = sbSize2(sBuffer);
 	    if (count > 0) value = sBuffer[dtid.x % count];
 	    return value;
     }
@@ -73,7 +72,7 @@ shader HappyStructuredBufferUtils
     float3 sbLoad(StructuredBuffer<float3> sBuffer, float3 defaultValue, uint dtid)
     {
 	    float3 value = defaultValue;
-	    uint count = sbSize(sBuffer);
+	    uint count = sbSize3(sBuffer);
 	    if (count > 0) value = sBuffer[dtid.x % count];
 	    return value;
     }
@@ -81,7 +80,7 @@ shader HappyStructuredBufferUtils
     float4 sbLoad(StructuredBuffer<float4> sBuffer, float4 defaultValue, uint dtid)
     {
 	    float4 value = defaultValue;
-	    uint count = sbSize(sBuffer);
+	    uint count = sbSize4(sBuffer);
 	    if (count > 0) value = sBuffer[dtid.x % count];
 	    return value;
     }
@@ -97,7 +96,7 @@ shader HappyStructuredBufferUtils
     uint sbLoad(StructuredBuffer<uint> sBuffer, uint defaultValue, uint dtid)
     {
 	    uint value = defaultValue;
-	    uint count = sbSize(sBuffer);
+	    uint count = sbSizeU(sBuffer);
 	    if (count > 0) value = sBuffer[dtid.x % count];
 	    return value;
     }
