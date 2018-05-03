@@ -150,10 +150,31 @@ namespace VL.Xenko.Shaders
                 soStrides[streamOutputElement.Stream] += streamOutputElement.ComponentCount * sizeof(float);
             }
 
-            var soElements = new SharpDX.Direct3D11.StreamOutputElement[]
+
+            SharpDX.Direct3D11.StreamOutputElement[] soElements;
+            int[] soStridesArray;
+
+            if (string.IsNullOrWhiteSpace(semanticName))
             {
-                new SharpDX.Direct3D11.StreamOutputElement(0, semanticName, 0, 0, 4, 0)
-            };
+                soElements = new SharpDX.Direct3D11.StreamOutputElement[]
+                {
+                    new SharpDX.Direct3D11.StreamOutputElement(0, "SV_Position", 0, 0, 4, 0),
+                    new SharpDX.Direct3D11.StreamOutputElement(0, "NORMAL", 0, 0, 4, 0),
+                    new SharpDX.Direct3D11.StreamOutputElement(0, "TEXCOORD", 0, 0, 4, 0)
+                };
+
+                soStridesArray = new int[] { 16, 16, 16 };
+            }
+            else
+            {
+                soElements = new SharpDX.Direct3D11.StreamOutputElement[]
+                {
+                    new SharpDX.Direct3D11.StreamOutputElement(0, semanticName, 0, 0, 4, 0)
+                };
+
+                soStridesArray = soStrides.ToArray();
+            }
+
 
             var nativeDevice = graphicsDevice.GetNativeDevice();
             var geometryShader = new SharpDX.Direct3D11.GeometryShader(nativeDevice, geometryBytecode, soElements, soStrides.ToArray(), reflection.StreamOutputRasterizedStream);

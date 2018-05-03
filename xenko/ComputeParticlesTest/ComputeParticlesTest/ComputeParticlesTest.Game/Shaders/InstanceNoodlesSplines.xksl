@@ -1,5 +1,5 @@
 ﻿
-shader InstanceNoodlesSplines : PositionStream4Base, Texturing, ShaderBaseStream, Transformation, ShaderUtils, HappyBicubicUtils, HappyStructuredBufferUtils
+shader InstanceNoodlesSplines : PositionStream4Base, ShaderBaseStream, Transformation, ShaderUtils, HappyBicubicUtils, HappyStructuredBufferUtils
 {
     StructuredBuffer<float3> ControlPointBuffer;
     StructuredBuffer<float> RadiusBuffer;
@@ -16,13 +16,13 @@ shader InstanceNoodlesSplines : PositionStream4Base, Texturing, ShaderBaseStream
     };
     StructuredBuffer<SplineSettings> SplineSettingsBuffer;
 
-    stream float3 Dir : NORMAL;
+    stream float4 Dir : NORMAL;
 
     // VS ==============================================================================
 
     stage void VSMain() 
     {
-     
+        streams.iv = streams.VertexID;
     }
 
 
@@ -30,7 +30,7 @@ shader InstanceNoodlesSplines : PositionStream4Base, Texturing, ShaderBaseStream
 
     patchstream float tessFactor[2] : SV_TessFactor;
 
-    void HSConstantMain(InputPatch<Input, 3> input, const OutputPatch<Input2, 3> output, out Constants constants) 
+    stage void HSConstantMain(InputPatch<Input, 1> input, const OutputPatch<Input2, 1> output, out Constants constants) 
     {
         SplineSettings s = SplineSettingsBuffer[0];
 
@@ -46,7 +46,7 @@ shader InstanceNoodlesSplines : PositionStream4Base, Texturing, ShaderBaseStream
     [outputtopology("line")]
     [outputcontrolpoints(1)]
     [patchconstantfunc("HSConstantMain")]
-    void HSMain(InputPatch<Input, 3> input, out Output output, uint uCPID : SV_OutputControlPointID) 
+    stage void HSMain(InputPatch<Input, 1> input, out Output output, uint uCPID : SV_OutputControlPointID) 
     {
         streams = input[uCPID];
         output = streams;
@@ -99,16 +99,18 @@ shader InstanceNoodlesSplines : PositionStream4Base, Texturing, ShaderBaseStream
 	   // }
     //}; 
 
+    stream float4 TexCoord : TEXCOORD0;
+    stream uint iv : VERTEXID;
     stream uint si;
 
     [domain("isoline")]
-    void DSMain(const OutputPatch<Input, 3> input, out Output output, in Constants constants, float2 uv : SV_DomainLocation) 
+    stage void DSMain(const OutputPatch<Input, 1> input, out Output output, in Constants constants, float2 uv : SV_DomainLocation) 
     {    
         SplineSettings s = SplineSettingsBuffer[0];
 
 	    //Retrieve spline id and vertex id
-	    int splineid = streams.VertexID / s.VertexPerSpline;	
-	    int segmentid = streams.VertexID % s.VertexPerSpline;
+	    int splineid = input[0].iv / s.VertexPerSpline;	
+	    int segmentid = input[0].iv % s.VertexPerSpline;
 	
 	    //That's the control point range in the buffer
 	    int offset = splineid * s.ControlPointPerSpline;
@@ -157,12 +159,13 @@ shader InstanceNoodlesSplines : PositionStream4Base, Texturing, ShaderBaseStream
 
 	    float width = sbLoad(RadiusBuffer, s.Radius, splineid);//widthIndexing.Get(splineid, offset,  startctrl,  endctrl,  t*ControlPointPerSpline);
         streams.PositionWS = float4(sp.Pos.xyz, width);
-	    streams.Dir = normalize(sp.Tang);
+	    streams.Dir = float4(normalize(sp.Tang), 0);
 	    streams.TexCoord = float4(t,0,0,0);
 	    if(!s.Loop)
         streams.TexCoord.y = t > segmentsize * (s.VertexPerSpline) * (1-0.25/(s.VertexPerSpline * s.TesselationFactor));
         streams.si = splineid;
         
+        //streams.ShadingPosition = mul(float4(streams.PositionWS.xyz, 1), ViewProjection);
         output = streams;
 
 
@@ -181,11 +184,64 @@ shader InstanceNoodlesSplines : PositionStream4Base, Texturing, ShaderBaseStream
      //   output = streams;
     }
 
+    // GS ==============================================================================
+    #define TUBE_RES 8
+    #define MAXVCOUNT (TUBE_RES+1)*2
+
+    static const float3 UpVector = float3(0, 1, 0);
+    float3x3 lookat(float3 dir,float3 up=float3(0,1,0)){float3 z=normalize(dir);float3 x=normalize(cross(up,z));float3 y=normalize(cross(z,x));return float3x3(x,y,z);} 
+    
+    void GS_TubePoint(float3x3 m, Input In, int i,float2 TexCd, inout TriangleStream<Output> GSOut)
+    {
+	    streams = In;
+	    //float4x4 tRing=sbRing[In.si%RingTransformCount];
+	    //float4x4 tRingIT=sbRingIT[In.si%RingTransformCount];
+	    float fRad = In.PositionWS.w;
+	    float3 ring=float3(sin(((float)i/TUBE_RES-.5/TUBE_RES+float2(-.25,0))*acos(-1)*2).xy,0);
+	
+	    //float3 pos = (mul(mul(float4(ring * fRad,1),tRing).xyz,m ));
+	    //float3 norm = normalize(mul(mul(float4(ring,1),tRingIT).xyz,m ));
+	    float3 pos = mul(ring * fRad, m);
+	    float3 norm = normalize(mul(ring,m));
+	
+	    //norm = mul(float4(norm,0),tWIT).xyz;
+	    pos += In.PositionWS.xyz;
+	    //Out.PosWVP = mul( float4(pos,1), tWVP );
+	    streams.ShadingPosition = float4(pos, 1);
+	    streams.Dir = float4(norm, 0);
+	    //Out.TexCd.xy=mul(float4((TexCd.xy*2-1)*float2(1,-1),0,1), sbLoad(sbTexTransform, dTMat, In.si)).xy*float2(1,-1)*.5+.5;
+	    streams.TexCoord.xy = (TexCd.xy*2-1) * float2(1, -1) * float2(1, -1) * .5 + .5;
+	    //streams.iid = In.si;
+
+	    GSOut.Append(streams);
+    }
+
+    //max v count
+    [StreamOutput("0:SV_Position.xyzw;0:NORMAL.xyzw;0:TEXCOORD0.xyzw")]
+    [maxvertexcount(18)]
+    stage void GSMain(line Input In[2], inout TriangleStream<Output> GSOut)
+    {
+	    if(In[1].TexCoord.y==1)return;
+	    float3 up = UpVector;
+	    //up=mul(float3(0,0,1),(float3x3)tVI);
+
+	    float3x3 m0=lookat(In[1].Dir,up);
+	    float3x3 m1=lookat(In[0].Dir,up);
+
+	    for(int i=0; i < TUBE_RES + 1; i++)
+        {
+		    GS_TubePoint( m0, In[1], i,float2(In[1].TexCoord.x,(float)i/TUBE_RES), GSOut );
+		    GS_TubePoint( m1, In[0], i,float2(In[0].TexCoord.x,(float)i/TUBE_RES), GSOut );
+	    }
+	    GSOut.RestartStrip();
+    }
+
+
     // PS ==============================================================================
 
-    void PSMain()
-    {
-        streams.ColorTarget = float4(1,1,1,1);
-    }
+    //stage void PSMain()
+    //{
+    //    streams.ColorTarget = float4(streams.Dir.xyz*0.5+0.5,1);
+    //}
 };
 
