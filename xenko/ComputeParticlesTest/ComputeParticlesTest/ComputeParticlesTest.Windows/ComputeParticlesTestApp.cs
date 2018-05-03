@@ -40,8 +40,10 @@ namespace ComputeParticlesTest
 #if !DEBUG
             var gfxOutput = GraphicsAdapterFactory.Adapters[0].Outputs;
             var displayMode = gfxOutput[0].CurrentDisplayMode;
+            
             var screenWidth = Math.Min(displayMode.Width, 1920);
-            var screenHeight = Math.Min(displayMode.Height, 1080);
+            var maxHeight = displayMode.AspectRatio < 1.7f ? 1200 : 1080;
+            var screenHeight = Math.Min(displayMode.Height, maxHeight);
 
             var game = VLHDE.GameInstance;
             game.GraphicsDeviceManager.PreferredBackBufferWidth = screenWidth;
