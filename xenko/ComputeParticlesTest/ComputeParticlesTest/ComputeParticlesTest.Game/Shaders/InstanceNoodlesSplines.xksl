@@ -217,7 +217,7 @@ shader InstanceNoodlesSplines : PositionStream4Base, ShaderBaseStream, Transform
     }
 
     //max v count
-    [StreamOutput("0:SV_Position.xyzw;0:NORMAL.xyzw;0:TEXCOORD0.xyzw")]
+    [StreamOutput("SV_Position.xyzw;NORMAL.xyzw;TEXCOORD0.xyzw")]
     [maxvertexcount(18)]
     stage void GSMain(line Input In[2], inout TriangleStream<Output> GSOut)
     {
@@ -225,13 +225,13 @@ shader InstanceNoodlesSplines : PositionStream4Base, ShaderBaseStream, Transform
 	    float3 up = UpVector;
 	    //up=mul(float3(0,0,1),(float3x3)tVI);
 
-	    float3x3 m0=lookat(In[1].Dir,up);
-	    float3x3 m1=lookat(In[0].Dir,up);
+	    float3x3 m0=lookat(In[0].Dir,up);
+	    float3x3 m1=lookat(In[1].Dir,up);
 
 	    for(int i=0; i < TUBE_RES + 1; i++)
         {
-		    GS_TubePoint( m0, In[1], i,float2(In[1].TexCoord.x,(float)i/TUBE_RES), GSOut );
-		    GS_TubePoint( m1, In[0], i,float2(In[0].TexCoord.x,(float)i/TUBE_RES), GSOut );
+		    GS_TubePoint( m1, In[1], i,float2(In[1].TexCoord.x,(float)i/TUBE_RES), GSOut );
+		    GS_TubePoint( m0, In[0], i,float2(In[0].TexCoord.x,(float)i/TUBE_RES), GSOut );
 	    }
 	    GSOut.RestartStrip();
     }
