@@ -1,6 +1,6 @@
-﻿using System;
-using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Graphics;
+using System;
+using Xenko.Engine;
+using Xenko.Graphics;
 
 namespace VL.Xenko
 {

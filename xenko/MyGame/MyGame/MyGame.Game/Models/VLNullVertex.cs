@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
-using SiliconStudio.Core.Mathematics;
-using SiliconStudio.Xenko.Graphics;
+using Xenko.Core.Mathematics;
+using Xenko.Graphics;
 
 namespace MyGame
 {

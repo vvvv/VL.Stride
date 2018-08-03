@@ -1,6 +1,6 @@
-﻿
-using SiliconStudio.Xenko.Graphics;
-using SiliconStudio.Xenko.Rendering;
+
+using Xenko.Graphics;
+using Xenko.Rendering;
 
 namespace MyGame
 {

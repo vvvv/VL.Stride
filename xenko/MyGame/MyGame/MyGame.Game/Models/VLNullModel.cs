@@ -1,14 +1,14 @@
-﻿// Copyright (c) 2014-2017 Silicon Studio Corp. All rights reserved. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2014-2017 Silicon Studio Corp. All rights reserved. (https://www.siliconstudio.co.jp)
 // See LICENSE.md for full license information.
 
-using SiliconStudio.Core;
-using SiliconStudio.Core.Annotations;
-using SiliconStudio.Core.Mathematics;
-using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Graphics;
-using SiliconStudio.Xenko.Graphics.GeometricPrimitives;
-using SiliconStudio.Xenko.Rendering;
-using SiliconStudio.Xenko.Rendering.ProceduralModels;
+using Xenko.Core;
+using Xenko.Core.Annotations;
+using Xenko.Core.Mathematics;
+using Xenko.Engine;
+using Xenko.Graphics;
+using Xenko.Graphics.GeometricPrimitives;
+using Xenko.Rendering;
+using Xenko.Rendering.ProceduralModels;
 using System;
 using System.Collections.Generic;
 

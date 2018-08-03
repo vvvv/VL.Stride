@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SiliconStudio.Core.Mathematics;
-using SiliconStudio.Xenko;
-using SiliconStudio.Xenko.Rendering;
-using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Graphics;
+using Xenko.Core.Mathematics;
+using Xenko;
+using Xenko.Rendering;
+using Xenko.Engine;
+using Xenko.Graphics;
 
-namespace MyGame.MyLibrary
+namespace MyGame
 {
     public class Class1
     {

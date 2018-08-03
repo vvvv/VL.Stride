@@ -1,6 +1,6 @@
-﻿using SiliconStudio.Core;
-using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Engine.Design;
+using Xenko.Core;
+using Xenko.Engine;
+using Xenko.Engine.Design;
 using System;
 using System.Collections.Generic;
 using System.Linq;

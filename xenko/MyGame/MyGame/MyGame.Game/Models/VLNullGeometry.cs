@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 
-using SiliconStudio.Core;
-using SiliconStudio.Xenko.Rendering;
-using SiliconStudio.Xenko.Graphics;
-using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
-using SiliconStudio.Core.Mathematics;
+using Xenko.Core;
+using Xenko.Rendering;
+using Xenko.Graphics;
+using Buffer = Xenko.Graphics.Buffer;
+using Xenko.Core.Mathematics;
 
 namespace MyGame
 {

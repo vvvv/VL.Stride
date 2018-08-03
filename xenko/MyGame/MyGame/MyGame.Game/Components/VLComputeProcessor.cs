@@ -1,6 +1,6 @@
-﻿using SiliconStudio.Core.Annotations;
-using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Rendering;
+using Xenko.Core.Annotations;
+using Xenko.Engine;
+using Xenko.Rendering;
 
 namespace MyGame.Components
 {

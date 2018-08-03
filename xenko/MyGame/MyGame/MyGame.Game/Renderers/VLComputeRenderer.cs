@@ -1,11 +1,11 @@
-﻿using SiliconStudio.Xenko.Rendering.Compositing;
+using Xenko.Rendering.Compositing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SiliconStudio.Xenko.Rendering;
-using SiliconStudio.Core;
+using Xenko.Rendering;
+using Xenko.Core;
 
 namespace MyGame 
 {
