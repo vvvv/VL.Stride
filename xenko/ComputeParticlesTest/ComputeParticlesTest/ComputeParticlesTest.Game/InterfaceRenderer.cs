@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SiliconStudio.Core.Mathematics;
-using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Rendering;
-using SiliconStudio.Xenko.Rendering.Compositing;
-using SiliconStudio.Xenko.Graphics;
+using Xenko.Core.Mathematics;
+using Xenko.Engine;
+using Xenko.Rendering;
+using Xenko.Rendering.Compositing;
+using Xenko.Graphics;
 
 namespace ComputeParticlesTest
 {

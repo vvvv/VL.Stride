@@ -1,5 +1,5 @@
-using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Graphics;
+using Xenko.Engine;
+using Xenko.Graphics;
 using System;
 using VL.Applications;
 using VL.Xenko;
@@ -72,7 +72,6 @@ namespace ComputeParticlesTest
         {
             var timer = new System.Timers.Timer(3000);
             timer.AutoReset = false;
-            timer.Start();
             timer.Elapsed += (s, a) => {
                 var game = (Game)sender;
                 NuGetAssemblyLoader.AssemblyLoader.AddPackageRepositories(VLPackageRepositories);
@@ -80,6 +79,8 @@ namespace ComputeParticlesTest
                 VLHDE.GameInstance = game;
                 game.Script.Add(script);
             };
+            timer.Start();
+
         }
     }
 }

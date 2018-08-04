@@ -1,4 +1,4 @@
-﻿using SiliconStudio.Xenko.Rendering;
+using Xenko.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;

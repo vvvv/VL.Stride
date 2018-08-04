@@ -1,13 +1,13 @@
-﻿using SiliconStudio.Xenko.Graphics;
-using SiliconStudio.Xenko.Rendering;
-using SiliconStudio.Xenko.Shaders;
+using Xenko.Graphics;
+using Xenko.Rendering;
+using Xenko.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Buffer = SiliconStudio.Xenko.Graphics.Buffer;
+using Buffer = Xenko.Graphics.Buffer;
 
 namespace VL.Xenko.Shaders
 {
@@ -37,27 +37,27 @@ namespace VL.Xenko.Shaders
 
         static NativeDeviceUtils()
         {
-            var comandListType = Type.GetType("SiliconStudio.Xenko.Graphics.CommandList, SiliconStudio.Xenko.Graphics");
+            var comandListType = Type.GetType("Xenko.Graphics.CommandList, Xenko.Graphics");
             var comandListTypeFields = comandListType.GetRuntimeFields();
             nativeDeviceContextFi = comandListTypeFields.Where(fi => fi.Name == "nativeDeviceContext").First();
             unorderedAccessViewsFi = comandListTypeFields.Where(fi => fi.Name == "unorderedAccessViews").First();
 
-            var graphicsResourceBaseType = Type.GetType("SiliconStudio.Xenko.Graphics.GraphicsResourceBase, SiliconStudio.Xenko.Graphics");
+            var graphicsResourceBaseType = Type.GetType("Xenko.Graphics.GraphicsResourceBase, Xenko.Graphics");
             nativeDeviceChildFi = graphicsResourceBaseType.GetFieldWithName("nativeDeviceChild");
 
-            var graphicsResourceType = Type.GetType("SiliconStudio.Xenko.Graphics.GraphicsResource, SiliconStudio.Xenko.Graphics");
+            var graphicsResourceType = Type.GetType("Xenko.Graphics.GraphicsResource, Xenko.Graphics");
             unorderedAccessViewFi = graphicsResourceType.GetFieldWithName("unorderedAccessView");
 
-            var pipelineStateType = Type.GetType("SiliconStudio.Xenko.Graphics.PipelineState, SiliconStudio.Xenko.Graphics");
+            var pipelineStateType = Type.GetType("Xenko.Graphics.PipelineState, Xenko.Graphics");
             geometryShaderFi = pipelineStateType.GetFieldWithName("geometryShader");
  
             //graphics device native device
-            var graphicsDeviceType = Type.GetType("SiliconStudio.Xenko.Graphics.GraphicsDevice, SiliconStudio.Xenko.Graphics");
+            var graphicsDeviceType = Type.GetType("Xenko.Graphics.GraphicsDevice, Xenko.Graphics");
             nativeDeviceFi = graphicsDeviceType.GetFieldWithName("nativeDevice");
             registerBufferMemoryUsageMi = graphicsDeviceType.GetmethodWithName("RegisterBufferMemoryUsage");
 
             //buffer
-            var bufferType = Type.GetType("SiliconStudio.Xenko.Graphics.Buffer, SiliconStudio.Xenko.Graphics");
+            var bufferType = Type.GetType("Xenko.Graphics.Buffer, Xenko.Graphics");
             var bufferTypeInfo = bufferType.GetTypeInfo();
             bufferCi = bufferTypeInfo.DeclaredConstructors.Where(ci => ci.GetParameters().Count() == 1).First();
             bufferDescriptionFi = bufferType.GetFieldWithName("bufferDescription");

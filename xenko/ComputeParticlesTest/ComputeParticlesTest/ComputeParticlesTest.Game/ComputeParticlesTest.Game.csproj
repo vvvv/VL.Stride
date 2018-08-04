@@ -1,409 +1,283 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{346CA5FC-E2FC-4C7C-9068-B202481AD302}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net461</TargetFramework>
     <RootNamespace>ComputeParticlesTest</RootNamespace>
-    <AssemblyName>ComputeParticlesTest.Game</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
-    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SiliconStudioCurrentPackagePath>$(MSBuildThisFileDirectory)..\ComputeParticlesTest.xkpkg</SiliconStudioCurrentPackagePath>
-    <SiliconStudioPackageProps>$([System.IO.Path]::ChangeExtension('$(SiliconStudioCurrentPackagePath)', '.props'))</SiliconStudioPackageProps>
-    <SiliconStudioProjectType>Library</SiliconStudioProjectType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;SILICONSTUDIO_PLATFORM_WINDOWS;SILICONSTUDIO_PLATFORM_WINDOWS_DESKTOP</DefineConstants>
-    <SiliconStudioPlatform>Windows</SiliconStudioPlatform>
-    <SiliconStudioBuildProfile>Windows</SiliconStudioBuildProfile>
-    <OutputPath>..\Bin\Windows\Debug\</OutputPath>
-    <IntermediateOutputPath>obj\Windows\Debug\</IntermediateOutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE;SILICONSTUDIO_PLATFORM_WINDOWS;SILICONSTUDIO_PLATFORM_WINDOWS_DESKTOP</DefineConstants>
-    <SiliconStudioPlatform>Windows</SiliconStudioPlatform>
-    <SiliconStudioBuildProfile>Windows</SiliconStudioBuildProfile>
-    <OutputPath>..\Bin\Windows\Release\</OutputPath>
-    <IntermediateOutputPath>obj\Windows\Release\</IntermediateOutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Testing|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE;SILICONSTUDIO_PLATFORM_WINDOWS;SILICONSTUDIO_PLATFORM_WINDOWS_DESKTOP</DefineConstants>
-    <SiliconStudioPlatform>Windows</SiliconStudioPlatform>
-    <SiliconStudioBuildProfile>Windows</SiliconStudioBuildProfile>
-    <OutputPath>..\Bin\Windows\Testing\</OutputPath>
-    <IntermediateOutputPath>obj\Windows\Testing\</IntermediateOutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE;SILICONSTUDIO_PLATFORM_WINDOWS;SILICONSTUDIO_PLATFORM_WINDOWS_DESKTOP</DefineConstants>
-    <SiliconStudioPlatform>Windows</SiliconStudioPlatform>
-    <SiliconStudioBuildProfile>Windows</SiliconStudioBuildProfile>
-    <OutputPath>..\Bin\Windows\AppStore\</OutputPath>
-    <IntermediateOutputPath>obj\Windows\AppStore\</IntermediateOutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'CoreCLR_Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;SILICONSTUDIO_PLATFORM_WINDOWS;SILICONSTUDIO_PLATFORM_WINDOWS_DESKTOP</DefineConstants>
-    <SiliconStudioPlatform>Windows</SiliconStudioPlatform>
-    <SiliconStudioBuildProfile>Windows</SiliconStudioBuildProfile>
-    <OutputPath>..\Bin\Windows\CoreCLR_Debug\</OutputPath>
-    <IntermediateOutputPath>obj\Windows\CoreCLR_Debug\</IntermediateOutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <SiliconStudioRuntime Condition="'$(SiliconStudioProjectType)' == 'Executable'">CoreCLR</SiliconStudioRuntime>
-    <SiliconStudioBuildDirExtension Condition="'$(SiliconStudioBuildDirExtension)' == ''">CoreCLR</SiliconStudioBuildDirExtension>
-    <DefineConstants>SILICONSTUDIO_RUNTIME_CORECLR;$(DefineConstants)</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'CoreCLR_Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE;SILICONSTUDIO_PLATFORM_WINDOWS;SILICONSTUDIO_PLATFORM_WINDOWS_DESKTOP</DefineConstants>
-    <SiliconStudioPlatform>Windows</SiliconStudioPlatform>
-    <SiliconStudioBuildProfile>Windows</SiliconStudioBuildProfile>
-    <OutputPath>..\Bin\Windows\CoreCLR_Release\</OutputPath>
-    <IntermediateOutputPath>obj\Windows\CoreCLR_Release\</IntermediateOutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <SiliconStudioRuntime Condition="'$(SiliconStudioProjectType)' == 'Executable'">CoreCLR</SiliconStudioRuntime>
-    <SiliconStudioBuildDirExtension Condition="'$(SiliconStudioBuildDirExtension)' == ''">CoreCLR</SiliconStudioBuildDirExtension>
-    <DefineConstants>SILICONSTUDIO_RUNTIME_CORECLR;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="Shaders\InstanceNoodlesSplines.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>InstanceNoodlesSplines1.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\HappyStructuredBufferUtils.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>HappyStructuredBufferUtils.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\PositionStream4Base.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>PositionStream4Base.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\GS_Sprites.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>GS_Sprites.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\HappyBicubicUtils.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>HappyBicubicUtils.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\TestTessellationBezier3d.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>TestTessellationBezier3d.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\ParticlesUtils_PosVelUVcoord.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>ParticlesUtils_PosVelUVcoord.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\StreamsDraw.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>StreamsDraw1.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\RingBufferSet.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>RingBufferSet.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\RingBufferDraw.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>RingBufferDraw.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\PointcloudTextureDraw.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>PointcloudTextureDraw.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\PointcloudDraw.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>PointcloudDraw.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\PointStruct.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>PointStruct.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\PointcloudProcessor.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>PointcloudProcessor.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\H_Perlin.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>H_Perlin1.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\ParticlesSimulation.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>ParticlesSimulation.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\H_Attractors.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>H_Attractors1.cs</LastGenOutput>
-    </None>
-    <None Include="Effects\ComputeEffects.xkfx">
+    <Compile Remove="Effects\ComputeEffects %282%29.cs" />
+    <Compile Remove="Effects\DrawEffects %282%29.cs" />
+    <Compile Remove="Effects\StreamOutEffects %282%29.cs" />
+    <Compile Remove="Shaders\GS_Sprites %282%29.cs" />
+    <Compile Remove="Shaders\HappyBicubicUtils %282%29.cs" />
+    <Compile Remove="Shaders\HappyStructuredBufferUtils %282%29.cs" />
+    <Compile Remove="Shaders\H_Attractors1.cs" />
+    <Compile Remove="Shaders\H_Perlin1.cs" />
+    <Compile Remove="Shaders\InstanceNoodlesSplines %282%29.cs" />
+    <Compile Remove="Shaders\InstanceNoodlesSplines1.cs" />
+    <Compile Remove="Shaders\ParticlesDraw %282%29.cs" />
+    <Compile Remove="Shaders\ParticlesSimulation %282%29.cs" />
+    <Compile Remove="Shaders\ParticlesUtils_PosVelInfoCol %282%29.cs" />
+    <Compile Remove="Shaders\ParticlesUtils_PosVelUVcoord %282%29.cs" />
+    <Compile Remove="Shaders\PointcloudDraw %282%29.cs" />
+    <Compile Remove="Shaders\PointcloudProcessor %282%29.cs" />
+    <Compile Remove="Shaders\PointcloudTextureDraw %282%29.cs" />
+    <Compile Remove="Shaders\PointStruct %282%29.cs" />
+    <Compile Remove="Shaders\PositionStream4Base %282%29.cs" />
+    <Compile Remove="Shaders\RingBufferDraw %282%29.cs" />
+    <Compile Remove="Shaders\RingBufferSet %282%29.cs" />
+    <Compile Remove="Shaders\ShaderUtils %282%29.cs" />
+    <Compile Remove="Shaders\StreamsDraw1.cs" />
+    <Compile Remove="Shaders\TestStreamOut %282%29.cs" />
+    <Compile Remove="Shaders\TestStreamOutDraw %282%29.cs" />
+    <Compile Remove="Shaders\TestTessellationBezier3d %282%29.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Shaders\TestStreamOutDraw %282%29.xksl" />
+    <None Remove="Shaders\TestTessellationBezier3d %282%29.xksl" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xenko" Version="3.0.0.1">
+      <PrivateAssets>contentfiles;analyzers</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SharpDX">
+      <HintPath>..\Bin\Windows\Release\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>..\Bin\Windows\Release\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics">
+      <HintPath>..\Bin\Windows\Release\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Effects\ComputeEffects.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ComputeEffects.xkfx</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\DrawEffects.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DrawEffects.xkfx</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\StreamOutEffects.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StreamOutEffects.xkfx</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\GS_Sprites.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GS_Sprites.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\HappyBicubicUtils.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HappyBicubicUtils.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\HappyStructuredBufferUtils.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HappyStructuredBufferUtils.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\H_Attractors.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>H_Attractors.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\H_Perlin.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>H_Perlin.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\InstanceNoodlesSplines.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>InstanceNoodlesSplines.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\ParticlesDraw.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ParticlesDraw.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\ParticlesSimulation.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ParticlesSimulation.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\ParticlesUtils_PosVelInfoCol.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ParticlesUtils_PosVelInfoCol.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\ParticlesUtils_PosVelUVcoord.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ParticlesUtils_PosVelUVcoord.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\PointcloudDraw.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PointcloudDraw.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\PointcloudProcessor.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PointcloudProcessor.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\PointcloudTextureDraw.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PointcloudTextureDraw.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\PointStruct.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PointStruct.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\PositionStream4Base.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PositionStream4Base.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\RingBufferDraw.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RingBufferDraw.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\RingBufferSet.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RingBufferSet.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\ShaderUtils.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ShaderUtils.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\StreamsDraw.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StreamsDraw.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\TestStreamOut.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TestStreamOut.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\TestStreamOutDraw.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TestStreamOutDraw.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Shaders\TestTessellationBezier3d.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TestTessellationBezier3d.xksl</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Effects\ComputeEffects.xkfx">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>ComputeEffects.cs</LastGenOutput>
     </None>
-    <None Include="Shaders\ParticlesUtils_PosVelInfoCol.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>ParticlesUtils_PosVelInfoCol.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\ParticlesDraw.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>ParticlesDraw.cs</LastGenOutput>
-    </None>
-    <None Include="project.json" />
-    <None Include="Shaders\ShaderUtils.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>ShaderUtils.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\TestStreamOutDraw.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>TestStreamOutDraw.cs</LastGenOutput>
-    </None>
-    <None Include="Shaders\TestStreamOut.xksl">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>TestStreamOut.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BasicCameraController.cs" />
-    <Compile Include="CSharpStructs\AttractorsStruct.cs" />
-    <Compile Include="CSharpStructs\ComputeRingBufferStruct.cs" />
-    <Compile Include="CSharpStructs\InstanceNoodlesSplinesStruct.cs" />
-    <Compile Include="CSharpStructs\PointcloudProcessorSettingsStruct.cs" />
-    <Compile Include="CSharpStructs\StreamsDrawSettingsStruct.cs" />
-    <Compile Include="Effects\DrawEffects.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>DrawEffects.xkfx</DependentUpon>
-    </Compile>
-    <None Include="Effects\StreamOutEffects.xkfx">
-      <Generator>XenkoShaderKeyGenerator</Generator>
-      <LastGenOutput>StreamOutEffects.cs</LastGenOutput>
-    </None>
-    <Compile Include="Effects\StreamOutEffects.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>StreamOutEffects.xkfx</DependentUpon>
-    </Compile>
-    <Compile Include="GameProfiler.cs" />
-    <Compile Include="ShaderParameterSetter\StreamsDrawParmeterSetter.cs" />
-    <Compile Include="Shaders\HappyStructuredBufferUtils.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>HappyStructuredBufferUtils.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="Shaders\InstanceNoodlesSplines1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>InstanceNoodlesSplines.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="Shaders\PositionStream4Base.cs">
-      <DependentUpon>PositionStream4Base.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\GS_Sprites.cs">
-      <DependentUpon>GS_Sprites.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\HappyBicubicUtils.cs">
-      <DependentUpon>HappyBicubicUtils.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\TestTessellationBezier3d.cs">
-      <DependentUpon>TestTessellationBezier3d.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\ParticlesUtils_PosVelUVcoord.cs">
-      <DependentUpon>ParticlesUtils_PosVelUVcoord.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\RingBufferSet.cs">
-      <DependentUpon>RingBufferSet.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\RingBufferDraw.cs">
-      <DependentUpon>RingBufferDraw.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\PointcloudTextureDraw.cs">
-      <DependentUpon>PointcloudTextureDraw.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\PointcloudDraw.cs">
-      <DependentUpon>PointcloudDraw.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\PointcloudProcessor.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PointcloudProcessor.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="Shaders\PointStruct.cs">
-      <DependentUpon>PointStruct.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\ParticlesSimulation.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ParticlesSimulation.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="Shaders\H_Attractors1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>H_Attractors.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="CSharpStructs\ComputeSimulationStruct.cs" />
-    <Compile Include="Effects\ComputeEffects.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ComputeEffects.xkfx</DependentUpon>
-    </Compile>
-    <None Include="Effects\DrawEffects.xkfx">
+    <None Update="Effects\DrawEffects.xkfx">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>DrawEffects.cs</LastGenOutput>
     </None>
-    <Compile Include="Shaders\H_Perlin1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>H_Perlin.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="Shaders\ParticlesUtils_PosVelInfoCol.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ParticlesUtils_PosVelInfoCol.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="Shaders\ParticlesDraw.cs">
-      <DependentUpon>ParticlesDraw.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="InterfaceRenderer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DelegateRenderer.cs" />
-    <Compile Include="Shaders\ShaderUtils.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ShaderUtils.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="Shaders\TestStreamOutDraw.cs">
-      <DependentUpon>TestStreamOutDraw.xksl</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Shaders\StreamsDraw1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>StreamsDraw.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="Shaders\TestStreamOut.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>TestStreamOut.xksl</DependentUpon>
-    </Compile>
-    <Compile Include="UI\UISelectionChanger.cs" />
-    <Compile Include="VL.Xenko.Shaders\IndirectBufferStructs.cs" />
-    <Compile Include="VL.Xenko.Shaders\NativeDeviceUtils.cs" />
-    <Compile Include="VL.Xenko.Utils\AudioUtils.cs" />
-    <Compile Include="VL.Xenko.Utils\BufferUtils.cs" />
-    <Compile Include="VL.Xenko.Utils\CameraUtils.cs" />
-    <Compile Include="VL.Xenko.Utils\CollectionUtils.cs" />
-    <Compile Include="VL.Xenko.Shaders\ComputeEffectDispatcher.cs" />
-    <Compile Include="VL.Xenko.Utils\ModelUtils.cs" />
-    <Compile Include="VLHDE.cs" />
+    <None Update="Effects\StreamOutEffects.xkfx">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>StreamOutEffects.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\GS_Sprites.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>GS_Sprites.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\HappyBicubicUtils.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>HappyBicubicUtils.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\HappyStructuredBufferUtils.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>HappyStructuredBufferUtils.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\H_Attractors.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>H_Attractors.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\H_Perlin.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>H_Perlin.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\InstanceNoodlesSplines.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>InstanceNoodlesSplines.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\ParticlesDraw.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>ParticlesDraw.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\ParticlesSimulation.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>ParticlesSimulation.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\ParticlesUtils_PosVelInfoCol.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>ParticlesUtils_PosVelInfoCol.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\ParticlesUtils_PosVelUVcoord.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>ParticlesUtils_PosVelUVcoord.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\PointcloudDraw.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>PointcloudDraw.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\PointcloudProcessor.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>PointcloudProcessor.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\PointcloudTextureDraw.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>PointcloudTextureDraw.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\PointStruct.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>PointStruct.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\PositionStream4Base.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>PositionStream4Base.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\RingBufferDraw.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>RingBufferDraw.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\RingBufferSet.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>RingBufferSet.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\ShaderUtils.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>ShaderUtils.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\StreamsDraw.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>StreamsDraw.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\TestStreamOut.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>TestStreamOut.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\TestStreamOutDraw.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>TestStreamOutDraw.cs</LastGenOutput>
+    </None>
+    <None Update="Shaders\TestTessellationBezier3d.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>TestTessellationBezier3d.cs</LastGenOutput>
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="SharpDX, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1" />
-    <Reference Include="SharpDX.Direct3D11, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\..\Program Files\Silicon Studio\Xenko\GamePackages\Xenko.2.1.2.1\Bin\Windows\SharpDX.Direct3D11.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\ComputeParticlesTest.Windows\Dependencies\SharpDX.Mathematics.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <Import Project="$(SiliconStudioPackageProps)" Condition="Exists('$(SiliconStudioPackageProps)')" />
-  <Import Project="$(SiliconStudioXenkoDir)\Targets\SiliconStudio.Common.targets" Condition="Exists('$(SiliconStudioXenkoDir)\Targets\SiliconStudio.Common.targets')" />
-  <Target Name="EnsureSiliconStudioXenkoInstalled" BeforeTargets="PrepareForBuild">
-    <Error Condition="'$(SiliconStudioXenkoDir)' == ''" Text="Xenko SDK was not found. Check Xenko is installed and the global env variable [SiliconStudioXenkoDir] is setup correctly" />
-    <Error Condition="!Exists('$(SiliconStudioXenkoDir)\Targets\SiliconStudio.Common.targets')" Text="Invalid Xenko SDK installation. Target file [$(SiliconStudioXenkoDir)\Targets\SiliconStudio.Common.targets] was not found." />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-    Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

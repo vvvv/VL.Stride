@@ -1,9 +1,9 @@
-﻿using System;
-using SiliconStudio.Xenko.Graphics;
-using SiliconStudio.Xenko.Rendering;
-using SiliconStudio.Core.Mathematics;
-using SiliconStudio.Xenko.Shaders;
-using SiliconStudio.Xenko.Rendering.ComputeEffect;
+using System;
+using Xenko.Graphics;
+using Xenko.Rendering;
+using Xenko.Core.Mathematics;
+using Xenko.Shaders;
+using Xenko.Rendering.ComputeEffect;
 using System.Reflection;
 using System.Linq;
 

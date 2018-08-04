@@ -1,12 +1,12 @@
-﻿
+
 using System;
 using System.Threading.Tasks;
-using SiliconStudio.Core.Mathematics;
-using SiliconStudio.Core.Diagnostics;
-using SiliconStudio.Xenko.Input;
-using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Profiling;
-using SiliconStudio.Core;
+using Xenko.Core.Mathematics;
+using Xenko.Core.Diagnostics;
+using Xenko.Input;
+using Xenko.Engine;
+using Xenko.Profiling;
+using Xenko.Core;
 
 namespace ComputeParticlesTest
 {

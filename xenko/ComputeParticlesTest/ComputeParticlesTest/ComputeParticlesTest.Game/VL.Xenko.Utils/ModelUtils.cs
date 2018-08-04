@@ -1,7 +1,7 @@
-﻿using SiliconStudio.Core.Mathematics;
-using SiliconStudio.Xenko.Engine;
-using SiliconStudio.Xenko.Rendering;
-using SiliconStudio.Xenko.Rendering.Materials;
+using Xenko.Core.Mathematics;
+using Xenko.Engine;
+using Xenko.Rendering;
+using Xenko.Rendering.Materials;
 using System;
 using System.Collections.Generic;
 using System.Linq;

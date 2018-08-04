@@ -1,5 +1,5 @@
-﻿using SiliconStudio.Xenko.Audio;
-using SiliconStudio.Xenko.Engine;
+using Xenko.Audio;
+using Xenko.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
