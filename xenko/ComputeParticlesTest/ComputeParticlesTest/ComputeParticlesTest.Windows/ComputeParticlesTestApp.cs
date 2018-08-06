@@ -13,8 +13,7 @@ namespace ComputeParticlesTest
         {
             using (var game = new Game())
             {
-                game.WindowCreated += Game_WindowCreated;
-                
+                game.WindowCreated += Game_WindowCreated;              
                 game.Run();
             }
         }
@@ -23,20 +22,23 @@ namespace ComputeParticlesTest
         {
             var startupDoc = VLDirectory + "Main.vl";
 
-
+            //open VL editor only in debug build
 #if DEBUG
             var openEditor = true;
 #else            
             var openEditor = false; 
 #endif
 
-
+            //setup context
             HDE.Main(new string[0], startupDoc, openEditor);
+
+            //disable VL mainloop
             var runtimeHost = HDE.HDEContext.Session.RuntimeHost as VL.Lang.Platforms.CIL.RuntimeHost;
             //runtimeHost.Mode = VL.Lang.Symbols.RunMode.Stopped;
             if (runtimeHost != null)
                 runtimeHost.UseInternalTimer = false;
 
+            //go fullscreen in release build
 #if !DEBUG
             var gfxOutput = GraphicsAdapterFactory.Adapters[0].Outputs;
             var displayMode = gfxOutput[0].CurrentDisplayMode;
@@ -73,10 +75,16 @@ namespace ComputeParticlesTest
             var timer = new System.Timers.Timer(3000);
             timer.AutoReset = false;
             timer.Elapsed += (s, a) => {
-                var game = (Game)sender;
+
+                //setup assembly loader
                 NuGetAssemblyLoader.AssemblyLoader.AddPackageRepositories(VLPackageRepositories);
                 var script = new VLHDE(HDEStart, HDEUpdate);
+
+                //assign game root
+                var game = (Game)sender;
                 VLHDE.GameInstance = game;
+
+                //attach VLHDE script
                 game.Script.Add(script);
             };
             timer.Start();
