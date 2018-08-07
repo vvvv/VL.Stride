@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VL.IO.Midi</name>
+    </assembly>
+    <members>
+        <member name="M:VL.Lib.IO.Midi.MessageUtils.MidiIntToFloat(System.Int32)">
+            <summary>
+            Converts an Integer32 in the range 0-127 to a Float32 in the range 0-1. Also takes care of clamping
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VL.Lib.IO.Midi.MessageUtils.FloatToMidiInt(System.Single)">
+            <summary>
+            Converts a Float32 in the range 0-1 to an Integer32 in the range 0-127. Also takes care of clamping
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VL.Lib.IO.Midi.MessageUtils.MidiIntToFloat14(System.Int32)">
+            <summary>
+            Converts an Integer32 in the range 0-16383 to a Float32 in the range 0-1. Also takes care of clamping
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VL.Lib.IO.Midi.MessageUtils.FloatToMidiInt14(System.Single)">
+            <summary>
+            Converts a Float32 in the range 0-1 to an Integer32 in the range 0-16383. Also takes care of clamping
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VL.Lib.IO.Midi.MessageUtils.IsNoteOnOrOff(Sanford.Multimedia.Midi.IMidiMessage,System.Boolean@,System.Boolean@)">
+            <summary>
+            Checks whether the midi message is a note on of off message, on is NoteOn with velocity > 0, off is NoteOff or NoteOn with velocity = 0
+            </summary>
+            <param name="message"></param>
+            <param name="isNoteOn"></param>
+            <param name="isNoteOff"></param>
+        </member>
+        <member name="M:VL.Lib.IO.Midi.MessageUtils.NoteOff(Sanford.Multimedia.Midi.ChannelMessage)">
+            <summary>
+            Returns the corresponding NoteOff message to the given NoteOn message
+            </summary>
+            <param name="noteOnMessage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VL.Lib.IO.Midi.MessageUtils.AllSoundOff(System.Int32)">
+            <summary>
+            Controller #120 with value 0
+            </summary>
+            <param name="channel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VL.Lib.IO.Midi.MessageUtils.AllNotesOff(System.Int32)">
+            <summary>
+            Controller #123 with value 0
+            </summary>
+            <param name="channel"></param>
+            <returns></returns>
+        </member>
+        <member name="T:VL.Lib.IO.Midi.MidiOutEventSink">
+            <summary>
+            Event sink that sends midi messages to an output device
+            </summary>
+        </member>
+        <member name="M:VL.Lib.IO.Midi.MidiOutEventSink.CustomManageObservable(System.IObservable{Sanford.Multimedia.Midi.IMidiMessage},System.IObservable{Sanford.Multimedia.Midi.IMidiMessage})">
+            <summary>
+            Subscribes to the observable if not already.
+            If the input is null of the default only the old subscription is disposed.
+            </summary>
+            <param name="observable">The potentially new observable.</param>
+        </member>
+        <member name="T:VL.Lib.IO.Midi.MidiObservable">
+            <summary>
+            Base class for several midi classes that provide midi mesages, like:
+            Input device, message splitter or a dummy if no input device was found.
+            </summary>
+            <seealso cref="!:System.IObservable&lt;Sanford.Multimedia.Midi.IMidiMessage&gt;" />
+        </member>
+        <member name="T:VL.Lib.IO.Midi.DefaultMidiObservable">
+            <summary>
+            The default event provider used by the MidiIn node
+            if the midi input device could not be opened.
+            </summary>
+            <seealso cref="T:VL.Lib.IO.Midi.MidiObservable" />
+        </member>
+    </members>
+</doc>

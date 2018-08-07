@@ -1,0 +1,231 @@
+<!DOCTYPE PATCH  SYSTEM "http://vvvv.org/versions/vvvv50debug34.106.dtd" >
+   <PATCH nodename="C:\Dev\vvvv\vvvv\public-vl\VL.CoreLib.VVVV\vvvv\girlpower\_Basics\Spreading\_DynamicObjects.v4p" systemname="Objects" filename="C:\Users\joreg\Documents\repos\vvvv\vvvv45\packs\VLIntegration\girlpower\Objects.v4p" scrollx="0" scrolly="0">
+   <BOUNDS type="Window" left="525" top="5310" width="10290" height="8295">
+   </BOUNDS>
+   <PACK Name="addonpack" Version="35.0.0">
+   </PACK>
+   <NODE systemname="Renderer (EX9)" nodename="Renderer (EX9)" componentmode="InAWindow" id="1">
+   <BOUNDS type="Node" left="390" top="7020" width="100" height="100">
+   </BOUNDS>
+   <BOUNDS type="Box" left="390" top="7020" width="2400" height="1800">
+   </BOUNDS>
+   <BOUNDS type="Window" left="510" top="465" width="4560" height="4575">
+   </BOUNDS>
+   <PIN pinname="Layers" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Aspect Ratio" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Actual Backbuffer Width" visible="1">
+   </PIN>
+   <PIN pinname="Actual Backbuffer Height" visible="1">
+   </PIN>
+   </NODE>
+   <NODE systemname="Text (EX9)" filename="%VVVV%\lib\nodes\plugins\VVVV.Nodes.dll" nodename="Text (EX9)" componentmode="Hidden" id="16">
+   <BOUNDS type="Node" left="3105" top="6225" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Text" visible="1" slicecount="9" values="125,125,125,125,125,125,125,125,125">
+   </PIN>
+   <PIN pinname="Layer" visible="1">
+   </PIN>
+   <PIN pinname="Transform" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Color" slicecount="9" visible="1" values="|1.00000,0.71962,0.00000,1.00000|,|0.60760,1.00000,0.00000,1.00000|,|0.00000,0.31337,1.00000,1.00000|,|0.50606,0.00000,1.00000,1.00000|,|0.12816,1.00000,0.00000,1.00000|,|1.00000,0.00000,0.91685,1.00000|,|0.00000,1.00000,0.70533,1.00000|,|0.88957,0.00000,1.00000,1.00000|,|1.00000,0.55113,0.00000,1.00000|">
+   </PIN>
+   </NODE>
+   <NODE systemname="RandomSpread (Spreads)" nodename="RandomSpread (Spreads)" componentmode="Hidden" id="21">
+   <BOUNDS type="Node" left="705" top="2400" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Spread Count" slicecount="1" visible="1" values="14">
+   </PIN>
+   <PIN pinname="Output" visible="1">
+   </PIN>
+   <PIN pinname="Random Seed" slicecount="1" values="18">
+   </PIN>
+   <PIN pinname="Width" slicecount="1" values="1.35">
+   </PIN>
+   </NODE>
+   <NODE systemname="Transform (Transform 2d Vector)" nodename="Transform (Transform 2d Vector)" componentmode="Hidden" id="20">
+   <BOUNDS type="Node" left="525" top="2880" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="TranslateXY" visible="1">
+   </PIN>
+   <PIN pinname="Transform Out" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="21" srcpinname="Output" dstnodeid="20" dstpinname="TranslateXY">
+   </LINK>
+   <NODE systemname="Text (EX9)" filename="%VVVV%\lib\nodes\plugins\VVVV.Nodes.dll" nodename="Text (EX9)" componentmode="Hidden" id="23">
+   <BOUNDS type="Node" left="375" top="6225" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Text" visible="1" slicecount="1" values="15">
+   </PIN>
+   <PIN pinname="Layer" visible="1">
+   </PIN>
+   <PIN pinname="Transform" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Color" slicecount="1" visible="1" values="|0.06566,0.00000,1.00000,1.00000|">
+   </PIN>
+   <BOUNDS type="Box" left="375" top="6225">
+   </BOUNDS>
+   </NODE>
+   <NODE nodename="IOBox (Value Advanced)" componentmode="InABox" id="24" systemname="IOBox (Value Advanced)">
+   <BOUNDS type="Box" left="1785" top="900" width="510" height="480">
+   </BOUNDS>
+   <BOUNDS type="Node" left="1785" top="900" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Y Input Value" slicecount="1" visible="1" values="6">
+   </PIN>
+   <PIN pinname="Units" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Precision" slicecount="1" values="4">
+   </PIN>
+   <PIN pinname="Value Type" slicecount="1" values="Integer">
+   </PIN>
+   <PIN pinname="Y Output Value" visible="1">
+   </PIN>
+   <PIN pinname="Size" slicecount="1" values="17">
+   </PIN>
+   </NODE>
+   <NODE systemname="Multiply (Value)" nodename="Multiply (Value)" componentmode="Hidden" id="25" hiddenwhenlocked="1">
+   <BOUNDS type="Node" left="1785" top="1845" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Input 1" visible="1">
+   </PIN>
+   <PIN pinname="Output" visible="1">
+   </PIN>
+   <PIN pinname="Input 2" slicecount="1" visible="1" values="2">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="24" srcpinname="Y Output Value" dstnodeid="25" dstpinname="Input 1">
+   </LINK>
+   <LINK srcnodeid="25" srcpinname="Output" dstnodeid="21" dstpinname="Spread Count">
+   </LINK>
+   <LINK srcnodeid="23" srcpinname="Layer" dstnodeid="1" dstpinname="Layers">
+   </LINK>
+   <NODE systemname="V4-Particle" filename="V4-Particle.v4p" nodename="V4-Particle.v4p" componentmode="Hidden" id="27">
+   <BOUNDS type="Node" left="532" top="5345" width="0" height="0">
+   </BOUNDS>
+   <BOUNDS type="Box" left="0" top="3060" width="5680" height="6060">
+   </BOUNDS>
+   <BOUNDS type="Window" left="2235" top="3165" width="9690" height="6630">
+   </BOUNDS>
+   <PIN pinname="Size" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="20" srcpinname="Transform Out" dstnodeid="27" dstpinname="Transform In">
+   </LINK>
+   <LINK srcnodeid="27" srcpinname="Transform Out" dstnodeid="23" dstpinname="Transform">
+   </LINK>
+   <LINK srcnodeid="27" srcpinname="Number" dstnodeid="23" dstpinname="Text">
+   </LINK>
+   <LINK srcnodeid="27" srcpinname="Color" dstnodeid="23" dstpinname="Color">
+   </LINK>
+   <NODE nodename="IOBox (Value Advanced)" componentmode="InABox" id="28" systemname="IOBox (Value Advanced)">
+   <BOUNDS type="Box" left="1890" top="4785" width="570" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="1890" top="4785" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Y Input Value" slicecount="1" visible="1" values="0.21">
+   </PIN>
+   <PIN pinname="Units" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Precision" slicecount="1" values="4">
+   </PIN>
+   <PIN pinname="Y Output Value" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="28" srcpinname="Y Output Value" dstnodeid="27" dstpinname="Size">
+   </LINK>
+   <NODE systemname="Renderer (EX9)" nodename="Renderer (EX9)" componentmode="InAWindow" id="29">
+   <BOUNDS type="Node" left="3120" top="6975" width="100" height="100">
+   </BOUNDS>
+   <BOUNDS type="Box" left="3120" top="6975" width="2400" height="1800">
+   </BOUNDS>
+   <BOUNDS type="Window" left="5280" top="450" width="4155" height="4620">
+   </BOUNDS>
+   <PIN pinname="Layers" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Aspect Ratio" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Actual Backbuffer Width" visible="1">
+   </PIN>
+   <PIN pinname="Actual Backbuffer Height" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="16" srcpinname="Layer" dstnodeid="29" dstpinname="Layers">
+   </LINK>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="31" systemname="IOBox (String)">
+   <BOUNDS type="Node" left="2490" top="885" width="3075" height="270">
+   </BOUNDS>
+   <BOUNDS type="Box" left="2490" top="885" width="2070" height="990">
+   </BOUNDS>
+   <PIN pinname="Input String" visible="0" slicecount="1" values="|&lt; Slowly change the number of particles to see how the two implementations work differently.|">
+   </PIN>
+   <PIN pinname="Output String" visible="0">
+   </PIN>
+   <PIN pinname="Show Grid" slicecount="1" values="0">
+   </PIN>
+   <PIN pinname="String Type" slicecount="1" values="MultiLine">
+   </PIN>
+   </NODE>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="32" systemname="IOBox (String)">
+   <BOUNDS type="Node" left="2475" top="4785" width="570" height="270">
+   </BOUNDS>
+   <BOUNDS type="Box" left="2475" top="4785" width="570" height="270">
+   </BOUNDS>
+   <PIN pinname="Input String" visible="0" slicecount="1" values="|&lt; Size|">
+   </PIN>
+   <PIN pinname="Output String" visible="0">
+   </PIN>
+   <PIN pinname="Show Grid" slicecount="1" values="0">
+   </PIN>
+   <PIN pinname="String Type" slicecount="1" values="MultiLine">
+   </PIN>
+   </NODE>
+   <NODE nodename="IOBox (String)" componentmode="InABox" id="33" systemname="IOBox (String)">
+   <BOUNDS type="Node" left="5010" top="810" width="5070" height="270">
+   </BOUNDS>
+   <BOUNDS type="Box" left="5010" top="810" width="4800" height="4185">
+   </BOUNDS>
+   <PIN pinname="Input String" visible="0" slicecount="1" values="|A simple particle with two properties: &cr;&lf;- Number (counting up from birth)&cr;&lf;- Color (chosen random at birth)&cr;&lf;Together those two properties make the &quot;State&quot; of the particle.&cr;&lf;&cr;&lf;Patched in vvvv: V4-Particle&cr;&lf;and in VL: VL-Particle&cr;&lf;&cr;&lf;Note how both particles can easily be spreaded. Only the V4-Particle obviously shares its state among all instances while the VL-Particle clearly manages an independent state for each of the particles. |">
+   </PIN>
+   <PIN pinname="Output String" visible="0">
+   </PIN>
+   <PIN pinname="Show Grid" slicecount="1" values="0">
+   </PIN>
+   <PIN pinname="String Type" slicecount="1" values="MultiLine">
+   </PIN>
+   <PIN pinname="Size" slicecount="1" values="11">
+   </PIN>
+   </NODE>
+   <NODE systemname="VL-Particle (Value)" filename="vl\VVVV.Value.VLPlanet.vl" nodename="VL-Particle (Value)" componentmode="Hidden" id="15">
+   <BOUNDS type="Node" left="3255" top="5355" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Result" visible="1">
+   </PIN>
+   <PIN pinname="Transform" visible="1">
+   </PIN>
+   <PIN pinname="Value" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Transform Out" visible="1">
+   </PIN>
+   <PIN pinname="Transform In" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Size" visible="1">
+   </PIN>
+   <PIN pinname="Color" visible="1">
+   </PIN>
+   <PIN pinname="Number" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="15" srcpinname="Transform Out" dstnodeid="16" dstpinname="Transform">
+   </LINK>
+   <LINK srcnodeid="20" srcpinname="Transform Out" dstnodeid="15" dstpinname="Transform In">
+   </LINK>
+   <LINK srcnodeid="28" srcpinname="Y Output Value" dstnodeid="15" dstpinname="Size">
+   </LINK>
+   <LINK srcnodeid="15" srcpinname="Color" dstnodeid="16" dstpinname="Color">
+   </LINK>
+   <LINK srcnodeid="15" srcpinname="Number" dstnodeid="16" dstpinname="Text">
+   </LINK>
+   </PATCH>

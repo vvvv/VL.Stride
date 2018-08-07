@@ -1,0 +1,483 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document xmlns:p="property" Id="OLHco7APweeQCUsUFTIETA" Summary="Node for the SpaceMouse by 3DConnexion device: http://www.3dconnexion.com" Authors="dominikKoller, vvvv group" Credits="" LicenseUrl="https://www.gnu.org/licenses/lgpl-3.0-standalone.html" ProjectUrl="https://vvvv.org/" Version="0.91" IsTrusted="true">
+  <NugetDependency Id="HQJUclHt4QZNLMLzOtf0se" Location="VL.CoreLib" Version="0.35.33" />
+  <DocumentDependency Id="LGhUSSVdx9dMhUTJQfdQEQ" Location="./TDxUtils.vl" />
+  <Patch Id="V41mIovd7BQNLnkH5bEtI0">
+    <Canvas Id="HyDaWe0Bv0CQXFtIsUBxpP" CanvasType="FullCategory">
+      <!--
+
+    ************************ SpaceMouse ************************
+
+-->
+      <Node Name="SpaceMouse" Category="Devices" Bounds="100,200" Id="F9VBkkatnzWLL44MirsQVY" Summary="Provides access to SpaceMouse devices by 3DConnexion">
+        <p:NodeReference>
+          <Choice Kind="ContainerDefinition" Name="Process" />
+          <FullNameCategoryReference ID="Primitive" />
+        </p:NodeReference>
+        <p:Interfaces>
+          <TypeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+            <Choice Kind="TypeFlag" Name="IDisposable" />
+            <FullNameCategoryReference ID="Primitive" />
+          </TypeReference>
+        </p:Interfaces>
+        <Patch Id="PmD7wyIiVBELQxN1N0etBZ">
+          <Slot Id="OGvaXOOQKDIMN85pDXhx9Z" Name="Device">
+            <p:TypeAnnotation LastCategoryFullName="TDx.TDxInput" LastSymbolSource="TDxUtils.vl">
+              <Choice Kind="TypeFlag" Name="DeviceClass" />
+            </p:TypeAnnotation>
+          </Slot>
+          <Patch Id="CLiDbKlnef7QTn8cQMsO7v" Name="Create (Hidden)" ParticipatingElements="LIteVQA1il1LXhpDZ817RZ" />
+          <Patch Id="AwPa8xu41zVPjtBMgkhZDI" Name="Update (Hidden)" ParticipatingElements="NBjpBBjm30wNe9fwJHokf1,P2BKiaeXBP0Pb9IXIrUsvX,VUSVs9K5NN2LI4doGynJEZ,MJBXVO6nJLZMHgkqTa3oGa">
+            <Pin Id="AAp5ANU9cnzOMqXgZDOAkZ" Name="Position" Kind="OutputPin" />
+            <Pin Id="PIIhg4Wk4fnLHC05WpDG24" Name="Rotation" Kind="OutputPin" />
+            <Pin Id="Fug1uk8T3wfQdzp9iiaqdF" Name="Angle" Kind="OutputPin" />
+            <Pin Id="IHWRuVWG5kePXNqpaVJ6sQ" Name="Enabled" Kind="InputPin" />
+            <Pin Id="EiElnzX3D4NL8tIkYtnH12" Name="Keys" Kind="OutputPin" />
+            <Pin Id="Rd3sMXH9TJiMdqJvd6sVj9" Name="DeviceType" Kind="OutputPin" />
+          </Patch>
+          <Patch Id="QndBXq1tSpoL7JBHI5KUJ4" Name="Dispose" ParticipatingElements="DSDiIzzEtP6Ln5c6UIg2a5" />
+          <Canvas Id="DwCFVEIRsirMWR3mEV7c2y" CanvasType="Group">
+            <Pad Id="SB0r24ADpj6Mt7om7s9qDn" Comment="comment" Bounds="873,1067,612,175" ShowValueBox="true" isIOBox="true" Value="&quot;The values received are usually in the range +/- 4000 (of an arbitrary unit)\r\n\r\nHowever, in the 3DConnexion properties, the 'speed' can be changed for each value independently, so there might be much bigger / smaller values too.\r\n\r\nFor rotation and translation, 3DConnexion uses arbitrary units.\r\n\r\nTo read more about how 3DConnexion supplies data, the Documentation in 3DxWare SDK provides useful information&quot;">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="String" />
+              </p:TypeAnnotation>
+              <p:ValueBoxSettings>
+                <p:fontsize p:Type="Int32">9</p:fontsize>
+                <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+              </p:ValueBoxSettings>
+            </Pad>
+            <Pad Id="J8lAZqmanpoPund48WXps0" Comment="Comment" Bounds="432,478,354,139" ShowValueBox="true" isIOBox="true" Value="&quot;We won't always need to Connect in Create - whoever wants that, should do it right after instanciating. \r\n\r\nIn Destroy, we want to Disconnect in every case. This is important, as the Default type (eg in the Split node) sometimes connects without having called connect (weird? yeah.)&quot;">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="String" />
+              </p:TypeAnnotation>
+              <p:ValueBoxSettings>
+                <p:fontsize p:Type="Int32">9</p:fontsize>
+                <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+              </p:ValueBoxSettings>
+            </Pad>
+            <Pad Id="EoKvGrhAUVvLWmEPr2NteG" Comment="comment" Bounds="124,260,398,95" ShowValueBox="true" isIOBox="true" Value="&quot;For some reason the device also gives us values when 'Is Connected' is false, after calling Disconnect. Therefore, I will pass values, and the device, only when 'Enabled' is true. Also, never trust the Is Connected - it might stay true even if the device is disconnected!\r\n&quot;">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="String" />
+              </p:TypeAnnotation>
+              <p:ValueBoxSettings>
+                <p:fontsize p:Type="Int32">9</p:fontsize>
+                <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+              </p:ValueBoxSettings>
+            </Pad>
+            <Pad Id="QcS4tJ80zyjNgy02L3keX2" SlotId="OGvaXOOQKDIMN85pDXhx9Z" Bounds="780,130" />
+            <Node Bounds="779,85,51,13" Id="LIteVQA1il1LXhpDZ817RZ">
+              <p:NodeReference LastCategoryFullName="TDx.TDxInput.DeviceClass" LastSymbolSource="TDxUtils.vl">
+                <Choice Kind="OperationNode" Name="Create" />
+                <CategoryReference Kind="Category" Name="DeviceClass" />
+              </p:NodeReference>
+              <Pin Id="VYpJAsH36wJPvpSXSb3mXA" Name="Output" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="825,204,59,13" Id="NBjpBBjm30wNe9fwJHokf1">
+              <p:NodeReference LastCategoryFullName="Primitive.Object" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="OperationNode" Name="IsAssigned" />
+                <CategoryReference Kind="Category" Name="Object" />
+              </p:NodeReference>
+              <Pin Id="IR6kNo4q71ZLa1hCWdbcgm" Name="X" Kind="InputPin" />
+              <Pin Id="OPganTIJ5cLLs3aVlMN6LN" Name="Result" Kind="OutputPin" />
+              <Pin Id="RTQxc24bevDNFx5x1S6zr5" Name="Not Assigned" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="631,204,59,13" Id="DSDiIzzEtP6Ln5c6UIg2a5">
+              <p:NodeReference LastCategoryFullName="Primitive.Object" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="OperationNode" Name="IsAssigned" />
+                <CategoryReference Kind="Category" Name="Object" />
+              </p:NodeReference>
+              <Pin Id="RhxLkSE3cQtQdEYmeui5om" Name="X" Kind="InputPin" />
+              <Pin Id="KJVQHOKYNVlM4qW7BSKAVJ" Name="Result" Kind="OutputPin" />
+              <Pin Id="LrPTc1y3fvdQFtGynmKFEu" Name="Not Assigned" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="846,575,45,13" Id="P2BKiaeXBP0Pb9IXIrUsvX">
+              <p:NodeReference LastCategoryFullName="Primitive.Boolean" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="OperationNode" Name="AND" />
+                <CategoryReference Kind="Category" Name="Boolean" />
+              </p:NodeReference>
+              <Pin Id="Vm13de5nd3xNJtX0J7TsyO" Name="Input" Kind="InputPin" />
+              <Pin Id="DVJZGYeT8EXNIdcNRFbG6q" Name="Input 2" Kind="InputPin" />
+              <Pin Id="MbcDPVltHnqN1vXfCgt5UV" Name="Apply" Kind="ApplyPin" />
+              <Pin Id="V7SWFuQheBdQdkboh5KzEf" Name="Output" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="904,647,40,13" Id="VUSVs9K5NN2LI4doGynJEZ">
+              <p:NodeReference LastCategoryFullName="TDx.TDxInput.DeviceClass" LastSymbolSource="TDxUtils.vl">
+                <Choice Kind="OperationNode" Name="Sensor" />
+                <CategoryReference Kind="Category" Name="DeviceClass" />
+              </p:NodeReference>
+              <Pin Id="ByNunONdIRfLmXsCEuOtyw" Name="Input" Kind="InputPin" />
+              <Pin Id="KuyrpsfY1IRNK264KReDvo" Name="Output" Kind="OutputPin" />
+              <Pin Id="Fmt73LfHfA1MYEutiG6KKF" Name="Sensor" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="1233,647,53,13" Id="MJBXVO6nJLZMHgkqTa3oGa">
+              <p:NodeReference LastCategoryFullName="TDx.TDxInput.DeviceClass" LastSymbolSource="TDxUtils.vl">
+                <Choice Kind="OperationNode" Name="Keyboard" />
+                <CategoryReference Kind="Category" Name="DeviceClass" />
+              </p:NodeReference>
+              <Pin Id="GMtsI8o2hanN7Hatxh5EZb" Name="Input" Kind="InputPin" />
+              <Pin Id="SIwQYpu7sXhN2bVmLZ5ju6" Name="Output" Kind="OutputPin" />
+              <Pin Id="NRbFtfh5qBzNgqCTP7e9o8" Name="Keyboard" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="883,608,806,282" Id="GhoBYv3C6mrODDUjpMqTeh">
+              <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="ApplicationStatefulRegion" Name="If" />
+                <CategoryReference Kind="Category" Name="Primitive" />
+              </p:NodeReference>
+              <Pin Id="OD0HrzS6CZJOOl7P9piwpm" Name="Condition" Kind="InputPin" />
+              <ControlPoint Id="Nk5oA5RgjwnPWLTWaaKY3G" Bounds="898,614" Name="" Alignment="Top" />
+              <ControlPoint Id="VaBhU4WhlkoNg2aomrToKa" Bounds="1026,614" Name="" Alignment="Top" />
+              <ControlPoint Id="UbUUuG4yQqmMe68ctb27xp" Bounds="1113,614" Name="" Alignment="Top" />
+              <ControlPoint Id="EYetKMb2d7MPEyUQJ3s8HJ" Bounds="1275,614" Name="" Alignment="Top" />
+              <ControlPoint Id="NbKCSTUZa62Lu509C71rIU" Bounds="1509,614" Name="" Alignment="Top" />
+              <ControlPoint Id="RwZn9EVqHUXP1brPisDD9T" Bounds="1620,614" Name="" Alignment="Top" />
+              <ControlPoint Id="TBgrwWfyp8CLEJmJrw4DyG" Bounds="898,884" Name="" Alignment="Bottom" />
+              <ControlPoint Id="EBGaJzadmx7LZdlWmHehxZ" Bounds="1026,884" Name="" Alignment="Bottom" />
+              <ControlPoint Id="Fb3bXOPvP12MAFvtVONCPY" Bounds="1113,884" Name="" Alignment="Bottom" />
+              <ControlPoint Id="PWw0l0o4FDBLpqydXWpKYW" Bounds="1275,884" Name="" Alignment="Bottom" />
+              <ControlPoint Id="LA6tPjPHEjgLgZ9A0gaIDD" Bounds="1523,884" Name="" Alignment="Bottom" />
+              <ControlPoint Id="V79AvMzcE8fMsH2XJ31QIs" Bounds="1663,884" Name="" Alignment="Bottom" />
+              <Patch Id="DakRUSPBhjnQUEYOx70RYi">
+                <Pad Id="KLPfxtmQiDINSvDbD9R9ra" Comment="First Key" Bounds="1434,689,40,19" ShowValueBox="true" isIOBox="true" Value="1">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Integer32" />
+                    <CategoryReference Kind="Category" Name="Primitive" />
+                  </p:TypeAnnotation>
+                  <p:ValueBoxSettings />
+                </Pad>
+                <Pad Id="VQRsxNrZ6LoNO0EMVCntTJ" Comment="Scalar" Bounds="917,809,51,19" ShowValueBox="true" isIOBox="true" Value="4000.0">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Float32" />
+                    <CategoryReference Kind="Category" Name="Primitive" />
+                  </p:TypeAnnotation>
+                  <p:ValueBoxSettings />
+                </Pad>
+                <Pad Id="H9bJzvypQX3LqVoIL7EPqY" Comment="Scalar" Bounds="1133,805,51,19" ShowValueBox="true" isIOBox="true" Value="4000.0">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Float32" />
+                    <CategoryReference Kind="Category" Name="Primitive" />
+                  </p:TypeAnnotation>
+                  <p:ValueBoxSettings />
+                </Pad>
+                <Node Bounds="1497,647,31,13" Id="BnyP4D0JwrFNfyigpvLxvN">
+                  <p:NodeReference LastCategoryFullName="TDx.TDxInput.DeviceClass" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="Type" />
+                    <CategoryReference Kind="Category" Name="DeviceClass" />
+                  </p:NodeReference>
+                  <Pin Id="EnofFJZOzfyPIzywb7x1RB" Name="Input" Kind="InputPin" />
+                  <Pin Id="Dh53sTiE0JkLG58msf6LjR" Name="Output" Kind="OutputPin" />
+                  <Pin Id="KaFYXeXqkfdMNaoJLv6RDY" Name="Type" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="1234,687,30,13" Id="CxmgIo9w0p4N1fdrLEKdy8">
+                  <p:NodeReference LastCategoryFullName="TDx.TDxInput.IKeyboard" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="Keys" />
+                    <CategoryReference Kind="Category" Name="IKeyboard" />
+                  </p:NodeReference>
+                  <Pin Id="TtGsRx9EusRPByU2WSlyZE" Name="Input" Kind="InputPin" />
+                  <Pin Id="KJuYo0GvK0cOtR9Gl1qGfw" Name="Output" Kind="OutputPin" />
+                  <Pin Id="NrFUIxxwmuZN0gctRD9eO6" Name="Keys" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="903,772,73,13" Id="BvUmndLZUIGPPKIAmVfvY3">
+                  <p:NodeReference LastCategoryFullName="Devices.SpaceMouse" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="ToVector3" />
+                    <CategoryReference Kind="Category" Name="SpaceMouse" />
+                  </p:NodeReference>
+                  <Pin Id="JD5btk0VW2CPiGULTM0ZHP" Name="IVector3D" Kind="InputPin" />
+                  <Pin Id="RIHiPJHRTBxNGstjisNY6Q" Name="Vector3" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="923,693,61,13" Id="HvwX12NY2q2Mp2o5mHavcy">
+                  <p:NodeReference LastCategoryFullName="TDx.TDxInput.ISensor" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="Translation" />
+                    <CategoryReference Kind="Category" Name="ISensor" />
+                  </p:NodeReference>
+                  <Pin Id="FwHz9ro6JIfM4fC1k73ZkV" Name="Input" Kind="InputPin" />
+                  <Pin Id="NkdZLJJxYHGNM2CEwv7vOf" Name="Output" Kind="OutputPin" />
+                  <Pin Id="BLdQyKZuwAkQTDYXjwJwBd" Name="Translation" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="902,841,45,13" Id="Flw7i1nBz0YMxBGcm9Bg5h">
+                  <p:NodeReference LastCategoryFullName="Math" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="OperationNode" Name="/ (Scale)" />
+                  </p:NodeReference>
+                  <Pin Id="PoQuSPyT0FcMVAJJJkbCnR" Name="Input" Kind="InputPin" />
+                  <Pin Id="QtB22h0DLW4PpeLNGasvPK" Name="Scalar" Kind="InputPin" />
+                  <Pin Id="BknU1IDZoxiOdJTYyRBFEC" Name="Apply" Kind="ApplyPin" />
+                  <Pin Id="M9DdphCrmJdN0e93PGOzxA" Name="Output" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="1049,775,73,13" Id="NWhcnflmbDhNSlfss6B3fR">
+                  <p:NodeReference LastCategoryFullName="Devices.SpaceMouse" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="ToVector3 (AngleAxis)" />
+                    <CategoryReference Kind="Category" Name="SpaceMouse" />
+                  </p:NodeReference>
+                  <Pin Id="NMB8XkYNDQCMTsqP0mbGfN" Name="IAngleAxis" Kind="InputPin" />
+                  <Pin Id="IlNK380fytROf7brRyTeO2" Name="Rotation" Kind="OutputPin" />
+                  <Pin Id="GBZxUCR50MLNLvKveiE8We" Name="Angle" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="1032,731,48,13" Id="Q0YU49TwPxWO60eWc7uPUH">
+                  <p:NodeReference LastCategoryFullName="TDx.TDxInput.ISensor" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="Rotation" />
+                    <CategoryReference Kind="Category" Name="ISensor" />
+                  </p:NodeReference>
+                  <Pin Id="CX5Zj0W0kVdLbec8Lj9AY4" Name="Input" Kind="InputPin" />
+                  <Pin Id="K6U8fe2s3F6QZq7CUzFZGg" Name="Output" Kind="OutputPin" />
+                  <Pin Id="AZsGwJx7fPNL128dTuRHY5" Name="Rotation" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="1117,834,20,20" Id="MttqukXuPIVMAYx3CIYKe4">
+                  <p:NodeReference LastCategoryFullName="Math" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <Choice Kind="OperationCallFlag" Name="/" />
+                  </p:NodeReference>
+                  <Pin Id="E6x9pno3Rq0LHN2g3Un08b" Name="Input" Kind="InputPin" />
+                  <Pin Id="AQlHplF3TVmN5u9rrD1veT" Name="Input 2" Kind="InputPin" />
+                  <Pin Id="A5GpUtiGM21OyGeOMKjjO2" Name="Output" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="1601,650,66,13" Id="AdnxZFIqr7HMm42ZSiKwwa">
+                  <p:NodeReference LastCategoryFullName="TDx.TDxInput.DeviceClass" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="IsConnected" />
+                    <CategoryReference Kind="Category" Name="DeviceClass" />
+                  </p:NodeReference>
+                  <Pin Id="GoOf7mxTfkZM6sOXfTkFML" Name="Input" Kind="InputPin" />
+                  <Pin Id="FFJROMZmwCrP5R4C6NLPuU" Name="Output" Kind="OutputPin" />
+                  <Pin Id="R4HiQRqkSnqQEDeFhPlu24" Name="Is Connected" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="1250,724,241,130" Id="C9wFu5to2ITNr45yERA7Vx">
+                  <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="ApplicationStatefulRegion" Name="Repeat" />
+                    <CategoryReference Kind="Category" Name="Primitive" />
+                  </p:NodeReference>
+                  <Pin Id="Utx7er5c0AgPmoYFxw5NYB" Name="Iteration Count" Kind="InputPin" />
+                  <ControlPoint Id="Kb6HEQp63p6MMo9nemlBSl" Bounds="1265,730" Name="" Alignment="Top" />
+                  <ControlPoint Id="FNDfJHv91GROcOK4gWZv7K" Bounds="1386,730" Name="i" Alignment="Top" />
+                  <ControlPoint Id="HkrL6B4asxlL7YiO14MCfB" Bounds="1267,848" Name="" Alignment="Bottom" />
+                  <ControlPoint Id="QT12Vw18r9hQXvC6NiIE5Q" Bounds="1388,848" Name="i" Alignment="Bottom" />
+                  <ControlPoint Id="ESVj5TMmikbLqUnDWJSM8g" Bounds="1282,848" Name="Output" Alignment="Bottom" />
+                  <Pin Id="MVT66G7i1U8LIbfJJWvvGC" Name="Break" Kind="OutputPin" />
+                  <Patch Id="MienImVUsyQLtkzgF3yYic">
+                    <Pad Id="TzgMC1Pgh5nO2PqwKjrWup" Comment="one" Bounds="1403,771,40,19" ShowValueBox="true" isIOBox="true" Value="1">
+                      <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                        <Choice Kind="TypeFlag" Name="Integer32" />
+                        <CategoryReference Kind="Category" Name="Primitive" />
+                      </p:TypeAnnotation>
+                      <p:ValueBoxSettings />
+                    </Pad>
+                    <Node Bounds="1263,777,59,13" Id="OKnrusOYcmIOMxOIPQRGhV">
+                      <p:NodeReference LastCategoryFullName="TDx.TDxInput.IKeyboard" LastSymbolSource="TDxUtils.vl">
+                        <Choice Kind="OperationNode" Name="IsKeyDown" />
+                        <CategoryReference Kind="Category" Name="IKeyboard" />
+                      </p:NodeReference>
+                      <Pin Id="AkP3WoJSAFWMMHNnGeHH2j" Name="Input" Kind="InputPin" />
+                      <Pin Id="PPH8x1bsXYkOSiqQCLlOOO" Name="Key" Kind="InputPin" />
+                      <Pin Id="EG3b3aPZN9sLHidlNW81UG" Name="Output" Kind="OutputPin" />
+                      <Pin Id="GixiqU983e6Mhsv8m5cjGb" Name="Result" Kind="OutputPin" />
+                    </Node>
+                    <Node Bounds="1389,805,45,13" Id="AjP60E5TFoPOhDKn2VROZT">
+                      <p:NodeReference LastCategoryFullName="Math" LastSymbolSource="CoreLibBasics.vl">
+                        <Choice Kind="OperationNode" Name="+" />
+                      </p:NodeReference>
+                      <Pin Id="UfenS1a1OLRNqpkESsmYZ1" Name="Input" Kind="InputPin" />
+                      <Pin Id="RERghynqEplMxwD96i8Dnv" Name="Input 2" Kind="InputPin" />
+                      <Pin Id="BfTdwwPVmxOPp9vS52v0dU" Name="Apply" Kind="ApplyPin" />
+                      <Pin Id="UOx0KiXK5QhNrWUwLxkVUm" Name="Output" Kind="OutputPin" />
+                    </Node>
+                    <Patch Id="TYtXiM43SPXNLsr705b6hQ" Name="Create" />
+                    <Patch Id="QcDqHXPm88sOmXSQ5dAd1C" Name="Update" ParticipatingElements="OKnrusOYcmIOMxOIPQRGhV,AjP60E5TFoPOhDKn2VROZT" />
+                    <Patch Id="I3r6d2CwChhLKT021fYtwS" Name="Dispose" />
+                  </Patch>
+                </Node>
+                <Patch Id="CqNVhEYDqlGOSMAnywRRX2" Name="Create" />
+                <Patch Id="Hf9nqDBP56bMpEzw7dhSsV" Name="Then" />
+              </Patch>
+            </Node>
+            <Node Bounds="879,252,197,289" Id="VWbVO1Bg5xYL1AnNwIjkJH">
+              <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="ApplicationStatefulRegion" Name="If" />
+                <CategoryReference Kind="Category" Name="Primitive" />
+              </p:NodeReference>
+              <Pin Id="Fid8PkGWrG0NxtqmJ5Oa45" Name="Condition" Kind="InputPin" />
+              <ControlPoint Id="Uzlrh1aACnLNYlyTYTAu5b" Bounds="923,258" Name="" Alignment="Top" />
+              <ControlPoint Id="BPWdhM6wOoEM5nkzUirmLs" Bounds="943,535" Name="" Alignment="Bottom" />
+              <Patch Id="KO3B0Q9CMT8M4P0LtLRcGr">
+                <Node Bounds="920,280,66,13" Id="K88zo3PGIodLZsvtT8k7ql">
+                  <p:NodeReference LastCategoryFullName="TDx.TDxInput.DeviceClass" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="IsConnected" />
+                    <CategoryReference Kind="Category" Name="DeviceClass" />
+                  </p:NodeReference>
+                  <Pin Id="QdKb2hc5GmeLuRco1G07Kb" Name="Input" Kind="InputPin" />
+                  <Pin Id="LiuiwmCZHKgPLBriRDZO9Q" Name="Output" Kind="OutputPin" />
+                  <Pin Id="PoFRfBRJDJrNxkJta767Dk" Name="Is Connected" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="980,316,25,13" Id="PF1cBqlkVsXMT4w3YzSnMq">
+                  <p:NodeReference LastCategoryFullName="Math" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="OperationNode" Name="!=" />
+                  </p:NodeReference>
+                  <Pin Id="FVgnVnc3hs7M2sUOaJFsyD" Name="Input" Kind="InputPin" />
+                  <Pin Id="DiKmNJHlUnZMzlOBQjO5uy" Name="Input 2" Kind="InputPin" />
+                  <Pin Id="PLScKwCCdZ9PeEtz24sFpu" Name="Result" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="927,356,137,149" Id="Mqu12hROPnaQCfML4EH5iQ">
+                  <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="ApplicationStatefulRegion" Name="If" />
+                    <CategoryReference Kind="Category" Name="Primitive" />
+                  </p:NodeReference>
+                  <Pin Id="KNITl5OmyuFL1gr2T9q3cm" Name="Condition" Kind="InputPin" />
+                  <ControlPoint Id="RKHeFUFvTq8P2jv3soQjuo" Bounds="942,362" Name="" Alignment="Top" />
+                  <ControlPoint Id="PlEpgq6gUhhPjRyy9QQoMo" Bounds="942,499" Name="" Alignment="Bottom" />
+                  <Patch Id="IlamykRuZNfMAM1Ww3X7dK">
+                    <Node Bounds="1024,407,29,13" Id="Gfp9smL7utLQL1yzu5XMG8">
+                      <p:NodeReference LastCategoryFullName="Primitive.Boolean" LastSymbolSource="CoreLibBasics.vl">
+                        <Choice Kind="OperationNode" Name="NOT" />
+                        <CategoryReference Kind="Category" Name="Boolean" />
+                      </p:NodeReference>
+                      <Pin Id="NtEKDmH8baGN6NYrYYUy67" Name="Input" Kind="InputPin" />
+                      <Pin Id="J3bOenQz8Z6LLeupRJdvcd" Name="Apply" Kind="ApplyPin" />
+                      <Pin Id="FZwCNSrDy1LOJm6sf1HB3R" Name="Output" Kind="OutputPin" />
+                    </Node>
+                    <Node Bounds="944,395,51,13" Id="JIeyZxz1Qu5PfFmxmG8RLO">
+                      <p:NodeReference LastCategoryFullName="TDx.TDxInput.DeviceClass" LastSymbolSource="TDxUtils.vl">
+                        <Choice Kind="OperationNode" Name="Connect" />
+                        <CategoryReference Kind="Category" Name="DeviceClass" />
+                      </p:NodeReference>
+                      <Pin Id="UEsfwWuGzhUOtGnBBY9utS" Name="Input" Kind="InputPin" />
+                      <Pin Id="Fhc744Gbq0ELcI14VvBv1o" Name="Apply" Kind="ApplyPin" />
+                      <Pin Id="KTHwU0BfEXMM9KeBZ7EJ42" Name="Output" Kind="OutputPin" />
+                    </Node>
+                    <Node Bounds="944,447,60,13" Id="Cz4DNpctM2IOKeg6aFllfx">
+                      <p:NodeReference LastCategoryFullName="TDx.TDxInput.DeviceClass" LastSymbolSource="TDxUtils.vl">
+                        <Choice Kind="OperationNode" Name="Disconnect" />
+                        <CategoryReference Kind="Category" Name="DeviceClass" />
+                      </p:NodeReference>
+                      <Pin Id="HYn7K7DDnUaNqCYKynk5El" Name="Input" Kind="InputPin" />
+                      <Pin Id="OsMj18IUrKRQOfHR4Qf8Rb" Name="Apply" Kind="ApplyPin" />
+                      <Pin Id="MVzuFr9ZSpkP9WM6hgy9Pb" Name="Output" Kind="OutputPin" />
+                    </Node>
+                    <Patch Id="ErlvF5YfralPkCHS2XUrBx" Name="Create" />
+                    <Patch Id="KW4zO5yRFbqQAJOJ7jA8QO" Name="Then" />
+                  </Patch>
+                </Node>
+                <Patch Id="MOp4SgHmxPjN7NrL9qzqNq" Name="Create" />
+                <Patch Id="UeZDLYnBWRtLmjcwX6NQbI" Name="Then" />
+              </Patch>
+            </Node>
+            <Node Bounds="710,245,90,110" Id="CjAIF56H6YKN5lIGotOq3U">
+              <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="ApplicationStatefulRegion" Name="If" />
+                <CategoryReference Kind="Category" Name="Primitive" />
+              </p:NodeReference>
+              <Pin Id="PGPkN7G0S7XLLpyc2f4jcp" Name="Condition" Kind="InputPin" />
+              <ControlPoint Id="MFzGch1VI8TPSoUxLOh3QB" Bounds="725,251" Name="" Alignment="Top" />
+              <ControlPoint Id="EFF4NCUKFmTMtq64Ydqi27" Bounds="726,349" Name="" Alignment="Bottom" />
+              <Patch Id="EEniFfLbJ5gO3ABXYzpBXh">
+                <Node Bounds="724,313,60,13" Id="SBqS9AQOg92Pa5pbPUtieS">
+                  <p:NodeReference LastCategoryFullName="TDx.TDxInput.ISimpleDevice" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="Disconnect" />
+                    <CategoryReference Kind="Category" Name="ISimpleDevice" />
+                  </p:NodeReference>
+                  <Pin Id="VxGTEKkgxMdN17TAxrDDoR" Name="Input" Kind="InputPin" />
+                  <Pin Id="GBSWAAjnFJUL0Iq8Rm5V6m" Name="Apply" Kind="ApplyPin" />
+                  <Pin Id="MP9TohLsZqJPaRxURCUNQP" Name="Output" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="722,274,66,13" Id="UrwbLwIoQjPNqq54xTSwpB">
+                  <p:NodeReference LastCategoryFullName="TDx.TDxInput.ISimpleDevice" LastSymbolSource="TDxUtils.vl">
+                    <Choice Kind="OperationNode" Name="IsConnected" />
+                    <CategoryReference Kind="Category" Name="ISimpleDevice" />
+                  </p:NodeReference>
+                  <Pin Id="DeAJQvunBxjQU4AoEWqLHt" Name="Input" Kind="InputPin" />
+                  <Pin Id="SVvj6tOAY0SLZyZlVlbG3f" Name="Output" Kind="OutputPin" />
+                  <Pin Id="GO46Xn2ySmeMXLsvlBA9Es" Name="Is Connected" Kind="OutputPin" />
+                </Node>
+                <Patch Id="OqbluWjEde6MBleDfm9W5z" Name="Create" />
+                <Patch Id="Eg3ZbHPCa8aNS8Bo9wFV82" Name="Then" />
+              </Patch>
+            </Node>
+            <ControlPoint Id="BtmYnLDqGUUPgWik8V0fGP" Bounds="1115,196" />
+            <ControlPoint Id="G9TwNeheGW2OR2JzB3zb9P" Bounds="895,927" />
+            <ControlPoint Id="DtaAmLg8RoaNmCynEPIM6Z" Bounds="1022,927" />
+            <ControlPoint Id="CSVFdH8H5UrMhdnDB5CPo3" Bounds="1108,927" />
+            <ControlPoint Id="RAIYIedS1cmQGhBT0mmgvd" Bounds="1269,927" />
+            <ControlPoint Id="UqgatvLzZF4NwEOGK3Rkji" Bounds="1522,927" />
+            <ControlPoint Id="IECpfNg9WmLQEwdJm4D0YR" Bounds="1114,564" />
+          </Canvas>
+          <Link Id="QJsPbKQV5c9Nry0TaaauHR" Ids="Nk5oA5RgjwnPWLTWaaKY3G,TBgrwWfyp8CLEJmJrw4DyG" IsFeedback="true" />
+          <Link Id="NLkiIIaUCZ0PJDucIEO6Ma" Ids="VaBhU4WhlkoNg2aomrToKa,EBGaJzadmx7LZdlWmHehxZ" IsFeedback="true" />
+          <Link Id="KUNoicv0jvGL1yXGVy69zZ" Ids="UbUUuG4yQqmMe68ctb27xp,Fb3bXOPvP12MAFvtVONCPY" IsFeedback="true" />
+          <Link Id="TGOykR35PSuLsmpGkNCag0" Ids="EYetKMb2d7MPEyUQJ3s8HJ,PWw0l0o4FDBLpqydXWpKYW" IsFeedback="true" />
+          <Link Id="UKJi3X9j84qNRgCS7KZIbS" Ids="NbKCSTUZa62Lu509C71rIU,LA6tPjPHEjgLgZ9A0gaIDD" IsFeedback="true" />
+          <Link Id="G23kOo0SkfCN4CFSkKoxzK" Ids="RwZn9EVqHUXP1brPisDD9T,V79AvMzcE8fMsH2XJ31QIs" IsFeedback="true" />
+          <Link Id="M4Rs6JZPeFnLg3vDoAtp9n" Ids="Kb6HEQp63p6MMo9nemlBSl,HkrL6B4asxlL7YiO14MCfB" IsFeedback="true" />
+          <Link Id="F6NhV1f5QPWLR3LjgwRI6X" Ids="FNDfJHv91GROcOK4gWZv7K,QT12Vw18r9hQXvC6NiIE5Q" IsFeedback="true" />
+          <Link Id="JSkyX7M11xbNRNbE5shnSB" Ids="Uzlrh1aACnLNYlyTYTAu5b,BPWdhM6wOoEM5nkzUirmLs" IsFeedback="true" />
+          <Link Id="OEa1aNsLY2SMV79aeN3tpK" Ids="RKHeFUFvTq8P2jv3soQjuo,PlEpgq6gUhhPjRyy9QQoMo" IsFeedback="true" />
+          <Link Id="CIf2tfCv9VzNMHufgza3Hm" Ids="MFzGch1VI8TPSoUxLOh3QB,EFF4NCUKFmTMtq64Ydqi27" IsFeedback="true" />
+          <Link Id="Qls4EbFsXWBP8HDpuLuBys" Ids="IHWRuVWG5kePXNqpaVJ6sQ,BtmYnLDqGUUPgWik8V0fGP" IsHidden="true" />
+          <Link Id="ByjwspjWHseQaFJc1XMgin" Ids="G9TwNeheGW2OR2JzB3zb9P,AAp5ANU9cnzOMqXgZDOAkZ" IsHidden="true" />
+          <Link Id="H2bi2CB81xmL36rhC5Wc0o" Ids="DtaAmLg8RoaNmCynEPIM6Z,PIIhg4Wk4fnLHC05WpDG24" IsHidden="true" />
+          <Link Id="V7C4gBJuMhcOk2s29tQPsJ" Ids="CSVFdH8H5UrMhdnDB5CPo3,Fug1uk8T3wfQdzp9iiaqdF" IsHidden="true" />
+          <Link Id="N4jpW4ipASbN0mJEyX3Xy9" Ids="RAIYIedS1cmQGhBT0mmgvd,EiElnzX3D4NL8tIkYtnH12" IsHidden="true" />
+          <Link Id="K9vdM7d4aLKLJ6AV96u8DJ" Ids="UqgatvLzZF4NwEOGK3Rkji,Rd3sMXH9TJiMdqJvd6sVj9" IsHidden="true" />
+          <Link Id="DmBhr2hnFL3QWEw3PTChQB" Ids="LA6tPjPHEjgLgZ9A0gaIDD,UqgatvLzZF4NwEOGK3Rkji" />
+          <Link Id="OUPlKGcSj7JLvaXZvqhJ5O" Ids="PWw0l0o4FDBLpqydXWpKYW,RAIYIedS1cmQGhBT0mmgvd" />
+          <Link Id="EDHgdWEgKaZPAcAT6fF16c" Ids="TBgrwWfyp8CLEJmJrw4DyG,G9TwNeheGW2OR2JzB3zb9P" />
+          <Link Id="LadpENDFLJHLzCGrMeTcyh" Ids="EBGaJzadmx7LZdlWmHehxZ,DtaAmLg8RoaNmCynEPIM6Z" />
+          <Link Id="Mvb21dGl4GhLdRJ29DvV4C" Ids="OPganTIJ5cLLs3aVlMN6LN,Fid8PkGWrG0NxtqmJ5Oa45" />
+          <Link Id="L2xcDKFbfX8QHx8Y2wbDS1" Ids="KJVQHOKYNVlM4qW7BSKAVJ,PGPkN7G0S7XLLpyc2f4jcp" />
+          <Link Id="KGAeBqWLKloMRuphdwjMjL" Ids="Fb3bXOPvP12MAFvtVONCPY,CSVFdH8H5UrMhdnDB5CPo3" />
+          <Link Id="GyPCWMQTLj6NzKjOYRS93n" Ids="BtmYnLDqGUUPgWik8V0fGP,DiKmNJHlUnZMzlOBQjO5uy" />
+          <Link Id="GGVSsfE2ahuOlvOyBFgyh5" Ids="BtmYnLDqGUUPgWik8V0fGP,Fhc744Gbq0ELcI14VvBv1o" />
+          <Link Id="Kep5Bx2zlmVPc99BNzURl2" Ids="BtmYnLDqGUUPgWik8V0fGP,NtEKDmH8baGN6NYrYYUy67" />
+          <Link Id="RajXJ0lSKdcN1yDd2kyGni" Ids="V7SWFuQheBdQdkboh5KzEf,OD0HrzS6CZJOOl7P9piwpm" />
+          <Link Id="LArLaIB0fBZMNOoEq9TR6B" Ids="KuyrpsfY1IRNK264KReDvo,GMtsI8o2hanN7Hatxh5EZb" />
+          <Link Id="RwXhe8kPLgZPu35IaAjnoj" Ids="SIwQYpu7sXhN2bVmLZ5ju6,EnofFJZOzfyPIzywb7x1RB" />
+          <Link Id="EZc20FHqJ0TPKC7HRu3Lqo" Ids="BPWdhM6wOoEM5nkzUirmLs,ByNunONdIRfLmXsCEuOtyw" />
+          <Link Id="ScKfnBCqDBNMzxWEAzYkkM" Ids="Fmt73LfHfA1MYEutiG6KKF,FwHz9ro6JIfM4fC1k73ZkV" />
+          <Link Id="LJukWBeq1rSLnVBGck7Iom" Ids="NRbFtfh5qBzNgqCTP7e9o8,TtGsRx9EusRPByU2WSlyZE" />
+          <Link Id="BWMnW9uBK9lQIIbPhswwrt" Ids="OPganTIJ5cLLs3aVlMN6LN,Vm13de5nd3xNJtX0J7TsyO" />
+          <Link Id="LfPRBhRtaGkMGgjFUDlgL1" Ids="BtmYnLDqGUUPgWik8V0fGP,IECpfNg9WmLQEwdJm4D0YR,DVJZGYeT8EXNIdcNRFbG6q" />
+          <Link Id="DvKHa0cr9zWP4s8CyOpjHI" Ids="KLPfxtmQiDINSvDbD9R9ra,FNDfJHv91GROcOK4gWZv7K" />
+          <Link Id="GC0nBBtaViTNwck6kifZYR" Ids="VQRsxNrZ6LoNO0EMVCntTJ,QtB22h0DLW4PpeLNGasvPK" />
+          <Link Id="JBmPMWIums8L0zrDsQ5jyF" Ids="KJuYo0GvK0cOtR9Gl1qGfw,Kb6HEQp63p6MMo9nemlBSl" />
+          <Link Id="AUKMzAVku0CM7skouU0mBF" Ids="NrFUIxxwmuZN0gctRD9eO6,Utx7er5c0AgPmoYFxw5NYB" />
+          <Link Id="NW7wfuvjVEeO6GVDev0yq4" Ids="RIHiPJHRTBxNGstjisNY6Q,PoQuSPyT0FcMVAJJJkbCnR" />
+          <Link Id="CIJ9KpSQ51INTocJf1pGwP" Ids="BLdQyKZuwAkQTDYXjwJwBd,JD5btk0VW2CPiGULTM0ZHP" />
+          <Link Id="Cds3QES6DUOPo863h2esr2" Ids="AZsGwJx7fPNL128dTuRHY5,NMB8XkYNDQCMTsqP0mbGfN" />
+          <Link Id="LwgFuoWcELSLcsYFptNNom" Ids="KaFYXeXqkfdMNaoJLv6RDY,LA6tPjPHEjgLgZ9A0gaIDD" />
+          <Link Id="ActepuTYfUJLoavuvjdqKW" Ids="ESVj5TMmikbLqUnDWJSM8g,PWw0l0o4FDBLpqydXWpKYW" />
+          <Link Id="AJr8P4jaGUzQH5d2N6RRfu" Ids="M9DdphCrmJdN0e93PGOzxA,TBgrwWfyp8CLEJmJrw4DyG" />
+          <Link Id="NfeAuhets40LOCdit9iW5e" Ids="Dh53sTiE0JkLG58msf6LjR,GoOf7mxTfkZM6sOXfTkFML" />
+          <Link Id="Gy2psIRuJ58ONWMABvxxl1" Ids="R4HiQRqkSnqQEDeFhPlu24,V79AvMzcE8fMsH2XJ31QIs" />
+          <Link Id="NwwZry7p5INQQz8Aj970Ej" Ids="GBZxUCR50MLNLvKveiE8We,E6x9pno3Rq0LHN2g3Un08b" />
+          <Link Id="J2mtltaElx4N65EoyTzv59" Ids="IlNK380fytROf7brRyTeO2,EBGaJzadmx7LZdlWmHehxZ" />
+          <Link Id="EemjI9wJ0o3LplQfYTPYwZ" Ids="A5GpUtiGM21OyGeOMKjjO2,Fb3bXOPvP12MAFvtVONCPY" />
+          <Link Id="NQfTparLpwuPlkxBLWT7KO" Ids="NkdZLJJxYHGNM2CEwv7vOf,CX5Zj0W0kVdLbec8Lj9AY4" />
+          <Link Id="BGGqJVMOYg2LLJDKQ2Vjku" Ids="GixiqU983e6Mhsv8m5cjGb,ESVj5TMmikbLqUnDWJSM8g" />
+          <Link Id="J7GHOsynOXYM5s2ilNHCoZ" Ids="FNDfJHv91GROcOK4gWZv7K,PPH8x1bsXYkOSiqQCLlOOO" />
+          <Link Id="CFGcq42r5DoOyM5CeUzwUg" Ids="FNDfJHv91GROcOK4gWZv7K,UfenS1a1OLRNqpkESsmYZ1" />
+          <Link Id="UqApRVyttXqMrcGes8kjex" Ids="TzgMC1Pgh5nO2PqwKjrWup,RERghynqEplMxwD96i8Dnv" />
+          <Link Id="Fe0oU6fbkUAL7yL3CLGyln" Ids="UOx0KiXK5QhNrWUwLxkVUm,QT12Vw18r9hQXvC6NiIE5Q" />
+          <Link Id="HfuLpw4VBCxPxE5JpNAyxk" Ids="Kb6HEQp63p6MMo9nemlBSl,AkP3WoJSAFWMMHNnGeHH2j" />
+          <Link Id="D9x0YNxrMtdNgT1mqI6sub" Ids="EG3b3aPZN9sLHidlNW81UG,HkrL6B4asxlL7YiO14MCfB" />
+          <Link Id="ImzrD4bYrBuOggbL2aKZjq" Ids="PoFRfBRJDJrNxkJta767Dk,FVgnVnc3hs7M2sUOaJFsyD" />
+          <Link Id="TU443eeDzPTOTR3dFDYs1s" Ids="PLScKwCCdZ9PeEtz24sFpu,KNITl5OmyuFL1gr2T9q3cm" />
+          <Link Id="R0zQWh3dM2WOWOOabb0Zbx" Ids="LiuiwmCZHKgPLBriRDZO9Q,RKHeFUFvTq8P2jv3soQjuo" />
+          <Link Id="IOsU4jC1SH1MKbYdIV2Mqt" Ids="Uzlrh1aACnLNYlyTYTAu5b,QdKb2hc5GmeLuRco1G07Kb" />
+          <Link Id="AQXn4nOPdgNPZuTNSWgoF1" Ids="PlEpgq6gUhhPjRyy9QQoMo,BPWdhM6wOoEM5nkzUirmLs" />
+          <Link Id="HPlzVszFDgxLhLElbDHYcU" Ids="FZwCNSrDy1LOJm6sf1HB3R,OsMj18IUrKRQOfHR4Qf8Rb" />
+          <Link Id="ClUrQpAhAchP2aR5lfTjiR" Ids="RKHeFUFvTq8P2jv3soQjuo,UEsfwWuGzhUOtGnBBY9utS" />
+          <Link Id="GX7qbdjoHEdLAZWxBMFCWY" Ids="KTHwU0BfEXMM9KeBZ7EJ42,HYn7K7DDnUaNqCYKynk5El" />
+          <Link Id="Pvb42j73WssNdbSwupk5Tx" Ids="MVzuFr9ZSpkP9WM6hgy9Pb,PlEpgq6gUhhPjRyy9QQoMo" />
+          <Link Id="TkMnlgeCtlUQSsf7h7wGnk" Ids="SVvj6tOAY0SLZyZlVlbG3f,VxGTEKkgxMdN17TAxrDDoR" />
+          <Link Id="UIh6f9c1DY2LzNqreHdFzT" Ids="GO46Xn2ySmeMXLsvlBA9Es,GBSWAAjnFJUL0Iq8Rm5V6m" />
+          <Link Id="Up7q4KVTmdrN0FzbJVZ0pv" Ids="MP9TohLsZqJPaRxURCUNQP,EFF4NCUKFmTMtq64Ydqi27" />
+          <Link Id="CWNvjS9ulu2LrHVM9oijmg" Ids="MFzGch1VI8TPSoUxLOh3QB,DeAJQvunBxjQU4AoEWqLHt" />
+          <ProcessDefinition Id="TrGEDfzaZv6NV8kCzxmgjm">
+            <Fragment Id="TawipINrddYPyF4ZQnG9l5" Patch="CLiDbKlnef7QTn8cQMsO7v" Enabled="true" />
+            <Fragment Id="MBu2jR6qRQxOXL7ySYZ0A2" Patch="AwPa8xu41zVPjtBMgkhZDI" Enabled="true" />
+          </ProcessDefinition>
+          <Link Id="Oc1lW8y7UuKNfSAbUNf6BI" Ids="VYpJAsH36wJPvpSXSb3mXA,QcS4tJ80zyjNgy02L3keX2" />
+          <Link Id="GGB5V6253R3NCHwYUjpM4M" Ids="QcS4tJ80zyjNgy02L3keX2,RhxLkSE3cQtQdEYmeui5om" />
+          <Link Id="EI3bVIGcq7XOqMc02KiVrd" Ids="QcS4tJ80zyjNgy02L3keX2,MFzGch1VI8TPSoUxLOh3QB" />
+          <Link Id="Tr8doiuQu9nNnNKghbljtV" Ids="QcS4tJ80zyjNgy02L3keX2,IR6kNo4q71ZLa1hCWdbcgm" />
+          <Link Id="FWGRVWiLMmgPvgqMuiL2f7" Ids="QcS4tJ80zyjNgy02L3keX2,Uzlrh1aACnLNYlyTYTAu5b" />
+          <Link Id="DVIdeiALMPPO7XVSR1fe7F" Ids="H9bJzvypQX3LqVoIL7EPqY,AQlHplF3TVmN5u9rrD1veT" />
+        </Patch>
+      </Node>
+    </Canvas>
+  </Patch>
+</Document>

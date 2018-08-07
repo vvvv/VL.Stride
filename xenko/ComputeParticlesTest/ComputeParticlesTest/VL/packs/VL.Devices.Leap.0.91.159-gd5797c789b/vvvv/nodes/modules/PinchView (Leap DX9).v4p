@@ -1,0 +1,167 @@
+<!DOCTYPE PATCH  SYSTEM "http://vvvv.org/versions/vvvv50alpha34.100.dtd" >
+   <PATCH nodename="C:\Users\vvvv_2\Documents\DOMINIK\LEAP_VL\modules\PinchView (Leap DX9).v4p" systemname="PinchView (Leap DX9)" filename="C:\Users\vvvv_2\Documents\DOMINIK\LEAP_VL\modules\PinchView (Leap DX9).v4p" scrollx="0" scrolly="-360">
+   <BOUNDS type="Window" left="1530" top="1065" width="5940" height="5040">
+   </BOUNDS>
+   <PACK Name="addonpack" Version="34.100.0">
+   </PACK>
+   <NODE id="16" systemname="IOBox (Node)" componentmode="InABox" nodename="IOBox (Node)">
+   <PIN pinname="Descriptive Name" slicecount="1" values="Layer">
+   </PIN>
+   <BOUNDS type="Box" left="1485" top="3885" width="750" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="1485" top="3885" width="750" height="240">
+   </BOUNDS>
+   <PIN pinname="Input Node" visible="1" slicecount="1" values="||">
+   </PIN>
+   </NODE>
+   <NODE nodename="IOBox (Node)" componentmode="InABox" id="17" systemname="IOBox (Node)">
+   <BOUNDS type="Box" left="1485" top="480" width="795" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="1485" top="480" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Input Node" slicecount="1" visible="1" values="||">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="Hand">
+   </PIN>
+   <PIN pinname="Output Node" visible="1">
+   </PIN>
+   </NODE>
+   <NODE systemname="AvoidNIL (Node)" filename="%VVVV%\lib\nodes\modules\Node\AvoidNIL (Node).v4p" nodename="AvoidNIL (Node)" componentmode="Hidden" id="18">
+   <BOUNDS type="Node" left="1485" top="855" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Input" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Output" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="17" srcpinname="Output Node" dstnodeid="18" dstpinname="Input">
+   </LINK>
+   <NODE nodename="IOBox (Color)" componentmode="InABox" id="24" systemname="IOBox (Color)">
+   <BOUNDS type="Box" left="3705" top="525" width="420" height="240">
+   </BOUNDS>
+   <BOUNDS type="Node" left="3705" top="525" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Color Input" visible="1" slicecount="1" values="|0.00000,0.52000,1.00000,0.00000|">
+   </PIN>
+   <PIN pinname="Color Output" visible="1">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="Input">
+   </PIN>
+   </NODE>
+   <NODE systemname="Hand (Leap)" filename="..\vl\VVVV.Devices.Leap.vl" nodename="Hand (Leap)" componentmode="Hidden" id="15">
+   <BOUNDS type="Node" left="1500" top="1245" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Fingers" visible="1">
+   </PIN>
+   <PIN pinname="Hand" visible="1" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Pinch Strength" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="18" srcpinname="Output" dstnodeid="15" dstpinname="Hand">
+   </LINK>
+   <NODE systemname="Finger (Leap)" filename="..\vl\VVVV.Devices.Leap.vl" nodename="Finger (Leap)" componentmode="Hidden" id="20">
+   <BOUNDS type="Node" left="1635" top="2385" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="TipPositionXYZ" visible="1">
+   </PIN>
+   <PIN pinname="Finger" visible="1" slicecount="1" values="||">
+   </PIN>
+   </NODE>
+   <NODE systemname="SelectFingers (Leap)" filename="..\vl\VVVV.Devices.Leap.vl" nodename="SelectFingers (Leap)" componentmode="Hidden" id="25">
+   <BOUNDS type="Node" left="1620" top="1920" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="Fingers" visible="1">
+   </PIN>
+   <PIN pinname="FingerType" visible="1">
+   </PIN>
+   <PIN pinname="Fingers Bin Size" visible="1" slicecount="1" values="-1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="15" srcpinname="Fingers" dstnodeid="25" dstpinname="Fingers">
+   </LINK>
+   <NODE nodename="IOBox (Enumerations)" componentmode="InABox" id="26" systemname="IOBox (Enumerations)">
+   <BOUNDS type="Box" left="3195" top="1620" width="780" height="585">
+   </BOUNDS>
+   <BOUNDS type="Node" left="3195" top="1620" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Input Enum" slicecount="2" visible="1" values="Index,Thumb">
+   </PIN>
+   <PIN pinname="Rows" slicecount="1" values="2">
+   </PIN>
+   <PIN pinname="SliceCount Mode" slicecount="1" values="ColsRowsPages">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="26" srcpinname="Output Enum" dstnodeid="25" dstpinname="FingerType">
+   </LINK>
+   <LINK srcnodeid="25" srcpinname="Fingers" dstnodeid="20" dstpinname="Finger">
+   </LINK>
+   <NODE nodename="IOBox (Value Advanced)" componentmode="InABox" id="27" systemname="IOBox (Value Advanced)">
+   <BOUNDS type="Box" left="5055" top="435" width="480" height="480">
+   </BOUNDS>
+   <BOUNDS type="Node" left="5055" top="435" width="0" height="0">
+   </BOUNDS>
+   <PIN pinname="Y Input Value" slicecount="1" visible="1" values="1">
+   </PIN>
+   <PIN pinname="Units" slicecount="1" values="||">
+   </PIN>
+   <PIN pinname="Precision" slicecount="1" values="4">
+   </PIN>
+   <PIN pinname="Value Type" slicecount="1" values="Boolean">
+   </PIN>
+   <PIN pinname="Behavior" slicecount="1" values="Toggle">
+   </PIN>
+   <PIN pinname="Descriptive Name" slicecount="1" values="Enabled">
+   </PIN>
+   </NODE>
+   <NODE systemname="SetAlpha (Color)" nodename="SetAlpha (Color)" componentmode="Hidden" id="28">
+   <BOUNDS type="Node" left="3690" top="2730" width="810" height="270">
+   </BOUNDS>
+   <PIN pinname="Input" visible="1">
+   </PIN>
+   <PIN pinname="Alpha" visible="1">
+   </PIN>
+   <PIN pinname="Output" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="24" srcpinname="Color Output" dstnodeid="28" dstpinname="Input">
+   </LINK>
+   <LINK srcnodeid="15" srcpinname="Pinch Strength" dstnodeid="28" dstpinname="Alpha">
+   </LINK>
+   <NODE systemname="Unzip (3d Bin)" filename="%VVVV%\lib\nodes\plugins\VVVV.Nodes.dll" nodename="Unzip (3d Bin)" componentmode="Hidden" id="29">
+   <BOUNDS type="Node" left="2115" top="2760" width="100" height="100">
+   </BOUNDS>
+   <PIN pinname="InputXY" visible="1">
+   </PIN>
+   <PIN pinname="Input Bin Size" visible="1">
+   </PIN>
+   <PIN pinname="InputXYZ" visible="1">
+   </PIN>
+   <PIN pinname="Output 1XYZ" visible="1">
+   </PIN>
+   <PIN pinname="Output 2XYZ" visible="1">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="25" srcpinname="Fingers Bin Size" dstnodeid="29" dstpinname="Input Bin Size">
+   </LINK>
+   <LINK srcnodeid="20" srcpinname="TipPositionXYZ" dstnodeid="29" dstpinname="InputXYZ">
+   </LINK>
+   <NODE systemname="Line (EX9 FromTo)" filename="%VVVV%\lib\nodes\modules\EX9\Line (EX9 FromTo).v4p" nodename="Line (EX9 FromTo)" componentmode="Hidden" id="30">
+   <BOUNDS type="Node" left="1500" top="3375" width="100" height="100">
+   </BOUNDS>
+   </NODE>
+   <LINK srcnodeid="30" srcpinname="Layer" dstnodeid="16" dstpinname="Input Node">
+   </LINK>
+   <LINK srcnodeid="27" srcpinname="Y Output Value" dstnodeid="30" dstpinname="Enabled" linkstyle="VHV">
+   <LINKPOINT x="5035" y="3285">
+   </LINKPOINT>
+   <LINKPOINT x="3320" y="3285">
+   </LINKPOINT>
+   </LINK>
+   <LINK srcnodeid="28" srcpinname="Output" dstnodeid="30" dstpinname="Color">
+   </LINK>
+   <LINK srcnodeid="29" srcpinname="Output 1XYZ" dstnodeid="30" dstpinname="From">
+   </LINK>
+   <LINK srcnodeid="29" srcpinname="Output 2XYZ" dstnodeid="30" dstpinname="To">
+   </LINK>
+   </PATCH>
