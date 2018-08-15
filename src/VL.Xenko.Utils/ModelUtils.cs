@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XenkoModel = global::Xenko.Rendering.Model;
 
 namespace VL.Xenko.Utils
 {
@@ -22,7 +23,7 @@ namespace VL.Xenko.Utils
             return entity.GetOrCreate<ModelComponent>();
         }
 
-        public static void SetColor(Model model, Color4 color, float metalness)
+        public static void SetColor(XenkoModel model, Color4 color, float metalness)
         {
             var m = model.Materials.FirstOrDefault()?.Material.Passes.FirstOrDefault();
 

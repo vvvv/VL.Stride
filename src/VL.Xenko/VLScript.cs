@@ -61,23 +61,5 @@ namespace VL.Xenko
             if (runtimeHost.Mode == VL.Lang.Symbols.RunMode.Running)
                 runtimeHost.Step();
         }
-
-        private static void Game_WindowCreated(object sender, System.EventArgs e)
-        {
-            var game = (Game)sender;
-            game.Window.AllowUserResizing = true;
-
-            var timer = new System.Timers.Timer(3000);
-            timer.AutoReset = false;
-            timer.Elapsed += (s, a) => {
-
-                //setup assembly loader
-                var script = new VLScript();
-
-                //attach VLHDE script
-                game.Script.Add(script);
-            };
-            timer.Start();
-        }
     }
 }
