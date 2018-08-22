@@ -32,7 +32,7 @@ namespace VL.Xenko.RootRenderFeatures
         public VLLowLevelAPIRenderFeature()
         {
             //pre adjust render priority, low numer is early, high number is late (advantage of backbuffer culling)
-            SortKey = 128;
+            SortKey = 191;
         }
 
         protected override void InitializeCore()
@@ -56,7 +56,7 @@ namespace VL.Xenko.RootRenderFeatures
             if (VisibilityGroup == null)
             {
                 VisibilityGroup = Context.SceneInstance.VisibilityGroups.FirstOrDefault();
-                if(VisibilityGroup != null)
+                if (VisibilityGroup != null)
                 {
                     //add one render object to the visibility group
                     var renderObject = new VLLowLevelAPIRenderObject();

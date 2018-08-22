@@ -11,6 +11,7 @@ namespace VL.Xenko
         public static void AttachVL(this Game game)
         {
             game.WindowCreated += Game_WindowCreated;
+            VLScript.GameInstance = game;
         }
 
         private static void Game_WindowCreated(object sender, System.EventArgs e)

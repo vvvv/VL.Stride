@@ -24,8 +24,6 @@ namespace VL.Xenko
 
         public override void Start()
         {
-            GameInstance = this.Services.GetService<Game>();
-
             AssemblyLoader.AddPackageRepositories(VLPackageRepositories);
 
             //open VL editor only in debug build
@@ -47,7 +45,7 @@ namespace VL.Xenko
             var maxHeight = displayMode.AspectRatio < 1.7f ? 1200 : 1080;
             var screenHeight = Math.Min(displayMode.Height, maxHeight);
 
-            var game = VLHDE.GameInstance;
+            var game = VLScript.GameInstance;
             game.GraphicsDeviceManager.PreferredBackBufferWidth = screenWidth;
             game.GraphicsDeviceManager.PreferredBackBufferHeight = screenHeight;
             game.GraphicsDeviceManager.IsFullScreen = true;
