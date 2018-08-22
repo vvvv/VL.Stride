@@ -11,16 +11,6 @@ namespace VL.Xenko.Utils
 {
     public static class CameraUtils
     {
-        public static CameraComponent GetFirstCamera()
-        {
-            return VLScript.GameInstance.SceneSystem.GraphicsCompositor.Cameras[0].Camera;
-        }
-
-        public static IMouseDevice GetFirstMouse()
-        {
-            return VLScript.GameInstance.Input.Mouse;
-        }
-
         public static Ray ScreenToWorldRay(CameraComponent cameraComponent, Vector2 position)
         {
             if (cameraComponent == null)

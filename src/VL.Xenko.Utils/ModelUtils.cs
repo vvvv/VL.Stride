@@ -13,11 +13,6 @@ namespace VL.Xenko.Utils
 {
     public static class ModelUtils
     {
-        public static Material LoadMaterial(string path)
-        {
-            return VLScript.GameInstance.Content.Load<Material>(path);
-        }
-
         public static ModelComponent GetOrCreateModelComponent(Entity entity)
         {
             return entity.GetOrCreate<ModelComponent>();
@@ -33,16 +28,6 @@ namespace VL.Xenko.Utils
                 m.Parameters.Set(MaterialKeys.MetalnessValue, metalness);
             }
 
-        }
-
-        public static Entity GetPrefabInstance(string prefabName)
-        {
-            // Note that "MyBulletPrefab" refers to the name and location of your prefab asset
-            var myBulletPrefab = VLScript.GameInstance.Content.Load<Prefab>(prefabName);
-
-            // Instantiate a prefab
-            var instance = myBulletPrefab.Instantiate();
-            return instance[0];
         }
     }
 }
