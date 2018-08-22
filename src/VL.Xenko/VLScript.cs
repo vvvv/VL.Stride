@@ -1,8 +1,9 @@
-﻿using NuGetAssemblyLoader;
-using System;
+﻿using System;
 using Xenko.Engine;
 using Xenko.Graphics;
-using VL.Applications;
+using VL;
+using System.Windows.Forms;
+using System.IO;
 
 namespace VL.Xenko
 {
@@ -11,21 +12,17 @@ namespace VL.Xenko
         public static Game GameInstance;
         public static new GraphicsDevice GraphicsDevice => GameInstance.GraphicsDevice;
 
-        static readonly string VLDefaultDirectory = Environment.CurrentDirectory + @"\VL\";
         readonly string FStartupDoc;
-        readonly string[] VLPackageRepositories;
+        VLContext FContext;
 
         // Declared public member fields and properties will show in the game studio
         public VLScript(string startupDoc = null, string[] packageRepositories = null)
         {
-            FStartupDoc = string.IsNullOrWhiteSpace(startupDoc) ? VLDefaultDirectory + "Main.vl" : startupDoc;
-            VLPackageRepositories = packageRepositories == null || packageRepositories.Length == 0 ? new string[] { VLDefaultDirectory + "packs" } : packageRepositories;
+            FStartupDoc = string.IsNullOrWhiteSpace(startupDoc) ? Path.Combine(Application.StartupPath, "vl", "Main.vl") : startupDoc;
         }
 
         public override void Start()
         {
-            AssemblyLoader.AddPackageRepositories(VLPackageRepositories);
-
             //open VL editor only in debug build
 #if DEBUG
             var openEditor = true;
@@ -34,7 +31,7 @@ namespace VL.Xenko
 #endif
 
             //setup context
-            HDE.Main(new string[0], FStartupDoc, openEditor);
+            FContext = VLSetup.CreateContext(FStartupDoc, openEditor, false);
 
             //go fullscreen in release build
 #if !DEBUG
@@ -45,7 +42,7 @@ namespace VL.Xenko
             var maxHeight = displayMode.AspectRatio < 1.7f ? 1200 : 1080;
             var screenHeight = Math.Min(displayMode.Height, maxHeight);
 
-            var game = VLScript.GameInstance;
+            var game = VLHDE.GameInstance;
             game.GraphicsDeviceManager.PreferredBackBufferWidth = screenWidth;
             game.GraphicsDeviceManager.PreferredBackBufferHeight = screenHeight;
             game.GraphicsDeviceManager.IsFullScreen = true;
@@ -55,9 +52,7 @@ namespace VL.Xenko
 
         public override void Update()
         {
-            var runtimeHost = HDE.HDEContext.Session.RuntimeHost;
-            if (runtimeHost.Mode == VL.Lang.Symbols.RunMode.Running)
-                runtimeHost.Step();
+            FContext.Update();
         }
     }
 }
