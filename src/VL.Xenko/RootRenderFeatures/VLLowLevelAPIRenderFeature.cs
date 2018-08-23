@@ -67,7 +67,8 @@ namespace VL.Xenko.RootRenderFeatures
             Renderer?.Prepare(context);
         }
 
-        public override void Draw(RenderDrawContext context, RenderView renderView, RenderViewStage renderViewStage)
+        int frameNr;
+        public override void Draw(RenderDrawContext context, RenderView renderView, RenderViewStage renderViewStage, int startIndex, int endIndex)
         {
             try
             {
@@ -88,5 +89,4 @@ namespace VL.Xenko.RootRenderFeatures
         }
 
     }
-        
 }
