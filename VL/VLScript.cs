@@ -4,6 +4,7 @@ using Xenko.Graphics;
 using VL;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
 
 namespace VL.Xenko
 {
@@ -50,9 +51,19 @@ namespace VL.Xenko
 #endif
         }
 
+        static SynchronizationContext FFormsSyncContext;
+        SendOrPostCallback FDoEventsCallback = new SendOrPostCallback(o => Application.DoEvents());
         public override void Update()
         {
             FContext.Update();
+
+            // Catch first sync contest from after forms created
+            if (FFormsSyncContext == null)
+                FFormsSyncContext = SynchronizationContext.Current;
+
+            // Post DoEvents async
+            if (FFormsSyncContext != null)
+                FFormsSyncContext.Post(FDoEventsCallback, null);
         }
     }
 }
