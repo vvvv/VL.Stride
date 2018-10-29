@@ -56,14 +56,6 @@ namespace VL.Xenko
         public override void Update()
         {
             FContext.Update();
-
-            // Catch first sync contest from after forms created
-            if (FFormsSyncContext == null)
-                FFormsSyncContext = SynchronizationContext.Current;
-
-            // Post DoEvents async
-            if (FFormsSyncContext != null)
-                FFormsSyncContext.Post(FDoEventsCallback, null);
         }
     }
 }
