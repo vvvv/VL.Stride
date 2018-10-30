@@ -1,9 +1,8 @@
-﻿using VL.Xenko.RootRenderFeatures;
-using Xenko.Core;
+﻿using Xenko.Core;
 using Xenko.Engine;
 using Xenko.Engine.Design;
 
-namespace V.Xenko.Rendering
+namespace VL.Xenko.Rendering
 {
     /// <summary>
     /// Layer components get picked up by the <see cref="LayerProcessor"/> for low level rendering.

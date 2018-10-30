@@ -1,8 +1,7 @@
-﻿using VL.Xenko.RootRenderFeatures;
-using Xenko.Core.Mathematics;
+﻿using Xenko.Core.Mathematics;
 using Xenko.Rendering;
 
-namespace V.Xenko.Rendering
+namespace VL.Xenko.Rendering
 {
     /// <summary>
     /// The render object used by the low level layer rendering system.

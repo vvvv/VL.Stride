@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using VL.Core;
-using VL.Xenko.RootRenderFeatures;
+using VL.Xenko.Rendering;
 using VL.Xenko.Shaders;
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;

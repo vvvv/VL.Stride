@@ -2,7 +2,7 @@
 using Xenko.Engine;
 using Xenko.Rendering;
 
-namespace V.Xenko.Rendering
+namespace VL.Xenko.Rendering
 {
     /// <summary>
     /// The layer processor installs for each <see cref="LayerComponent"/> a <see cref="RenderLayer"/> object in its visibility group.

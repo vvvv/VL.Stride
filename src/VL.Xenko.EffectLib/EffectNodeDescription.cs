@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using VL.Core;
 using VL.Xenko.Rendering;
-using VL.Xenko.RootRenderFeatures;
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;
 using Xenko.Rendering;

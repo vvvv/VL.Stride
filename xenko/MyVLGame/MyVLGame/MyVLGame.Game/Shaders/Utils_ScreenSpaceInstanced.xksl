@@ -1,0 +1,20 @@
+﻿
+shader Utils_ScreenSpaceInstanced : Common_VS_PS_Base, Common_InstanceWorld
+{
+
+    [Color]
+    stage float4 Color;
+    
+    override stage void VSMain()
+    {
+        uint ii = streams.InstanceID;
+        float4 pos = mul(float4(0, 0, 0, 1), InstanceWorld[ii].Matrix);
+        pos.xyz += mul(streams.Position, World).xyz;
+        streams.ShadingPosition = pos;
+    }
+
+    override stage void PSMain() 
+    {
+        streams.ColorTarget = Color;
+    }
+};

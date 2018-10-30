@@ -1,6 +1,5 @@
 ﻿using System;
-using V.Xenko.Rendering;
-using VL.Xenko.RootRenderFeatures;
+using VL.Xenko.Rendering;
 using Xenko.Engine;
 
 namespace VL.Xenko.Layer

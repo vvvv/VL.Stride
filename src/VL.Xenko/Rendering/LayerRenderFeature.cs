@@ -1,11 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using VL.Core;
-using VL.Xenko.RootRenderFeatures;
+using Xenko.Graphics;
 using Xenko.Rendering;
 
-namespace V.Xenko.Rendering
+namespace VL.Xenko.Rendering
 {
+    public interface ILowLevelAPIRender
+    {
+        void Initialize();
+
+        void Collect(RenderContext context);
+
+        void Extract();
+
+        void Prepare(RenderDrawContext context);
+
+        void Draw(RenderContext renderContext, RenderDrawContext drawContext, RenderView renderView, RenderViewStage renderViewStage, CommandList commandList);
+    }
+
     /// <summary>
     /// The layer render feature redirects low level rendering calls to the <see cref="LayerComponent.Layer"/> property 
     /// of all the layer components in the scene which have the SingleCallPerFrame set to false.
