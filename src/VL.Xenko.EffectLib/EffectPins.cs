@@ -8,7 +8,7 @@ namespace VL.Xenko.EffectLib
 {
     static class EffectPins
     {
-        public static IVLPin CreatePin(ParameterCollection parameters, ParameterKey key, bool isPermutationKey)
+        public static IVLPin CreatePin(ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey)
         {
             var argument = key.GetType().GetGenericArguments()[0];
             if (isPermutationKey)
@@ -19,7 +19,7 @@ namespace VL.Xenko.EffectLib
             else if (argument.IsValueType)
             {
                 var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateValuePin), BindingFlags.Static | BindingFlags.Public);
-                return createPinMethod.MakeGenericMethod(argument).Invoke(null, new object[] { parameters, key }) as IVLPin;
+                return createPinMethod.MakeGenericMethod(argument).Invoke(null, new object[] { parameters, key, count }) as IVLPin;
             }
             else
             {
@@ -40,16 +40,34 @@ namespace VL.Xenko.EffectLib
             return new PermutationParameterPin<T>(parameters, key);
         }
 
-        public static IVLPin CreateValuePin<T>(ParameterCollection parameters, ValueParameterKey<T> key) where T : struct
+        public static IVLPin CreateValuePin<T>(ParameterCollection parameters, ValueParameterKey<T> key, int count) where T : struct
         {
             var shaderType = typeof(T);
             var pinType = TypeConversions.ShaderToPinTypeMap.ValueOrDefault(shaderType);
             if (pinType != null)
             {
-                var convertedValueParameterPinType = typeof(ConvertedValueParameterPin<,>).MakeGenericType(shaderType, pinType);
-                return Activator.CreateInstance(convertedValueParameterPinType, parameters, key) as IVLPin;
+                if (count > 1)
+                {
+                    var parameterPinType = typeof(ConvertedArrayValueParameterPin<,>).MakeGenericType(shaderType, pinType);
+                    return Activator.CreateInstance(parameterPinType, parameters, key) as IVLPin;
+                }
+                else
+                {
+                    var parameterPinType = typeof(ConvertedValueParameterPin<,>).MakeGenericType(shaderType, pinType);
+                    return Activator.CreateInstance(parameterPinType, parameters, key) as IVLPin;
+                }
             }
-            return new ValueParameterPin<T>(parameters, key);
+            else
+            {
+                if (count > 1)
+                {
+                    return new ArrayValueParameterPin<T>(parameters, key);
+                }
+                else
+                {
+                    return new ValueParameterPin<T>(parameters, key);
+                }
+            }
         }
 
         public static IVLPin CreateResourcePin<T>(ParameterCollection parameters, ObjectParameterKey<T> key) where T : class
@@ -173,6 +191,39 @@ namespace VL.Xenko.EffectLib
         }
     }
 
+    class ArrayValueParameterPin<T> : ParameterPin, IVLPin where T : struct
+    {
+        public readonly ValueParameterKey<T> Key;
+        readonly ParameterCollection parameters;
+
+        public ArrayValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key) : base(key)
+        {
+            this.parameters = parameters;
+            this.Key = key;
+        }
+
+        public override void Update(ParameterCollection parameters)
+        {
+        }
+
+        // TODO: Add overloads to Xenko wich take accessor instead of less optimal key
+        public T[] Value
+        {
+            get => parameters.GetValues(Key);
+            set
+            {
+                if (value.Length > 0)
+                    parameters.Set(Key, value);
+            }
+        }
+
+        object IVLPin.Value
+        {
+            get => Value;
+            set => Value = (T[])value;
+        }
+    }
+
     class ConvertedValueParameterPin<TShader, TPin> : ParameterPin, IVLPin
         where TShader : struct
         where TPin : struct
@@ -213,6 +264,56 @@ namespace VL.Xenko.EffectLib
         {
             get => Value;
             set => Value = (TPin)value;
+        }
+    }
+
+    class ConvertedArrayValueParameterPin<TShader, TPin> : ParameterPin, IVLPin
+        where TShader : struct
+        where TPin : struct
+    {
+        public readonly ValueParameterKey<TShader> Key;
+        readonly ParameterCollection parameters;
+        readonly ValueConverter<TPin, TShader> pinToShader;
+        readonly ValueConverter<TShader, TPin> shaderToPin;
+
+        public ConvertedArrayValueParameterPin(ParameterCollection parameters, ValueParameterKey<TShader> key) : base(key)
+        {
+            Key = key;
+            this.parameters = parameters;
+            this.pinToShader = TypeConversions.GetConverter<TPin, TShader>();
+            this.shaderToPin = TypeConversions.GetConverter<TShader, TPin>();
+        }
+
+        public override void Update(ParameterCollection parameters)
+        {
+        }
+
+        public TShader[] ShaderValue => parameters.GetValues(Key);
+
+        public TPin[] Value
+        {
+            get
+            {
+                var shaderValue = ShaderValue;
+                var value = new TPin[shaderValue.Length];
+                for (int i = 0; i < value.Length; i++)
+                    value[i] = shaderToPin(ref shaderValue[i]);
+                return value;
+            }
+            set
+            {
+                var shaderValue = new TShader[value.Length];
+                for (int i = 0; i < value.Length; i++)
+                    shaderValue[i] = pinToShader(ref value[i]);
+                if (shaderValue.Length > 0)
+                    parameters.Set(Key, shaderValue);
+            }
+        }
+
+        object IVLPin.Value
+        {
+            get => Value;
+            set => Value = (TPin[])value;
         }
     }
 

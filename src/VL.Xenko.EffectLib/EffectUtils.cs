@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using VL.Core;
@@ -198,6 +199,20 @@ namespace VL.Xenko.EffectLib
             { typeof(Vector3), typeof(SharpDX.Vector3) },
             { typeof(Vector4), typeof(SharpDX.Vector4) },
         };
+
+        static readonly MethodInfo ConvertMethod = typeof(TypeConversions).GetMethod(nameof(Convert), BindingFlags.Static | BindingFlags.Public);
+
+        public static object ConvertShaderToPin(object shaderValue, Type pinType)
+        {
+            var convertMethod = ConvertMethod.MakeGenericMethod(shaderValue.GetType(), pinType);
+            return convertMethod.Invoke(null, new object[] { shaderValue });
+        }
+
+        public static TOut Convert<TIn, TOut>(TIn value)
+        {
+            var converter = GetConverter<TIn, TOut>();
+            return converter(ref value);
+        }
 
         public static ValueConverter<TIn, TOut> GetConverter<TIn, TOut>()
         {
