@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using VL.Core;
 using VL.Xenko.Rendering;
+using VL.Xenko.RootRenderFeatures;
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;
 using Xenko.Rendering;
@@ -185,7 +186,7 @@ namespace VL.Xenko.EffectLib
                     if (key == ComputeShaderBaseKeys.ThreadGroupCountGlobal)
                         continue; // Already handled
 
-                    yield return new ParameterPinDescription(usedNames, key);
+                    yield return new ParameterPinDescription(usedNames, key, parameter.Count);
                 }
 
                 if (needsWorld)
@@ -253,19 +254,40 @@ namespace VL.Xenko.EffectLib
     class ParameterPinDescription : EffectPinDescription
     {
         public readonly ParameterKey Key;
+        public readonly int Count;
         public readonly bool IsPermutationKey;
 
-        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, object defaultValue = null, bool isPermutationKey = false)
+        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, int count = 1, object defaultValue = null, bool isPermutationKey = false)
         {
             Key = key;
             IsPermutationKey = isPermutationKey;
-            DefaultValueBoxed = defaultValue ?? Key.DefaultValueMetadata?.GetDefaultValue();
-            Name = Key.GetPinName(usedNames);
+            Count = count;
+            Name = key.GetPinName(usedNames);
+            var elementType = TypeConversions.ShaderToPinTypeMap.ValueOrDefault(key.PropertyType, key.PropertyType);
+            defaultValue = defaultValue ?? key.DefaultValueMetadata?.GetDefaultValue();
+            // TODO: This should be fixed in Xenko
+            if (key.PropertyType == typeof(Matrix))
+                defaultValue = Matrix.Identity;
+            if (elementType != key.PropertyType)
+                defaultValue = TypeConversions.ConvertShaderToPin(defaultValue, elementType);
+            if (count > 1)
+            {
+                Type = elementType.MakeArrayType();
+                var arr = Array.CreateInstance(elementType, count);
+                for (int i = 0; i < arr.Length; i++)
+                    arr.SetValue(defaultValue, i);
+                DefaultValueBoxed = arr;
+            }
+            else
+            {
+                Type = elementType;
+                DefaultValueBoxed = defaultValue;
+            }
         }
 
         public override string Name { get; }
-        public override Type Type => TypeConversions.ShaderToPinTypeMap.ValueOrDefault(Key.PropertyType, Key.PropertyType);
+        public override Type Type { get; }
         public override object DefaultValueBoxed { get; }
-        public override IVLPin CreatePin(IVLNode node, ParameterCollection parameters) => EffectPins.CreatePin(parameters, Key, IsPermutationKey);
+        public override IVLPin CreatePin(IVLNode node, ParameterCollection parameters) => EffectPins.CreatePin(parameters, Key, Count, IsPermutationKey);
     }
 }
