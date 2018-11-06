@@ -10,7 +10,7 @@ using Xenko.Rendering.ComputeEffect;
 
 namespace VL.Xenko.EffectLib
 {
-    class ComputeEffectNode : IVLNode, ILowLevelAPIRender
+    class ComputeEffectNode : VLObject, IVLNode, ILowLevelAPIRender
     {
         readonly EffectNodeDescription description;
         readonly DynamicEffectInstance instance;
@@ -29,7 +29,7 @@ namespace VL.Xenko.EffectLib
         MutablePipelineState pipelineState;
         bool pipelineStateDirty = true;
 
-        public ComputeEffectNode(EffectNodeDescription description)
+        public ComputeEffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext)
         {
             this.description = description;
             graphicsDevice = description.Factory.DeviceService.GraphicsDevice;
@@ -150,7 +150,8 @@ namespace VL.Xenko.EffectLib
             }
             catch (Exception e)
             {
-                RuntimeGraph.ReportException(e);
+                var re = new RuntimeException(e.InnermostException(), this);
+                RuntimeGraph.ReportException(re);
             }
         }
     }

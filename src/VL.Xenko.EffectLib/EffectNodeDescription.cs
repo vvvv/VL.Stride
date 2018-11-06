@@ -62,9 +62,9 @@ namespace VL.Xenko.EffectLib
         public IVLNode CreateInstance(NodeContext context)
         {
             if (IsCompute)
-                return new ComputeEffectNode(this);
+                return new ComputeEffectNode(context, this);
             else
-                return new EffectNode(this);
+                return new EffectNode(context, this);
         }
 
         public IVLPin[] CreateNodeInputs(IVLNode node, ParameterCollection parameters) => Inputs.Select(p => p.CreatePin(node, parameters)).ToArray();
