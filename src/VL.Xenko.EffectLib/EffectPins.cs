@@ -297,14 +297,22 @@ namespace VL.Xenko.EffectLib
                 var shaderValue = ShaderValue;
                 var value = new TPin[shaderValue.Length];
                 for (int i = 0; i < value.Length; i++)
-                    value[i] = shaderToPin(ref shaderValue[i]);
+                {
+                    // Make a local copy because matrix gets transposed in place
+                    var c = shaderValue[i];
+                    value[i] = shaderToPin(ref c);
+                }
                 return value;
             }
             set
             {
                 var shaderValue = new TShader[value.Length];
                 for (int i = 0; i < value.Length; i++)
-                    shaderValue[i] = pinToShader(ref value[i]);
+                {
+                    // Make a local copy because matrix gets transposed in place
+                    var c = value[i];
+                    shaderValue[i] = pinToShader(ref c);
+                }
                 if (shaderValue.Length > 0)
                     parameters.Set(Key, shaderValue);
             }

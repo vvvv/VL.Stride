@@ -2,13 +2,14 @@
 using System.Linq;
 using VL.Core;
 using VL.Xenko.Rendering;
+using VL.Xenko.Shaders;
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;
 using Xenko.Rendering;
 
 namespace VL.Xenko.EffectLib
 {
-    class EffectNode : IVLNode, IEffect
+    class EffectNode : VLObject, IVLNode, IEffect
     {
         readonly EffectNodeDescription description;
         readonly DynamicEffectInstance instance;
@@ -20,7 +21,7 @@ namespace VL.Xenko.EffectLib
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> customParameterSetterPin;
         ConvertedValueParameterPin<Matrix, SharpDX.Matrix> worldPin;
 
-        public EffectNode(EffectNodeDescription description)
+        public EffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext)
         {
             this.description = description;
             graphicsDevice = description.Factory.DeviceService.GraphicsDevice;
@@ -76,7 +77,8 @@ namespace VL.Xenko.EffectLib
             }
             catch (Exception e)
             {
-                RuntimeGraph.ReportException(e);
+                var re = new RuntimeException(e.InnermostException(), this);
+                RuntimeGraph.ReportException(re);
             }
             return instance;
         }
