@@ -19,13 +19,9 @@ namespace VL.Xenko.EffectLib
 
         public static readonly PinDescription<ILowLevelAPIRender> ComputeMainOutput = new PinDescription<ILowLevelAPIRender>("Output");
 
+        public static readonly PinDescription<Int3> ComputeDispatchCountInput = new PinDescription<Int3>("Dispatch Count", new Int3(1));
+
         public static readonly PinDescription<Int3> ComputeThreadNumbersInput = new PinDescription<Int3>("Thread Numbers", new Int3(1));
-
-        public static readonly PinDescription<Int3> ComputeDispatchThreadGroupCountInput = new PinDescription<Int3>("Thread Group Count", new Int3(1));
-
-        public static readonly PinDescription<bool> ComputeResetCounterInput = new PinDescription<bool>("Reset Counter", true);
-
-        //public static readonly PinDescription<int> ComputeCounterValueInput = new PinDescription<int>("Counter Value");
 
         public static readonly PinDescription<int> ComputeIterationCountInput = new PinDescription<int>("Iteration Count", 1);
 
@@ -133,14 +129,13 @@ namespace VL.Xenko.EffectLib
                 usedNames.Add(ParameterSetterInput.Name);
                 if (IsCompute)
                 {
+                    usedNames.Add(ComputeDispatchCountInput.Name);
                     usedNames.Add(ComputeThreadNumbersInput.Name);
-                    usedNames.Add(ComputeDispatchThreadGroupCountInput.Name);
-                    usedNames.Add(ComputeResetCounterInput.Name);
                     usedNames.Add(ComputeIterationCountInput.Name);
                     usedNames.Add(ComputeIterationParameterSetterInput.Name);
                     // Thread numbers and thread group count pins
                     yield return ComputeThreadNumbersInput;
-                    yield return ComputeDispatchThreadGroupCountInput;
+                    yield return ComputeDispatchCountInput;
                 }
 
                 // Permutation parameters
@@ -190,12 +185,6 @@ namespace VL.Xenko.EffectLib
 
                 if (needsWorld)
                     yield return new ParameterPinDescription(usedNames, TransformationKeys.World);
-
-                if (IsCompute)
-                {
-                    yield return ComputeResetCounterInput;
-                    //yield return ComputeCounterValueInput;
-                }
 
                 yield return ParameterSetterInput;
 

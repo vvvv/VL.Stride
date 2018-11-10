@@ -20,8 +20,7 @@ namespace VL.Xenko.EffectLib
         readonly PerDrawParameters[] perDrawParams;
         readonly ParameterCollection parameters;
         ConvertedValueParameterPin<Matrix, SharpDX.Matrix> worldPin;
-        Pin<Int3> threadNumbersPin, threadGroupCountPin;
-        Pin<bool> resetCounterPin;
+        Pin<Int3> threadNumbersPin, dispatchCountPin;
         Pin<int> iterationCountPin;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> parameterSetterPin;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext, int>> iterationParameterSetterPin;
@@ -49,8 +48,7 @@ namespace VL.Xenko.EffectLib
                 worldPin = Inputs.OfType<ConvertedValueParameterPin<Matrix, SharpDX.Matrix>>().FirstOrDefault(p => p.Key == TransformationKeys.World);
 
             Inputs.SelectPin(EffectNodeDescription.ComputeThreadNumbersInput, ref threadNumbersPin);
-            Inputs.SelectPin(EffectNodeDescription.ComputeDispatchThreadGroupCountInput, ref threadGroupCountPin);
-            Inputs.SelectPin(EffectNodeDescription.ComputeResetCounterInput, ref resetCounterPin);
+            Inputs.SelectPin(EffectNodeDescription.ComputeDispatchCountInput, ref dispatchCountPin);
             Inputs.SelectPin(EffectNodeDescription.ComputeIterationCountInput, ref iterationCountPin);
             Inputs.SelectPin(EffectNodeDescription.ParameterSetterInput, ref parameterSetterPin);
             Inputs.SelectPin(EffectNodeDescription.ComputeIterationParameterSetterInput, ref iterationParameterSetterPin);
@@ -124,7 +122,7 @@ namespace VL.Xenko.EffectLib
                 commandList.SetPipelineState(pipelineState.CurrentState);
 
                 // Set thread group count as provided by input pin
-                var threadGroupCount = threadGroupCountPin.Value;
+                var threadGroupCount = dispatchCountPin.Value;
                 parameters.Set(ComputeShaderBaseKeys.ThreadGroupCountGlobal, threadGroupCount);
 
                 // TODO: This can be optimized by uploading only parameters from the PerDispatch groups - look in Xenkos RootEffectRenderFeature
@@ -139,10 +137,6 @@ namespace VL.Xenko.EffectLib
 
                     // Upload the parameters
                     instance.Apply(drawContext.GraphicsContext);
-
-                    // Reset UAVs
-                    //if (i == 0 && resetCounterPin.Value)
-                    //    commandList.ComputeShaderReApplyUnorderedAccessView(0, 0);
 
                     // Draw a full screen quad
                     commandList.Dispatch(threadGroupCount.X, threadGroupCount.Y, threadGroupCount.Z);

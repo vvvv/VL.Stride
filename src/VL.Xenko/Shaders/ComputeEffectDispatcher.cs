@@ -56,8 +56,6 @@ namespace VL.Xenko.Shaders
         /// </summary>
         public string ShaderSourceName { get; set; }
 
-        public bool ResetCounter { get; set; }
-        public int CounterValue { get; set; }
         public string LastError { get; private set; } = string.Empty;
         public bool IsIndirect { get; set; }
         public Buffer IndirectArgsBuffer { get; set; }
@@ -161,9 +159,6 @@ namespace VL.Xenko.Shaders
             {
                 // Apply the effect, TODO: only update parameters here and Apply only once in Draw
                 EffectInstance.Apply(drawRenderDrawContext.GraphicsContext);
-
-                if (ResetCounter)
-                    drawCommandList.ComputeShaderReApplyUnorderedAccessView(0, CounterValue);
 
                 // Dispatch compute shader
                 if (IsIndirect)
