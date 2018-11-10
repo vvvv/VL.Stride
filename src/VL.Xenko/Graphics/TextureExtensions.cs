@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.IO;
 using System.Runtime.CompilerServices;
 using VL.Lib.Basics.Imaging;
 using VL.Lib.Collections;
@@ -40,6 +41,17 @@ namespace VL.Xenko.Graphics
             }
 
             return texture;
+        }
+
+        public static void SaveTexture(Texture texture, CommandList commandList, string filename, ImageFileType imageFileType = ImageFileType.Png)
+        {
+            using (var image = texture.GetDataAsImage(commandList))
+            {
+                using (var resultFileStream = File.OpenWrite(filename))
+                {
+                    image.Save(resultFileStream, imageFileType);
+                }
+            }
         }
     }
 }
