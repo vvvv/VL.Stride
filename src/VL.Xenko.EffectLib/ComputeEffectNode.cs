@@ -141,8 +141,8 @@ namespace VL.Xenko.EffectLib
                     instance.Apply(drawContext.GraphicsContext);
 
                     // Reset UAVs
-                    if (i == 0 && resetCounterPin.Value)
-                        commandList.ComputeShaderReApplyUnorderedAccessView(0, 0);
+                    //if (i == 0 && resetCounterPin.Value)
+                    //    commandList.ComputeShaderReApplyUnorderedAccessView(0, 0);
 
                     // Draw a full screen quad
                     commandList.Dispatch(threadGroupCount.X, threadGroupCount.Y, threadGroupCount.Z);
