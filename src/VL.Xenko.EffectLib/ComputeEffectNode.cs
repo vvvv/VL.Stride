@@ -20,7 +20,7 @@ namespace VL.Xenko.EffectLib
         readonly PerDrawParameters[] perDrawParams;
         readonly ParameterCollection parameters;
         ConvertedValueParameterPin<Matrix, SharpDX.Matrix> worldPin;
-        Pin<Int3> threadNumbersPin, dispatchCountPin;
+        Pin<Int3> dispatchCountPin, threadNumbersPin;
         Pin<int> iterationCountPin;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> parameterSetterPin;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext, int>> iterationParameterSetterPin;
@@ -47,8 +47,8 @@ namespace VL.Xenko.EffectLib
             if (perDrawParams.Length > 0)
                 worldPin = Inputs.OfType<ConvertedValueParameterPin<Matrix, SharpDX.Matrix>>().FirstOrDefault(p => p.Key == TransformationKeys.World);
 
-            Inputs.SelectPin(EffectNodeDescription.ComputeThreadNumbersInput, ref threadNumbersPin);
             Inputs.SelectPin(EffectNodeDescription.ComputeDispatchCountInput, ref dispatchCountPin);
+            Inputs.SelectPin(EffectNodeDescription.ComputeThreadNumbersInput, ref threadNumbersPin);
             Inputs.SelectPin(EffectNodeDescription.ComputeIterationCountInput, ref iterationCountPin);
             Inputs.SelectPin(EffectNodeDescription.ParameterSetterInput, ref parameterSetterPin);
             Inputs.SelectPin(EffectNodeDescription.ComputeIterationParameterSetterInput, ref iterationParameterSetterPin);
