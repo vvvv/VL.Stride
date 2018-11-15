@@ -88,10 +88,20 @@ namespace VL.Xenko.EffectLib
         public abstract void Update(ParameterCollection parameters);
     }
 
-    class PermutationParameterPin<T> : ParameterPin, IVLPin
+    abstract class PermutationParameterPin : ParameterPin
+    {
+        public PermutationParameterPin(ParameterKey key) : base(key)
+        {
+        }
+
+        public bool HasChanged { get; protected set; }
+    }
+
+    class PermutationParameterPin<T> : PermutationParameterPin, IVLPin
     {
         public readonly PermutationParameterKey<T> Key;
         readonly ParameterCollection parameters;
+        readonly EqualityComparer<T> comparer = EqualityComparer<T>.Default;
         PermutationParameter<T> accessor;
 
         public PermutationParameterPin(ParameterCollection parameters, PermutationParameterKey<T> key) : base(key)
@@ -109,7 +119,11 @@ namespace VL.Xenko.EffectLib
         public T Value
         {
             get => parameters.Get(accessor);
-            set => parameters.Set(accessor, value);
+            set
+            {
+                HasChanged = !comparer.Equals(value, Value);
+                parameters.Set(accessor, value);
+            }
         }
 
         object IVLPin.Value

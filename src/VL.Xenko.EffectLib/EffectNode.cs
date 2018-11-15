@@ -9,9 +9,8 @@ using Xenko.Rendering;
 
 namespace VL.Xenko.EffectLib
 {
-    class EffectNode : VLObject, IVLNode, IEffect
+    class EffectNode : EffectNodeBase, IVLNode, IEffect
     {
-        readonly EffectNodeDescription description;
         readonly DynamicEffectInstance instance;
         readonly GraphicsDevice graphicsDevice;
         readonly PerFrameParameters[] perFrameParams;
@@ -21,10 +20,9 @@ namespace VL.Xenko.EffectLib
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> customParameterSetterPin;
         ConvertedValueParameterPin<Matrix, SharpDX.Matrix> worldPin;
 
-        public EffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext)
+        public EffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext, description)
         {
-            this.description = description;
-            graphicsDevice = description.Factory.DeviceService.GraphicsDevice;
+            graphicsDevice = description.Factory.DeviceManager.GraphicsDevice;
             instance = new DynamicEffectInstance(description.Name);
             instance.Initialize(description.Factory.ServiceRegistry);
             instance.UpdateEffect(graphicsDevice);
@@ -53,7 +51,7 @@ namespace VL.Xenko.EffectLib
             }
         }
 
-        public void Dispose()
+        protected override void Destroy()
         {
             instance.Dispose();
         }

@@ -10,9 +10,8 @@ using Xenko.Rendering.ComputeEffect;
 
 namespace VL.Xenko.EffectLib
 {
-    class ComputeEffectNode : VLObject, IVLNode, ILowLevelAPIRender
+    class ComputeEffectNode : EffectNodeBase, IVLNode, ILowLevelAPIRender
     {
-        readonly EffectNodeDescription description;
         readonly DynamicEffectInstance instance;
         readonly GraphicsDevice graphicsDevice;
         readonly PerFrameParameters[] perFrameParams;
@@ -29,10 +28,9 @@ namespace VL.Xenko.EffectLib
         MutablePipelineState pipelineState;
         bool pipelineStateDirty = true;
 
-        public ComputeEffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext)
+        public ComputeEffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext, description)
         {
-            this.description = description;
-            graphicsDevice = description.Factory.DeviceService.GraphicsDevice;
+            graphicsDevice = description.Factory.DeviceManager.GraphicsDevice;
             instance = new DynamicEffectInstance("ComputeEffectShader");
             // TODO: Same code as in description
             instance.Parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, description.Name);
@@ -64,7 +62,7 @@ namespace VL.Xenko.EffectLib
         {
         }
 
-        public void Dispose()
+        protected override void Destroy()
         {
             instance.Dispose();
         }
