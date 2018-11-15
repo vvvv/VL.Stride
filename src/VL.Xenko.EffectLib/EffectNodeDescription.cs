@@ -39,6 +39,8 @@ namespace VL.Xenko.EffectLib
         public static readonly PinDescription<Action<ParameterCollection, RenderView, RenderDrawContext, int>> ComputeIterationParameterSetterInput = 
             new PinDescription<Action<ParameterCollection, RenderView, RenderDrawContext, int>>("Iteration Parameter Setter");
 
+        public static readonly PinDescription<bool> ComputeEnabledInput = new PinDescription<bool>("Enabled", true);
+
         EffectPinDescription[] inputs, outputs;
         bool? isCompute;
         CompilerResults compilerResults;
@@ -156,6 +158,7 @@ namespace VL.Xenko.EffectLib
                     usedNames.Add(ComputeThreadNumbersInput.Name);
                     usedNames.Add(ComputeIterationCountInput.Name);
                     usedNames.Add(ComputeIterationParameterSetterInput.Name);
+                    usedNames.Add(ComputeEnabledInput.Name);
                     // Thread numbers and thread group count pins
                     yield return ComputeThreadNumbersInput;
                     yield return ComputeDispatchCountInput;
@@ -215,6 +218,7 @@ namespace VL.Xenko.EffectLib
                 {
                     yield return ComputeIterationCountInput;
                     yield return ComputeIterationParameterSetterInput;
+                    yield return ComputeEnabledInput;
                 }
             }
         }

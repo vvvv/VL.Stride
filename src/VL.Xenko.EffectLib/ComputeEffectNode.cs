@@ -23,6 +23,7 @@ namespace VL.Xenko.EffectLib
         Pin<int> iterationCountPin;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> parameterSetterPin;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext, int>> iterationParameterSetterPin;
+        Pin<bool> enabledPin;
         ValueParameter<Int3> threadGroupCountAccessor;
         MutablePipelineState pipelineState;
         bool pipelineStateDirty = true;
@@ -50,6 +51,7 @@ namespace VL.Xenko.EffectLib
             Inputs.SelectPin(EffectNodeDescription.ComputeIterationCountInput, ref iterationCountPin);
             Inputs.SelectPin(EffectNodeDescription.ParameterSetterInput, ref parameterSetterPin);
             Inputs.SelectPin(EffectNodeDescription.ComputeIterationParameterSetterInput, ref iterationParameterSetterPin);
+            Inputs.SelectPin(EffectNodeDescription.ComputeEnabledInput, ref enabledPin);
         }
 
         public IVLPin[] Inputs { get; }
@@ -83,6 +85,9 @@ namespace VL.Xenko.EffectLib
 
         void ILowLevelAPIRender.Draw(RenderContext renderContext, RenderDrawContext drawContext, RenderView renderView, RenderViewStage renderViewStage, CommandList commandList)
         {
+            if (!enabledPin.Value)
+                return;
+
             try
             {
                 var pipelineState = this.pipelineState ?? (this.pipelineState = new MutablePipelineState(renderContext.GraphicsDevice));
