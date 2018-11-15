@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using System.Threading;
 using VL.Core;
+using VL.Core.Diagnostics;
 using VL.Xenko.Rendering;
+using VL.Xenko.Shaders;
+using Xenko.Core.Diagnostics;
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;
 using Xenko.Rendering;
 using Xenko.Rendering.ComputeEffect;
 using Xenko.Shaders;
+using Xenko.Shaders.Compiler;
 using Buffer = Xenko.Graphics.Buffer;
 
 namespace VL.Xenko.EffectLib
@@ -32,8 +40,8 @@ namespace VL.Xenko.EffectLib
             new PinDescription<Action<ParameterCollection, RenderView, RenderDrawContext, int>>("Iteration Parameter Setter");
 
         EffectPinDescription[] inputs, outputs;
-        Effect effect;
         bool? isCompute;
+        CompilerResults compilerResults;
 
         public EffectNodeDescription(EffectNodeFactory factory, string effectName)
         {
@@ -51,9 +59,23 @@ namespace VL.Xenko.EffectLib
 
         public EffectPinDescription[] Outputs => outputs ?? (outputs = GetOuputs().ToArray());
 
-        public Effect Effect => effect ?? (effect = Factory.EffectSystem.LoadEffect(Name).WaitForResult());
-
         public bool IsCompute => isCompute.HasValue ? isCompute.Value : (isCompute = GetIsCompute()).Value;
+
+        public bool IsInUse => compilerResults != null;
+
+        public CompilerResults CompilerResults => compilerResults ?? (compilerResults = Factory.GetCompilerResults(Name));
+
+        public IEnumerable<Message> Messages
+        {
+            get
+            {
+                foreach (var m in CompilerResults.Messages)
+                    yield return new Message(m.Type.ToMessageType(), m.Text);
+                var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();
+                foreach (var m in bytecodeCompilerResults.CompilationLog.Messages)
+                    yield return new Message(m.Type.ToMessageType(), m.Text);
+            }
+        }
 
         public IVLNode CreateInstance(NodeContext context)
         {
@@ -83,18 +105,19 @@ namespace VL.Xenko.EffectLib
 
         bool GetIsCompute()
         {
-            using (var effectInstance = new DynamicEffectInstance(Name))
+            try
             {
-                try
-                {
-                    effectInstance.Initialize(Factory.ServiceRegistry);
-                    effectInstance.UpdateEffect(Factory.DeviceService.GraphicsDevice);
-                    return effectInstance.Effect.Bytecode.Stages.Any(s => s.Stage == ShaderStage.Compute);
-                }
-                catch (Exception)
-                {
+                if (CompilerResults.HasErrors)
                     return false;
-                }
+                var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();
+                if (bytecodeCompilerResults.CompilationLog.HasErrors)
+                    return false;
+                var bytecode = bytecodeCompilerResults.Bytecode;
+                return bytecode.Stages.Any(s => s.Stage == ShaderStage.Compute);
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
@@ -123,7 +146,7 @@ namespace VL.Xenko.EffectLib
                     parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
                 }
                 dummyInstance.Initialize(Factory.ServiceRegistry);
-                dummyInstance.UpdateEffect(Factory.DeviceService.GraphicsDevice);
+                dummyInstance.UpdateEffect(Factory.DeviceManager.GraphicsDevice);
 
                 var usedNames = new HashSet<string>();
                 usedNames.Add(ParameterSetterInput.Name);
@@ -209,6 +232,22 @@ namespace VL.Xenko.EffectLib
             {
                 yield return EffectMainOutput;
             }
+        }
+
+        public bool OpenEditor()
+        {
+            var path = Factory.GetPathOfXkslShader(Name);
+            Process.Start(path);
+
+            var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();
+            foreach (var m in bytecodeCompilerResults.CompilationLog.Messages)
+            {
+                if (EffectNodeFactory.TryGetFilePath(m, out string p) && p != path && File.Exists(p))
+                    Process.Start(p);
+                break;
+            }
+
+            return true;
         }
     }
 

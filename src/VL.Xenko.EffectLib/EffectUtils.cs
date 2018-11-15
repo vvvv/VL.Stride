@@ -5,12 +5,14 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using VL.Core;
+using VL.Core.Diagnostics;
+using Xenko.Core.Diagnostics;
 using Xenko.Core.Mathematics;
 using Xenko.Rendering;
 
 namespace VL.Xenko.EffectLib
 {
-    static class PinExtensions
+    static class EffectUtils
     {
         static readonly Regex FCamelCasePattern = new Regex("[a-z][A-Z0-9]", RegexOptions.Compiled);
 
@@ -47,6 +49,25 @@ namespace VL.Xenko.EffectLib
             if (dotIndex >= 0)
                 return name.Substring(dotIndex + 1);
             return name;
+        }
+
+        public static MessageType ToMessageType(this LogMessageType type)
+        {
+            switch (type)
+            {
+                case LogMessageType.Debug:
+                    return MessageType.Debug;
+                case LogMessageType.Verbose:
+                case LogMessageType.Info:
+                    return MessageType.Info;
+                case LogMessageType.Warning:
+                    return MessageType.Warning;
+                case LogMessageType.Error:
+                case LogMessageType.Fatal:
+                    return MessageType.Error;
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 

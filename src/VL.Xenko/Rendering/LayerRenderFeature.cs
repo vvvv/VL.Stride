@@ -23,7 +23,7 @@ namespace VL.Xenko.Rendering
     /// The layer render feature redirects low level rendering calls to the <see cref="LayerComponent.Layer"/> property 
     /// of all the layer components in the scene which have the SingleCallPerFrame set to false.
     /// </summary>
-    public /*sealed*/ class LayerRenderFeature : RootRenderFeature, INotifyHotSwapImminent
+    public /*sealed*/ class LayerRenderFeature : RootRenderFeature
     {
         private readonly List<ILowLevelAPIRender> singleCallLayers = new List<ILowLevelAPIRender>();
         private readonly List<ILowLevelAPIRender> layers = new List<ILowLevelAPIRender>();
@@ -64,30 +64,12 @@ namespace VL.Xenko.Rendering
                 }
             }
 
-            // Tell VL that we're calling into it - ensures that no hotswap will be happening
-            RuntimeGraph.Enter(this);
-            try
+            // Call layers which want to get invoked only once per frame first
+            var currentFrameNr = renderContext.Time.FrameCount;
+            if (lastFrameNr != currentFrameNr)
             {
-                // Call layers which want to get invoked only once per frame first
-                var currentFrameNr = renderContext.Time.FrameCount;
-                if (lastFrameNr != currentFrameNr)
-                {
-                    lastFrameNr = currentFrameNr;
-                    foreach (var layer in singleCallLayers)
-                    {
-                        try
-                        {
-                            layer?.Draw(Context, context, renderView, renderViewStage, context.CommandList);
-                        }
-                        catch (Exception e)
-                        {
-                            RuntimeGraph.ReportException(e);
-                        }
-                    }
-                }
-
-                // Call layers which can get invoked twice per frame (for each eye)
-                foreach (var layer in layers)
+                lastFrameNr = currentFrameNr;
+                foreach (var layer in singleCallLayers)
                 {
                     try
                     {
@@ -99,12 +81,19 @@ namespace VL.Xenko.Rendering
                     }
                 }
             }
-            finally
+
+            // Call layers which can get invoked twice per frame (for each eye)
+            foreach (var layer in layers)
             {
-                RuntimeGraph.Exit(this);
+                try
+                {
+                    layer?.Draw(Context, context, renderView, renderViewStage, context.CommandList);
+                }
+                catch (Exception e)
+                {
+                    RuntimeGraph.ReportException(e);
+                }
             }
         }
-
-        void INotifyHotSwapImminent.HotSwapImminent() { }
     }
 }
