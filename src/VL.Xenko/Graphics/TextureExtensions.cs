@@ -43,7 +43,7 @@ namespace VL.Xenko.Graphics
             return texture;
         }
 
-        public static void SaveTexture(Texture texture, CommandList commandList, string filename, ImageFileType imageFileType = ImageFileType.Png)
+        public static void SaveTexture(this Texture texture, CommandList commandList, string filename, ImageFileType imageFileType = ImageFileType.Png)
         {
             using (var image = texture.GetDataAsImage(commandList))
             {
@@ -53,5 +53,8 @@ namespace VL.Xenko.Graphics
                 }
             }
         }
+
+        
+
     }
 }
