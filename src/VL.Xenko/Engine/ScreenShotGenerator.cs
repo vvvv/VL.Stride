@@ -1,6 +1,5 @@
 ﻿using System;
 using VL.Xenko.Graphics;
-using Xenko.Core.Mathematics;
 using Xenko.Games;
 using Xenko.Graphics;
 
@@ -51,14 +50,13 @@ namespace VL.Xenko.Engine
                     graphicsContext.ResourceGroupAllocator.Reset(graphicsContext.CommandList);
                     gameSystems.Draw(drawTime);
 
-                    // write the screen shot to the file
+                    // write the screenshot to the file
                     renderTarget.SaveTexture(commandList, screenshotUrl, fileType);
 
                 }
                 finally
                 {
                     // Cleanup
-
                     graphicsDevice.Presenter = previousPresenter;
                     tempPresenter.Dispose();
 
