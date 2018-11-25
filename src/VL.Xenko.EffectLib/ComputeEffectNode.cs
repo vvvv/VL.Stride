@@ -35,8 +35,15 @@ namespace VL.Xenko.EffectLib
             // TODO: Same code as in description
             instance.Parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, description.Name);
             instance.Parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
-            instance.Initialize(description.Factory.ServiceRegistry);
-            instance.UpdateEffect(graphicsDevice);
+            try
+            {
+                instance.Initialize(description.Factory.ServiceRegistry);
+                instance.UpdateEffect(graphicsDevice);
+            }
+            catch (Exception e)
+            {
+                ReportException(e);
+            }
             parameters = instance.Parameters;
             Inputs = description.CreateNodeInputs(this, parameters);
             Outputs = description.CreateNodeOutputs(this, parameters);
@@ -85,7 +92,7 @@ namespace VL.Xenko.EffectLib
 
         void ILowLevelAPIRender.Draw(RenderContext renderContext, RenderDrawContext drawContext, RenderView renderView, RenderViewStage renderViewStage, CommandList commandList)
         {
-            if (!enabledPin.Value)
+            if (!enabledPin.Value || description.HasCompilerErrors)
                 return;
 
             try
@@ -147,8 +154,7 @@ namespace VL.Xenko.EffectLib
             }
             catch (Exception e)
             {
-                var re = new RuntimeException(e.InnermostException(), this);
-                RuntimeGraph.ReportException(re);
+                ReportException(e);
             }
         }
     }

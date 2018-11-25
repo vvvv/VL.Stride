@@ -61,9 +61,15 @@ namespace VL.Xenko.EffectLib
 
         public EffectPinDescription[] Outputs => outputs ?? (outputs = GetOuputs().ToArray());
 
-        public bool IsCompute => isCompute.HasValue ? isCompute.Value : (isCompute = GetIsCompute()).Value;
+        public bool IsCompute
+        {
+            get => isCompute.HasValue ? isCompute.Value : (isCompute = GetIsCompute()).Value;
+            set => isCompute = value;
+        }
 
         public bool IsInUse => compilerResults != null;
+
+        public bool HasCompilerErrors => CompilerResults.HasErrors || CompilerResults.Bytecode.WaitForResult().CompilationLog.HasErrors;
 
         public CompilerResults CompilerResults => compilerResults ?? (compilerResults = Factory.GetCompilerResults(Name));
 

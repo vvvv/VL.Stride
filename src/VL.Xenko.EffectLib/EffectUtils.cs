@@ -79,10 +79,13 @@ namespace VL.Xenko.EffectLib
 
         public static IEnumerable<T> GetWellKnownParameters<T>(this ParameterCollection parameters, Dictionary<string, T> map)
         {
-            foreach (var p in parameters.Layout.LayoutParameterKeyInfos)
+            if (parameters != null)
             {
-                if (map.TryGetValue(p.Key.Name, out T entry))
-                    yield return entry;
+                foreach (var p in parameters.Layout.LayoutParameterKeyInfos)
+                {
+                    if (map.TryGetValue(p.Key.Name, out T entry))
+                        yield return entry;
+                }
             }
         }
 

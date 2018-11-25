@@ -24,8 +24,15 @@ namespace VL.Xenko.EffectLib
         {
             graphicsDevice = description.Factory.DeviceManager.GraphicsDevice;
             instance = new DynamicEffectInstance(description.Name);
-            instance.Initialize(description.Factory.ServiceRegistry);
-            instance.UpdateEffect(graphicsDevice);
+            try
+            {
+                instance.Initialize(description.Factory.ServiceRegistry);
+                instance.UpdateEffect(graphicsDevice);
+            }
+            catch (Exception e)
+            {
+                ReportException(e);
+            }
             parameters = instance.Parameters;
             Inputs = description.CreateNodeInputs(this, parameters);
             Outputs = description.CreateNodeOutputs(this, parameters);

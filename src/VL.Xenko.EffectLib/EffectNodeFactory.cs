@@ -41,6 +41,7 @@ namespace VL.Xenko.EffectLib
         readonly ObservableCollection<IVLNodeDescription> nodeDescriptions;
         readonly DirectoryWatcher directoryWatcher;
         readonly SynchronizationContext mainContext;
+        Timer timer;
 
         public EffectNodeFactory()
         {
@@ -56,6 +57,9 @@ namespace VL.Xenko.EffectLib
 
             if (EffectSystem != null)
             {
+                // Leads to deadlocks
+                ((EffectCompilerCache)EffectSystem.Compiler).CompileEffectAsynchronously = false;
+
                 // Ensure the effect system tracks the same files as we do
                 var fieldInfo = typeof(EffectSystem).GetField("directoryWatcher", BindingFlags.NonPublic | BindingFlags.Instance);
                 directoryWatcher = fieldInfo.GetValue(EffectSystem) as DirectoryWatcher;
@@ -220,7 +224,8 @@ namespace VL.Xenko.EffectLib
         {
             if (e.ChangeType == FileEventChangeType.Changed || e.ChangeType == FileEventChangeType.Renamed)
             {
-                mainContext.Post(_ => UpdateNodeDescriptions(), null);
+                timer?.Dispose();
+                timer = new Timer(_ => mainContext.Post(s => UpdateNodeDescriptions(), null), null, 500, Timeout.Infinite);
             }
         }
 
@@ -237,6 +242,8 @@ namespace VL.Xenko.EffectLib
                 if (!updatedDescription.Inputs.SequenceEqual(description.Inputs, PinComparer.Instance) ||
                     !updatedDescription.Outputs.SequenceEqual(description.Outputs, PinComparer.Instance))
                 {
+                    if (updatedDescription.HasCompilerErrors && !description.HasCompilerErrors)
+                        updatedDescription.IsCompute = description.IsCompute; // So we build the correct instance - would be nice if system could deal with null
                     // Signature change, force a new compilation
                     nodeDescriptions[i] = updatedDescription;
                 }

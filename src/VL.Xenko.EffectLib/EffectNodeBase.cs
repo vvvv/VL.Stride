@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using VL.Core;
+using VL.Xenko.Shaders;
 
 namespace VL.Xenko.EffectLib
 {
     abstract class EffectNodeBase : VLObject, IDisposable
     {
-        readonly EffectNodeDescription description;
+        protected readonly EffectNodeDescription description;
         int counter = 1;
 
         public EffectNodeBase(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext)
@@ -29,5 +30,11 @@ namespace VL.Xenko.EffectLib
         }
 
         protected abstract void Destroy();
+
+        protected void ReportException(Exception e)
+        {
+            var re = new RuntimeException(e.InnermostException(), this);
+            RuntimeGraph.ReportException(re);
+        }
     }
 }
