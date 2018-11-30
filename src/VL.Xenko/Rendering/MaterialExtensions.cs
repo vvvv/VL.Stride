@@ -36,13 +36,15 @@ namespace VL.Xenko.Rendering
         {
             foreach (var pass in material.Passes)
             {
-                clone.Passes.Add(new MaterialPass(new ParameterCollection(pass.Parameters))
+                clone.Passes.Add(new MaterialPass()
                 {
                     HasTransparency = pass.HasTransparency,
                     BlendState = pass.BlendState,
                     CullMode = pass.CullMode,
                     IsLightDependent = pass.IsLightDependent,
-                    TessellationMethod = pass.TessellationMethod
+                    TessellationMethod = pass.TessellationMethod,
+                    PassIndex = pass.PassIndex,
+                    Parameters = new ParameterCollection(pass.Parameters)
                 });
             }
         }
