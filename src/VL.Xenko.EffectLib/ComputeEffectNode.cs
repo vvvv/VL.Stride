@@ -116,11 +116,25 @@ namespace VL.Xenko.EffectLib
                 // Give user chance to override
                 parameterSetterPin?.Value.Invoke(parameters, renderView, drawContext);
 
-                if (instance.UpdateEffect(renderContext.GraphicsDevice) || pipelineStateDirty)
+                var upstreamVersion = description.Version;
+                try
                 {
-                    threadGroupCountAccessor = parameters.GetAccessor(ComputeShaderBaseKeys.ThreadGroupCountGlobal);
-                    foreach (var p in Inputs.OfType<ParameterPin>())
-                        p.Update(parameters);
+                    if (upstreamVersion > version && instance.UpdateEffect(renderContext.GraphicsDevice))
+                    {
+                        threadGroupCountAccessor = parameters.GetAccessor(ComputeShaderBaseKeys.ThreadGroupCountGlobal);
+                        foreach (var p in Inputs.OfType<ParameterPin>())
+                            p.Update(parameters);
+                        pipelineStateDirty = true;
+                    }
+                }
+                finally
+                {
+                    version = upstreamVersion;
+                }
+
+                if (pipelineStateDirty)
+                {
+                    instance.UpdateEffect(renderContext.GraphicsDevice);
                     pipelineState.State.SetDefaults();
                     pipelineState.State.RootSignature = instance.RootSignature;
                     pipelineState.State.EffectBytecode = instance.Effect.Bytecode;

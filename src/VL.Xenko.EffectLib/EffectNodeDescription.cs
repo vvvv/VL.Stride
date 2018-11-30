@@ -51,6 +51,19 @@ namespace VL.Xenko.EffectLib
             Name = effectName;
         }
 
+        // Used when effect has errors - we keep the signature from the previous one but show the compiler errors
+        // Because we have errors VL will dispose all previous instances of ours and not create any new ones but the type information of our pins we keep on
+        // to so other parts of patch won't break due to loss of typing information
+        public EffectNodeDescription(EffectNodeDescription previous, CompilerResults compilerResults)
+        {
+            Factory = previous.Factory;
+            Name = previous.Name;
+            inputs = previous.Inputs;
+            outputs = previous.Outputs;
+            isCompute = previous.IsCompute;
+            this.compilerResults = compilerResults;
+        }
+
         public EffectNodeFactory Factory { get; }
 
         public string Name { get; }
@@ -64,7 +77,6 @@ namespace VL.Xenko.EffectLib
         public bool IsCompute
         {
             get => isCompute.HasValue ? isCompute.Value : (isCompute = GetIsCompute()).Value;
-            set => isCompute = value;
         }
 
         public bool IsInUse => compilerResults != null;
@@ -72,6 +84,10 @@ namespace VL.Xenko.EffectLib
         public bool HasCompilerErrors => CompilerResults.HasErrors || CompilerResults.Bytecode.WaitForResult().CompilationLog.HasErrors;
 
         public CompilerResults CompilerResults => compilerResults ?? (compilerResults = Factory.GetCompilerResults(Name));
+
+        public EffectBytecode Bytecode => CompilerResults.Bytecode.WaitForResult().Bytecode;
+
+        public int Version { get; internal set; }
 
         public IEnumerable<Message> Messages
         {

@@ -12,11 +12,13 @@ namespace VL.Xenko.EffectLib
     abstract class EffectNodeBase : VLObject, IDisposable
     {
         protected readonly EffectNodeDescription description;
+        protected int version;
         int counter = 1;
 
         public EffectNodeBase(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext)
         {
             this.description = description;
+            this.version = description.Version;
         }
 
         public IVLNodeDescription NodeDescription => description;

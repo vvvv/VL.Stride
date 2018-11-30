@@ -17,6 +17,7 @@ namespace VL.Xenko.EffectLib
         readonly PerViewParameters[] perViewParams;
         readonly PerDrawParameters[] perDrawParams;
         readonly ParameterCollection parameters;
+        bool pipelineStateDirty = true;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> customParameterSetterPin;
         ConvertedValueParameterPin<Matrix, SharpDX.Matrix> worldPin;
 
@@ -51,10 +52,19 @@ namespace VL.Xenko.EffectLib
 
         public void Update()
         {
-            if (instance.UpdateEffect(graphicsDevice))
+            var upstreamVersion = description.Version;
+            try
             {
-                foreach (var p in Inputs.OfType<ParameterPin>())
-                    p.Update(parameters);
+                if (pipelineStateDirty || (upstreamVersion > version && instance.UpdateEffect(graphicsDevice)))
+                {
+                    foreach (var p in Inputs.OfType<ParameterPin>())
+                        p.Update(parameters);
+                    pipelineStateDirty = false;
+                }
+            }
+            finally
+            {
+                version = upstreamVersion;
             }
         }
 

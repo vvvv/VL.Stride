@@ -239,13 +239,25 @@ namespace VL.Xenko.EffectLib
                     continue;
 
                 var updatedDescription = new EffectNodeDescription(this, description.Name);
-                if (!updatedDescription.Inputs.SequenceEqual(description.Inputs, PinComparer.Instance) ||
+                if (updatedDescription.HasCompilerErrors != description.HasCompilerErrors ||
+                    !updatedDescription.Inputs.SequenceEqual(description.Inputs, PinComparer.Instance) ||
                     !updatedDescription.Outputs.SequenceEqual(description.Outputs, PinComparer.Instance))
                 {
-                    if (updatedDescription.HasCompilerErrors && !description.HasCompilerErrors)
-                        updatedDescription.IsCompute = description.IsCompute; // So we build the correct instance - would be nice if system could deal with null
-                    // Signature change, force a new compilation
-                    nodeDescriptions[i] = updatedDescription;
+                    if (updatedDescription.HasCompilerErrors)
+                    {
+                        // Keep the signature of previous description but show errors and since we have errors kill all living instances so they don't have to deal with it
+                        nodeDescriptions[i] = new EffectNodeDescription(description, updatedDescription.CompilerResults);
+                    }
+                    else
+                    {
+                        // Signature change, force a new compilation
+                        nodeDescriptions[i] = updatedDescription;
+                    }
+                }
+                else if (updatedDescription.Bytecode != description.Bytecode)
+                {
+                    // Just increase the change count so instances can update
+                    description.Version++;
                 }
             }
         }
