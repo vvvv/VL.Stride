@@ -98,6 +98,7 @@ namespace VL.Xenko.EffectLib
             try
             {
                 var pipelineState = this.pipelineState ?? (this.pipelineState = new MutablePipelineState(renderContext.GraphicsDevice));
+                var permutationCounter = parameters.PermutationCounter;
 
                 // TODO1: PerFrame could be done in Update if we'd have access to frame time
                 // TODO2: This code can be optimized by using parameter accessors and not parameter keys
@@ -132,9 +133,12 @@ namespace VL.Xenko.EffectLib
                     version = upstreamVersion;
                 }
 
-                if (pipelineStateDirty)
+                if (pipelineStateDirty || permutationCounter != parameters.PermutationCounter)
                 {
                     instance.UpdateEffect(renderContext.GraphicsDevice);
+                    threadGroupCountAccessor = parameters.GetAccessor(ComputeShaderBaseKeys.ThreadGroupCountGlobal);
+                    foreach (var p in Inputs.OfType<ParameterPin>())
+                        p.Update(parameters);
                     pipelineState.State.SetDefaults();
                     pipelineState.State.RootSignature = instance.RootSignature;
                     pipelineState.State.EffectBytecode = instance.Effect.Bytecode;
