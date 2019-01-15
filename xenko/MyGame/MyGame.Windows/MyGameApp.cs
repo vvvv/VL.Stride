@@ -11,7 +11,8 @@ namespace MyGame.Windows
         {
             using (var game = new Game())
             {
-                game.AttachVL();
+                var vlMainDoc = @"..\..\..\vl\Main.vl";
+                game.AttachVL(vlMainDoc);
                 game.Run();
             }
         }
