@@ -1,6 +1,6 @@
 using System;
-using VL.Xenko;
 using Xenko.Engine;
+using VL.Xenko;
 
 namespace MyGame.Windows
 {
