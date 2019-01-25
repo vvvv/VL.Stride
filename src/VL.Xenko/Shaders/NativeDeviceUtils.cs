@@ -230,20 +230,5 @@ namespace VL.Xenko.Shaders
 
             return b;
         }
-
-        public static FastTextRenderer SetMatrixTransformHack(this FastTextRenderer fastTextRenderer, dynamic matrixTransform)
-        {
-            if (matrixTransformPi == null)
-            {
-                var effect = (EffectInstance)simpleEffectFi.GetValue(fastTextRenderer);
-                effect.Parameters.Set(SpriteBaseKeys.MatrixTransform, matrixTransform);
-                return fastTextRenderer; 
-            }
-            else
-            {
-                matrixTransformPi.SetValue(fastTextRenderer, matrixTransform);
-                return fastTextRenderer;
-            }
-        }
     }
 }
