@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Description>Allows to run VL inside a Xenko game.</Description>
+    <IncludeContentInPackage>false</IncludeContentInPackage>
+    <IncludeOutputsInPackage>true</IncludeOutputsInPackage>
+    <IncludeVLPackagesInPackage>true</IncludeVLPackagesInPackage>
+    <NugetExePath>$(NuGetPackageRoot)NuGet.CommandLine\4.9.2\tools</NugetExePath>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MSBuildTasks" Version="1.5.0.260">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NuGet.CommandLine" Version="4.9.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <!-- DO NOT DELETE ME! -->
+    <PackageReference Include="VVVV.NuGetAssemblyLoader" Version="0.1.10" />
+
+    <PackageReference Include="Xenko.Engine" Version="3.1.0.1-beta01-0406" />
+    <PackageReference Include="VL.UI.Forms" Version="0.95.92-g6d2aca0743" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VL.Xenko.EffectLib\VL.Xenko.EffectLib.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\VL.Xenko\VL.Xenko.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="App.config">
+      <Kind>Content</Kind>
+      <BuildAction>None</BuildAction>
+      <TargetFramework>any</TargetFramework>
+    </None>
+  </ItemGroup>
+  <Target Name="InstallPacksIntoContentFolder" Condition="'$(IncludeVLPackagesInPackage)' == 'true'" BeforeTargets="GetPackageContents">
+    <!-- General properties -->
+    <PropertyGroup>
+      <_PackageInstallDirectory>$(IntermediateOutputPath)packs\</_PackageInstallDirectory>
+      <_PackageTargetPrefix>vl\packs\</_PackageTargetPrefix>
+    </PropertyGroup>
+    <!-- Packages to install -->
+    <ItemGroup>
+      <_PackagesToInstall Include="VL.Xenko.EffectLib" Version="$(Version)" />
+    </ItemGroup>
+    <!-- Make sure we start from scratch -->
+    <RemoveDir Directories="$(_PackageInstallDirectory)" />
+    <!-- Install our VL packages -->
+    <NuGetInstall StandardOutputImportance="high" ToolPath="$(NugetExePath)" Package="%(_PackagesToInstall.Identity)" Version="%(_PackagesToInstall.Version)" OutputDirectory="$(_PackageInstallDirectory)" ConfigFile="$(LocalNuGetConfigFile)" PackageSaveMode="nuspec" PreRelease="true" />
+    <!-- Make all the installed packages part of our package -->
+    <ItemGroup>
+      <!-- Include files first so we can use it's metadata when adding to package files -->
+      <_ContentFiles Include="$(_PackageInstallDirectory)**" />
+      <PackageFile Include="@(_ContentFiles)" Condition="$([System.String]::new('%(RecursiveDir)').StartsWith('VL.'))">
+        <Kind>Content</Kind>
+        <BuildAction>None</BuildAction>
+        <CopyToOutput>true</CopyToOutput>
+        <TargetFramework>any</TargetFramework>
+        <!-- nuget pack does not pack up *.nuspec files - so rename them -->
+        <TargetPath Condition="%(Extension) == '.nuspec'">$(_PackageTargetPrefix)%(RecursiveDir)%(Filename).nuspec1</TargetPath>
+        <TargetPath Condition="%(Extension) != '.nuspec'">$(_PackageTargetPrefix)%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+      </PackageFile>
+    </ItemGroup>
+  </Target>
+</Project>
