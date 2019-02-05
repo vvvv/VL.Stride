@@ -1,14 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" InitialTargets="IncludeVLPackages">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <PackageId>$(AssemblyName)</PackageId>
     <Description>Allows to run VL inside a Xenko game.</Description>
-    <IncludeContentInPackage>false</IncludeContentInPackage>
+    <IncludeContentInPackage>true</IncludeContentInPackage>
     <IncludeOutputsInPackage>true</IncludeOutputsInPackage>
-    <IncludeVLPackagesInPackage>true</IncludeVLPackagesInPackage>
     <NugetExePath>$(NuGetPackageRoot)NuGet.CommandLine\4.9.2\tools</NugetExePath>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MSBuildTasks" Version="1.5.0.260">
@@ -19,11 +18,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    
+    <PackageReference Include="VL.Meta.Gamma" Version="0.95.100-g96c9f976ef" />
+    <PackageReference Include="VL.UI.Forms" Version="0.95.98-g93e1486243" IncludeAssets="all" />
+    
     <!-- DO NOT DELETE ME! -->
     <PackageReference Include="VVVV.NuGetAssemblyLoader" Version="0.1.10" />
 
     <PackageReference Include="Xenko.Engine" Version="3.1.0.1-beta01-0406" />
-    <PackageReference Include="VL.UI.Forms" Version="0.95.92-g6d2aca0743" IncludeAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VL.Xenko.EffectLib\VL.Xenko.EffectLib.csproj" ReferenceOutputAssembly="false" />
@@ -39,33 +41,39 @@
       <TargetFramework>any</TargetFramework>
     </None>
   </ItemGroup>
-  <Target Name="InstallPacksIntoContentFolder" Condition="'$(IncludeVLPackagesInPackage)' == 'true'" BeforeTargets="GetPackageContents">
-    <!-- General properties -->
-    <PropertyGroup>
-      <_PackageInstallDirectory>$(IntermediateOutputPath)packs\</_PackageInstallDirectory>
-      <_PackageTargetPrefix>vl\packs\</_PackageTargetPrefix>
-    </PropertyGroup>
-    <!-- Packages to install -->
+  
+  <Target Name="IncludeVLPackages">
     <ItemGroup>
-      <_PackagesToInstall Include="VL.Xenko.EffectLib" Version="$(Version)" />
+      <_VLMetaPackage Include="@(PackageReference-&gt;WithMetadataValue('Identity', 'VL.Meta.Gamma'))" />
     </ItemGroup>
-    <!-- Make sure we start from scratch -->
-    <RemoveDir Directories="$(_PackageInstallDirectory)" />
-    <!-- Install our VL packages -->
-    <NuGetInstall StandardOutputImportance="high" ToolPath="$(NugetExePath)" Package="%(_PackagesToInstall.Identity)" Version="%(_PackagesToInstall.Version)" OutputDirectory="$(_PackageInstallDirectory)" ConfigFile="$(LocalNuGetConfigFile)" PackageSaveMode="nuspec" PreRelease="true" />
-    <!-- Make all the installed packages part of our package -->
+    <PropertyGroup>
+      <_PackageTargetPrefix>vl\packs\</_PackageTargetPrefix>
+      <VLVersion>@(_VLMetaPackage->'%(Version)')</VLVersion>
+    </PropertyGroup>
+    <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd'/&gt;" XmlInputPath="$(NuGetPackageRoot)VL.Meta.Gamma\$(VLVersion)\VL.Meta.Gamma.nuspec" Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency/@id">
+      <Output TaskParameter="Result" ItemName="VLPackage" />
+    </XmlPeek>
+    <Message Importance="high" Text="Using VL ($(VLVersion)) packages: @(VLPackage)" />
     <ItemGroup>
-      <!-- Include files first so we can use it's metadata when adding to package files -->
-      <_ContentFiles Include="$(_PackageInstallDirectory)**" />
-      <PackageFile Include="@(_ContentFiles)" Condition="$([System.String]::new('%(RecursiveDir)').StartsWith('VL.'))">
+      <_PackContent Include="$(NuGetPackageRoot)%(VLPackage.Identity)\$(VLVersion)\**" Exclude="$(NuGetPackageRoot)%(VLPackage.Identity)\$(VLVersion)\*.nupkg*">
+        <PackageId>%(VLPackage.Identity)</PackageId>
+        <PackageVersion>$(VLVersion)</PackageVersion>
+      </_PackContent>
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="@(_PackContent)">
+        <!-- Project specific metadata -->
+        <!-- nuget pack does not pack up *.nuspec files - so rename them -->
+        <Link Condition="%(Extension) == '.nuspec'">$(_PackageTargetPrefix)%(_PackContent.PackageId)-%(_PackContent.PackageVersion)\%(RecursiveDir)%(Filename).nuspec1</Link>
+        <Link Condition="%(Extension) != '.nuspec'">$(_PackageTargetPrefix)%(_PackContent.PackageId)-%(_PackContent.PackageVersion)\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <!-- Package specific metadata -->
         <Kind>Content</Kind>
         <BuildAction>None</BuildAction>
         <CopyToOutput>true</CopyToOutput>
         <TargetFramework>any</TargetFramework>
-        <!-- nuget pack does not pack up *.nuspec files - so rename them -->
-        <TargetPath Condition="%(Extension) == '.nuspec'">$(_PackageTargetPrefix)%(RecursiveDir)%(Filename).nuspec1</TargetPath>
-        <TargetPath Condition="%(Extension) != '.nuspec'">$(_PackageTargetPrefix)%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
-      </PackageFile>
+    </None>
     </ItemGroup>
   </Target>
+
 </Project>

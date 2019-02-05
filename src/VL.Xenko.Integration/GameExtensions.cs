@@ -16,7 +16,7 @@ namespace VL.Xenko
         /// <param name="openEditor">Whether or not to open the VL editor.</param>
         /// <param name="openEditorInOtherThread">Whether or not to start VL editor in separate thread.</param>
         /// <param name="goFullscreen">Whether or not the game window should go fullscreen.</param>
-        public static void AttachVL(this Game game, string document = null, bool openEditor = true, bool openEditorInOtherThread = false, bool goFullscreen = false)
+        public static void AttachVL(this Game game, string document = null, bool openEditor = true, bool openEditorInOtherThread = true, bool goFullscreen = false)
         {
             // Use lazy initialization so VL will start after the Xenko game is up an running
             var context = VLContext.Create(
