@@ -18,15 +18,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    
-    <PackageReference Include="VL.Meta.Gamma" Version="0.95.112-gbc165851b7" />
-    <PackageReference Include="VL.UI.Forms" Version="0.95.112-gbc165851b7" IncludeAssets="all" />
-    
+    <PackageReference Include="VL.Meta.Gamma" Version="0.96.6-g1e76781b6b" />
+    <PackageReference Include="VL.UI.Forms" Version="0.96.6-g1e76781b6b" IncludeAssets="all" />
     <!-- DO NOT DELETE ME! -->
-    <PackageReference Include="VVVV.NuGetAssemblyLoader" Version="0.1.10" />
-
-    <PackageReference Include="Xenko.Engine" Version="3.1.0.1-beta01-0438" />
-
+    <PackageReference Include="VVVV.NuGetAssemblyLoader" Version="0.1.11" />
+    <PackageReference Include="Xenko.Engine" Version="3.1.0.1-beta01-0441" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.10.0" />
@@ -47,7 +43,6 @@
       <TargetFramework>any</TargetFramework>
     </None>
   </ItemGroup>
-
   <Target Name="GetVLVersion">
     <ItemGroup>
       <_VLMetaPackage Include="@(PackageReference-&gt;WithMetadataValue('Identity', 'VL.Meta.Gamma'))" />
@@ -55,9 +50,8 @@
     <PropertyGroup>
       <_PackageTargetPrefix>vl\packs\</_PackageTargetPrefix>
       <VLVersion>@(_VLMetaPackage->'%(Version)')</VLVersion>
-    </PropertyGroup>    
+    </PropertyGroup>
   </Target>
-  
   <Target Name="IncludeVLPackages" DependsOnTargets="GetVLVersion">
     <PropertyGroup>
       <_VLGammaMetaPackageManifestPath>$(NuGetPackageRoot)VL.Meta.Gamma\$(VLVersion)\VL.Meta.Gamma.nuspec</_VLGammaMetaPackageManifestPath>
@@ -84,8 +78,7 @@
         <BuildAction>None</BuildAction>
         <CopyToOutput>true</CopyToOutput>
         <TargetFramework>any</TargetFramework>
-    </None>
+      </None>
     </ItemGroup>
   </Target>
-
 </Project>
