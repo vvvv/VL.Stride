@@ -1,0 +1,14 @@
+﻿
+shader Utils_ScreenSpaceDebugTexture : ShaderBase, PositionStream4, Transformation, Texturing
+{
+    override stage void VSMain()
+    {
+        streams.ShadingPosition = mul(streams.Position, World);
+    }
+
+    override stage void PSMain() 
+    {
+        float4 col = Texture0.Sample(LinearSampler, streams.TexCoord);
+        streams.ColorTarget = col;
+    }
+};
