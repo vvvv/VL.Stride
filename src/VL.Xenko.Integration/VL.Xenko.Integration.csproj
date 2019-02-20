@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk" InitialTargets="IncludeVLPackages">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <PackageId>$(AssemblyName)</PackageId>
@@ -51,7 +51,7 @@
       <VLVersion>@(_VLMetaPackage->'%(Version)')</VLVersion>
     </PropertyGroup>
   </Target>
-  <Target Name="IncludeVLPackages" DependsOnTargets="GetVLVersion">
+  <Target Name="IncludeVLPackages" DependsOnTargets="GetVLVersion" BeforeTargets="AssignTargetPaths">
     <PropertyGroup>
       <_VLGammaMetaPackageManifestPath>$(NuGetPackageRoot)VL.Meta.Gamma\$(VLVersion)\VL.Meta.Gamma.nuspec</_VLGammaMetaPackageManifestPath>
     </PropertyGroup>
