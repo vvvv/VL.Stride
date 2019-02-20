@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk" InitialTargets="IncludeVLPackages">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <PackageId>$(AssemblyName)</PackageId>
@@ -10,12 +10,14 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MSBuildTasks" Version="1.5.0.235">
-      <PrivateAssets>all</PrivateAssets>
+    <PackageReference Include="MSBuildTasks" Version="1.5.0.276">
+      <!-- Don't set to private - needed by VL.Build.targets -->
+      <PrivateAssets>none</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NuGet.CommandLine" Version="4.9.2">
-      <PrivateAssets>all</PrivateAssets>
+      <!-- Don't set to private - needed by VL.Build.targets -->
+      <PrivateAssets>none</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="VL.Meta.Gamma" Version="0.96.16-g9c5e367775" />
@@ -30,54 +32,14 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting.Common" Version="2.10.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VL.Xenko.EffectLib\VL.Xenko.EffectLib.csproj" />
+    <ProjectReference Include="..\VL.Xenko.EffectLib\VL.Xenko.EffectLib.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="App.config">
-      <Kind>Content</Kind>
-      <BuildAction>None</BuildAction>
-      <TargetFramework>any</TargetFramework>
+    <None Update="build\VL.Xenko.Integration.targets">
+      <Kind>Build</Kind>
     </None>
   </ItemGroup>
-  <Target Name="GetVLVersion">
-    <ItemGroup>
-      <_VLMetaPackage Include="@(PackageReference-&gt;WithMetadataValue('Identity', 'VL.Meta.Gamma'))" />
-    </ItemGroup>
-    <PropertyGroup>
-      <_PackageTargetPrefix>vl\packs\</_PackageTargetPrefix>
-      <VLVersion>@(_VLMetaPackage->'%(Version)')</VLVersion>
-    </PropertyGroup>
-  </Target>
-  <Target Name="IncludeVLPackages" DependsOnTargets="GetVLVersion">
-    <PropertyGroup>
-      <_VLGammaMetaPackageManifestPath>$(NuGetPackageRoot)VL.Meta.Gamma\$(VLVersion)\VL.Meta.Gamma.nuspec</_VLGammaMetaPackageManifestPath>
-    </PropertyGroup>
-    <XmlPeek Condition="Exists('$(_VLGammaMetaPackageManifestPath)')" Namespaces="&lt;Namespace Prefix='n' Uri='http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd'/&gt;" XmlInputPath="$(_VLGammaMetaPackageManifestPath)" Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency/@id">
-      <Output TaskParameter="Result" ItemName="VLPackage" />
-    </XmlPeek>
-    <Message Importance="high" Text="Using VL ($(VLVersion)) packages: @(VLPackage)" />
-    <ItemGroup>
-      <_PackContent Include="$(NuGetPackageRoot)%(VLPackage.Identity)\$(VLVersion)\**" Exclude="$(NuGetPackageRoot)%(VLPackage.Identity)\$(VLVersion)\*.nupkg*">
-        <PackageId>%(VLPackage.Identity)</PackageId>
-        <PackageVersion>$(VLVersion)</PackageVersion>
-      </_PackContent>
-    </ItemGroup>
-    <ItemGroup>
-      <None Include="@(_PackContent)">
-        <!-- Project specific metadata -->
-        <!-- nuget pack does not pack up *.nuspec files - so rename them -->
-        <Link Condition="%(Extension) == '.nuspec'">$(_PackageTargetPrefix)%(_PackContent.PackageId)-%(_PackContent.PackageVersion)\%(RecursiveDir)%(Filename).nuspec1</Link>
-        <Link Condition="%(Extension) != '.nuspec'">$(_PackageTargetPrefix)%(_PackContent.PackageId)-%(_PackContent.PackageVersion)\%(RecursiveDir)%(Filename)%(Extension)</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <!-- Package specific metadata -->
-        <Kind>Content</Kind>
-        <BuildAction>None</BuildAction>
-        <CopyToOutput>true</CopyToOutput>
-        <TargetFramework>any</TargetFramework>
-      </None>
-    </ItemGroup>
-  </Target>
 </Project>
