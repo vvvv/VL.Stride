@@ -4,8 +4,6 @@
     <TargetFramework>net472</TargetFramework>
     <PackageId>$(AssemblyName)</PackageId>
     <Description>Allows to run VL inside a Xenko game.</Description>
-    <IncludeContentInPackage>true</IncludeContentInPackage>
-    <IncludeOutputsInPackage>true</IncludeOutputsInPackage>
     <NugetExePath>$(NuGetPackageRoot)NuGet.CommandLine\4.9.2\tools</NugetExePath>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -19,6 +17,10 @@
       <!-- Don't set to private - needed by VL.Build.targets -->
       <PrivateAssets>none</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.v110_xp" Version="1.1.2">
+      <!-- This way we save one MB in package size (e_sqlite3.dll) - Xenko delivers this file anyways -->
+      <ExcludeAssets>build</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="VL.Meta.Gamma" Version="0.96.27-g8978b8f112" />
     <PackageReference Include="VL.UI.Forms" Version="0.96.27-g8978b8f112" IncludeAssets="all" />
