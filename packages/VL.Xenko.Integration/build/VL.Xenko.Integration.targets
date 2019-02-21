@@ -61,35 +61,6 @@
     <Message Importance="high" Text="Using VL version $(VLVersion)" />
   </Target>
 
-  <Target Name="_GetVLXenkoEffectLibManifestFromPackage"
-      DependsOnTargets="GetVLXenkoVersion"
-      Condition=" '$(_BuildingLocally)' == 'false' ">
-    <PropertyGroup>
-      <_VLXenkoEffectLibManifest>$(NuGetPackageRoot)VL.Xenko.EffectLib\$(VLXenkoVersion)\vl.xenko.effectlib.nuspec</_VLXenkoEffectLibManifest>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="_GetVLXenkoEffectLibManifestFromProject"
-        DependsOnTargets="GetVLXenkoVersion"
-        Condition=" '$(_BuildingLocally)' == 'true' ">
-    <MSBuild Projects="$(MsBuildThisFileDirectory)..\..\VL.Xenko.EffectLib\src\VL.Xenko.EffectLib.csproj"
-             Properties="Configuration=$(Configuration)"
-             Targets="GetTargetPath" >
-      <Output TaskParameter="TargetOutputs" ItemName="_EffectLibAssembly" />
-    </MSBuild>
-    <PropertyGroup>
-      <_VLXenkoEffectLibManifest>@(_EffectLibAssembly->'%(RootDir)%(Directory)%(Filename)').nuspec</_VLXenkoEffectLibManifest>
-    </PropertyGroup>
-    <Message Importance="high" Text="Using $(_VLXenkoEffectLibManifest)" />
-  </Target>
-
-  <Target Name="GetVLXenkoEffectLibManifest"
-          DependsOnTargets="_GetVLXenkoEffectLibManifestFromPackage;_GetVLXenkoEffectLibManifestFromProject">
-    <PropertyGroup>
-      <_VLXenkoEffectLibOutputManifest>$(_PackageInstallDirectory)VL.Xenko.EffectLib.$(VLXenkoVersion)\VL.Xenko.EffectLib.nuspec</_VLXenkoEffectLibOutputManifest>
-    </PropertyGroup>
-  </Target>
-
   <Target Name="InstallVLIntoPacksFolder" 
           DependsOnTargets="GetVLVersion" 
           Inputs="$(NuGetPackageRoot)VL.Meta.Gamma\$(VLVersion)\vl.meta.gamma.nuspec"
@@ -107,9 +78,16 @@
     </PropertyGroup>
   </Target>
 
+  <Target Name="_GetVLXenkoEffectLibOutputManifest"
+          DependsOnTargets="GetVLXenkoVersion">
+    <PropertyGroup>
+      <_VLXenkoEffectLibOutputManifest>$(_PackageInstallDirectory)VL.Xenko.EffectLib.$(VLXenkoVersion)\VL.Xenko.EffectLib.nuspec</_VLXenkoEffectLibOutputManifest>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="InstallVLXenkoIntoPacksFolder" 
-          DependsOnTargets="GetVLXenkoEffectLibManifest"
-          Inputs="$(_VLXenkoEffectLibManifest)"
+          DependsOnTargets="_GetVLXenkoEffectLibOutputManifest"
+          Inputs="$(_VLXenkoManifest)"
           Outputs="$(_VLXenkoEffectLibOutputManifest)">
     <Message Importance="high" Text="Installing VL.Xenko.EffectLib.$(VLXenkoVersion) to $(_PackageInstallDirectory)" />
     <NuGetInstall ToolPath="$(NugetExePath)"
@@ -120,9 +98,6 @@
                   PackageSaveMode="nuspec"
                   PreRelease="true" />
     <Touch Files="$(_VLXenkoEffectLibOutputManifest)" />
-    <PropertyGroup>
-      <_PackagesInstalled>true</_PackagesInstalled>
-    </PropertyGroup>
   </Target>
  
   <Target Name="InstallPacksIntoContentFolder" 
