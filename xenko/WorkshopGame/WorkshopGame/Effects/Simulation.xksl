@@ -1,0 +1,83 @@
+﻿
+
+shader Simulation: ComputeShaderBase, Global, ParticleStruct
+{   
+
+   // SETTINGS ---------------------------------------------------------------------
+    cbuffer PerFrame
+    {   
+        uint ParticlesCount;
+        bool Reset;
+        float3 TargetPos;
+        float TargetStrength;
+
+    };
+
+
+    // RESOURCES ---------------------------------------------------------------------
+
+    stage RWStructuredBuffer<Particle> ParticlesBuffer;
+    stage Buffer<float4> RandomValues;
+
+    // =====================================================================
+    // CS ==================================================================
+    // =====================================================================
+
+    override void Compute()
+    {
+        uint id = streams.DispatchThreadId.x;
+        if(id >= ParticlesCount) return;
+
+        Particle POut = ParticlesBuffer[id];
+
+        float4 Rnd = RandomValues[id];
+
+        // RESET ----------------------------------------------------------------------------
+        if(Reset)
+        {
+            POut = (Particle) 0;
+            POut.Pos.xyz = Rnd.xyz;
+            POut.Vel = 0;
+        }
+
+         
+        // ====================================================================================
+        // PARTICLE DATA ======================================================================
+        // ====================================================================================
+        float3 Pos = POut.Pos.xyz;
+        float3 Vel = POut.Vel.xyz;
+        float VelLength = length(Vel);
+
+
+        // DRAG:
+        float drag = Rnd.w;
+        if(VelLength > 0)
+        Vel -= Vel * (1-drag);
+
+
+        // ====================================================================================
+        // FORCES =============================================================================
+        // ====================================================================================
+
+        float3 Force = 0;
+
+
+        // Target
+        Force += ((TargetPos + Rnd) - Pos) * TargetStrength;
+
+        Vel += Force;
+
+        // ====================================================================================
+        // INTEGRATION ========================================================================
+        // ====================================================================================
+
+        // Vel 
+        POut.Vel.xyz = Vel;
+        // Pos
+        Pos = Pos + Vel * TimeStep;
+        POut.Pos.xyz = Pos;
+    
+        ParticlesBuffer[id] =  POut;
+    }
+};
+
