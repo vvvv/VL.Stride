@@ -83,7 +83,7 @@
           Inputs="@(_Manifests)"
           Outputs="@(_Manifests->'%(OutputManifest)')">
     
-    <ItemGroup>
+    <ItemGroup Condition="Exists('$(_PackageInstallDirectory)')">
       <_OldDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', '*', System.IO.SearchOption.TopDirectoryOnly))" />
     </ItemGroup>
     <RemoveDir Directories="@(_OldDirectories)" />    
@@ -99,7 +99,7 @@
                   PreRelease="true" />
     <Touch Files="@(_Manifests->'%(OutputManifest)')" />
 
-    <ItemGroup>
+    <ItemGroup Condition="Exists('$(_PackageInstallDirectory)')">
       <_AllDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', '*', System.IO.SearchOption.TopDirectoryOnly))" />
       <_VLDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', 'VL.*', System.IO.SearchOption.TopDirectoryOnly))" />
       <_DirectoriesToDelete Include="@(_AllDirectories)" Exclude="@(_VLDirectories)" />
