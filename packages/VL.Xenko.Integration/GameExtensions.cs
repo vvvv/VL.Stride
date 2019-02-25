@@ -8,11 +8,12 @@ namespace VL.Xenko
 {
     public static class GameExtensions
     {
+
         /// <summary>
         /// Attaches VL to the game.
         /// </summary>
         /// <param name="game">The game to attach VL to.</param>
-        /// <param name="document">The main document VL should open. Defaults to EXE-PATH/vl/Main.vl</param>
+        /// <param name="document">The main document VL should open. Defaults to EXE-PATH/vl/Main.vl, so leave blank when distributing the output folder with contained vl docs.</param>
         /// <param name="openEditor">Whether or not to open the VL editor.</param>
         /// <param name="openEditorInOtherThread">Whether or not to start VL editor in separate thread.</param>
         /// <param name="goFullscreen">Whether or not the game window should go fullscreen.</param>

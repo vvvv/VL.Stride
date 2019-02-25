@@ -8,6 +8,11 @@ namespace VL.Xenko
     // TODO: VL script should talk to one IVLNode so we can also feed it data properly from Xenko as well as exposing its pins to Xenko editor
     public class VLScript : SyncScript
     {
+        /// <summary>
+        /// Recommended default doc while developing.
+        /// </summary>
+        public const string MainVLDocSrc = @"..\..\..\vl\Main.vl";
+
         // TODO: Get rid of me
         public static Game GameInstance { get; private set; }
 

@@ -12,7 +12,7 @@ namespace WorkshopGame.Windows
             using (var game = new Game())
             {
                 var vlMainDoc = @"..\..\..\vl\Main.vl";
-                game.AttachVL(vlMainDoc);
+                game.AttachVL(vlMainDoc, goFullscreen: true);
                 game.Run();
             }
         }
