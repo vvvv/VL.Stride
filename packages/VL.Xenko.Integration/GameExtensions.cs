@@ -20,7 +20,7 @@ namespace VL.Xenko
         public static void AttachVL(this Game game, string document = null, bool openEditor = true, bool openEditorInOtherThread = true, bool goFullscreen = false)
         {
             // Use lazy initialization so VL will start after the Xenko game is up an running
-            var context = VLContext.Create(
+            var context = VLContext.Create("xenko",
                 document: document ?? Path.Combine(Application.StartupPath, "vl", "Main.vl"),
                 openEditor: openEditor,
                 openEditorInOtherThread: openEditorInOtherThread,

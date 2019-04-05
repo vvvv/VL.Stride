@@ -27,12 +27,12 @@ namespace VL.Xenko.Core
                 return context.Serialize(null, value.ToArray());
             }
 
-            public Int3 Deserialize(SerializationContext context, object content, Type type, Int3 defaultValue)
+            public Int3 Deserialize(SerializationContext context, object content, Type type)
             {
-                var @array = context.Deserialize(content, null, Array.Empty<int>());
+                var @array = context.Deserialize<int[]>(content, null);
                 if (@array.Length == 3)
                     return new Int3(@array);
-                return defaultValue;
+                return Int3.Zero;
             }
         }
 
@@ -43,12 +43,12 @@ namespace VL.Xenko.Core
                 return context.Serialize(null, value.ToArray());
             }
 
-            public Vector2 Deserialize(SerializationContext context, object content, Type type, Vector2 defaultValue)
+            public Vector2 Deserialize(SerializationContext context, object content, Type type)
             {
-                var @array = context.Deserialize(content, null, Array.Empty<float>());
+                var @array = context.Deserialize<float[]>(content, null);
                 if (@array.Length == 2)
                     return new Vector2(@array);
-                return defaultValue;
+                return Vector2.Zero;
             }
         }
 
@@ -59,12 +59,12 @@ namespace VL.Xenko.Core
                 return context.Serialize(null, value.ToArray());
             }
 
-            public Vector3 Deserialize(SerializationContext context, object content, Type type, Vector3 defaultValue)
+            public Vector3 Deserialize(SerializationContext context, object content, Type type)
             {
-                var @array = context.Deserialize(content, null, Array.Empty<float>());
+                var @array = context.Deserialize<float[]>(content, null);
                 if (@array.Length == 3)
                     return new Vector3(@array);
-                return defaultValue;
+                return Vector3.Zero;
             }
         }
 
@@ -75,12 +75,12 @@ namespace VL.Xenko.Core
                 return context.Serialize(null, value.ToArray());
             }
 
-            public Vector4 Deserialize(SerializationContext context, object content, Type type, Vector4 defaultValue)
+            public Vector4 Deserialize(SerializationContext context, object content, Type type)
             {
-                var @array = context.Deserialize(content, null, Array.Empty<float>());
+                var @array = context.Deserialize<float[]>(content, null);
                 if (@array.Length == 4)
                     return new Vector4(@array);
-                return defaultValue;
+                return Vector4.UnitW;
             }
         }
 
@@ -91,12 +91,12 @@ namespace VL.Xenko.Core
                 return context.Serialize(null, value.ToArray());
             }
 
-            public Quaternion Deserialize(SerializationContext context, object content, Type type, Quaternion defaultValue)
+            public Quaternion Deserialize(SerializationContext context, object content, Type type)
             {
-                var @array = context.Deserialize(content, null, Array.Empty<float>());
+                var @array = context.Deserialize<float[]>(content, null);
                 if (@array.Length == 4)
                     return new Quaternion(@array);
-                return defaultValue;
+                return Quaternion.Identity;
             }
         }
 
@@ -107,12 +107,12 @@ namespace VL.Xenko.Core
                 return context.Serialize(null, value.ToArray());
             }
 
-            public Matrix Deserialize(SerializationContext context, object content, Type type, Matrix defaultValue)
+            public Matrix Deserialize(SerializationContext context, object content, Type type)
             {
-                var @array = context.Deserialize(content, null, Array.Empty<float>());
+                var @array = context.Deserialize<float[]>(content, null);
                 if (@array.Length == 16)
                     return new Matrix(@array);
-                return defaultValue;
+                return Matrix.Identity;
             }
         }
 
@@ -127,10 +127,10 @@ namespace VL.Xenko.Core
                 };
             }
 
-            public BoundingBox Deserialize(SerializationContext context, object content, Type type, BoundingBox defaultValue)
+            public BoundingBox Deserialize(SerializationContext context, object content, Type type)
             {
-                var minimum = context.Deserialize(content, nameof(BoundingBox.Minimum), defaultValue.Minimum);
-                var maximum = context.Deserialize(content, nameof(BoundingBox.Maximum), defaultValue.Maximum);
+                var minimum = context.Deserialize<Vector3>(content, nameof(BoundingBox.Minimum));
+                var maximum = context.Deserialize<Vector3>(content, nameof(BoundingBox.Maximum));
                 return new BoundingBox(minimum, maximum);
             }
         }
@@ -143,12 +143,12 @@ namespace VL.Xenko.Core
                 return context.Serialize(null, @array);
             }
 
-            public RectangleF Deserialize(SerializationContext context, object content, Type type, RectangleF defaultValue)
+            public RectangleF Deserialize(SerializationContext context, object content, Type type)
             {
-                var @array = context.Deserialize(content, null, Array.Empty<float>());
+                var @array = context.Deserialize<float[]>(content, null);
                 if (@array.Length == 4)
                     return new RectangleF(@array[0], @array[1], @array[2], @array[3]);
-                return defaultValue;
+                return RectangleF.Empty;
             }
         }
 
@@ -159,12 +159,12 @@ namespace VL.Xenko.Core
                 return context.Serialize(null, value.ToArray());
             }
 
-            public Color3 Deserialize(SerializationContext context, object content, Type type, Color3 defaultValue)
+            public Color3 Deserialize(SerializationContext context, object content, Type type)
             {
-                var @array = context.Deserialize(content, null, Array.Empty<float>());
+                var @array = context.Deserialize<float[]>(content, null);
                 if (@array.Length == 3)
                     return new Color3(@array);
-                return defaultValue;
+                return new Color3(0);
             }
         }
 
@@ -175,12 +175,12 @@ namespace VL.Xenko.Core
                 return context.Serialize(null, value.ToArray());
             }
 
-            public Color4 Deserialize(SerializationContext context, object content, Type type, Color4 defaultValue)
+            public Color4 Deserialize(SerializationContext context, object content, Type type)
             {
-                var @array = context.Deserialize(content, null, Array.Empty<float>());
+                var @array = context.Deserialize<float[]>(content, null);
                 if (@array.Length == 4)
                     return new Color4(@array);
-                return defaultValue;
+                return Color4.Black;
             }
         }
     }
