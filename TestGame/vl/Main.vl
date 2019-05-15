@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="DLbPUfgFMXLPoRKR0E0WbF" LanguageVersion="2019.1.0-0140-ga613e595c9" Version="0.128">
+<Document xmlns:p="property" Id="DLbPUfgFMXLPoRKR0E0WbF" LanguageVersion="2019.1.0-0344-gd5eabf23a7" Version="0.128">
   <NugetDependency Id="FeSAYsTHh3BMyO28kRm6jL" Location="VL.CoreLib" Version="0.96.6" />
   <Patch Id="LJ2kmwJCTUoLVzSBB1MlJA">
     <Canvas Id="VGizQ5KZ7t2OVrOfNroTum" DefaultCategory="Main" CanvasType="FullCategory" />
@@ -41,7 +41,6 @@
             <Pin Id="PqsNtAGUiiFOFFoSmoEHMz" Name="Input 2" Kind="InputPin" />
             <Pin Id="N1w6JxxTNnOLq9BY9yqFz4" Name="Input 3" Kind="InputPin" />
             <Pin Id="G8nR1q1baHwOec5uXyeJpQ" Name="Input 4" Kind="InputPin" />
-            <Pin Id="ErkoRuE1B2WLpppUvkhIpI" Name="Input 5" Kind="InputPin" />
             <Pin Id="PBVuvTdDbPmNfLBOCJ2jmL" Name="Output" Kind="OutputPin" />
           </Node>
           <Node Bounds="678,768,61,19" Id="IcHjBqHuzYkNa1K6PZgDXK">
@@ -95,8 +94,16 @@
               <Choice Kind="ProcessNode" Name="Skybox" />
             </p:NodeReference>
             <Pin Id="QEOiSgE95vnNyuO7a2WC1S" Name="Transformation" Kind="InputPin" />
-            <Pin Id="NIZTHppDXNyQU6rpSkrTc9" Name="Intensity" Kind="InputPin" />
-            <Pin Id="OBKahBTPhYbK98Trp0OHRs" Name="Light Intensity" Kind="InputPin" />
+            <Pin Id="NIZTHppDXNyQU6rpSkrTc9" Name="Intensity" Kind="InputPin" DefaultValue="0.08">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Float32" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="OBKahBTPhYbK98Trp0OHRs" Name="Light Intensity" Kind="InputPin" DefaultValue="0.45">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Float32" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="Rfuv0JWXZ9OO4bKPkqWlxA" Name="Enabled" Kind="InputPin" />
             <Pin Id="VGvUH7qlr9ALeqaWCgvda9" Name="Entity" Kind="OutputPin" />
           </Node>
@@ -108,10 +115,16 @@
               <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Bang</p:buttonmode>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="BTwG0NlnxAPLx3i8fbvqkq" Comment="Index" Bounds="399,226,35,15" ShowValueBox="true" isIOBox="true" Value="0">
+          <Pad Id="BTwG0NlnxAPLx3i8fbvqkq" Comment="Index" Bounds="399,226,221,24" ShowValueBox="true" isIOBox="true" Value="4">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Integer32" />
             </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:maximum p:Type="Int32">4</p:maximum>
+              <p:minimum p:Type="Int32">0</p:minimum>
+              <p:showslider p:Type="Boolean">true</p:showslider>
+              <p:sliderdirection p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.SliderDirectionEnum">Horizontal</p:sliderdirection>
+            </p:ValueBoxSettings>
           </Pad>
           <Node Bounds="469,545,58,19" Id="EvKrXmq5mSAOyODq0zvpuG">
             <p:NodeReference LastCategoryFullName="3D.Transform" LastSymbolSource="CoreLibBasics.vl">
@@ -146,12 +159,6 @@
             <Pin Id="GWoEyyf041AO0hvN11ygl1" Name="Color" Kind="InputPin" />
             <Pin Id="E8PzlPVJDFkPyfpdgMJT94" Name="Entity" Kind="OutputPin" />
           </Node>
-          <Node Bounds="891,595,117,19" Id="RIAwUR1ss0zQEkgzL848U4">
-            <p:NodeReference LastCategoryFullName="Xenko.Demos" LastSymbolSource="VL.Xenko.Demos.vl">
-              <Choice Kind="ProcessNode" Name="DynamicMeshDemo" />
-            </p:NodeReference>
-            <Pin Id="H1Ci9r5CN8yNjTgzndiWJo" Name="Output" Kind="OutputPin" />
-          </Node>
           <Node Bounds="396,355,60,19" Id="J8aekYp62wRLM0DXBECZAr">
             <p:NodeReference LastCategoryFullName="Xenko.Demos" LastSymbolSource="VL.Xenko.Demos.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -175,7 +182,6 @@
         <Link Id="NqKnV9lTDWLLs7l0hSqRAF" Ids="I2SIGeIQGnFQHEkcPpdln5,E2WNXOQXb13LqUmBgO0EXy" />
         <Link Id="R3yc3ZkMeRvMIc5wYGFqp6" Ids="PBVuvTdDbPmNfLBOCJ2jmL,DjGGaWiTea5MfAP2kvWz9O" />
         <Link Id="ALiWWCMerKmQAifpVn1pVT" Ids="E8PzlPVJDFkPyfpdgMJT94,PqsNtAGUiiFOFFoSmoEHMz" />
-        <Link Id="O69HQGBdak7LJWANweyxlv" Ids="H1Ci9r5CN8yNjTgzndiWJo,ErkoRuE1B2WLpppUvkhIpI" />
         <Link Id="G7JI4b6V3gTPwap4LAVPuA" Ids="VGvUH7qlr9ALeqaWCgvda9,G8nR1q1baHwOec5uXyeJpQ" />
         <Link Id="HQneHBLYKz3P8oQKM9qsbi" Ids="JRnmE49AD3aL9MicxZri3l,OrywJiE4wpXNulTmX4hyN9" />
         <Link Id="DMLIfPqfzgyMVTGd2p2ef1" Ids="BTwG0NlnxAPLx3i8fbvqkq,JMRFojafqspPtEemxmesZG" />
