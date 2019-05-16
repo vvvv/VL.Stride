@@ -51,6 +51,15 @@
     <Message Importance="high" Text="Using VL.Xenko version $(VLXenkoVersion)" />
   </Target>
 
+  <Target Name="GetXenkoLiveEditorVersion" DependsOnTargets="_GetVLXenkoManifest">
+    <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
+             XmlInputPath="$(_VLXenkoManifest)"
+             Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='XenkoLiveEditor']/@version">
+      <Output TaskParameter="Result" PropertyName="XenkoLiveEditorVersion" />
+    </XmlPeek>
+    <Message Importance="high" Text="Using XenkoLiveEditor version $(XenkoLiveEditorVersion)" />
+  </Target>
+
   <Target Name="GetVLVersion"
           DependsOnTargets="GetVLXenkoVersion">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;" 
@@ -62,7 +71,7 @@
   </Target>
 
   <Target Name="_GetManifests"
-          DependsOnTargets="GetVLVersion;GetVLXenkoVersion;_GetVLXenkoManifest">
+          DependsOnTargets="GetVLVersion;GetVLXenkoVersion;GetXenkoLiveEditorVersion;_GetVLXenkoManifest">
     <ItemGroup>
       <_Manifests Include="$(NuGetPackageRoot)VL.Meta.Gamma\$(VLVersion)\vl.meta.gamma.nuspec">
         <OutputManifest>$(_PackageInstallDirectory)VL.Meta.Gamma.$(VLVersion)\VL.Meta.Gamma.nuspec</OutputManifest>
@@ -73,6 +82,11 @@
         <OutputManifest>$(_PackageInstallDirectory)VL.Xenko.EffectLib.$(VLXenkoVersion)\VL.Xenko.EffectLib.nuspec</OutputManifest>
         <PackageId>VL.Xenko.EffectLib</PackageId>
         <PackageVersion>$(VLXenkoVersion)</PackageVersion>
+      </_Manifests>
+      <_Manifests Include="$(_VLXenkoManifest)">
+        <OutputManifest>$(_PackageInstallDirectory)XenkoLiveEditor.$(XenkoLiveEditorVersion)\XenkoLiveEditor.nuspec</OutputManifest>
+        <PackageId>XenkoLiveEditor</PackageId>
+        <PackageVersion>$(XenkoLiveEditorVersion)</PackageVersion>
       </_Manifests>
     </ItemGroup>
   </Target>
@@ -88,7 +102,7 @@
     </ItemGroup>
     <RemoveDir Directories="@(_OldDirectories)" />-->    
     
-    <Message Importance="high" Text="Installing VL $(VLVersion) and VL.Xenko $(VLXenkoVersion) packages to $(_PackageInstallDirectory)" />
+    <Message Importance="high" Text="Installing VL $(VLVersion), VL.Xenko $(VLXenkoVersion) and XenkoLiveEditor $(XenkoLiveEditorVersion) packages to $(_PackageInstallDirectory)" />
     <NuGetInstall StandardOutputImportance="high"
                   ToolPath="$(NugetExePath)"
                   Package="%(_Manifests.PackageId)"
@@ -102,7 +116,7 @@
     <ItemGroup Condition="Exists('$(_PackageInstallDirectory)')">
       <_AllDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', '*', System.IO.SearchOption.TopDirectoryOnly))" />
       <_VLDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', 'VL.*', System.IO.SearchOption.TopDirectoryOnly))" />
-      <_DirectoriesToDelete Include="@(_AllDirectories)" Exclude="@(_VLDirectories)" />
+      <_DirectoriesToDelete Include="@(_AllDirectories)" Exclude="@(_VLDirectories);$(_PackageInstallDirectory)XenkoLiveEditor.$(XenkoLiveEditorVersion)" />
     </ItemGroup>
     <Message Importance="high" Text="Removing all non-VL packages @(_DirectoriesToDelete)" />
     <RemoveDir Directories="@(_DirectoriesToDelete)" />
