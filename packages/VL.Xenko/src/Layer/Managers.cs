@@ -1,4 +1,5 @@
-﻿using VL.Lib.Collections;
+﻿using System;
+using VL.Lib.Collections;
 using Xenko.Core.Collections;
 using Xenko.Engine;
 
@@ -7,7 +8,7 @@ namespace VL.Xenko.Layer
     /// <summary>
     /// Manages the children of an <see cref="Entity"/>.
     /// </summary>
-    public sealed class EntityChildrenManager
+    public sealed class EntityChildrenManager : IDisposable
     {
         readonly Entity entity;
         readonly FastList<EntityLink> links = new FastList<EntityLink>();
@@ -18,8 +19,11 @@ namespace VL.Xenko.Layer
             this.entity = entity;
         }
 
-        public Entity Update(Spread<Entity> children)
+        public Entity Update(Spread<Entity> children, string name = "GroupEntity")
         {
+            if (entity.Name != name)
+                entity.Name = name;
+
             // Quick change check
             if (children != this.children)
                 this.children = children;
@@ -58,7 +62,7 @@ namespace VL.Xenko.Layer
     /// <summary>
     /// Manages the components of an <see cref="Entity"/>.
     /// </summary>
-    public sealed class EntityComponentsManager
+    public sealed class EntityComponentsManager : IDisposable
     {
         readonly Entity entity;
         readonly FastList<ComponentLink> links = new FastList<ComponentLink>();

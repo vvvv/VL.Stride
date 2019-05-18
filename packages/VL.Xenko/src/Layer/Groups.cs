@@ -59,7 +59,7 @@ namespace VL.Xenko.Layer
     {
         readonly EntityChildrenManager manager = new EntityChildrenManager(new Entity());
 
-        public Entity Update(Spread<Entity> input) => manager.Update(input);
+        public Entity Update(Spread<Entity> input, string name = "Spectral Group") => manager.Update(input, name);
         public void Dispose() => manager.Dispose();
     }
 }
