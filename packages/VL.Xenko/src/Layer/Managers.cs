@@ -23,8 +23,8 @@ namespace VL.Xenko.Layer
 
         public Entity Update(Spread<Entity> children, ref Matrix transform, string name = "Children Manager")
         {
-            if (entity.Name != name)
-                entity.Name = name;
+            entity.Name = name;
+            entity.Transform.LocalMatrix = transform;
 
             // Quick change check
             if (children != this.children)
@@ -50,7 +50,6 @@ namespace VL.Xenko.Layer
                 link.Dispose();
                 links.RemoveAt(i);
             }
-            entity.Transform.LocalMatrix = transform;
             return entity;
         }
 
