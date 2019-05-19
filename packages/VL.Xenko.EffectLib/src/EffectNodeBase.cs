@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VL.Core;
 using VL.Xenko.Shaders;
+using Xenko.Core.Mathematics;
 
 namespace VL.Xenko.EffectLib
 {
@@ -22,6 +23,27 @@ namespace VL.Xenko.EffectLib
         }
 
         public IVLNodeDescription NodeDescription => description;
+
+        protected ConvertedValueParameterPin<Matrix, SharpDX.Matrix> worldPin;
+
+        protected Matrix entityWorldMatrix = Matrix.Identity;
+        public void SetEntityWorldMatrix(Matrix entityWorld)
+            => entityWorldMatrix = entityWorld;
+
+        protected Matrix ComputeWorldMatrix()
+        {
+            Matrix result;
+            if (worldPin != null)
+            {
+                var world = worldPin.ShaderValue;
+                Matrix.MultiplyTo(ref world, ref entityWorldMatrix, out result);
+                worldPin.ShaderValue = result;
+            }
+            else
+                result = entityWorldMatrix;
+            return result;
+        }
+
 
         public void Dispose()
         {

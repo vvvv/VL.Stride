@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using VL.Lib.Collections;
 using VL.Xenko.Rendering;
+using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Graphics;
 using Xenko.Rendering;
@@ -15,9 +16,9 @@ namespace VL.Xenko.Layer
     {
         Spread<ILowLevelAPIRender> FUpstreamLayers = Spread<ILowLevelAPIRender>.Empty;
 
-        public ILowLevelAPIRender Update(IEnumerable<ILowLevelAPIRender> input)
+        public ILowLevelAPIRender Update(Spread<ILowLevelAPIRender> input)
         {
-            FUpstreamLayers = input.ToSpread();
+            FUpstreamLayers = input;
             return this;
         }
 
@@ -50,6 +51,12 @@ namespace VL.Xenko.Layer
             foreach (var upstreamLayer in FUpstreamLayers)
                 upstreamLayer?.Draw(renderContext, drawContext, renderView, renderViewStage, commandList);
         }
+
+        void ILowLevelAPIRender.SetEntityWorldMatrix(Matrix entityWorld)
+        {
+            foreach (var upstreamLayer in FUpstreamLayers)
+                upstreamLayer?.SetEntityWorldMatrix(entityWorld);
+        }
     }
 
     /// <summary>
@@ -60,6 +67,7 @@ namespace VL.Xenko.Layer
         readonly EntityChildrenManager manager = new EntityChildrenManager(new Entity());
 
         public Entity Update(Spread<Entity> input, string name = "Spectral Group") => manager.Update(input, name);
+        public void Transform(ref Matrix transform) => manager.Transform(ref transform);
         public void Dispose() => manager.Dispose();
     }
 }

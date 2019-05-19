@@ -262,7 +262,11 @@ namespace VL.Xenko.EffectLib
             accessor = parameters.GetAccessor(Key);
         }
 
-        public TShader ShaderValue => parameters.Get(accessor);
+        public TShader ShaderValue
+        {
+            get => parameters.Get(accessor);
+            set => parameters.Set(accessor, value);
+        }
 
         public TPin Value
         {

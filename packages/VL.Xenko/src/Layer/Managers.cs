@@ -1,6 +1,7 @@
 ﻿using System;
 using VL.Lib.Collections;
 using Xenko.Core.Collections;
+using Xenko.Core.Mathematics;
 using Xenko.Engine;
 
 namespace VL.Xenko.Layer
@@ -17,9 +18,10 @@ namespace VL.Xenko.Layer
         public EntityChildrenManager(Entity entity)
         {
             this.entity = entity;
+            this.entity.Transform.UseTRS = false;
         }
 
-        public Entity Update(Spread<Entity> children, string name = "GroupEntity")
+        public Entity Update(Spread<Entity> children, string name = "Children Manager")
         {
             if (entity.Name != name)
                 entity.Name = name;
@@ -51,6 +53,9 @@ namespace VL.Xenko.Layer
 
             return entity;
         }
+
+        public void Transform(ref Matrix transform)
+            => entity.Transform.LocalMatrix = transform;
 
         public void Dispose()
         {

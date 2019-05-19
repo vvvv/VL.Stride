@@ -9,7 +9,6 @@ namespace VL.Xenko.Rendering
     public class RenderLayer : RenderObject
     {
         public bool SingleCallPerFrame;
-        public Matrix WorldMatrix;
         public ILowLevelAPIRender Layer;
     }
 }

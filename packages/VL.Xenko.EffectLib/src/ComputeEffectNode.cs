@@ -18,7 +18,6 @@ namespace VL.Xenko.EffectLib
         readonly PerViewParameters[] perViewParams;
         readonly PerDrawParameters[] perDrawParams;
         readonly ParameterCollection parameters;
-        ConvertedValueParameterPin<Matrix, SharpDX.Matrix> worldPin;
         Pin<Int3> dispatchCountPin, threadNumbersPin;
         Pin<int> iterationCountPin;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> parameterSetterPin;
@@ -102,14 +101,11 @@ namespace VL.Xenko.EffectLib
 
                 // TODO1: PerFrame could be done in Update if we'd have access to frame time
                 // TODO2: This code can be optimized by using parameter accessors and not parameter keys
-                parameters.SetPerFrameParameters(perFrameParams, drawContext.RenderContext);
-                parameters.SetPerViewParameters(perViewParams, renderView);
 
-                if (worldPin != null)
-                {
-                    var world = worldPin.ShaderValue;
-                    parameters.SetPerDrawParameters(perDrawParams, renderView, ref world);
-                }
+                parameters.SetPerFrameParameters(perFrameParams, drawContext.RenderContext);
+                var world = ComputeWorldMatrix();
+                parameters.SetPerDrawParameters(perDrawParams, renderView, ref world);
+                parameters.SetPerViewParameters(perViewParams, renderView);
 
                 // Set permutation parameters before updating the effect (needed by compiler)
                 parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, threadNumbersPin.Value);

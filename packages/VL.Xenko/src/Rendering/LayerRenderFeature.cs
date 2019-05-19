@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using VL.Core;
+using Xenko.Core.Mathematics;
 using Xenko.Graphics;
 using Xenko.Rendering;
 
@@ -15,6 +16,8 @@ namespace VL.Xenko.Rendering
         void Extract();
 
         void Prepare(RenderDrawContext context);
+
+        void SetEntityWorldMatrix(Matrix entityWorld);
 
         void Draw(RenderContext renderContext, RenderDrawContext drawContext, RenderView renderView, RenderViewStage renderViewStage, CommandList commandList);
     }

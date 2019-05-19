@@ -20,7 +20,6 @@ namespace VL.Xenko.EffectLib
         readonly ParameterCollection parameters;
         bool pipelineStateDirty = true;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> customParameterSetterPin;
-        ConvertedValueParameterPin<Matrix, SharpDX.Matrix> worldPin;
 
         public EffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext, description)
         {
@@ -81,13 +80,9 @@ namespace VL.Xenko.EffectLib
                 // TODO1: PerFrame could be done in Update if we'd have access to frame time
                 // TODO2: This code can be optimized by using parameter accessors and not parameter keys
                 parameters.SetPerFrameParameters(perFrameParams, renderDrawContext.RenderContext);
+                var world = ComputeWorldMatrix();
+                parameters.SetPerDrawParameters(perDrawParams, renderView, ref world);
                 parameters.SetPerViewParameters(perViewParams, renderView);
-
-                if (worldPin != null)
-                {
-                    var world = worldPin.ShaderValue;
-                    parameters.SetPerDrawParameters(perDrawParams, renderView, ref world);
-                }
 
                 customParameterSetterPin?.Value?.Invoke(parameters, renderView, renderDrawContext);
             }
