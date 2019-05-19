@@ -35,7 +35,7 @@ shader DrawParticles : Common_VS_PS_Base, ParticleStruct, Common_Utils
         {
             streams.TexCoord  = QuadUV[i].xy;
             
-            float4 posView = mul(streams.PositionWS, View);
+            float4 posView = mul(streams.PositionWS, WorldView);
             posView.xyz += QuadPositions[i].xyz * ParticleSize;
             streams.ShadingPosition = mul(posView, Projection);
             

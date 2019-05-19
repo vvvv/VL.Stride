@@ -21,7 +21,7 @@ namespace VL.Xenko.Layer
             this.entity.Transform.UseTRS = false;
         }
 
-        public Entity Update(Spread<Entity> children, string name = "Children Manager")
+        public Entity Update(Spread<Entity> children, ref Matrix transform, string name = "Children Manager")
         {
             if (entity.Name != name)
                 entity.Name = name;
@@ -50,12 +50,9 @@ namespace VL.Xenko.Layer
                 link.Dispose();
                 links.RemoveAt(i);
             }
-
+            entity.Transform.LocalMatrix = transform;
             return entity;
         }
-
-        public void Transform(ref Matrix transform)
-            => entity.Transform.LocalMatrix = transform;
 
         public void Dispose()
         {

@@ -18,6 +18,6 @@ namespace Xenko.Rendering
 {
     public static partial class Common_ConstantColorKeys
     {
-        public static readonly ValueParameterKey<Vector4> Color = ParameterKeys.NewValue<Vector4>();
+        public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>();
     }
 }
