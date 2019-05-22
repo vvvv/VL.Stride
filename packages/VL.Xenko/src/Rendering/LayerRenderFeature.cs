@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using VL.Core;
+using Xenko.Core.Diagnostics;
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;
 using Xenko.Rendering;
@@ -43,36 +44,54 @@ namespace VL.Xenko.Rendering
 
         public override void Draw(RenderDrawContext context, RenderView renderView, RenderViewStage renderViewStage, int startIndex, int endIndex)
         {
-            // Do not call into VL if not running
-            var renderContext = context.RenderContext;
-            var runtime = this.runtime ?? (this.runtime = renderContext.Services.GetService<IVLRuntime>());
-            if (runtime != null && !runtime.IsRunning)
-                return;
-
-            // Build the list of layers to render
-            singleCallLayers.Clear();
-            layers.Clear();
-            for (var index = startIndex; index < endIndex; index++)
+            //CPU and GPU profiling
+            using (Profiler.Begin(VLProfilerKeys.LayerRenderProfilingKey))
+            using (context.QueryManager.BeginProfile(Color.Green, VLProfilerKeys.LayerRenderProfilingKey))
             {
-                var renderNodeReference = renderViewStage.SortedRenderNodes[index].RenderNode;
-                var renderNode = GetRenderNode(renderNodeReference);
-                var renderElement = (RenderLayer)renderNode.RenderObject;
+                // Do not call into VL if not running
+                var renderContext = context.RenderContext;
+                var runtime = this.runtime ?? (this.runtime = renderContext.Services.GetService<IVLRuntime>());
+                if (runtime != null && !runtime.IsRunning)
+                    return;
 
-                if (renderElement.Enabled)
+                // Build the list of layers to render
+                singleCallLayers.Clear();
+                layers.Clear();
+                for (var index = startIndex; index < endIndex; index++)
                 {
-                    if (renderElement.SingleCallPerFrame)
-                        singleCallLayers.Add(renderElement.Layer);
-                    else
-                        layers.Add(renderElement.Layer); 
-                }
-            }
+                    var renderNodeReference = renderViewStage.SortedRenderNodes[index].RenderNode;
+                    var renderNode = GetRenderNode(renderNodeReference);
+                    var renderElement = (RenderLayer)renderNode.RenderObject;
 
-            // Call layers which want to get invoked only once per frame first
-            var currentFrameNr = renderContext.Time.FrameCount;
-            if (lastFrameNr != currentFrameNr)
-            {
-                lastFrameNr = currentFrameNr;
-                foreach (var layer in singleCallLayers)
+                    if (renderElement.Enabled)
+                    {
+                        if (renderElement.SingleCallPerFrame)
+                            singleCallLayers.Add(renderElement.Layer);
+                        else
+                            layers.Add(renderElement.Layer);
+                    }
+                }
+
+                // Call layers which want to get invoked only once per frame first
+                var currentFrameNr = renderContext.Time.FrameCount;
+                if (lastFrameNr != currentFrameNr)
+                {
+                    lastFrameNr = currentFrameNr;
+                    foreach (var layer in singleCallLayers)
+                    {
+                        try
+                        {
+                            layer?.Draw(Context, context, renderView, renderViewStage, context.CommandList);
+                        }
+                        catch (Exception e)
+                        {
+                            RuntimeGraph.ReportException(e);
+                        }
+                    }
+                }
+
+                // Call layers which can get invoked twice per frame (for each eye)
+                foreach (var layer in layers)
                 {
                     try
                     {
@@ -82,19 +101,6 @@ namespace VL.Xenko.Rendering
                     {
                         RuntimeGraph.ReportException(e);
                     }
-                }
-            }
-
-            // Call layers which can get invoked twice per frame (for each eye)
-            foreach (var layer in layers)
-            {
-                try
-                {
-                    layer?.Draw(Context, context, renderView, renderViewStage, context.CommandList);
-                }
-                catch (Exception e)
-                {
-                    RuntimeGraph.ReportException(e);
                 }
             }
         }
