@@ -24,7 +24,6 @@
   <Target Name="_GetVLXenkoManifestFromPackage" Condition=" '$(_BuildingLocally)' == 'false' ">
     <PropertyGroup>
       <_VLXenkoManifest>$(MsBuildThisFileDirectory)..\vl.xenko.integration.nuspec</_VLXenkoManifest>
-      <_VLXenkoWindowsManifest>$(MsBuildThisFileDirectory)..\vl.xenko.windows.nuspec</_VLXenkoWindowsManifest>
     </PropertyGroup>
   </Target>
 
@@ -34,14 +33,8 @@
              Targets="GetTargetPath" >
       <Output TaskParameter="TargetOutputs" ItemName="_IntegrationAssembly" />
     </MSBuild>
-    <MSBuild Projects="$(MsBuildThisFileDirectory)..\..\VL.Xenko.Windows\src\VL.Xenko.Windows.csproj"
-             Properties="Configuration=$(Configuration)"
-             Targets="GetTargetPath" >
-      <Output TaskParameter="TargetOutputs" ItemName="_XenkoWindowsAssembly" />
-    </MSBuild>
     <PropertyGroup>
       <_VLXenkoManifest>@(_IntegrationAssembly->'%(RootDir)%(Directory)%(Filename)').nuspec</_VLXenkoManifest>
-      <_VLXenkoWindowsManifest>@(_XenkoWindowsAssembly->'%(RootDir)%(Directory)%(Filename)').nuspec</_VLXenkoWindowsManifest>
     </PropertyGroup>
   </Target>
 
@@ -69,7 +62,7 @@
 
   <Target Name="GetXenkoTextureConverterVersion" DependsOnTargets="_GetVLXenkoManifest">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
-             XmlInputPath="$(_VLXenkoWindowsManifest)"
+             XmlInputPath="$(_VLXenkoManifest)"
              Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='Xenko.TextureConverter']/@version">
       <Output TaskParameter="Result" PropertyName="XenkoTextureConverterVersion" />
     </XmlPeek>
