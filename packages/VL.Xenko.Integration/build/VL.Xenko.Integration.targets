@@ -93,6 +93,11 @@
         <PackageVersion>$(VLXenkoVersion)</PackageVersion>
       </_Manifests>
       <_Manifests Include="$(_VLXenkoManifest)">
+        <OutputManifest>$(_PackageInstallDirectory)VL.Xenko.Windows.$(VLXenkoVersion)\VL.Xenko.Windows.nuspec</OutputManifest>
+        <PackageId>VL.Xenko.Windows</PackageId>
+        <PackageVersion>$(VLXenkoVersion)</PackageVersion>
+      </_Manifests>
+      <_Manifests Include="$(_VLXenkoManifest)">
         <OutputManifest>$(_PackageInstallDirectory)XenkoLiveEditor.$(XenkoLiveEditorVersion)\XenkoLiveEditor.nuspec</OutputManifest>
         <PackageId>XenkoLiveEditor</PackageId>
         <PackageVersion>$(XenkoLiveEditorVersion)</PackageVersion>
@@ -116,7 +121,7 @@
     </ItemGroup>
     <RemoveDir Directories="@(_OldDirectories)" />-->    
     
-    <Message Importance="high" Text="Installing VL $(VLVersion), VL.Xenko $(VLXenkoVersion) and XenkoLiveEditor $(XenkoLiveEditorVersion) packages to $(_PackageInstallDirectory)" />
+    <Message Importance="high" Text="Installing VL $(VLVersion), VL.Xenko $(VLXenkoVersion), VL.Xenko.Windows $(VLXenkoWindowsVersion) and XenkoLiveEditor $(XenkoLiveEditorVersion) packages to $(_PackageInstallDirectory)" />
     <NuGetInstall StandardOutputImportance="high"
                   ToolPath="$(NugetExePath)"
                   Package="%(_Manifests.PackageId)"
