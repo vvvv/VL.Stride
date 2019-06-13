@@ -50,7 +50,8 @@
     </XmlPeek>
     <Message Importance="high" Text="Using VL.Xenko version $(VLXenkoVersion)" />
   </Target>
-
+  
+  <!-- Live Editor -->
   <Target Name="GetXenkoLiveEditorVersion" DependsOnTargets="_GetVLXenkoManifest">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
              XmlInputPath="$(_VLXenkoManifest)"
@@ -60,6 +61,27 @@
     <Message Importance="high" Text="Using XenkoLiveEditor version $(XenkoLiveEditorVersion)" />
   </Target>
 
+  <!-- MahApps.Metro -->
+  <Target Name="GetMahAppsMetroVersion" DependsOnTargets="_GetVLXenkoManifest">
+    <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
+             XmlInputPath="$(_VLXenkoManifest)"
+             Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='MahApps.Metro']/@version">
+      <Output TaskParameter="Result" PropertyName="MahAppsMetroVersion" />
+    </XmlPeek>
+    <Message Importance="high" Text="Using MahApps.Metro version $(MahAppsMetroVersion)" />
+  </Target>
+
+  <!-- ControlzEx -->
+  <Target Name="GetControlzExVersion" DependsOnTargets="_GetVLXenkoManifest">
+    <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
+             XmlInputPath="$(_VLXenkoManifest)"
+             Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='ControlzEx']/@version">
+      <Output TaskParameter="Result" PropertyName="ControlzExVersion" />
+    </XmlPeek>
+    <Message Importance="high" Text="Using MahApps.Metro version $(ControlzExVersion)" />
+  </Target>
+
+  <!-- Xenko.TextureConverter -->
   <Target Name="GetXenkoTextureConverterVersion" DependsOnTargets="_GetVLXenkoManifest">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
              XmlInputPath="$(_VLXenkoManifest)"
@@ -80,7 +102,7 @@
   </Target>
 
   <Target Name="_GetManifests"
-          DependsOnTargets="GetVLVersion;GetVLXenkoVersion;GetXenkoLiveEditorVersion;GetXenkoTextureConverterVersion;_GetVLXenkoManifest">
+          DependsOnTargets="GetVLVersion;GetVLXenkoVersion;GetXenkoLiveEditorVersion;GetMahAppsMetroVersion;GetControlzExVersion;GetXenkoTextureConverterVersion;_GetVLXenkoManifest">
     <ItemGroup>
       <_Manifests Include="$(NuGetPackageRoot)VL.Meta.Gamma\$(VLVersion)\vl.meta.gamma.nuspec">
         <OutputManifest>$(_PackageInstallDirectory)VL.Meta.Gamma.$(VLVersion)\VL.Meta.Gamma.nuspec</OutputManifest>
@@ -101,6 +123,16 @@
         <OutputManifest>$(_PackageInstallDirectory)XenkoLiveEditor.$(XenkoLiveEditorVersion)\XenkoLiveEditor.nuspec</OutputManifest>
         <PackageId>XenkoLiveEditor</PackageId>
         <PackageVersion>$(XenkoLiveEditorVersion)</PackageVersion>
+      </_Manifests>
+      <_Manifests Include="$(_VLXenkoManifest)">
+        <OutputManifest>$(_PackageInstallDirectory)MahApps.Metro.$(MahAppsMetroVersion)\MahApps.Metro.nuspec</OutputManifest>
+        <PackageId>MahApps.Metro</PackageId>
+        <PackageVersion>$(MahAppsMetroVersion)</PackageVersion>
+      </_Manifests>
+      <_Manifests Include="$(_VLXenkoManifest)">
+        <OutputManifest>$(_PackageInstallDirectory)ControlzEx.$(ControlzExVersion)\ControlzEx.nuspec</OutputManifest>
+        <PackageId>ControlzEx</PackageId>
+        <PackageVersion>$(ControlzExVersion)</PackageVersion>
       </_Manifests>
       <_Manifests Include="$(_VLXenkoManifest)">
         <OutputManifest>$(_PackageInstallDirectory)Xenko.TextureConverter.$(XenkoTextureConverterVersion)\Xenko.TextureConverter.nuspec</OutputManifest>
@@ -135,7 +167,7 @@
     <ItemGroup Condition="Exists('$(_PackageInstallDirectory)')">
       <_AllDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', '*', System.IO.SearchOption.TopDirectoryOnly))" />
       <_VLDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', 'VL.*', System.IO.SearchOption.TopDirectoryOnly))" />
-      <_DirectoriesToDelete Include="@(_AllDirectories)" Exclude="@(_VLDirectories);$(_PackageInstallDirectory)XenkoLiveEditor.$(XenkoLiveEditorVersion);$(_PackageInstallDirectory)Xenko.TextureConverter.$(XenkoTextureConverterVersion)" />
+      <_DirectoriesToDelete Include="@(_AllDirectories)" Exclude="@(_VLDirectories);$(_PackageInstallDirectory)XenkoLiveEditor.$(XenkoLiveEditorVersion);$(_PackageInstallDirectory)MahApps.Metro.$(MahAppsMetroVersion);$(_PackageInstallDirectory)ControlzEx.$(ControlzExVersion);$(_PackageInstallDirectory)Xenko.TextureConverter.$(XenkoTextureConverterVersion)" />
     </ItemGroup>
     <Message Importance="high" Text="Removing all non-VL packages @(_DirectoriesToDelete)" />
     <RemoveDir Directories="@(_DirectoriesToDelete)" />
