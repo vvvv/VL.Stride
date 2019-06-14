@@ -167,7 +167,8 @@
     <ItemGroup Condition="Exists('$(_PackageInstallDirectory)')">
       <_AllDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', '*', System.IO.SearchOption.TopDirectoryOnly))" />
       <_VLDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', 'VL.*', System.IO.SearchOption.TopDirectoryOnly))" />
-      <_DirectoriesToDelete Include="@(_AllDirectories)" Exclude="@(_VLDirectories);$(_PackageInstallDirectory)XenkoLiveEditor.$(XenkoLiveEditorVersion);$(_PackageInstallDirectory)MahApps.Metro.$(MahAppsMetroVersion);$(_PackageInstallDirectory)ControlzEx.$(ControlzExVersion);$(_PackageInstallDirectory)Xenko.TextureConverter.$(XenkoTextureConverterVersion)" />
+      <_XenkoDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', 'Xenko.*', System.IO.SearchOption.TopDirectoryOnly))" />
+      <_DirectoriesToDelete Include="@(_AllDirectories)" Exclude="@(_VLDirectories);@(_XenkoDirectories);$(_PackageInstallDirectory)XenkoLiveEditor.$(XenkoLiveEditorVersion);$(_PackageInstallDirectory)MahApps.Metro.$(MahAppsMetroVersion);$(_PackageInstallDirectory)ControlzEx.$(ControlzExVersion);$(_PackageInstallDirectory)Xenko.TextureConverter.$(XenkoTextureConverterVersion)" />
     </ItemGroup>
     <Message Importance="high" Text="Removing all non-VL packages @(_DirectoriesToDelete)" />
     <RemoveDir Directories="@(_DirectoriesToDelete)" />
