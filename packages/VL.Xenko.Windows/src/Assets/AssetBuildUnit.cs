@@ -54,10 +54,10 @@ namespace VL.Xenko.Assets
             {
                 buildStep = Prepare();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // TODO: properly log errors
-                //Builder.Logger.Error("An exception was triggered during the compilation of the preview items '{0}':\n" + e.Message, AssetItem.Location);
+                System.Diagnostics.Debug.WriteLine(e);
                 return null;
             }
             if (buildStep != null)

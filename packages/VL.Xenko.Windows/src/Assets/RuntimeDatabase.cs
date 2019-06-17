@@ -47,6 +47,7 @@ namespace VL.Xenko.Assets
             CompilerContext.Platform = PlatformType.Windows;
 
             databaseGameSettings = GameSettingsFactory.Create();
+            CompilerContext.SetGameSettingsAsset(databaseGameSettings);
             //// TODO: get the best available between 10 and 11
             //databaseGameSettings.GetOrCreate<RenderingSettings>().DefaultGraphicsProfile = GraphicsProfile.Level_11_0;
 

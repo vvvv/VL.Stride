@@ -26,6 +26,11 @@ using Xenko.Graphics;
 using Xenko.Navigation;
 using Xenko.Engine;
 using System.Reactive.Subjects;
+using System.Reactive.Linq;
+using System.Reactive;
+using Xenko.Core.IO;
+using Xenko.Core.BuildEngine;
+using System.Reactive.Threading.Tasks;
 
 namespace VL.Xenko.Assets
 { 
@@ -35,7 +40,7 @@ namespace VL.Xenko.Assets
     public sealed class RuntimeContentLoader : IDisposable
     {
         private Subject<ReloadingAsset> AssetBuilt = new Subject<ReloadingAsset>();
-        public IObservable<ReloadingAsset> OnAssetBuilt => AssetBuilt;
+        public IObservable<Tuple<ReloadingAsset, object>> OnAssetBuilt { get; }
         private readonly ILogger logger;
         private readonly IRuntimeDatabase database;
         private RenderingMode currentRenderingMode;
@@ -45,6 +50,7 @@ namespace VL.Xenko.Assets
 #if DEBUG
         private ContentManagerStats debugStats;
         private bool enableReferenceLogging = true;
+        private ContentManager contentManager;
 #endif
 
         /// <summary>
@@ -82,6 +88,13 @@ namespace VL.Xenko.Assets
             this.logger = logger;
             database = runtimDatabase;
             UpdateGameSettings(game);
+
+            //TODO: just a hack for now
+            game.Services.RemoveService<IDatabaseFileProviderService>();
+            game.Services.AddService(MicrothreadLocalDatabases.ProviderService);
+            contentManager = new ContentManager(Game.Services);
+
+            OnAssetBuilt = AssetBuilt.SelectMany(ra => ra.Result.Task.ToObservable().Select(o => new Tuple<ReloadingAsset, object>(ra, o)));
         }
 
         public void UpdateGameSettings(Game game)
@@ -128,7 +141,7 @@ namespace VL.Xenko.Assets
             if (assetItem == null) throw new ArgumentNullException(nameof(assetItem));
 
             var url = GetLoadingTimeUrl(assetItem);
-            return !string.IsNullOrEmpty(url) ? Game.Content.Get<T>(url) : default(T);
+            return !string.IsNullOrEmpty(url) ? contentManager.Get<T>(url) : default(T);
         }
 
         public Task<ISyncLockable> ReserveDatabaseSyncLock()
@@ -195,7 +208,7 @@ namespace VL.Xenko.Assets
         private bool IsCurrentlyLoaded(AssetId assetId, bool loadedManuallyOnly = false)
         {
             string url;
-            return AssetLoadingTimeUrls.TryGetValue(assetId, out url) && Game.Content.IsLoaded(url, loadedManuallyOnly);
+            return AssetLoadingTimeUrls.TryGetValue(assetId, out url) && contentManager.IsLoaded(url, loadedManuallyOnly);
         }
 
         private Task<Dictionary<AssetItem, object>> UnloadAndReloadAssets(ICollection<AssetItem> assets)
@@ -267,7 +280,7 @@ namespace VL.Xenko.Assets
                             // If this type supports fast reload, retrieve the current (old) value via a load
                             var type = AssetRegistry.GetContentType(assetToUnload.AssetItem.Asset.GetType());
                             string url = GetLoadingTimeUrl(assetToUnload.AssetItem);
-                            var oldValue = Game.Content.Get(type, url);
+                            var oldValue = contentManager.Get(type, url);
                             if (oldValue != null)
                             {
                                 logger?.Debug($"Preparing fast-reload of {assetToUnload.AssetItem.Location}");
@@ -364,7 +377,7 @@ namespace VL.Xenko.Assets
 
 
                             // Remove assets that were previously loaded but are not anymore from the assetLoadingTimeUrls map.
-                            foreach (var loadedUrls in AssetLoadingTimeUrls.Where(x => !Game.Content.IsLoaded(x.Value)).ToList())
+                            foreach (var loadedUrls in AssetLoadingTimeUrls.Where(x => !contentManager.IsLoaded(x.Value)).ToList())
                             {
                                 AssetLoadingTimeUrls.Remove(loadedUrls.Key);
                             }
@@ -392,7 +405,7 @@ namespace VL.Xenko.Assets
                 {
                     UnloadContent(url);
                     // Remove assets that were previously loaded but are not anymore from the assetLoadingTimeUrls map.
-                    foreach (var loadedUrls in AssetLoadingTimeUrls.Where(x => !Game.Content.IsLoaded(x.Value)).ToList())
+                    foreach (var loadedUrls in AssetLoadingTimeUrls.Where(x => !contentManager.IsLoaded(x.Value)).ToList())
                     {
                         AssetLoadingTimeUrls.Remove(loadedUrls.Key);
                     }
@@ -405,16 +418,16 @@ namespace VL.Xenko.Assets
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = debugStats ?? Game.Content.GetStats();
+                debugStats = debugStats ?? contentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Loading {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
 #endif
-            var result = Game.Content.Load(type, url);
+            var result = contentManager.Load(type, url);
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = Game.Content.GetStats();
+                debugStats = contentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Loaded {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
@@ -427,16 +440,16 @@ namespace VL.Xenko.Assets
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = debugStats ?? Game.Content.GetStats();
+                debugStats = debugStats ?? contentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Unloading {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
 #endif
-            Game.Content.Unload(url);
+            contentManager.Unload(url);
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = Game.Content.GetStats();
+                debugStats = contentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Unloaded {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
@@ -449,18 +462,18 @@ namespace VL.Xenko.Assets
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = debugStats ?? Game.Content.GetStats();
+                debugStats = debugStats ?? contentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Reloading {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
 #endif
-            Game.Content.Reload(obj, url);
+            contentManager.Reload(obj, url);
             AssetLoadingTimeUrls[assetItem.Id] = url;
 
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = Game.Content.GetStats();
+                debugStats = contentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Reloaded {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }

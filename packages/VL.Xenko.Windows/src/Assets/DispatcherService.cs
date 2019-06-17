@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using Xenko.Core.Annotations;
+using Xenko.Engine;
 
 namespace VL.Xenko.Assets
 {
@@ -25,6 +26,7 @@ namespace VL.Xenko.Assets
         {
             return new DispatcherService(Dispatcher.CurrentDispatcher);
         }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DispatcherService"/> class using the associated dispatcher.
@@ -79,7 +81,8 @@ namespace VL.Xenko.Assets
         /// <inheritdoc/>
         public Task InvokeTask(Func<Task> task)
         {
-            return InvokeTask(dispatcher, task);
+            return task();
+            //return InvokeTask(dispatcher, task);
         }
 
         /// <inheritdoc/>
