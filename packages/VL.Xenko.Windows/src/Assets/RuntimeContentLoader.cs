@@ -47,10 +47,11 @@ namespace VL.Xenko.Assets
         private ColorSpace currentColorSpace;
         private ObjectId currentNavigationGroupsHash;
         private int loadingAssetCount;
+        private ContentManager contentManager;
+
 #if DEBUG
         private ContentManagerStats debugStats;
         private bool enableReferenceLogging = true;
-        private ContentManager contentManager;
 #endif
 
         /// <summary>
@@ -94,7 +95,17 @@ namespace VL.Xenko.Assets
             game.Services.AddService(MicrothreadLocalDatabases.ProviderService);
             contentManager = new ContentManager(Game.Services);
 
-            OnAssetBuilt = AssetBuilt.SelectMany(ra => ra.Result.Task.ToObservable().Select(o => new Tuple<ReloadingAsset, object>(ra, o)));
+            OnAssetBuilt = AssetBuilt.SelectMany(SelectAssetEvent);
+        }
+
+        private static IObservable<Tuple<ReloadingAsset, object>> SelectAssetEvent(ReloadingAsset ra)
+        {
+            return ra.Result.Task.ToObservable().Select(o => SelectTaskEvent(ra, o));
+        }
+
+        private static Tuple<ReloadingAsset, object> SelectTaskEvent(ReloadingAsset ra, object o)
+        {
+            return new Tuple<ReloadingAsset, object>(ra, o);
         }
 
         public void UpdateGameSettings(Game game)

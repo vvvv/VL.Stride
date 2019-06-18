@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Xenko.Engine;
 using Xenko.Graphics;
@@ -6,7 +7,7 @@ using Xenko.Graphics;
 namespace VL.Xenko
 {
     // TODO: VL script should talk to one IVLNode so we can also feed it data properly from Xenko as well as exposing its pins to Xenko editor
-    public class VLScript : SyncScript
+    public class VLScript : AsyncScript
     {
         /// <summary>
         /// Recommended default doc while developing.
@@ -30,7 +31,7 @@ namespace VL.Xenko
 
         public new Game Game { get; }
 
-        public override void Start()
+        public override async Task Execute()
         {
             if (FGoFullscreen)
             {
@@ -46,12 +47,13 @@ namespace VL.Xenko
                 Game.GraphicsDeviceManager.IsFullScreen = true;
                 Game.GraphicsDeviceManager.ApplyChanges();
             }
-        }
 
-        public override void Update()
-        {
-            // Update all VL root nodes
-            FContext.Update();
+            while (true)
+            {
+                await Script.NextFrame();
+                // Update all VL root nodes
+                FContext.Update();
+            }
         }
     }
 }
