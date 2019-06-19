@@ -130,7 +130,7 @@ namespace VL.Xenko.Assets
         /// Types that support fast reloading (ie. updating existing object instead of loading a new one and updating references).
         /// </summary>
         // TODO: add an Attribute on Assets to specify if they are fast-reloadable (plugin approach)
-        private static ICollection<Type> FastReloadTypes => new[] { typeof(MaterialAsset), typeof(TextureAsset) };
+        private static ICollection<Type> FastReloadTypes => new Type[0];
 
         /// <summary>
         /// The <see cref="Game"/> associated with this instance.
