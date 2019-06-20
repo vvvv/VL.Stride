@@ -47,7 +47,8 @@ namespace VL.Xenko.Assets
         private ColorSpace currentColorSpace;
         private ObjectId currentNavigationGroupsHash;
         private int loadingAssetCount;
-        private ContentManager contentManager;
+
+        public ContentManager ContentManager { get; }
 
 #if DEBUG
         private ContentManagerStats debugStats;
@@ -93,7 +94,7 @@ namespace VL.Xenko.Assets
             //TODO: just a hack for now
             game.Services.RemoveService<IDatabaseFileProviderService>();
             game.Services.AddService(MicrothreadLocalDatabases.ProviderService);
-            contentManager = new ContentManager(Game.Services);
+            ContentManager = new ContentManager(Game.Services);
 
             OnAssetBuilt = AssetBuilt.SelectMany(SelectAssetEvent);
         }
@@ -152,7 +153,7 @@ namespace VL.Xenko.Assets
             if (assetItem == null) throw new ArgumentNullException(nameof(assetItem));
 
             var url = GetLoadingTimeUrl(assetItem);
-            return !string.IsNullOrEmpty(url) ? contentManager.Get<T>(url) : default(T);
+            return !string.IsNullOrEmpty(url) ? ContentManager.Get<T>(url) : default(T);
         }
 
         public Task<ISyncLockable> ReserveDatabaseSyncLock()
@@ -219,7 +220,7 @@ namespace VL.Xenko.Assets
         private bool IsCurrentlyLoaded(AssetId assetId, bool loadedManuallyOnly = false)
         {
             string url;
-            return AssetLoadingTimeUrls.TryGetValue(assetId, out url) && contentManager.IsLoaded(url, loadedManuallyOnly);
+            return AssetLoadingTimeUrls.TryGetValue(assetId, out url) && ContentManager.IsLoaded(url, loadedManuallyOnly);
         }
 
         private Task<Dictionary<AssetItem, object>> UnloadAndReloadAssets(ICollection<AssetItem> assets)
@@ -291,7 +292,7 @@ namespace VL.Xenko.Assets
                             // If this type supports fast reload, retrieve the current (old) value via a load
                             var type = AssetRegistry.GetContentType(assetToUnload.AssetItem.Asset.GetType());
                             string url = GetLoadingTimeUrl(assetToUnload.AssetItem);
-                            var oldValue = contentManager.Get(type, url);
+                            var oldValue = ContentManager.Get(type, url);
                             if (oldValue != null)
                             {
                                 logger?.Debug($"Preparing fast-reload of {assetToUnload.AssetItem.Location}");
@@ -388,7 +389,7 @@ namespace VL.Xenko.Assets
 
 
                             // Remove assets that were previously loaded but are not anymore from the assetLoadingTimeUrls map.
-                            foreach (var loadedUrls in AssetLoadingTimeUrls.Where(x => !contentManager.IsLoaded(x.Value)).ToList())
+                            foreach (var loadedUrls in AssetLoadingTimeUrls.Where(x => !ContentManager.IsLoaded(x.Value)).ToList())
                             {
                                 AssetLoadingTimeUrls.Remove(loadedUrls.Key);
                             }
@@ -416,7 +417,7 @@ namespace VL.Xenko.Assets
                 {
                     UnloadContent(url);
                     // Remove assets that were previously loaded but are not anymore from the assetLoadingTimeUrls map.
-                    foreach (var loadedUrls in AssetLoadingTimeUrls.Where(x => !contentManager.IsLoaded(x.Value)).ToList())
+                    foreach (var loadedUrls in AssetLoadingTimeUrls.Where(x => !ContentManager.IsLoaded(x.Value)).ToList())
                     {
                         AssetLoadingTimeUrls.Remove(loadedUrls.Key);
                     }
@@ -429,16 +430,16 @@ namespace VL.Xenko.Assets
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = debugStats ?? contentManager.GetStats();
+                debugStats = debugStats ?? ContentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Loading {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
 #endif
-            var result = contentManager.Load(type, url);
+            var result = ContentManager.Load(type, url);
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = contentManager.GetStats();
+                debugStats = ContentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Loaded {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
@@ -451,16 +452,16 @@ namespace VL.Xenko.Assets
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = debugStats ?? contentManager.GetStats();
+                debugStats = debugStats ?? ContentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Unloading {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
 #endif
-            contentManager.Unload(url);
+            ContentManager.Unload(url);
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = contentManager.GetStats();
+                debugStats = ContentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Unloaded {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
@@ -473,18 +474,18 @@ namespace VL.Xenko.Assets
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = debugStats ?? contentManager.GetStats();
+                debugStats = debugStats ?? ContentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Reloading {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
 #endif
-            contentManager.Reload(obj, url);
+            ContentManager.Reload(obj, url);
             AssetLoadingTimeUrls[assetItem.Id] = url;
 
 #if DEBUG
             if (enableReferenceLogging)
             {
-                debugStats = contentManager.GetStats();
+                debugStats = ContentManager.GetStats();
                 var entry = debugStats.LoadedAssets.FirstOrDefault(x => x.Url == url);
                 logger?.Debug($"Reloaded {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
