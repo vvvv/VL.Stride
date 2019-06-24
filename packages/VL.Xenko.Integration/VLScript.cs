@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VL.Lang.Platforms.CIL;
 using Xenko.Engine;
 using Xenko.Graphics;
 
@@ -35,6 +36,9 @@ namespace VL.Xenko
         {
             if (FGoFullscreen)
             {
+                //if (FContext.Runtime is RuntimeHost rth)
+                //    rth.Mode = Lang.Symbols.RunMode.Paused;
+
                 var gfxOutput = GraphicsAdapterFactory.Adapters[0].Outputs;
                 var displayMode = gfxOutput[0].CurrentDisplayMode;
 
