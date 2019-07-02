@@ -7,7 +7,7 @@ namespace VL.Xenko.Core
 {
     public static class LoggerExtensions
     {
-        public static ILogger GetLoggerresult(string name = null) 
+        public static ILogger GetLoggerResult(string name = null) 
             => new LoggerResult(name);
     }
 }

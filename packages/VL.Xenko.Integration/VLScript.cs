@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VL.Lang.Platforms.CIL;
+using VL.Xenko.Core;
 using Xenko.Engine;
 using Xenko.Graphics;
 
@@ -56,7 +57,7 @@ namespace VL.Xenko
             {
                 await Script.NextFrame();
                 // Update all VL root nodes
-                FContext.Update();
+                await Task.Run(() => FContext.Update());
             }
         }
     }

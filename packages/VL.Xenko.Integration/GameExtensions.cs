@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 using VL.Core;
+using VL.Xenko.Assets;
 using Xenko.Engine;
 
 namespace VL.Xenko
@@ -46,7 +47,9 @@ namespace VL.Xenko
                 if (s == game)
                 {
                     var script = new VLScript(context, game, goFullscreen);
+                    var builderScript = new AssetBuildScript();
                     game.Script.Add(script);
+                    game.Script.Add(builderScript);
                     game.Window.AllowUserResizing = true;
                 }
             };
