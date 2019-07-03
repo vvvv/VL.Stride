@@ -7,7 +7,7 @@ using Xenko.Engine;
 
 namespace VL.Xenko.Assets
 {
-    public class AssetBuildScript : AsyncScript
+    public class AssetBuildService : AsyncScript
     {
         public RuntimeContentLoader ContentLoader;
         ConcurrentQueue<AssetItem> workQueue = new ConcurrentQueue<AssetItem>();

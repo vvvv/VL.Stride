@@ -19,6 +19,7 @@ namespace VL.Xenko
         // TODO: Get rid of me
         public static Game GameInstance { get; private set; }
 
+        private readonly Action VLUpdate;
         readonly VLContext FContext;
         readonly bool FGoFullscreen;
 
@@ -29,6 +30,7 @@ namespace VL.Xenko
             FGoFullscreen = goFullscreen;
             Game = game;
             GameInstance = game;
+            VLUpdate = FContext.Update;
         }
 
         public new Game Game { get; }
@@ -57,7 +59,8 @@ namespace VL.Xenko
             {
                 await Script.NextFrame();
                 // Update all VL root nodes
-                await Task.Run(() => FContext.Update());
+                //await Task.Run(VLUpdate);
+                FContext.Update();
             }
         }
     }

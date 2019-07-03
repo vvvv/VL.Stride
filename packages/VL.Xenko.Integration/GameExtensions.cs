@@ -47,9 +47,10 @@ namespace VL.Xenko
                 if (s == game)
                 {
                     var script = new VLScript(context, game, goFullscreen);
-                    var builderScript = new AssetBuildScript();
+                    var assetBuildService = new AssetBuildService();
+                    game.Services.AddService(assetBuildService);
                     game.Script.Add(script);
-                    game.Script.Add(builderScript);
+                    game.Script.Add(assetBuildService);
                     game.Window.AllowUserResizing = true;
                 }
             };
