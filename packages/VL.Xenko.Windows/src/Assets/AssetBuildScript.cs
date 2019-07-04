@@ -12,6 +12,11 @@ namespace VL.Xenko.Assets
         public RuntimeContentLoader ContentLoader;
         ConcurrentQueue<AssetItem> workQueue = new ConcurrentQueue<AssetItem>();
 
+        public AssetBuildService()
+        {
+            PackageSessionPublicHelper.FindAndSetMSBuildVersion();
+        }
+
         public void PushWork(IEnumerable<AssetItem> items)
         {
             foreach(var item in items)
