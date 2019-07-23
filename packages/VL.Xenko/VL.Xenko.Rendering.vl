@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="MZmd92n0x8tLLBfKYOnxOx" LanguageVersion="2019.1.0-0417-g808f072318" Version="0.128">
+<Document xmlns:p="property" Id="MZmd92n0x8tLLBfKYOnxOx" LanguageVersion="2019.1.0-0428-g0be7813910" Version="0.128">
   <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="0.38.1043" />
   <Patch Id="AXcrkz7wtuiLTLQMfXYFvQ">
     <Canvas Id="UNxfqzqFZ0sNZX8LT3rUat" DefaultCategory="Xenko" CanvasType="FullCategory">
@@ -23184,6 +23184,85 @@
             <Link Id="FotaytdO96NQWOQaNTTyOp" Ids="QUQjSebzAtRLttja9ZdxCi,Rq0R8OjhsXbPao2Ey2qM36" />
             <Link Id="Kv3oce4vL9JNKx4deBTjp6" Ids="NlwkQXh9PkHLq7OaCkYbUE,EI1MIVOUkInNLK0BXhKJ8s" />
             <Link Id="TFdfhSOcuY9MTMsk4Bj14v" Ids="CXdT6RieacALPABfPa50iS,NlwkQXh9PkHLq7OaCkYbUE" IsHidden="true" />
+          </Patch>
+        </Node>
+        <!--
+
+    ************************ SetBackgroundColor ************************
+
+-->
+        <Node Name="SetBackgroundColor" Bounds="637,370" Id="L2DnpqxwFpxN54vZ9TnT7A">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="Builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="FDV7tgiWVkNQLX8foWxJcX">
+            <Canvas Id="VCbNmb8MZH3OdOk8j4MCxS" CanvasType="Group">
+              <Node Bounds="569,404,241,150" Id="SCcNfQKWle8M45wbP4T8uY">
+                <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                  <Choice Kind="ProcessStatefulRegion" Name="Cache" />
+                  <CategoryReference Kind="Category" Name="Primitive" />
+                </p:NodeReference>
+                <Pin Id="N5l6p9bNlLdPmDL0fgp5kn" Name="Force" Kind="InputPin" />
+                <Pin Id="ErT9WkyLTsTNPQPYF69qIB" Name="Dispose Cached Outputs" Kind="InputPin" />
+                <Pin Id="K9S9uQrMe71ME52AL3qUyJ" Name="Has Changed" Kind="OutputPin" />
+                <Patch Id="FL9tLZaauv3MIRD3sNTadr" ManuallySortedPins="true">
+                  <Patch Id="LF1iaqEMH15Pus4cPTrNmM" Name="Create" ManuallySortedPins="true" />
+                  <Patch Id="V1KTx9b4KdMPTXqn710gPT" Name="Then" ManuallySortedPins="true" />
+                  <Node Bounds="581,428,137,13" Id="RDY4HJgrJotNafEmF0sLMB">
+                    <p:NodeReference LastCategoryFullName="Xenko.Utils" LastSymbolSource="VL.Xenko.Engine.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="OperationCallFlag" Name="GetGraphicsCompositor" />
+                    </p:NodeReference>
+                    <Pin Id="TKD7BPaORxaPDyXBkUfjXX" Name="Compositor" Kind="OutputPin" />
+                  </Node>
+                  <Node Bounds="581,466,125,22" Id="MSDeamwkllfLFL5y9Rlloz">
+                    <p:NodeReference LastCategoryFullName="Xenko.Utils" LastSymbolSource="VL.Xenko.Engine.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="OperationCallFlag" Name="GetFirstForwardRenderer" />
+                    </p:NodeReference>
+                    <Pin Id="QDvqIxwJRSPM7BP6YuNRWU" Name="Input" Kind="InputPin" />
+                    <Pin Id="LBNXo8uGMF0L452e1Wt67s" Name="Output" Kind="OutputPin" />
+                    <Pin Id="SoP4CpTuHAJLQAIeVGhUqS" Name="Forward Renderer" Kind="OutputPin" />
+                  </Node>
+                  <Node Bounds="709,509,85,22" Id="J92EqQShEfcP0koTKPoPIW">
+                    <p:NodeReference LastCategoryFullName="Xenko.Utils" LastSymbolSource="VL.Xenko.Engine.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="OperationCallFlag" Name="SetClearOptions" />
+                    </p:NodeReference>
+                    <Pin Id="NXOAw8BU87kOsWl5AKkanr" Name="Input" Kind="InputPin" />
+                    <Pin Id="JirAF6sLhaKLz9EaSojhRC" Name="Color" Kind="InputPin" />
+                    <Pin Id="Jt4zoaCZyUOLcO9koly8wG" Name="Depth" Kind="InputPin" />
+                    <Pin Id="Oa8Cfuz2deRPjNDvgYp2Q3" Name="Stencil Value" Kind="InputPin" />
+                    <Pin Id="FDWYSTRM9jKLPtpE1epuLM" Name="Clear Flags" Kind="InputPin" />
+                    <Pin Id="AQrVqgjpMZdNpSCv1HWhMV" Name="Output" Kind="OutputPin" />
+                  </Node>
+                </Patch>
+                <ControlPoint Id="GxoFcp0fON8O63NgMaVcsO" Bounds="732,411" Alignment="Top" />
+              </Node>
+              <ControlPoint Id="RjlBiXWqfGiNNUAsrPM3yE" Bounds="825,303" />
+              <ControlPoint Id="TFoHRs1UiYGQMV92qJZUN8" Bounds="728,281" />
+            </Canvas>
+            <Patch Id="TPC72y21XBvMHmYVtcB1xj" Name="Create" />
+            <Patch Id="Ru50PCyUuGiPQrxr1CDVCO" Name="Update">
+              <Pin Id="KJSPebNJcHDLTCzNSoq8yp" Name="Force" Kind="InputPin" Bounds="825,303" />
+              <Pin Id="SPLPvyosjwDMmsU18CqivE" Name="Color" Kind="InputPin" Bounds="728,281" DefaultValue="0.2500004, 0.2500004, 0.2500004, 1">
+                <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="TypeFlag" Name="RGBA" />
+                </p:TypeAnnotation>
+              </Pin>
+            </Patch>
+            <ProcessDefinition Id="TSSdJ2n024KQIoRV2yPk6X">
+              <Fragment Id="CbZETtWbu1YNtr1mVC5CPc" Patch="TPC72y21XBvMHmYVtcB1xj" Enabled="true" />
+              <Fragment Id="TWxMcOMuX7QPesBZZlNulV" Patch="Ru50PCyUuGiPQrxr1CDVCO" Enabled="true" />
+            </ProcessDefinition>
+            <Link Id="ErU0CYTbaIRQVbvhS0tT6D" Ids="TKD7BPaORxaPDyXBkUfjXX,QDvqIxwJRSPM7BP6YuNRWU" />
+            <Link Id="TNknSvYu96cNlHEltwx93V" Ids="SoP4CpTuHAJLQAIeVGhUqS,NXOAw8BU87kOsWl5AKkanr" />
+            <Link Id="CEoB6iXQFnYNXvRU2WSEHm" Ids="RjlBiXWqfGiNNUAsrPM3yE,N5l6p9bNlLdPmDL0fgp5kn" />
+            <Link Id="EtQ7IsV7kA8N9NKGbHLLED" Ids="KJSPebNJcHDLTCzNSoq8yp,RjlBiXWqfGiNNUAsrPM3yE" IsHidden="true" />
+            <Link Id="GALVuLI0thSNS68KSpbbet" Ids="TFoHRs1UiYGQMV92qJZUN8,GxoFcp0fON8O63NgMaVcsO" />
+            <Link Id="DDox9WKf004OfrwdbswTl5" Ids="SPLPvyosjwDMmsU18CqivE,TFoHRs1UiYGQMV92qJZUN8" IsHidden="true" />
+            <Link Id="DaHKIjCYQpbO9bujSLpOfu" Ids="GxoFcp0fON8O63NgMaVcsO,JirAF6sLhaKLz9EaSojhRC" />
           </Patch>
         </Node>
       </Canvas>
