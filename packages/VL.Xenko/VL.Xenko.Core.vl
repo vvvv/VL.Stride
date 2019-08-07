@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="MZmd92n0x8tLLBfKYOnxOx" LanguageVersion="2019.1.0-0417-g808f072318" Version="0.128">
+<Document xmlns:p="property" Id="MZmd92n0x8tLLBfKYOnxOx" LanguageVersion="2019.1.0-0568-g3bb521b672" Version="0.128">
   <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="0.38.1043" />
   <Patch Id="AXcrkz7wtuiLTLQMfXYFvQ">
     <Canvas Id="UNxfqzqFZ0sNZX8LT3rUat" DefaultCategory="Xenko" CanvasType="FullCategory">
@@ -1473,6 +1473,75 @@
             <Pin Id="Df3mxwnGC8wNsdJNgvGI4h" Name="Output" Kind="OutputPin" Bounds="1717,783" />
             <Pin Id="UNQ0qBcBW9YOnYvEOzSj1U" Name="Item" Kind="OutputPin" Bounds="2083,984" />
             <Pin Id="LHbSTNBSZJWM3JhYwn0Dmu" Name="Item Index" Kind="OutputPin" Bounds="1869,974" />
+          </Patch>
+        </Node>
+        <!--
+
+    ************************ ToRay ************************
+
+-->
+        <Node Name="ToRay" Bounds="573,512,181,250" Id="DfdPKxQumFQPSnhof4bYd1">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="OperationDefinition" Name="Operation" />
+          </p:NodeReference>
+          <Patch Id="MMPWBQ7EaldLBE3k9uGP8q">
+            <Node Bounds="650,691,46,26" Id="MAh8gKBoKS6NhuaB71YJj9">
+              <p:NodeReference LastCategoryFullName="Xenko.Core.Mathematics.Ray" LastSymbolSource="Xenko.Core.Mathematics.dll">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <CategoryReference Kind="AssemblyCategory" Name="Ray" />
+                <Choice Kind="OperationCallFlag" Name="Create" />
+              </p:NodeReference>
+              <Pin Id="Su46I9bgXHqLkLEMIt0SWM" Name="Position" Kind="InputPin" />
+              <Pin Id="LuiRQaOqZEiPu0SvCZy3Io" Name="Direction" Kind="InputPin" />
+              <Pin Id="I2RySNqpAlaNqxG7c0mebL" Name="Output" Kind="StateOutputPin" />
+            </Node>
+            <Node Bounds="671,583,58,26" Id="H5udvUYdN8wNfIvYzhTw9D">
+              <p:NodeReference LastCategoryFullName="3D.Ray" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <CategoryReference Kind="RecordType" Name="Ray" />
+                <Choice Kind="OperationCallFlag" Name="Direction" />
+              </p:NodeReference>
+              <Pin Id="Kve99Cl2dLOPJGiuW7VqWj" Name="Input" Kind="StateInputPin" />
+              <Pin Id="PJZijvr7YJIMshgEhwfhcu" Name="Direction" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="692,637" Id="CHM9SunmwlPN9O0LWCXC8I">
+              <p:NodeReference LastCategoryFullName="Xenko.Utils" LastSymbolSource="VL.Xenko.Core.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="OperationCallFlag" Name="ToVec3" />
+              </p:NodeReference>
+              <Pin Id="JuAUlzgOCHhPhUUPT50LWd" Name="Input" Kind="InputPin" />
+              <Pin Id="M8VuVULPQAIMSO4DCgLiwe" Name="Output" Kind="OutputPin" />
+            </Node>
+            <Link Id="NR1JAw1oAj6O7EwoHn8zTF" Ids="PJZijvr7YJIMshgEhwfhcu,JuAUlzgOCHhPhUUPT50LWd" />
+            <Link Id="D4IYALGooYdNwJ5tkFQAwY" Ids="M8VuVULPQAIMSO4DCgLiwe,LuiRQaOqZEiPu0SvCZy3Io" />
+            <Node Bounds="615,635,50,19" Id="RyG6cbezJA7PA9KP13BbDc">
+              <p:NodeReference LastCategoryFullName="Xenko.Utils" LastSymbolSource="VL.Xenko.Core.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="OperationCallFlag" Name="ToVec3" />
+              </p:NodeReference>
+              <Pin Id="O3MuVlqRXJGO2cQjAqvBLs" Name="Input" Kind="InputPin" />
+              <Pin Id="OBb8cWoMEUBOpMJK31kKBy" Name="Output" Kind="OutputPin" />
+            </Node>
+            <Link Id="OgfDuiH6H9BNZPjbUMJN0o" Ids="OBb8cWoMEUBOpMJK31kKBy,Su46I9bgXHqLkLEMIt0SWM" />
+            <ControlPoint Id="Jpt4lxymqGaQEu6iw0JFs0" Bounds="653,745" />
+            <Link Id="EhkWe8O5vB9NQFVtMP3OZt" Ids="I2RySNqpAlaNqxG7c0mebL,Jpt4lxymqGaQEu6iw0JFs0" />
+            <Link Id="BuaKCJbR0MAMLg0tcnGvSC" Ids="Jpt4lxymqGaQEu6iw0JFs0,It1jww5eTgVN9qk65h1Wvg" IsHidden="true" />
+            <Node Bounds="589,587,58,26" Id="UJjiPsqzV0PN9770Ps2rcg">
+              <p:NodeReference LastCategoryFullName="3D.Ray" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <CategoryReference Kind="RecordType" Name="Ray" />
+                <Choice Kind="OperationCallFlag" Name="Position" />
+              </p:NodeReference>
+              <Pin Id="A5GlhhX2qh6NWvX1L7NcwZ" Name="Input" Kind="StateInputPin" />
+              <Pin Id="MsuNUo4SbBoQMVRFLO0beZ" Name="Position" Kind="OutputPin" />
+            </Node>
+            <Link Id="QXE4Q9MGIuTN0cO9RACF0w" Ids="MsuNUo4SbBoQMVRFLO0beZ,O3MuVlqRXJGO2cQjAqvBLs" />
+            <ControlPoint Id="TOrc6EjOZhmOMKwjqmgxwE" Bounds="587,530" />
+            <Link Id="FhBxfReXyNOMBwd9195XgW" Ids="TOrc6EjOZhmOMKwjqmgxwE,A5GlhhX2qh6NWvX1L7NcwZ" />
+            <Link Id="MVMeP6PdttgMTz2mhoMr63" Ids="BbjGhTaTm43LufbrvVN6HL,TOrc6EjOZhmOMKwjqmgxwE" IsHidden="true" />
+            <Pin Id="BbjGhTaTm43LufbrvVN6HL" Name="Input" Kind="InputPin" Bounds="587,530" />
+            <Pin Id="It1jww5eTgVN9qk65h1Wvg" Name="Output" Kind="OutputPin" Bounds="653,746" />
+            <Link Id="DvWgrxxHpdhPY1fuxoLj53" Ids="TOrc6EjOZhmOMKwjqmgxwE,Kve99Cl2dLOPJGiuW7VqWj" />
           </Patch>
         </Node>
       </Canvas>
