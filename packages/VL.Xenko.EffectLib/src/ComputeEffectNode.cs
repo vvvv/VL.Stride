@@ -53,7 +53,7 @@ namespace VL.Xenko.EffectLib
             perViewParams = parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
             perDrawParams = parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
             if (perDrawParams.Length > 0)
-                worldPin = Inputs.OfType<ConvertedValueParameterPin<Matrix, SharpDX.Matrix>>().FirstOrDefault(p => p.Key == TransformationKeys.World);
+                worldPin = Inputs.OfType<ValueParameterPin<Matrix>>().FirstOrDefault(p => p.Key == TransformationKeys.World);
 
             Inputs.SelectPin(EffectNodeDescription.ComputeDispatchCountInput, ref dispatchCountPin);
             Inputs.SelectPin(EffectNodeDescription.ComputeThreadNumbersInput, ref threadNumbersPin);

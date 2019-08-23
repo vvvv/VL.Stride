@@ -41,7 +41,7 @@ namespace VL.Xenko.EffectLib
             perViewParams = parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
             perDrawParams = parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
             if (perDrawParams.Length > 0)
-                worldPin = Inputs.OfType<ConvertedValueParameterPin<Matrix, SharpDX.Matrix>>().FirstOrDefault(p => p.Key == TransformationKeys.World);
+                worldPin = Inputs.OfType<ValueParameterPin<Matrix>>().FirstOrDefault(p => p.Key == TransformationKeys.World);
             if (Inputs.Length > 0)
                 customParameterSetterPin = Inputs[Inputs.Length - 1] as Pin<Action<ParameterCollection, RenderView, RenderDrawContext>>;
         }

@@ -1,9 +1,9 @@
-﻿using SharpDX;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xenko.Core.Mathematics;
 using Xenko.Rendering;
 using Xenko.Rendering.Compositing;
 using XenkoMath = Xenko.Core.Mathematics;
@@ -21,7 +21,7 @@ namespace VL.Xenko.Rendering
 
         public static ForwardRenderer SetClearOptions(this ForwardRenderer forwardRenderer, Color4 color, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
         {
-            forwardRenderer.Clear.Color = new XenkoMath.Color4(color.Red, color.Green, color.Blue, color.Alpha);
+            forwardRenderer.Clear.Color = new XenkoMath.Color4(color.R, color.G, color.B, color.A);
             forwardRenderer.Clear.ClearFlags = clearFlags;
             forwardRenderer.Clear.Depth = depth;
             forwardRenderer.Clear.Stencil = stencilValue;

@@ -24,7 +24,7 @@ namespace VL.Xenko.EffectLib
 
         public IVLNodeDescription NodeDescription => description;
 
-        protected ConvertedValueParameterPin<Matrix, SharpDX.Matrix> worldPin;
+        protected ValueParameterPin<Matrix> worldPin;
 
         protected Matrix entityWorldMatrix = Matrix.Identity;
         public void SetEntityWorldMatrix(Matrix entityWorld)
@@ -35,9 +35,9 @@ namespace VL.Xenko.EffectLib
             Matrix result;
             if (worldPin != null)
             {
-                var world = worldPin.ShaderValue;
+                var world = worldPin.Value;
                 Matrix.MultiplyTo(ref world, ref entityWorldMatrix, out result);
-                worldPin.ShaderValue = result;
+                worldPin.Value = result;
             }
             else
                 result = entityWorldMatrix;

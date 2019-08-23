@@ -218,10 +218,10 @@ namespace VL.Xenko.EffectLib
     {
         public static Dictionary<Type, Type> ShaderToPinTypeMap = new Dictionary<Type, Type>()
         {
-            { typeof(Matrix), typeof(SharpDX.Matrix) },
-            { typeof(Vector2), typeof(SharpDX.Vector2) },
-            { typeof(Vector3), typeof(SharpDX.Vector3) },
-            { typeof(Vector4), typeof(SharpDX.Vector4) },
+            //{ typeof(Matrix), typeof(SharpDX.Matrix) },
+            //{ typeof(Vector2), typeof(SharpDX.Vector2) },
+            //{ typeof(Vector3), typeof(SharpDX.Vector3) },
+            //{ typeof(Vector4), typeof(SharpDX.Vector4) },
         };
 
         static readonly MethodInfo ConvertMethod = typeof(TypeConversions).GetMethod(nameof(Convert), BindingFlags.Static | BindingFlags.Public);
