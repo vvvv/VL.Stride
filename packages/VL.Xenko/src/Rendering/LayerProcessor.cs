@@ -37,7 +37,7 @@ namespace VL.Xenko.Rendering
                 if (myEntityComponent.Enabled)
                 {
                     //update world matrix befor rendering
-                    myEntityComponent.Layer.SetEntityWorldMatrix(myEntityComponent.Entity.Transform.WorldMatrix);
+                    myEntityComponent.Layer?.SetEntityWorldMatrix(myEntityComponent.Entity.Transform.WorldMatrix);
                     myRenderObject.SingleCallPerFrame = myEntityComponent.SingleCallPerFrame;
                     myRenderObject.Layer = myEntityComponent.Layer;
                 }
