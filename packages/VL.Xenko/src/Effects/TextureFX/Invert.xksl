@@ -1,7 +1,13 @@
-﻿namespace VL.Xenko.Effects.TextureFX
+﻿shader Invert : TextureFX
 {
-    shader Invert
+    float Factor = 1;
+
+    stage override float4 Shading()
     {
-   
-    };
-}
+        float4 c = InTex();
+        c.rgb = lerp(c.rgb, 1 - c.rgb, Factor);
+        return c;
+    }
+};
+
+

@@ -21,7 +21,7 @@ using Buffer = Xenko.Graphics.Buffer;
 
 namespace VL.Xenko.EffectLib
 {
-    class EffectNodeDescription : IVLNodeDescription
+    public class EffectNodeDescription : IVLNodeDescription
     {
         public static readonly PinDescription<IEffect> EffectMainOutput = new PinDescription<IEffect>("Output");
 
@@ -281,7 +281,7 @@ namespace VL.Xenko.EffectLib
         }
     }
 
-    abstract class EffectPinDescription : IVLPinDescription
+    public abstract class EffectPinDescription : IVLPinDescription
     {
         public abstract string Name { get; }
         public abstract Type Type { get; }
@@ -292,7 +292,7 @@ namespace VL.Xenko.EffectLib
         public abstract IVLPin CreatePin(IVLNode node, ParameterCollection parameters);
     }
 
-    class PinDescription<T> : EffectPinDescription
+    public class PinDescription<T> : EffectPinDescription
     {
         public PinDescription(string name, T defaultValue = default(T))
         {
@@ -308,7 +308,7 @@ namespace VL.Xenko.EffectLib
         public override IVLPin CreatePin(IVLNode node, ParameterCollection parameters) => new Pin<T>(Name, DefaultValue);
     }
 
-    class ParameterPinDescription : EffectPinDescription
+    public class ParameterPinDescription : EffectPinDescription
     {
         public readonly ParameterKey Key;
         public readonly int Count;
