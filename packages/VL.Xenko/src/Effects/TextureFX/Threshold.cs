@@ -24,6 +24,5 @@ namespace Xenko.Rendering
         public static readonly ValueParameterKey<float> Smooth = ParameterKeys.NewValue<float>(0.01f);
         public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
         public static readonly ValueParameterKey<bool> AntiAliasing = ParameterKeys.NewValue<bool>();
-        public static readonly ValueParameterKey<float> Test = ParameterKeys.NewValue<float>();
     }
 }

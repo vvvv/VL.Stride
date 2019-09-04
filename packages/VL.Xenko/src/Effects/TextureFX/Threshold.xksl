@@ -8,12 +8,11 @@
     float Smooth = 0.01f; 
     bool Invert;
     bool AntiAliasing;
-    float Test;
 
     stage override float4 Shading()
     {
         float4 c = InTex();
-        float f = c.r * Test;
+        float f = c.r;
         float th = (Threshold - 0.5) * 1.001 + 0.5;
         float fmth = f-th;
         f = fmth / max(0.00000001 + fwidth(fmth) * AntiAliasing, Smooth) + th;

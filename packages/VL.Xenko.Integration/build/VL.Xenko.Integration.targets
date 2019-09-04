@@ -148,10 +148,10 @@
           Inputs="@(_Manifests)"
           Outputs="@(_Manifests->'%(OutputManifest)')">
     
-    <!--<ItemGroup Condition="Exists('$(_PackageInstallDirectory)')">
+    <ItemGroup Condition="Exists('$(_PackageInstallDirectory)')">
       <_OldDirectories Include="$([System.IO.Directory]::GetDirectories('$(_PackageInstallDirectory)', '*', System.IO.SearchOption.TopDirectoryOnly))" />
     </ItemGroup>
-    <RemoveDir Directories="@(_OldDirectories)" />-->    
+    <RemoveDir Directories="@(_OldDirectories)" />    
     
     <Message Importance="high" Text="Installing VL $(VLVersion), VL.Xenko $(VLXenkoVersion), VL.Xenko.Windows $(VLXenkoVersion) and XenkoLiveEditor $(XenkoLiveEditorVersion) packages to $(_PackageInstallDirectory)" />
     <NuGetInstall StandardOutputImportance="high"
