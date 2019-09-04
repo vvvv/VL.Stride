@@ -23,7 +23,7 @@ namespace VL.Xenko.Effects.TextureFX
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
                 context.Mixin(mixin, "ComputeColorFX");
-                context.Mixin(mixin, context.GetParam(TextureFXKeys.Test123));
+                context.Mixin(mixin, context.GetParam(TextureFXKeys.ComputeColorRoot));
             }
 
             [ModuleInitializer]

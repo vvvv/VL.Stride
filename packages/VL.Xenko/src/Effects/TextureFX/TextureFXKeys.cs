@@ -8,6 +8,6 @@ namespace VL.Xenko.Effects.TextureFX
 {
     class TextureFXKeys
     {
-        public static readonly PermutationParameterKey<ShaderSource> Test123 = ParameterKeys.NewPermutation<ShaderSource>();
+        public static readonly PermutationParameterKey<ShaderSource> ComputeColorRoot = ParameterKeys.NewPermutation<ShaderSource>();
     }
 }

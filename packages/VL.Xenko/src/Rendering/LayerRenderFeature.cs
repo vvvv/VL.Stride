@@ -33,11 +33,18 @@ namespace VL.Xenko.Rendering
         private readonly List<ILowLevelAPIRender> layers = new List<ILowLevelAPIRender>();
         private int lastFrameNr;
         private IVLRuntime runtime;
+        public ILowLevelAPIRender Tooltip;
 
         public LayerRenderFeature()
         {
             // Pre adjust render priority, low numer is early, high number is late (advantage of backbuffer culling)
             SortKey = 190;
+        }
+
+        protected override void InitializeCore()
+        {
+            base.InitializeCore();
+            this.Context.Services.AddService(this);
         }
 
         public override Type SupportedRenderObjectType => typeof(RenderLayer);
@@ -101,6 +108,16 @@ namespace VL.Xenko.Rendering
                     {
                         RuntimeGraph.ReportException(e);
                     }
+                }
+
+                //render tooltip
+                try
+                {
+                    Tooltip?.Draw(Context, context, renderView, renderViewStage, context.CommandList);
+                }
+                catch (Exception e)
+                {
+                    RuntimeGraph.ReportException(e);
                 }
             }
         }

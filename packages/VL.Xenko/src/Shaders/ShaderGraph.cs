@@ -22,14 +22,14 @@ namespace VL.Xenko.Shaders
                 Parameters = effectImageShader.Parameters,
             };
 
-            var computeColor = new ComputeShaderClassColor
+            var computeColorShader = new ComputeShaderClassColor
             {
                 MixinReference = "ComputeColorOne",
             };
 
             var computeColor1 = new ComputeColor(Color.Red);
             var computeColor2 = new ComputeColor(Color.Green);
-            var computeColorT = new ComputeBinaryColor
+            var computeColor = new ComputeBinaryColor
             {
                 LeftChild = computeColor1,
                 RightChild = computeColor2,
@@ -42,8 +42,7 @@ namespace VL.Xenko.Shaders
             var mixin = new ShaderMixinSource();
             mixin.AddComposition("Func", shaderSource);
 
-            effectImageShader.Parameters.Set(TextureFXKeys.Test123, mixin);
-            //effectImageShader.Parameters.Set(MaterialKeys.DiffuseValue, Color.Red);
+            effectImageShader.Parameters.Set(TextureFXKeys.ComputeColorRoot, mixin);
             return effectImageShader;
         }
     }
