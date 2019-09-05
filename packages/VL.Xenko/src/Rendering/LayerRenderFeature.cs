@@ -127,9 +127,11 @@ namespace VL.Xenko.Rendering
                 }
 
                 //render tooltip
+                if(Tooltip != null)
                 try
                 {
-                    Tooltip?.Draw(Context, context, renderView, renderViewStage, context.CommandList);
+                    using (context.PushRenderTargetsAndRestore())
+                        Tooltip.Draw(Context, context, renderView, renderViewStage, context.CommandList);
                 }
                 catch (Exception e)
                 {
