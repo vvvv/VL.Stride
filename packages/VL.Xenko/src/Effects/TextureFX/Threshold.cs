@@ -21,7 +21,7 @@ namespace Xenko.Rendering
         public static readonly ValueParameterKey<Color4> ColorA = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));
         public static readonly ValueParameterKey<Color4> ColorB = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
         public static readonly ValueParameterKey<float> Threshold = ParameterKeys.NewValue<float>(0.5f);
-        public static readonly ValueParameterKey<float> Smooth = ParameterKeys.NewValue<float>(0.01f);
+        public static readonly ValueParameterKey<float> Smooth = ParameterKeys.NewValue<float>(0.02f);
         public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
         public static readonly ValueParameterKey<bool> AntiAliasing = ParameterKeys.NewValue<bool>();
     }

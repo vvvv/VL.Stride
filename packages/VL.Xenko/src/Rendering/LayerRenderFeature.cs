@@ -34,6 +34,7 @@ namespace VL.Xenko.Rendering
         private int lastFrameNr;
         private IVLRuntime runtime;
         public ILowLevelAPIRender Tooltip;
+        public ILowLevelAPIRender TextureFX;
 
         public LayerRenderFeature()
         {
@@ -60,6 +61,21 @@ namespace VL.Xenko.Rendering
                 var runtime = this.runtime ?? (this.runtime = renderContext.Services.GetService<IVLRuntime>());
                 if (runtime != null && !runtime.IsRunning)
                     return;
+
+                //render textureFX
+                
+                if (TextureFX != null)
+                {
+                    try
+                    {
+                        using (context.PushRenderTargetsAndRestore())
+                            TextureFX.Draw(Context, context, renderView, renderViewStage, context.CommandList);
+                    }
+                    catch (Exception e)
+                    {
+                        RuntimeGraph.ReportException(e);
+                    } 
+                }
 
                 // Build the list of layers to render
                 singleCallLayers.Clear();

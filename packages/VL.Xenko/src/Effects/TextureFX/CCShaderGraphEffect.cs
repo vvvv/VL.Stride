@@ -18,7 +18,7 @@ namespace VL.Xenko.Effects.TextureFX
 {
     internal static partial class ShaderMixins
     {
-        internal partial class EffectTest  : IShaderMixinBuilder
+        internal partial class CCShaderGraphEffect  : IShaderMixinBuilder
         {
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
@@ -30,7 +30,7 @@ namespace VL.Xenko.Effects.TextureFX
             internal static void __Initialize__()
 
             {
-                ShaderMixinManager.Register("EffectTest", new EffectTest());
+                ShaderMixinManager.Register("CCShaderGraphEffect", new CCShaderGraphEffect());
             }
         }
     }

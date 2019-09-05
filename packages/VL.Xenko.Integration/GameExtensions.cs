@@ -26,7 +26,7 @@ namespace VL.Xenko
                 openEditor: openEditor,
                 openEditorInOtherThread: openEditorInOtherThread,
                 useInternalTimer: false,
-                lazy: true);
+                lazy: false);
 
             // Register the context and the session in Xenko so we can fetch it later
             game.Services.AddService(context);
