@@ -11,6 +11,7 @@ namespace TestGame.Windows
         {
             using (var game = new Game())
             {
+                //game.GraphicsDeviceManager.DeviceCreationFlags |= Xenko.Graphics.DeviceCreationFlags.Debug;
                 game.AttachVL(VLScript.MainVLDocSrc);
                 game.Run();
             }
