@@ -92,6 +92,9 @@ namespace VL.Xenko.Assets
             UpdateGameSettings(game);
 
             //TODO: just a hack for now
+            var defaultDatabase = game.Services.GetService<IDatabaseFileProviderService>().FileProvider;
+            MicrothreadLocalDatabases.AddToSharedGroup(defaultDatabase.ContentIndexMap.GetMergedIdMap()
+                .Select(idm => new OutputObject(new ObjectUrl(UrlType.Content, idm.Key), idm.Value)).ToDictionary(e => e.Url));
             game.Services.RemoveService<IDatabaseFileProviderService>();
             game.Services.AddService(MicrothreadLocalDatabases.ProviderService);
             ContentManager = new ContentManager(Game.Services);

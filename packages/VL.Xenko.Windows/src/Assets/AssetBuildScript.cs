@@ -7,6 +7,9 @@ using Xenko.Engine;
 
 namespace VL.Xenko.Assets
 {
+    /// <summary>
+    /// Custom vl script that sets MSBuild
+    /// </summary>
     public class AssetBuildService : AsyncScript
     {
         public RuntimeContentLoader ContentLoader;
@@ -14,6 +17,7 @@ namespace VL.Xenko.Assets
 
         public AssetBuildService()
         {
+            //set msbuild
             PackageSessionPublicHelper.FindAndSetMSBuildVersion();
         }
 
