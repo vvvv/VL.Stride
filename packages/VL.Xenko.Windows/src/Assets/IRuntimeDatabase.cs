@@ -15,5 +15,7 @@ namespace VL.Xenko.Assets
         Task<IDisposable> LockAsync();
         Task Build(AssetItem x, BuildDependencyType dependencyType);
         Task<IDisposable> MountInCurrentMicroThread();
+
+        void ResetDependencyCompiler();
     }
 }

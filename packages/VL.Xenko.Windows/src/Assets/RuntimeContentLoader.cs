@@ -104,6 +104,9 @@ namespace VL.Xenko.Assets
             OnAssetBuilt = AssetBuilt.SelectMany(SelectAssetEvent);
         }
 
+        public void ResetDependencyCompiler()
+            => database.ResetDependencyCompiler();
+
         private static IObservable<Tuple<ReloadingAsset, object>> SelectAssetEvent(ReloadingAsset ra)
         {
             return ra.Result.Task.ToObservable().Select(o => SelectTaskEvent(ra, o));

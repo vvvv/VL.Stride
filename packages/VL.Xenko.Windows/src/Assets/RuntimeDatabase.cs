@@ -35,8 +35,13 @@ namespace VL.Xenko.Assets
         internal readonly AssetCompilerContext CompilerContext = new AssetCompilerContext { CompilationContext = typeof(AssetCompilationContext) };
         private readonly MicroThreadLock databaseLock = new MicroThreadLock();
         private readonly GameSettingsAsset databaseGameSettings;
-        internal readonly AssetDependenciesCompiler AssetDependenciesCompiler = new AssetDependenciesCompiler(typeof(RuntimeCompilationContext));
+        internal AssetDependenciesCompiler AssetDependenciesCompiler = new AssetDependenciesCompiler(typeof(RuntimeCompilationContext));
         private bool isDisposed;
+
+        public void ResetDependencyCompiler()
+        {
+            AssetDependenciesCompiler = new AssetDependenciesCompiler(typeof(RuntimeCompilationContext));
+        }
 
         public RuntimeDatabase(ILogger logger, AssetBuilderService assetBuilderService, Game game)
         {
