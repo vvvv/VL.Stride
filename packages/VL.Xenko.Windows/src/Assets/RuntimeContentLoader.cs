@@ -40,7 +40,9 @@ namespace VL.Xenko.Assets
     public sealed class RuntimeContentLoader : IDisposable
     {
         private Subject<ReloadingAsset> AssetBuilt = new Subject<ReloadingAsset>();
+        private Subject<string> AssetRemoved = new Subject<string>();
         public IObservable<Tuple<ReloadingAsset, object>> OnAssetBuilt { get; }
+        public IObservable<string> OnAssetRemoved => AssetRemoved;
         private readonly ILogger logger;
         private readonly IRuntimeDatabase database;
         private RenderingMode currentRenderingMode;
@@ -450,7 +452,7 @@ namespace VL.Xenko.Assets
             return result;
         }
 
-        private void UnloadContent(string url)
+        public void UnloadContent(string url)
         {
 #if DEBUG
             if (enableReferenceLogging)
@@ -461,6 +463,7 @@ namespace VL.Xenko.Assets
             }
 #endif
             ContentManager.Unload(url);
+            AssetRemoved.OnNext(url);
 #if DEBUG
             if (enableReferenceLogging)
             {
