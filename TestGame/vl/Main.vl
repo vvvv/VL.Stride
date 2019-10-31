@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="DLbPUfgFMXLPoRKR0E0WbF" LanguageVersion="2019.1.0-0902-gc9b5d845e6" Version="0.128">
+<Document xmlns:p="property" Id="DLbPUfgFMXLPoRKR0E0WbF" LanguageVersion="2019.1.0-0923-ge75127f352" Version="0.128">
   <NugetDependency Id="FeSAYsTHh3BMyO28kRm6jL" Location="VL.CoreLib" Version="0.96.6" />
   <Patch Id="LJ2kmwJCTUoLVzSBB1MlJA">
     <Canvas Id="VGizQ5KZ7t2OVrOfNroTum" DefaultCategory="Main" CanvasType="FullCategory" />
@@ -170,7 +170,7 @@
           </Pad>
           <Pad Id="M0l2ZxbhX2MMq7NgvA7z3A" Comment="Already Loaded" Bounds="782,390,35,35" ShowValueBox="true" isIOBox="true" />
           <Pad Id="GmyBWptykKmNAKmIrlghRm" Comment="Is Loading" Bounds="652,390,35,35" ShowValueBox="true" isIOBox="true" />
-          <Pad Id="A7Fa5sqoAp7NGPREijRGzD" Comment="Project Path" Bounds="1435,260,555,15" ShowValueBox="true" isIOBox="true" Value="..\..\xenko\XenkoDevTestGame\XenkoDevTestGame\XenkoDevTestGame.csproj">
+          <Pad Id="A7Fa5sqoAp7NGPREijRGzD" Comment="Project Path" Bounds="1433,145,555,15" ShowValueBox="true" isIOBox="true" Value="..\..\xenko\XenkoDevTestGame\XenkoDevTestGame\XenkoDevTestGame.csproj">
             <p:TypeAnnotation LastCategoryFullName="IO" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>
@@ -182,6 +182,7 @@
             </p:NodeReference>
             <Pin Id="CPhTQIHEfcsOqZgqrPNO4b" Name="Project Path" Kind="InputPin" />
             <Pin Id="AjbsRzlF0BvMEymV4y8pqS" Name="Reload" Kind="InputPin" />
+            <Pin Id="UwylaHqeHvBMh6mOt7tbLh" Name="Auto Reload" Kind="InputPin" />
             <Pin Id="RWyN02SyLPvPQ06UxoE3Ju" Name="Loading" Kind="OutputPin" />
             <Pin Id="IAtD3T56Z6wOeHtprLPGBg" Name="Project Is Loading" Kind="OutputPin" />
             <Pin Id="EkPNcB2sa74LdwnpqD9gE8" Name="Contents" Kind="OutputPin" />
@@ -191,6 +192,7 @@
             <Pin Id="SP1lMFDKjQaQOOZu994WRQ" Name="Any Content Is Loading" Kind="OutputPin" />
             <Pin Id="HxbacOHCQ7ZLglIKZ8dzCH" Name="Available Assets" Kind="OutputPin" />
             <Pin Id="R8feZy31oDeQZvqrTIQb1t" Name="Content URLs" Kind="OutputPin" />
+            <Pin Id="Rqw92Is4R97QPBDE3Ag21o" Name="Changes" Kind="OutputPin" />
           </Node>
           <Pad Id="K97Gn0mN2BAOrJV3uyCU3J" Comment="Is Loading" Bounds="1767,436,117,264" ShowValueBox="true" isIOBox="true">
             <p:ValueBoxSettings>
@@ -228,7 +230,7 @@
               </Node>
             </Patch>
           </Node>
-          <Pad Id="ObrLBlXh1UNL1Y2g9tudmr" Comment="" Bounds="1092,508,256,264" ShowValueBox="true" isIOBox="true">
+          <Pad Id="ObrLBlXh1UNL1Y2g9tudmr" Comment="" Bounds="1137,489,256,295" ShowValueBox="true" isIOBox="true">
             <p:ValueBoxSettings>
               <p:maxvisibleentries p:Type="Int32">80</p:maxvisibleentries>
             </p:ValueBoxSettings>
@@ -236,7 +238,7 @@
           <Pad Id="PTsw6QeUQJTPeDJjgTvmNw" Comment="Loading" Bounds="1279,364,35,35" ShowValueBox="true" isIOBox="true" />
           <Pad Id="DQ0Gvh5O0XmLvtBZgxDhW4" Comment="Project Is Loading" Bounds="1391,364,35,35" ShowValueBox="true" isIOBox="true" />
           <Pad Id="MCdEmmyqUaaPA8ts6dVzU0" Comment="Any Content Is Loading" Bounds="2105,369,35,35" ShowValueBox="true" isIOBox="true" />
-          <Pad Id="TrkeAGc7C6OMPQ4cAxaMWl" Comment="Reload" Bounds="1808,171,70,66" ShowValueBox="true" isIOBox="true" Value="False">
+          <Pad Id="TrkeAGc7C6OMPQ4cAxaMWl" Comment="Reload" Bounds="1712,193,70,66" ShowValueBox="true" isIOBox="true" Value="False">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Boolean" />
             </p:TypeAnnotation>
@@ -261,13 +263,17 @@
             <Pin Id="RV5n3piiwu2Pam8h0iRhWK" Name="Name" Kind="InputPin" />
             <Pin Id="TUPZImI2zcoMfgUo1piYjk" Name="Entity" Kind="OutputPin" />
           </Node>
-          <Node Bounds="604,730,88,19" Id="U3NG3IH39orNdIUdpyxjXi">
+          <Node Bounds="601,711,88,19" Id="U3NG3IH39orNdIUdpyxjXi">
             <p:NodeReference LastCategoryFullName="Xenko.Rendering" LastSymbolSource="VL.Xenko.Rendering.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="DirectionalLight" />
             </p:NodeReference>
             <Pin Id="M7U4jJMpbPjPmcZQsIVd7e" Name="Transformation" Kind="InputPin" />
-            <Pin Id="QikAs8AzeL2P90abaMQ1qy" Name="Intensity" Kind="InputPin" />
+            <Pin Id="QikAs8AzeL2P90abaMQ1qy" Name="Intensity" Kind="InputPin" DefaultValue="0.79">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Float32" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="Jzr1cCHbqgKPhHMbBTi1A0" Name="Color" Kind="InputPin" />
             <Pin Id="LPk5XeeLD6sM1A2blsllaZ" Name="Name" Kind="InputPin" />
             <Pin Id="EDquL2s7YENPqH4K6JEIcD" Name="Enabled" Kind="InputPin" />
@@ -287,7 +293,7 @@
             <Pin Id="CAQLQuvtPHKP469GoqSPj6" Name="Name" Kind="InputPin" />
             <Pin Id="TTkCUsfN3zFPqikQXTNatb" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="604,686,54,19" Id="Q2rNrHQcIn1Onl4ur0m7iB">
+          <Node Bounds="601,667,54,19" Id="Q2rNrHQcIn1Onl4ur0m7iB">
             <p:NodeReference LastCategoryFullName="3D.Matrix" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="OperationCallFlag" Name="Rotation" />
@@ -338,13 +344,17 @@
             <Pin Id="JiTvNTmLz2CPerFWnzFKuf" Name="Cull Mode" Kind="InputPin" />
             <Pin Id="COjr4pItkypMqD4UqLQAcB" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="582,633,66,19" Id="JsonoTx71IyLCADETzWMJC">
+          <Node Bounds="590,593,66,19" Id="JsonoTx71IyLCADETzWMJC">
             <p:NodeReference LastCategoryFullName="Xenko.Rendering" LastSymbolSource="VL.Xenko.Rendering.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="QuadEntity" />
             </p:NodeReference>
             <Pin Id="Qr43AmtPcf7M8Dsk9uxfJN" Name="Transformation" Kind="InputPin" />
-            <Pin Id="SYjUD3BTWXNLRVCZVIGRfm" Name="Enabled" Kind="InputPin" />
+            <Pin Id="SYjUD3BTWXNLRVCZVIGRfm" Name="Enabled" Kind="InputPin" DefaultValue="False">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="PIlhZqLIsG2LVPjyiJK9IZ" Name="Name" Kind="InputPin" />
             <Pin Id="PI42wmQLtCpN05qdV9YAim" Name="Texture" Kind="InputPin" />
             <Pin Id="DyOXxlbbAWBQc8SyoQdOGh" Name="Entity" Kind="OutputPin" />
@@ -474,6 +484,66 @@
             </p:ValueBoxSettings>
           </Pad>
           <Pad Id="SKI0I2Fw2q2Pdi4Jjf518t" Comment="Exists" Bounds="393,640,35,35" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="DyvloyozlKZM5i78Uh4amA" Comment="Prefab Url" Bounds="831,565,138,16" ShowValueBox="true" isIOBox="true" Value="Prefabs/TestPrefab">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Node Bounds="789,627,108,19" Id="GDc5l0Q8vdmOFHssMgiKMs">
+            <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows" LastSymbolSource="VL.Xenko.Assets.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="RuntimePrefabEntity" />
+            </p:NodeReference>
+            <Pin Id="OT4018jZBIoNOO665Jvkxf" Name="Entities" Kind="InputPin" />
+            <Pin Id="JPtBakicY6VN3uWzYE3I0K" Name="Components" Kind="InputPin" />
+            <Pin Id="TzPuPfUDU1XQDVSCPibbUS" Name="Prefab Url" Kind="InputPin" />
+            <Pin Id="J6mQSNUYmmWQZHBf5M6TFd" Name="Transformation" Kind="InputPin" />
+            <Pin Id="LfpNFHHwIeULrWMGcgL2zB" Name="Enabled" Kind="InputPin" />
+            <Pin Id="FfNTj1b3QzaQVx37XjaLRK" Name="Name" Kind="InputPin" />
+            <Pin Id="DSAJXi7mNbCNnhixEwG0yX" Name="Output" Kind="StateOutputPin" />
+            <Pin Id="MGapfApQzyRNKD0DRDysjF" Name="Entity" Kind="OutputPin" />
+            <Pin Id="Bu2KA2ry6xhPwC1hgidPhO" Name="First Original Prefab Entity" Kind="OutputPin" />
+            <Pin Id="DXS4FgZRgWkMLJKzgfwsdj" Name="Original Prefab Entities" Kind="OutputPin" />
+          </Node>
+          <Pad Id="Qn5zWdEWeL8OdJTAFhgzIv" Comment="Original Prefab Entities" Bounds="787,709,185,15" ShowValueBox="true" isIOBox="true" />
+          <Node Bounds="905,800,79,19" Id="T1NL9kG6aIYPbBsuFpNgAG">
+            <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows" LastSymbolSource="VL.Xenko.Assets.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="RuntimeAsset" />
+            </p:NodeReference>
+            <Pin Id="LKOt9yssAN6LbDOKHdFwNJ" Name="Url" Kind="InputPin" />
+            <Pin Id="PlRM7LimpifLpMoXXmrLiw" Name="Force Recreate" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="FHK1lVmU6awPchdgO4pjY3" Name="Clear On Unload" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="TyGojtXF0MrLQgFdek2VGj" Name="Asset" Kind="OutputPin" />
+            <Pin Id="J6d9VipOfRUPdzjyv9RW9U" Name="Exists" Kind="OutputPin" />
+            <Pin Id="Dje0V2nhMyMMWcHVNgCJeU" Name="Updated" Kind="OutputPin" />
+          </Node>
+          <Pad Id="RGEVzvU3xChQKp8fPE78w3" Comment="Url" Bounds="906,766,118,14" ShowValueBox="true" isIOBox="true" Value="Scenes/TestScene">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Node Bounds="1056,892" Id="VKFWR2IDWlYPCmZCSov9FH">
+            <p:NodeReference LastCategoryFullName="Animation.FrameBased" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="Counter" />
+            </p:NodeReference>
+            <Pin Id="QdrIn3ZsesSO1ojzXaLtHQ" Name="Increment" Kind="InputPin" />
+            <Pin Id="CzV826l9cE5PxW2yo8B2G1" Name="Default" Kind="InputPin" />
+            <Pin Id="TY2VlVDCkjELOHBFsf6xAC" Name="Up" Kind="ApplyPin" />
+            <Pin Id="GDCpXTqtgsIPEHAatwpuZy" Name="Down" Kind="ApplyPin" />
+            <Pin Id="HVHyVmiG7MIQIyd4w9QaC6" Name="Reset" Kind="ApplyPin" />
+            <Pin Id="BVggzty91pvO4AynfmLvp1" Name="Value" Kind="OutputPin" />
+          </Node>
+          <Pad Id="Ao2mWHfQ7aGM2w3c7MEvaU" Comment="" Bounds="1058,937,35,15" ShowValueBox="true" isIOBox="true" />
         </Canvas>
         <Patch Id="O83s8L1ielBOdVBpuwVvjH" Name="Create" />
         <Patch Id="V6pD3pcgBJ3OcJfTtYxkGp" Name="Update" />
@@ -506,7 +576,6 @@
         <Link Id="GEuQCLCPv4uPltx4P2qQ0K" Ids="RWyN02SyLPvPQ06UxoE3Ju,PTsw6QeUQJTPeDJjgTvmNw" />
         <Link Id="Kza4gKnKEu5PksOOb9cmbM" Ids="IAtD3T56Z6wOeHtprLPGBg,DQ0Gvh5O0XmLvtBZgxDhW4" />
         <Link Id="C1CYLLTk0ANQAoHkJmryZJ" Ids="SP1lMFDKjQaQOOZu994WRQ,MCdEmmyqUaaPA8ts6dVzU0" />
-        <Link Id="INsvhDth461M3NfuLS0UXo" Ids="TrkeAGc7C6OMPQ4cAxaMWl,AjbsRzlF0BvMEymV4y8pqS" />
         <Link Id="QITmzvwSrZ3Ohthtwx3Lb9" Ids="R8feZy31oDeQZvqrTIQb1t,MyXPX6qpGT2O3YXzM4Zq3X" />
         <Link Id="K8sr23lLkO0P9taorjDWik" Ids="CjU87z5glDDL3zMEr5Qp23,AfXajbBirqVNI3TYilnm2v" />
         <Link Id="DK3gAvhR4seNcFeWYg9PVj" Ids="Q7RTAaTx0OnQIP89WPPtt4,M7U4jJMpbPjPmcZQsIVd7e" />
@@ -533,6 +602,14 @@
         <Link Id="CrHdsHlowLuLUWX6CLV9tN" Ids="MclLW5PoiE5Pq9TMZxvV4H,Ek5swLKykpUOsVWAv6Cv7f" />
         <Link Id="NbyVAwvNAVvMZVPU97uvcG" Ids="N5Uxl99YjbDMHJMMksO21E,SKI0I2Fw2q2Pdi4Jjf518t" />
         <Link Id="M39BR1N04VCPucgOistT5Z" Ids="ENS2rJeroCJMVE503YfKnr,PI42wmQLtCpN05qdV9YAim" />
+        <Link Id="VNe7TXyGJ04P9R1JdNCnf2" Ids="DyvloyozlKZM5i78Uh4amA,TzPuPfUDU1XQDVSCPibbUS" />
+        <Link Id="FBgxpelPMFNOmJqrTPT1rB" Ids="DXS4FgZRgWkMLJKzgfwsdj,Qn5zWdEWeL8OdJTAFhgzIv" />
+        <Link Id="HRqAXEy2Ud6NIV0qQ2sUqt" Ids="MGapfApQzyRNKD0DRDysjF,HNffZ9kGkKhMGDvRPXR0AA" />
+        <Link Id="SZtlAFrkUWsPuUJE4gRual" Ids="RGEVzvU3xChQKp8fPE78w3,LKOt9yssAN6LbDOKHdFwNJ" />
+        <Link Id="VW0kdDKhcBhOg17OVaBkCA" Ids="Dje0V2nhMyMMWcHVNgCJeU,QdrIn3ZsesSO1ojzXaLtHQ" />
+        <Link Id="NiqtrfVH9gZMmiBJrATDjs" Ids="BVggzty91pvO4AynfmLvp1,Ao2mWHfQ7aGM2w3c7MEvaU" />
+        <Link Id="T5CDNLUvsSbODz3jmhLLaV" Ids="TyGojtXF0MrLQgFdek2VGj,QFTNcQDgVuhLato0p5Xtd3" />
+        <Link Id="R1IHifwZYKiPtAW97c1FSD" Ids="TrkeAGc7C6OMPQ4cAxaMWl,AjbsRzlF0BvMEymV4y8pqS" />
       </Patch>
     </Node>
   </Patch>
