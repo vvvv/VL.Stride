@@ -295,23 +295,26 @@ namespace VL.Xenko.Assets
                     // First, unload assets
                     foreach (var assetToUnload in assets)
                     {
-                        if (FastReloadTypes.Contains(assetToUnload.AssetItem.Asset.GetType()) && IsCurrentlyLoaded(assetToUnload.AssetItem.Asset.Id))
+                        //while (ContentManager.IsLoaded(assetToUnload.AssetItem.Location))
                         {
-                            // If this type supports fast reload, retrieve the current (old) value via a load
-                            var type = AssetRegistry.GetContentType(assetToUnload.AssetItem.Asset.GetType());
-                            string url = GetLoadingTimeUrl(assetToUnload.AssetItem);
-                            var oldValue = ContentManager.Get(type, url);
-                            if (oldValue != null)
+                            if (FastReloadTypes.Contains(assetToUnload.AssetItem.Asset.GetType()) && IsCurrentlyLoaded(assetToUnload.AssetItem.Asset.Id))
                             {
-                                logger?.Debug($"Preparing fast-reload of {assetToUnload.AssetItem.Location}");
-                                objToFastReload.Add(url, oldValue);
+                                // If this type supports fast reload, retrieve the current (old) value via a load
+                                var type = AssetRegistry.GetContentType(assetToUnload.AssetItem.Asset.GetType());
+                                string url = GetLoadingTimeUrl(assetToUnload.AssetItem);
+                                var oldValue = ContentManager.Get(type, url);
+                                if (oldValue != null)
+                                {
+                                    logger?.Debug($"Preparing fast-reload of {assetToUnload.AssetItem.Location}");
+                                    objToFastReload.Add(url, oldValue);    
+                                }
                             }
-                        }
-                        else if (IsCurrentlyLoaded(assetToUnload.AssetItem.Asset.Id, true))
-                        {
-                            // Unload this object if it has already been loaded.
-                            logger?.Debug($"Unloading {assetToUnload.AssetItem.Location}");
-                            await UnloadAsset(assetToUnload.AssetItem.Asset.Id);
+                            else if (IsCurrentlyLoaded(assetToUnload.AssetItem.Asset.Id, true))
+                            {
+                                // Unload this object if it has already been loaded.
+                                logger?.Debug($"Unloading {assetToUnload.AssetItem.Location}");
+                                await UnloadAsset(assetToUnload.AssetItem.Asset.Id);
+                            } 
                         }
                     }
 
