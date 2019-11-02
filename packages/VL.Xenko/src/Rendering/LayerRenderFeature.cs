@@ -45,7 +45,8 @@ namespace VL.Xenko.Rendering
         protected override void InitializeCore()
         {
             base.InitializeCore();
-            this.Context.Services.AddService(this);
+            if (Context.Services.GetService<LayerRenderFeature>() == null)
+                Context.Services.AddService(this);
         }
 
         public override Type SupportedRenderObjectType => typeof(RenderLayer);

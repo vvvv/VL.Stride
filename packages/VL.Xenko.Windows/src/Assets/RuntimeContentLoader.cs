@@ -31,6 +31,7 @@ using System.Reactive;
 using Xenko.Core.IO;
 using Xenko.Core.BuildEngine;
 using System.Reactive.Threading.Tasks;
+using Xenko.Assets.Rendering;
 
 namespace VL.Xenko.Assets
 { 
@@ -255,7 +256,7 @@ namespace VL.Xenko.Assets
 
             // Ask Game thread to check our collection
             // Note: if there was many requests during same frame, they will be grouped and only first invocation of this method will process all of them in a batch
-            CheckAssetsToReload().Forget();
+            CheckAssetsToReload();
 
             // Wait for all of the currently requested assets to be processed
             return Task.WhenAll(reloadingAssets.Select(x => x.Result.Task))
@@ -266,9 +267,9 @@ namespace VL.Xenko.Assets
                 });
         }
 
-        private Task CheckAssetsToReload()
+        private async void CheckAssetsToReload()
         {
-            return GameDispatcher.InvokeTask(async () =>
+            //return Task.Run(async () =>
             {
                 List<ReloadingAsset> assets;
 
@@ -295,7 +296,7 @@ namespace VL.Xenko.Assets
                     // First, unload assets
                     foreach (var assetToUnload in assets)
                     {
-                        //while (ContentManager.IsLoaded(assetToUnload.AssetItem.Location))
+                        while (ContentManager.IsLoaded(assetToUnload.AssetItem.Location))
                         {
                             if (FastReloadTypes.Contains(assetToUnload.AssetItem.Asset.GetType()) && IsCurrentlyLoaded(assetToUnload.AssetItem.Asset.Id))
                             {
@@ -306,7 +307,7 @@ namespace VL.Xenko.Assets
                                 if (oldValue != null)
                                 {
                                     logger?.Debug($"Preparing fast-reload of {assetToUnload.AssetItem.Location}");
-                                    objToFastReload.Add(url, oldValue);    
+                                    objToFastReload.Add(url, oldValue);
                                 }
                             }
                             else if (IsCurrentlyLoaded(assetToUnload.AssetItem.Asset.Id, true))
@@ -314,7 +315,8 @@ namespace VL.Xenko.Assets
                                 // Unload this object if it has already been loaded.
                                 logger?.Debug($"Unloading {assetToUnload.AssetItem.Location}");
                                 await UnloadAsset(assetToUnload.AssetItem.Asset.Id);
-                            } 
+                            }
+                            else break;
                         }
                     }
 
@@ -413,7 +415,7 @@ namespace VL.Xenko.Assets
                     // Make sure everything is complete before we return
                     await task;
                 }
-            });
+            }
         }
 
         public async Task UnloadAsset(AssetId id)
