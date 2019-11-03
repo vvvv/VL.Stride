@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="OpwXTKxodpcLMuzoaGSQfF" LanguageVersion="2019.1.0-0923-ge75127f352" Version="0.128">
+<Document xmlns:p="property" Id="OpwXTKxodpcLMuzoaGSQfF" LanguageVersion="2019.1.0-0930-g60a3dd6ea9" Version="0.128">
   <NugetDependency Id="F5PUq8fPVCDO1EGFvZJgLA" Location="VL.CoreLib" Version="2019.1.0-415" />
   <Patch Id="U5v4tfopLKQNbWZ7OZRPST">
     <Canvas Id="JxWjJexiKp3QBRP2vXcX6T" DefaultCategory="VL.Xenko.Assets.Windows" CanvasType="FullCategory">
@@ -3418,8 +3418,9 @@
                 <Node Bounds="834,577,111,19" Id="AEnTON5vgJfO0EbbXmpqi2">
                   <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows" LastSymbolSource="VL.Xenko.Assets.vl">
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                    <Choice Kind="ProcessNode" Name="UnLoadProjectAssets" />
+                    <Choice Kind="ProcessNode" Name="UnloadDeletedProjectAssets" />
                   </p:NodeReference>
+                  <Pin Id="GK2ixnhfrVNO35EYfcbbVk" Name="New Assets" Kind="InputPin" />
                   <Pin Id="FOTxjrJVZpsL7nxIHOlPK4" Name="Urls" Kind="InputPin" />
                   <Pin Id="LQiZDG6m0KiMvhHxbOr70t" Name="Execution Order Helper" Kind="OutputPin" />
                 </Node>
@@ -4163,7 +4164,7 @@
             </Node>
             <ControlPoint Id="QuOOwDhr3dLLKNzjurlW67" Bounds="876,222" />
             <Node Bounds="213,404,92,19" Id="B6HjCyUXCQXObsnU29rm8a">
-              <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows.UnLoadProjectAssets" LastSymbolSource="VL.Xenko.Assets.vl">
+              <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows.UnloadDeletedProjectAssets" LastSymbolSource="VL.Xenko.Assets.vl">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="OperationCallFlag" Name="SafeUnloadAsset" />
               </p:NodeReference>
@@ -6525,16 +6526,16 @@
       <Overlay Id="LhTQ7BMfe7gOzso22JLSKr" Name="Builder Service" Bounds="1288,-384,1125,692" />
       <!--
 
-    ************************ UnLoadProjectAssets ************************
+    ************************ UnloadDeletedProjectAssets ************************
 
 -->
-      <Node Name="UnLoadProjectAssets" Bounds="1242,853" Id="F0eeRIYlw5oOACKE7TLzEo">
+      <Node Name="UnloadDeletedProjectAssets" Bounds="1242,853" Id="F0eeRIYlw5oOACKE7TLzEo">
         <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="Builtin">
           <Choice Kind="ContainerDefinition" Name="Process" />
         </p:NodeReference>
         <Patch Id="Meu9FoCRK84PjlhCvKsdjC">
           <Canvas Id="A4A7sI0AIOHMxVzLdyj425" CanvasType="Group">
-            <Node Bounds="381,171,120,19" Id="FqhyXMcSO4PMjdivQ2R4yg">
+            <Node Bounds="109,264,120,19" Id="FqhyXMcSO4PMjdivQ2R4yg">
               <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows" LastSymbolSource="VL.Xenko.Assets.vl">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="ProcessAppFlag" Name="GetAssetBuilderService" />
@@ -6547,13 +6548,13 @@
     ************************ SafeUnloadAsset ************************
 
 -->
-            <Node Name="SafeUnloadAsset" Bounds="605,108,429,509" Id="AyOx0c9QZbDMkRivlADdlH">
+            <Node Name="SafeUnloadAsset" Bounds="639,60,429,509" Id="AyOx0c9QZbDMkRivlADdlH">
               <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
                 <Choice Kind="OperationDefinition" Name="Operation" />
                 <CategoryReference Kind="Category" Name="Primitive" NeedsToBeDirectParent="true" />
               </p:NodeReference>
               <Patch Id="PU3pHL6QtvvN0OA8mP4YA5">
-                <Node Bounds="688,203,295,394" Id="MkqOUYYfOvoOPUn2GT0UDH">
+                <Node Bounds="722,155,295,394" Id="MkqOUYYfOvoOPUn2GT0UDH">
                   <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="VL.CoreLib.Experimental.vl">
                     <Choice Kind="OperationCallFlag" Name="Try (Stateless)" />
                     <Choice Kind="RegionFlag" Name="Region (Stateless)" Fixed="true" />
@@ -6564,8 +6565,8 @@
                   <Pin Id="TJzJqwXW5K9N00JlfvwEjC" Name="Error Message" Kind="OutputPin" />
                   <Patch Id="JUKUaozxw7dOJs5JzKjuSu" Name="Try" ManuallySortedPins="true">
                     <Pin Id="JXtDqwtHoMmP8AcGIixC2a" Name="Result" Kind="OutputPin" />
-                    <ControlPoint Id="I2Y3sAQ0fxGNoh4NRVDNqe" Bounds="780,590" />
-                    <Node Bounds="700,226,99,26" Id="I99lJ2U8RTEOnyYX9igKBW">
+                    <ControlPoint Id="I2Y3sAQ0fxGNoh4NRVDNqe" Bounds="814,542" />
+                    <Node Bounds="734,178,99,26" Id="I99lJ2U8RTEOnyYX9igKBW">
                       <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows.AssetBuilderService" LastSymbolSource="VL.Xenko.Assets.vl">
                         <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                         <CategoryReference Kind="ClassType" Name="AssetBuilderService" />
@@ -6575,14 +6576,14 @@
                       <Pin Id="HDfSBoHVqnqQHJbsUJBGYd" Name="Output" Kind="StateOutputPin" />
                       <Pin Id="VkgamYVHTOGMe0AvZtC3jr" Name="Content Loader" Kind="OutputPin" />
                     </Node>
-                    <Pad Id="TpXSGdPawjKQAq8YnRxh0D" Comment="Result" Bounds="780,544,35,35" ShowValueBox="true" isIOBox="true" Value="True">
+                    <Pad Id="TpXSGdPawjKQAq8YnRxh0D" Comment="Result" Bounds="814,496,35,35" ShowValueBox="true" isIOBox="true" Value="True">
                       <p:TypeAnnotation>
                         <Choice Kind="TypeFlag" Name="Boolean" />
                         <FullNameCategoryReference ID="Primitive" />
                       </p:TypeAnnotation>
                       <p:ValueBoxSettings />
                     </Pad>
-                    <Node Bounds="716,278,98,26" Id="CVVwHc8SjaDPLnT6rvn2R8">
+                    <Node Bounds="750,230,98,26" Id="CVVwHc8SjaDPLnT6rvn2R8">
                       <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.RuntimeContentLoader" LastSymbolSource="VL.Xenko.Windows.dll">
                         <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                         <CategoryReference Kind="AssemblyCategory" Name="RuntimeContentLoader" />
@@ -6592,7 +6593,7 @@
                       <Pin Id="T7A65PfZWFvLRKZmHFwqh5" Name="Output" Kind="StateOutputPin" />
                       <Pin Id="DapQRDNu6M3NUFDBwXPJaN" Name="Content Manager" Kind="OutputPin" />
                     </Node>
-                    <Node Bounds="782,365,189,147" Id="EcTvLFWzLwNMgxODjoPQcv">
+                    <Node Bounds="816,317,189,147" Id="EcTvLFWzLwNMgxODjoPQcv">
                       <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                         <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                         <Choice Kind="ApplicationStatefulRegion" Name="Repeat" />
@@ -6606,7 +6607,7 @@
                           <Pin Id="LyKzb1HSgBIOFTDsX0v1VI" Name="Break" Kind="OutputPin" />
                         </Patch>
                         <Patch Id="P6rtTncm8adPwcQlVu1yWx" Name="Dispose" ManuallySortedPins="true" />
-                        <Node Bounds="794,448,98,26" Id="OnkZ6dSsFhaMgiaoC7rrap">
+                        <Node Bounds="828,400,98,26" Id="OnkZ6dSsFhaMgiaoC7rrap">
                           <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.RuntimeContentLoader" LastSymbolSource="VL.Xenko.Windows.dll">
                             <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                             <CategoryReference Kind="AssemblyCategory" Name="RuntimeContentLoader" NeedsToBeDirectParent="true" />
@@ -6617,7 +6618,7 @@
                           <Pin Id="JGO5pdX7ktULp3ah30Z4hg" Name="Apply" Kind="InputPin" />
                           <Pin Id="HYLEL01dISgNRH1WKAnmbn" Name="Output" Kind="StateOutputPin" />
                         </Node>
-                        <Node Bounds="816,388,75,26" Id="Gw4gaettl78P8pIA7KAml6">
+                        <Node Bounds="850,340,75,26" Id="Gw4gaettl78P8pIA7KAml6">
                           <p:NodeReference LastCategoryFullName="Xenko.Core.Serialization.Contents.ContentManager" LastSymbolSource="Xenko.Core.Serialization.dll">
                             <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                             <Choice Kind="OperationCallFlag" Name="IsLoaded" />
@@ -6629,8 +6630,8 @@
                           <Pin Id="EuT6A5kDqTBQCcaaiPFxY0" Name="Output" Kind="StateOutputPin" />
                           <Pin Id="ACf9h2p0iHkLJpP6B92T8L" Name="Result" Kind="OutputPin" />
                         </Node>
-                        <ControlPoint Id="E6D9LRurwL1Pfn8qVDzRda" Bounds="923,495" />
-                        <Node Bounds="921,459,37,19" Id="EuxBORzt8sGOtNNl2FRijj">
+                        <ControlPoint Id="E6D9LRurwL1Pfn8qVDzRda" Bounds="957,447" />
+                        <Node Bounds="955,411,37,19" Id="EuxBORzt8sGOtNNl2FRijj">
                           <p:NodeReference LastCategoryFullName="Primitive.Boolean" LastSymbolSource="CoreLibBasics.vl">
                             <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                             <Choice Kind="OperationCallFlag" Name="NOT" />
@@ -6641,7 +6642,7 @@
                         </Node>
                       </Patch>
                     </Node>
-                    <Pad Id="MJrM0lECWilOF97mIciCgK" Comment="" Bounds="723,328,35,15" ShowValueBox="true" isIOBox="true" Value="999">
+                    <Pad Id="MJrM0lECWilOF97mIciCgK" Comment="" Bounds="757,280,35,15" ShowValueBox="true" isIOBox="true" Value="999">
                       <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                         <Choice Kind="TypeFlag" Name="Integer32" />
                       </p:TypeAnnotation>
@@ -6652,14 +6653,14 @@
                 <Link Id="InAwJkZZaBaMSAYpokF4jL" Ids="VkgamYVHTOGMe0AvZtC3jr,QFInCLC8CFwO6ovUi0dFAn" />
                 <Link Id="KZqKIfOTaexNvMXMuO2PYl" Ids="TpXSGdPawjKQAq8YnRxh0D,I2Y3sAQ0fxGNoh4NRVDNqe" />
                 <Link Id="SFnbZbKnCe1OZWjUbiCurF" Ids="H4SnOhDtbdwMttE0OfIhOr,Mv3DZdMtXBuORXmQw8WeQ3" />
-                <ControlPoint Id="H4SnOhDtbdwMttE0OfIhOr" Bounds="619,126" />
+                <ControlPoint Id="H4SnOhDtbdwMttE0OfIhOr" Bounds="653,78" />
                 <Pin Id="I6vAxDcNFlINQseOudZJ5y" Name="Input" Kind="InputPin" Bounds="1471,713" />
                 <Link Id="GOpkC9CtkEiMAuoFUeWMRZ" Ids="I6vAxDcNFlINQseOudZJ5y,H4SnOhDtbdwMttE0OfIhOr" IsHidden="true" />
                 <Link Id="JYwb8l5tkLAMwW80CLYyY0" Ids="ILZkfHukJCFOTitleqOfWm,AzdKZ9vZJBWLPMIYhae98G" />
-                <ControlPoint Id="ILZkfHukJCFOTitleqOfWm" Bounds="998,298" />
+                <ControlPoint Id="ILZkfHukJCFOTitleqOfWm" Bounds="1032,250" />
                 <Pin Id="TpDkQxqheu6NCEs50eTSm1" Name="Url" Kind="InputPin" Bounds="1615,750" />
                 <Link Id="IW5YWvhWqO0P5lpzRbitKD" Ids="TpDkQxqheu6NCEs50eTSm1,ILZkfHukJCFOTitleqOfWm" IsHidden="true" />
-                <ControlPoint Id="T5LWKLjuVIkMCe2CCvdiD2" Bounds="619,193" />
+                <ControlPoint Id="T5LWKLjuVIkMCe2CCvdiD2" Bounds="653,145" />
                 <Link Id="NqCU0QpKie1MaHDcjq4ush" Ids="H4SnOhDtbdwMttE0OfIhOr,T5LWKLjuVIkMCe2CCvdiD2" />
                 <Pin Id="QpguVMXbmmkPLPUDdH2rgh" Name="Output" Kind="OutputPin" Bounds="1381,796" />
                 <Link Id="A1JBkWlFuG2LLt5sjtx6oi" Ids="T5LWKLjuVIkMCe2CCvdiD2,QpguVMXbmmkPLPUDdH2rgh" IsHidden="true" />
@@ -6673,7 +6674,7 @@
                 <Link Id="HJ90yDlgeijPL6JbCDCysR" Ids="MJrM0lECWilOF97mIciCgK,OFYUcH56g1TLZcKtCpkKDR" />
               </Patch>
             </Node>
-            <Node Bounds="369,247,133,86" Id="RyvGTp0iiIBOVfAodNccos">
+            <Node Bounds="351,336,149,154" Id="RyvGTp0iiIBOVfAodNccos">
               <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                 <Choice Kind="ApplicationStatefulRegion" Name="ForEach" />
@@ -6684,25 +6685,72 @@
                 <Patch Id="EPtioBYALHQPuEuk8mPXn0" Name="Create" ManuallySortedPins="true" />
                 <Patch Id="TNRhnS6ZexhQHOC9xyl0NU" Name="Update" ManuallySortedPins="true" />
                 <Patch Id="C6jhJJ5P1oHL7AiNFB3A08" Name="Dispose" ManuallySortedPins="true" />
-                <Node Bounds="381,293,92,19" Id="PKFKST1oivmM22Ayn8Japs">
+                <Node Bounds="363,452,92,19" Id="PKFKST1oivmM22Ayn8Japs">
                   <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows.UnLoadProjectAsset" LastSymbolSource="VL.Xenko.Assets.vl">
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                     <Choice Kind="OperationCallFlag" Name="SafeUnloadAsset" />
-                    <CategoryReference Kind="Category" Name="UnLoadProjectAssets" NeedsToBeDirectParent="true" />
+                    <CategoryReference Kind="Category" Name="UnloadDeletedProjectAssets" NeedsToBeDirectParent="true" />
                   </p:NodeReference>
                   <Pin Id="IuFWiUMoVi5P5Eb86bZKNr" Name="Input" Kind="InputPin" />
                   <Pin Id="TfnVVHpATOqPx4h6uaijhP" Name="Url" Kind="InputPin" />
                   <Pin Id="VhPVwiJotIQN8jN5biWEhS" Name="Output" Kind="OutputPin" />
                 </Node>
               </Patch>
-              <ControlPoint Id="CumORniRPpoLJtRIJLwEo9" Bounds="485,253" Alignment="Top" />
+              <ControlPoint Id="CumORniRPpoLJtRIJLwEo9" Bounds="483,343" Alignment="Top" />
             </Node>
-            <ControlPoint Id="JL9HCmLdye2PhydZ40sHjk" Bounds="485,219" />
-            <ControlPoint Id="T3nRA1jmEqxNuOqHyEIz2G" Bounds="371,363" />
+            <ControlPoint Id="JL9HCmLdye2PhydZ40sHjk" Bounds="550,52" />
+            <ControlPoint Id="T3nRA1jmEqxNuOqHyEIz2G" Bounds="353,522" />
+            <Node Bounds="359,58,123,128" Id="EG5CO6MnCB0LNaBpyPSkVI">
+              <p:NodeReference LastCategoryFullName="Collections.Sequence" LastSymbolSource="VL.Collections.vl">
+                <Choice Kind="OperationCallFlag" Name="Select" />
+                <CategoryReference Kind="MutableInterfaceType" Name="Sequence" NeedsToBeDirectParent="true" />
+                <Choice Kind="RegionFlag" Name="Region (Stateless)" Fixed="true" />
+              </p:NodeReference>
+              <Pin Id="KbpC3na1Pl4Omz7zZdlGdK" Name="Input" Kind="InputPin" />
+              <Pin Id="TTb5Flbr6YXNsqjonY1G2g" Name="Output" Kind="OutputPin" />
+              <Patch Id="S6wd3Yg4SfDLWBvp6uawY1" Name="Transformer" ManuallySortedPins="true">
+                <Pin Id="N63Cg9N3BLgMM27Baq1VGK" Name="Arg 1" Kind="InputPin" />
+                <Pin Id="CmrnTvC7GrfLGnIQRvub25" Name="Arg 2" Kind="InputPin" />
+                <Pin Id="FzOrU8WwF3ILHcLO5IkHNE" Name="Result" Kind="OutputPin" />
+                <ControlPoint Id="AbDIXHLyP56PWBRwEkg5d0" Bounds="374,69" />
+                <ControlPoint Id="LkQ2V0lXHsuNyMh7spk1te" Bounds="434,69" />
+                <ControlPoint Id="OGjM7ttSaCLOOPKvrb5hmA" Bounds="373,179" />
+                <Node Bounds="377,81,55,26" Id="SZwY28AkBikMZoIsln8FGu">
+                  <p:NodeReference LastCategoryFullName="Xenko.Core.Assets.AssetItem" LastSymbolSource="Xenko.Core.Assets.dll">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <CategoryReference Kind="AssemblyCategory" Name="AssetItem" />
+                    <Choice Kind="OperationCallFlag" Name="Location" />
+                  </p:NodeReference>
+                  <Pin Id="M3HMQlJ41NjO3mTW11ZT7r" Name="Input" Kind="StateInputPin" />
+                  <Pin Id="KYWDAVGxC8ENMz7JZEYexD" Name="Output" Kind="StateOutputPin" />
+                  <Pin Id="DwhLFtZ7JNhQAR2Gn4Yjvg" Name="Location" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="371,132,55,19" Id="GP6HePNCwPHPJGGDz1pr5r">
+                  <p:NodeReference LastCategoryFullName="System.Conversion" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <Choice Kind="OperationCallFlag" Name="ToString" />
+                  </p:NodeReference>
+                  <Pin Id="I4j6cnVbucpMO4Pwe2bOZZ" Name="Input" Kind="InputPin" />
+                  <Pin Id="NwSasEEwQ40Otl73tzmPYB" Name="Result" Kind="OutputPin" />
+                </Node>
+              </Patch>
+            </Node>
+            <ControlPoint Id="G9BQCWcq2RfLowiDJpZDk2" Bounds="361,20" />
+            <Node Bounds="481,273,47,19" Id="GTqOh87InavNTPTBJ4OsEP">
+              <p:NodeReference LastCategoryFullName="Collections.Sequence" LastSymbolSource="VL.Collections.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="OperationCallFlag" Name="Except" />
+                <CategoryReference Kind="MutableInterfaceType" Name="Sequence" NeedsToBeDirectParent="true" />
+              </p:NodeReference>
+              <Pin Id="TbMaFJ0yO2qLGIQr0ixsCO" Name="Input" Kind="InputPin" />
+              <Pin Id="Q36O2U6SFluPhE9wZjCmrG" Name="Input 2" Kind="InputPin" />
+              <Pin Id="M80V1w81Y59LL9FJ6Mmp5U" Name="Output" Kind="OutputPin" />
+            </Node>
           </Canvas>
           <Patch Id="Ii1jJ6hqwZ7NXmw4KpLL2T" Name="Create" />
           <Patch Id="HMDWT696ytaQZQ5t9ObmVy" Name="Update">
             <Pin Id="KTXzY8z6Za9MWk4NKjFEsb" Name="Urls" Kind="InputPin" Bounds="595,241" />
+            <Pin Id="BrBWZSflSuNNnyJC6yZnJP" Name="New Assets" Kind="InputPin" Bounds="356,6" />
             <Pin Id="LOSr0G6qrviMVKr5wYo0TR" Name="Execution Order Helper" Kind="OutputPin" Bounds="362,375" />
           </Patch>
           <ProcessDefinition Id="GFx4DDpQFLhLeyUzKdHnJ5">
@@ -6713,10 +6761,20 @@
           <Patch Id="GtDKPK3y7IQLlhZ470PWR8" Name="Dispose" />
           <Link Id="EXQXc0M2GVMNWVpvjsLfiE" Ids="NjYWYi01vJDPo0SenhfuvU,IuFWiUMoVi5P5Eb86bZKNr" />
           <Link Id="QHn6FbkSUF2QOVBRldZodp" Ids="CumORniRPpoLJtRIJLwEo9,TfnVVHpATOqPx4h6uaijhP" />
-          <Link Id="RJUatbJaJGLQHM2EhbBKBx" Ids="JL9HCmLdye2PhydZ40sHjk,CumORniRPpoLJtRIJLwEo9" />
           <Link Id="EwxlXpDdIkGLfmm10vTnQC" Ids="KTXzY8z6Za9MWk4NKjFEsb,JL9HCmLdye2PhydZ40sHjk" IsHidden="true" />
           <Link Id="LFjf1pDJxczOpEjQp4jXbd" Ids="FWn6Mf0iq29OxhliulDfux,T3nRA1jmEqxNuOqHyEIz2G" />
           <Link Id="RaAtC0t7IsPPd6UHWrnVHr" Ids="T3nRA1jmEqxNuOqHyEIz2G,LOSr0G6qrviMVKr5wYo0TR" IsHidden="true" />
+          <Link Id="Fgb3JgouwXsLED7I8g88xO" Ids="N63Cg9N3BLgMM27Baq1VGK,AbDIXHLyP56PWBRwEkg5d0" IsHidden="true" />
+          <Link Id="BNsTeadlkmZL2eyRfRTHYT" Ids="CmrnTvC7GrfLGnIQRvub25,LkQ2V0lXHsuNyMh7spk1te" IsHidden="true" />
+          <Link Id="PKzU6mhH21JNiiOC71brlr" Ids="OGjM7ttSaCLOOPKvrb5hmA,FzOrU8WwF3ILHcLO5IkHNE" IsHidden="true" />
+          <Link Id="EuVRTCsIGn8LjS1fkZogdt" Ids="AbDIXHLyP56PWBRwEkg5d0,M3HMQlJ41NjO3mTW11ZT7r" />
+          <Link Id="RocCu0A7S9TO11c5fnnpWS" Ids="DwhLFtZ7JNhQAR2Gn4Yjvg,I4j6cnVbucpMO4Pwe2bOZZ" />
+          <Link Id="C032I7Ffsr2N7sccUvI0Xk" Ids="NwSasEEwQ40Otl73tzmPYB,OGjM7ttSaCLOOPKvrb5hmA" />
+          <Link Id="Ii7XMlQxMsdLEIvmB2vZTB" Ids="G9BQCWcq2RfLowiDJpZDk2,KbpC3na1Pl4Omz7zZdlGdK" />
+          <Link Id="OZfG9mr0LKjOZjEKSB2pHC" Ids="BrBWZSflSuNNnyJC6yZnJP,G9BQCWcq2RfLowiDJpZDk2" IsHidden="true" />
+          <Link Id="Aro9u4WmxmYP2jw1mqORR6" Ids="JL9HCmLdye2PhydZ40sHjk,TbMaFJ0yO2qLGIQr0ixsCO" />
+          <Link Id="SVcugaDeQdJORpe5JC2Z4g" Ids="TTb5Flbr6YXNsqjonY1G2g,Q36O2U6SFluPhE9wZjCmrG" />
+          <Link Id="BsrHMx4OWzeLGmFpozm8HH" Ids="M80V1w81Y59LL9FJ6Mmp5U,CumORniRPpoLJtRIJLwEo9" />
         </Patch>
       </Node>
       <!--
@@ -6880,7 +6938,7 @@
                 <Patch Id="LupmsNFb30DNgVYeM297aG" Name="Update" ParticipatingElements="MTFznkNWclILg3hHoT8ijp" ManuallySortedPins="true" />
                 <Patch Id="IjsfTqzzXmdNwUWXVAmhnS" Name="Dispose" ManuallySortedPins="true" />
                 <Node Bounds="302,658,92,19" Id="P4Ebz8H9LPtMqCepkaY50M">
-                  <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows.UnLoadProjectAssets" LastSymbolSource="VL.Xenko.Assets.vl">
+                  <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows.UnloadDeletedProjectAssets" LastSymbolSource="VL.Xenko.Assets.vl">
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                     <Choice Kind="OperationCallFlag" Name="SafeUnloadAsset" />
                   </p:NodeReference>
@@ -7092,7 +7150,7 @@
               <Pin Id="LeIuO1lKathQOl8k8E4zVO" Name="Value" Kind="OutputPin" />
               <Pin Id="Lw0ppjvn1zIL9UkcXXVMRb" Name="On Data" Kind="OutputPin" />
             </Node>
-            <Node Bounds="548,568,239,230" Id="SkU4E7rps32LopsZje3tPY">
+            <Node Bounds="548,553,377,244" Id="SkU4E7rps32LopsZje3tPY">
               <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                 <Choice Kind="ProcessStatefulRegion" Name="Cache" />
@@ -7104,7 +7162,7 @@
               <Patch Id="U28PnoiclqPPF48Xy1stI5" ManuallySortedPins="true">
                 <Patch Id="NdIockMXa3JLYCvg3cMdDt" Name="Create" ManuallySortedPins="true" />
                 <Patch Id="F8cMgGuZXzyOToTtN8Cl27" Name="Then" ManuallySortedPins="true" />
-                <Node Bounds="588,591,113,19" Id="Bmg1ZoGAPciQMuQgv3ShgF">
+                <Node Bounds="588,576,113,19" Id="Bmg1ZoGAPciQMuQgv3ShgF">
                   <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows.LoadProject" LastSymbolSource="VL.Xenko.Assets.vl">
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                     <Choice Kind="OperationNode" Name="FilterAssets" />
@@ -7115,7 +7173,7 @@
                 </Node>
                 <Pad Id="DkGFVdeKN3XLKVjGYeHX70" SlotId="QRcfgMWj8dHNR82txDFMqG" Bounds="590,727" />
                 <Slot Id="QRcfgMWj8dHNR82txDFMqG" Name="Urls" />
-                <Pad Id="K7OonikbL2dOtsMbMZA4h2" SlotId="QRcfgMWj8dHNR82txDFMqG" Bounds="770,617">
+                <Pad Id="K7OonikbL2dOtsMbMZA4h2" SlotId="QRcfgMWj8dHNR82txDFMqG" Bounds="908,591">
                   <p:ValueBoxSettings />
                 </Pad>
                 <Node Bounds="588,648,185,19" Id="AEOO1GPjMkAPFAsFe2UQQU">
@@ -7128,6 +7186,15 @@
                   <Pin Id="Nj30M2xzdx4NWSPfY7Obls" Name="Urls" Kind="OutputPin" />
                   <Pin Id="QVykZoRVRmtPMXI9TlCRnG" Name="Is Loading" Kind="OutputPin" />
                   <Pin Id="Rjmz8GJ1KeyNufe9FDptoW" Name="Content" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="768,614,143,19" Id="KvVuXqqJSI7QVp3NnCtQAq">
+                  <p:NodeReference LastCategoryFullName="VL.Xenko.Assets.Windows" LastSymbolSource="VL.Xenko.Assets.vl">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <Choice Kind="ProcessNode" Name="UnloadDeletedProjectAssets" />
+                  </p:NodeReference>
+                  <Pin Id="SKg6ju0hdr3Lde5r6f9yr1" Name="New Assets" Kind="InputPin" />
+                  <Pin Id="EeCRX5qGLOvP5AlaxJncnH" Name="Urls" Kind="InputPin" />
+                  <Pin Id="DUF3WuwPCi8LAdq84ru4d2" Name="Execution Order Helper" Kind="OutputPin" />
                 </Node>
               </Patch>
               <ControlPoint Id="HwfvmJNLGgcO0sPkv3YPQZ" Bounds="710,792" Alignment="Bottom" />
@@ -7645,8 +7712,10 @@
           <Link Id="DqLZxknIZOJMYSbTLlZsQZ" Ids="Nj30M2xzdx4NWSPfY7Obls,DkGFVdeKN3XLKVjGYeHX70" />
           <Link Id="TIiO2mT7dHILSj0nArh8ZQ" Ids="NzOrEwiceEdPelKwdKIG2L,RsOxNv8ziG9Pa99y7WNcrx" />
           <Link Id="SVMl3YrNPSnOQZRJDlU9hk" Ids="Nj30M2xzdx4NWSPfY7Obls,I27Kk2SEnvFMjSy7gaCmci" />
-          <Link Id="DWHmOf6qpCxOa1lQvm5lIP" Ids="K7OonikbL2dOtsMbMZA4h2,IlLxmdX7SEOLB7nGPemqX9" />
           <Link Id="AGPMF6maYy3NU4LtLKv0im" Ids="I7Aad3aKhphL4u76yDNO8C,ThqCDCgy67qPBJLQQ6yFnX" />
+          <Link Id="FkZlESiTTh5LKUyJP1I3WT" Ids="K7OonikbL2dOtsMbMZA4h2,EeCRX5qGLOvP5AlaxJncnH" />
+          <Link Id="HXbrzBfgDuAODmnyZ1rL2b" Ids="DUF3WuwPCi8LAdq84ru4d2,IlLxmdX7SEOLB7nGPemqX9" />
+          <Link Id="GaNv7jIu1KYLT04thI3X3i" Ids="NzOrEwiceEdPelKwdKIG2L,SKg6ju0hdr3Lde5r6f9yr1" />
         </Patch>
       </Node>
       <!--
@@ -7777,11 +7846,6 @@
           <Patch Id="AZCuzLzRjXjNLTagdTTI2j" Name="Update">
             <Pin Id="S93uN5Ym8DtPToaSLHMh2r" Name="Url" Kind="InputPin" Bounds="547,297" />
           </Patch>
-          <!--
-
-    ************************  ************************
-
--->
           <ProcessDefinition Id="OnMZoKcBREULkPR8xzM8d4">
             <Fragment Id="LfG400MIWUaQOBmRiVwPg8" Patch="N4MHbcCDGivNdqmtQ2y0X9" Enabled="true" />
             <Fragment Id="FRqyG3JoGdzPzTtUBDw5AF" Patch="AZCuzLzRjXjNLTagdTTI2j" Enabled="true" />
