@@ -15,13 +15,13 @@
         </p:NodeReference>
         <Patch Id="NJQ5vAJmZ66LoM3bb4k98E">
           <Canvas Id="RkA6ZidC3TVOh34e5CJfKT" CanvasType="Group">
-            <ControlPoint Id="D6YBSZWlf0jMiiGHt72G8W" Bounds="369,168" />
+            <ControlPoint Id="D6YBSZWlf0jMiiGHt72G8W" Bounds="378,171" />
             <!--
 
     ************************ UpdateEntityPosition ************************
 
 -->
-            <Node Name="UpdateEntityPosition" Bounds="641,278" Id="LMqGBLKXbQyN8DPNYUQmiW">
+            <Node Name="UpdateEntityPosition" Bounds="590,301" Id="LMqGBLKXbQyN8DPNYUQmiW">
               <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
                 <Choice Kind="ContainerDefinition" Name="Process" />
               </p:NodeReference>
@@ -118,6 +118,44 @@
                 <Link Id="BQwv9D4UpWVOuhWMNHsQLe" Ids="EzO8U0tj8VDNOZ1VWuEdWR,QwojssngK4eNlD1Edq7dBK" />
               </Patch>
             </Node>
+            <Node Bounds="376,230" Id="Fj5CsR8KW8cLcwO5YHzQVw">
+              <p:NodeReference LastCategoryFullName="Xenko.Engine" LastSymbolSource="VL.Xenko.Engine.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="ProcessAppFlag" Name="FindEntities" />
+              </p:NodeReference>
+              <Pin Id="GviNF9TES00LZCqj3k0c89" Name="Input" Kind="InputPin" />
+              <Pin Id="BiWD7A5YYDlP4erlnpa3oj" Name="Name" Kind="InputPin" />
+              <Pin Id="BY5uQwGRGicOU4xHAuqK8l" Name="Force" Kind="InputPin" />
+              <Pin Id="PdnoqjJ48zGPt9f5NP13Yg" Name="First Result" Kind="OutputPin" />
+              <Pin Id="PupTPs9FczZPTSvw7AvHOm" Name="All Results" Kind="OutputPin" />
+              <Pin Id="VYw4BYpz6JAPoqVIL2Zxtx" Name="Has Changed" Kind="OutputPin" />
+            </Node>
+            <Pad Id="Mw7q79CmiwVNZFqZYr5eKc" Comment="Name" Bounds="410,204,72,8" ShowValueBox="true" isIOBox="true" Value="MetalSphere">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="String" />
+              </p:TypeAnnotation>
+            </Pad>
+            <Node Bounds="396,278,134,86" Id="O9uJy5yHCGENRMH5ENfZOZ">
+              <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                <Choice Kind="ApplicationStatefulRegion" Name="ForEach" />
+                <CategoryReference Kind="Category" Name="Primitive" />
+              </p:NodeReference>
+              <Pin Id="K1dxLYzJKpKQRdiMargiKz" Name="Break" Kind="OutputPin" />
+              <Patch Id="ERYyBnymoaLNjjatpBGqb8" ManuallySortedPins="true">
+                <Patch Id="Dg6Bbwp7AiVM9pTnF571oP" Name="Create" ManuallySortedPins="true" />
+                <Patch Id="Ctk37X0BvcnLgu2XGysKzm" Name="Update" ManuallySortedPins="true" />
+                <Patch Id="VoI3wrpencgO0PaKpxik2W" Name="Dispose" ManuallySortedPins="true" />
+                <Node Bounds="408,308,110,19" Id="UEMczkIeXZIPkxPZH6lETa">
+                  <p:NodeReference LastCategoryFullName="Main.UpdateSomeSpheres" LastSymbolSource="Main.vl">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <Choice Kind="ProcessAppFlag" Name="UpdateEntityPosition" />
+                  </p:NodeReference>
+                  <Pin Id="NnHKOC1sAplMNgBAbsyMBa" Name="Input" Kind="InputPin" />
+                </Node>
+              </Patch>
+              <ControlPoint Id="VswqE6bghV8Nx1N6BVFOaH" Bounds="410,284" Alignment="Top" />
+            </Node>
           </Canvas>
           <Patch Id="MrRW8HYanw5MMB0j9rvkZw" Name="Create" />
           <Patch Id="KuqG2nPeNKPPCuCrDTGApt" Name="Update">
@@ -132,6 +170,10 @@
             <Fragment Id="EsYYZq1qzvgQTKwOqQsiQo" Patch="KuqG2nPeNKPPCuCrDTGApt" Enabled="true" />
           </ProcessDefinition>
           <Link Id="NTWXLrbYCKGNT7zVtm7xV6" Ids="L8AYGwBy37jOIAfNOjLmNA,D6YBSZWlf0jMiiGHt72G8W" IsHidden="true" />
+          <Link Id="EEtgNFLqFNVOn9JxIqppsR" Ids="D6YBSZWlf0jMiiGHt72G8W,GviNF9TES00LZCqj3k0c89" />
+          <Link Id="BHxwyw6b9pfNYw9YLw9cK3" Ids="Mw7q79CmiwVNZFqZYr5eKc,BiWD7A5YYDlP4erlnpa3oj" />
+          <Link Id="EkGMbZsa2koP5VkFjaFVPE" Ids="PupTPs9FczZPTSvw7AvHOm,VswqE6bghV8Nx1N6BVFOaH" />
+          <Link Id="IouSiurWtgVNzbrVVi3cdU" Ids="VswqE6bghV8Nx1N6BVFOaH,NnHKOC1sAplMNgBAbsyMBa" />
         </Patch>
       </Node>
     </Canvas>
@@ -718,18 +760,6 @@
             </p:TypeAnnotation>
           </Pad>
           <Overlay Id="Diy7TrBsLvwQRCcAxgNvBg" Name="Any Additional Xenko Project" Bounds="931,387,856,602" />
-          <Node Bounds="425,756" Id="J0vus6BIpt1OH7AjLkAC6x">
-            <p:NodeReference LastCategoryFullName="Xenko.Rendering" LastSymbolSource="VL.Xenko.Rendering.vl">
-              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="Skybox" />
-            </p:NodeReference>
-            <Pin Id="IzlMcgMMPjuLr2z79suv4V" Name="Transformation" Kind="InputPin" />
-            <Pin Id="CWvzRUDSkT9LxzCT3eHNv0" Name="Intensity" Kind="InputPin" />
-            <Pin Id="D4mE2Q81YqpM7PhxRDT9xP" Name="Light Intensity" Kind="InputPin" />
-            <Pin Id="NhRNYTle6DgLMTuTFmtllW" Name="Enabled" Kind="InputPin" />
-            <Pin Id="CvhsaoWbV1WOySV415K1dT" Name="Name" Kind="InputPin" />
-            <Pin Id="OYVomdfwUK5NY5TUx7sWPx" Name="Entity" Kind="OutputPin" />
-          </Node>
           <Node Bounds="641,806,109,19" Id="LU7jcIpUhy1MbVmF9gqFZ5">
             <p:NodeReference LastCategoryFullName="Main" LastSymbolSource="Main.vl">
               <Choice Kind="ProcessNode" Name="UpdateSomeSpheres" />
@@ -793,10 +823,10 @@
         <Link Id="LXmhwV7o3VIQWgoNiaZ5Tw" Ids="CyBdwyiV84WLN8GCceuDZD,Cc0EsWRatIeNhFBPM0mi7g" />
         <Link Id="U363o0z2YN8LajRxqQLc6y" Ids="FKyqH8L0uRhNuUNjoyLzPI,FdvKYDXwgVkOEJJbJqxJnO" />
         <Link Id="RfkXYMh8dCtOW0S9QoH6bn" Ids="CzmsRHX4ZwxLmKU4OteDpY,UwylaHqeHvBMh6mOt7tbLh" />
-        <Link Id="EFwVP8ma1ZcOQKyXPcRiYz" Ids="OYVomdfwUK5NY5TUx7sWPx,EzH4DL9ixJ5Pw6fqfUN0zq" />
         <Link Id="BcG3Wt52MsuPlt1oJTeNhF" Ids="VwkZIGqcKO0PbyaSexKOR7,Ib3bWRab9fwL3Q6uWsMMpC" />
         <Link Id="BkJXCvNLkloQRnyQOtYv91" Ids="CjU87z5glDDL3zMEr5Qp23,KoQwUg0N6rhNjggsgAucZ6" />
         <Link Id="QKKu234DmK8MPzIKSrK2Zt" Ids="TyGojtXF0MrLQgFdek2VGj,QFTNcQDgVuhLato0p5Xtd3" />
+        <Link Id="VkjRy0e5qdGQK3EsT0Ffmb" Ids="TyGojtXF0MrLQgFdek2VGj,RgWGXMOCE2MMgWEtmqticr" />
       </Patch>
     </Node>
   </Patch>
