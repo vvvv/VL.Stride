@@ -18,13 +18,13 @@ namespace VL.Xenko.Shaders
         private bool pipelineStateDirty = true;
         private EffectBytecode previousBytecode;
 
-        public ComputeEffectDispatcher(RenderContext context)
+        public ComputeEffectDispatcher(RenderContext context, string effectName = "ComputeEffectShader")
             : base(context, null)
         {
             pipelineState = new MutablePipelineState(context.GraphicsDevice);
 
             // Setup the effect compiler
-            EffectInstance = new DynamicEffectInstance("ComputeEffectShader", Parameters);
+            EffectInstance = new DynamicEffectInstance(effectName, Parameters);
             EffectInstance.Initialize(context.Services);
 
             // We give ComputeEffectShader a higher priority, since they are usually executed serially and blocking

@@ -1,0 +1,17 @@
+using Xenko.Rendering.ComputeEffect;
+
+namespace VL.Xenko.Effects.ComputeFX
+{
+    effect ComputeFXGraphEffect
+    {
+        using params ComputeFXKeys;
+        using params ComputeEffectShaderKeys;
+                
+        mixin macro ThreadNumberX = ComputeEffectShaderKeys.ThreadNumbers.X;
+        mixin macro ThreadNumberY = ComputeEffectShaderKeys.ThreadNumbers.Y;            
+        mixin macro ThreadNumberZ = ComputeEffectShaderKeys.ThreadNumbers.Z;
+
+        mixin ComputeFXBase;
+        mixin ComputeFXKeys.ComputeRoot;
+    };
+}

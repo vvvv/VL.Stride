@@ -1,0 +1,12 @@
+﻿namespace VL.Xenko.Effects.ComputeFX
+{
+    shader ComputeAssignVarFloat<MemberName VarName> : ComputeVoid, StreamVariableFloat<VarName>
+    {
+        compose ComputeFloat Value;
+        override void Compute()
+        {
+            streams.Foo = 0; //hack to get streams in
+            streams.VarName = Value.Compute();
+        }
+    };
+}
