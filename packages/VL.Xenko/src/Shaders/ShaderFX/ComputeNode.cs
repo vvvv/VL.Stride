@@ -8,7 +8,7 @@ namespace VL.Xenko.Shaders
 {
     public class ComputeNode<T> : ComputeNode
     {
-        public string ShaderName { get; set; }
+        public string ShaderName { get; set; } = "Compute";
 
         protected virtual ShaderClassSource GetShaderSourceForType(string shaderName, params string[] genericArguments)
         {
@@ -27,7 +27,7 @@ namespace VL.Xenko.Shaders
                 case int v:
                     return new ShaderClassSource(shaderName + "Int", genericArguments);
                 case uint v:
-                    return new ShaderClassSource(shaderName + "Uint", genericArguments);
+                    return new ShaderClassSource(shaderName + "UInt", genericArguments);
                 default:
                     throw new NotImplementedException("No shader defined for type: " + typeof(T).Name);
             }
