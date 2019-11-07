@@ -8,13 +8,13 @@ using Xenko.Core.Mathematics;
 
 namespace VL.Xenko.Shaders.ShaderFX.Operations
 {
-    public class ComputeColorToFloat4 : ComputeColor
+    public class ComputeColorToFloat4 : ComputeValue<Vector4>
     {
         public IComputeColor Input { get; set; }
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
-            return ComputeNode<Vector4>.ReturnIfNotNull(Input);
+            return ReturnIfNotNull(Input);
         }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
