@@ -27,19 +27,23 @@ namespace VL.Xenko.Shaders
         [Display("Computes")]
         public IEnumerable<IComputeVoid> Computes { get; set; }
 
+        public override IEnumerable<IComputeNode> GetChildren(object context = null)
+        {
+            return Computes ?? base.GetChildren(context);
+        }
+
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
             var shaderSources = new ShaderArraySource();
 
-            foreach (var compute in Computes)
-                shaderSources.Add(compute.GenerateShaderSource(context, baseKeys));
+            if(Computes != null)
+                foreach (var compute in Computes)
+                    shaderSources.Add(compute.GenerateShaderSource(context, baseKeys));
 
             var shaderSource = new ShaderClassSource("ComputeOrder");
             var mixin = new ShaderMixinSource();
             mixin.Mixins.Add(shaderSource);
-
-            if (shaderSources != null)
-                mixin.AddComposition("Computes", shaderSources);
+            mixin.AddComposition("Computes", shaderSources);
 
             return mixin;
         }

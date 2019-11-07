@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using VL.Xenko.Effects.ComputeFX;
 using VL.Xenko.Effects.TextureFX;
 using VL.Xenko.Rendering;
+using VL.Xenko.Shaders.ShaderFX.Operations;
 using Xenko.Core;
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;
@@ -23,30 +25,66 @@ namespace VL.Xenko.Shaders
             var value2 = new ComputeValue<float>();
             var value3 = new ComputeValue<float>();
 
-            var first = new AssignVar<float>()
+            var var1 = new AssignVar<float>()
             {
                 VarName = "var1",
                 Value = value1
             };
 
-            var second = new AssignVar<float>()
+            var var2 = new AssignVar<float>()
             {
                 VarName = "var2",
                 Value = value2
             };
 
-            var third = new AssignVar<float>()
+            var var3 = new AssignVar<float>()
             {
                 VarName = "var3",
                 Value = value3
             };
 
-            var order = new ComputeOrder()
+            var assignVars = new ComputeOrder()
             {
-                Computes = new[] { first, second, third }
+                Computes = new[] { var1, var2, var3 }
             };
 
-            return order;
+            var getter1 = new GetVar<float>()
+            {
+                Var = var1,
+            };
+
+            var getter2 = new GetVar<float>()
+            {
+                Var = var2,
+            };
+
+            var plus = new BinaryOperation<float>("Plus")
+            {
+                Left = getter1,
+                Right = getter2
+            };
+
+            var last = new AssignVar<float>()
+            {
+                VarName = "result",
+                Value = plus
+            };
+
+            var result = new ComputeOrder()
+            {
+                Computes = new IComputeVoid[] { assignVars, last }
+            };
+
+            var tree = result.GetChildren();
+
+            var flat = tree.Flatten(n => n.GetChildren()).ToList();
+
+            return result;
+        }
+
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> e, Func<T, IEnumerable<T>> f)
+        {
+            return e.SelectMany(c => f(c).Flatten(f)).Concat(e);
         }
 
         public static ComputeEffectDispatcher ComposeComputeShader(GraphicsDevice graphicsDevice, IServiceRegistry services, IComputeVoid root)

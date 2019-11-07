@@ -36,6 +36,11 @@ namespace VL.Xenko.Shaders.ShaderFX.Operations
         [Display("Right")]
         public IComputeValue<T> Right { get; set; }
 
+        public override IEnumerable<IComputeNode> GetChildren(object context = null)
+        {
+            return ReturnIfNotNull(Left, Right);
+        }
+
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
             var shaderSource = GetShaderSourceForType(ShaderName);

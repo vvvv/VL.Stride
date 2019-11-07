@@ -8,9 +8,9 @@ using Xenko.Core.Mathematics;
 
 namespace VL.Xenko.Shaders.ShaderFX.Operations
 {
-    public class Float4ToComputeColor : ComputeColor
+    public class ComputeColorToFloat4 : ComputeColor
     {
-        public IComputeValue<Vector4> Input { get; set; }
+        public IComputeColor Input { get; set; }
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
@@ -19,7 +19,7 @@ namespace VL.Xenko.Shaders.ShaderFX.Operations
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var shaderSource = new ShaderClassSource("Float4ToColor");
+            var shaderSource = new ShaderClassSource("ColorToFloat4");
 
             var mixin = new ShaderMixinSource();
             mixin.Mixins.Add(shaderSource);

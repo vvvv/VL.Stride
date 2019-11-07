@@ -3,11 +3,19 @@ using Xenko.Rendering.Materials;
 using Xenko.Rendering.Materials.ComputeColors;
 using Xenko.Shaders;
 using Xenko.Core.Mathematics;
+using System.Collections.Generic;
 
 namespace VL.Xenko.Shaders
 {
     public class ComputeNode<T> : ComputeNode
     {
+        public static IEnumerable<IComputeNode> ReturnIfNotNull(params IComputeNode[] children)
+        {
+            foreach (var child in children)
+                if (child != null)
+                    yield return child;
+        }
+
         public string ShaderName { get; set; } = "Compute";
 
         protected virtual ShaderClassSource GetShaderSourceForType(string shaderName, params string[] genericArguments)

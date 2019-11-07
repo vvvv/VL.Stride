@@ -24,6 +24,10 @@ namespace VL.Xenko.Shaders.ShaderFX
         public IComputeValue<float> Z { get; set; }
         public IComputeValue<float> W { get; set; }
 
+        public override IEnumerable<IComputeNode> GetChildren(object context = null)
+        {
+            return ReturnIfNotNull(X, Y, Z, W);
+        }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
