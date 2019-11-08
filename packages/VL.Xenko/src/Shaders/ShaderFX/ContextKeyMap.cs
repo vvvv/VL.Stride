@@ -6,6 +6,8 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     static class ContextKeyMap<T>
     {
+        static ulong ObjectKeyIDCounter;
+
         //shader compiler context to object key
         static Dictionary<ShaderGeneratorContext, Dictionary<T, ObjectParameterKey<T>>> KeyValuesPerContext = new Dictionary<ShaderGeneratorContext, Dictionary<T, ObjectParameterKey<T>>>();
 
@@ -17,7 +19,7 @@ namespace VL.Xenko.Shaders.ShaderFX
                 return key;
             }
 
-            var newObjectKey = ParameterKeys.NewObject<T>(default(T), "ValueBuffer");
+            var newObjectKey = ParameterKeys.NewObject<T>(default(T), "Object_fx" + (++ObjectKeyIDCounter));
             keyMap[value] = newObjectKey;
 
             return newObjectKey;
