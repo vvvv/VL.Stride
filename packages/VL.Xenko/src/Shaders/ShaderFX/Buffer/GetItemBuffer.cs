@@ -11,31 +11,34 @@ using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
-    public class GetItemBuffer<T> : ComputeValue<T> where T : struct
+    public class GetItemBuffer<T> : ComputeValue<T>
     {
-        public GetItemBuffer(Buffer buffer, IComputeValue<uint> index)
+        public GetItemBuffer(DeclBuffer buffer, IComputeValue<uint> index)
         {
-            DynamicBuffer = buffer;
+            BufferDecl = buffer;
             Index = index;
         }
 
-        public Buffer DynamicBuffer { get; }
+        public DeclBuffer BufferDecl { get; }
 
         public IComputeValue<uint> Index { get; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var bufferKey = ContextKeyMap<Buffer>.GetParameterKey(context, DynamicBuffer);
+            BufferDecl.GenerateShaderSource(context, baseKeys);
 
-            context.Parameters.Set(bufferKey, DynamicBuffer);
-
-            var shaderClassSource = GetShaderSourceForType<T>("GetItemBuffer", bufferKey);
+            var shaderClassSource = GetShaderSourceForType<T>("GetItemBuffer", BufferDecl.BufferKey);
 
             var mixin = shaderClassSource.CreateMixin();
 
             mixin.AddComposition(Index, "Index", context, baseKeys);
 
             return mixin;
+        }
+
+        public override IEnumerable<IComputeNode> GetChildren(object context = null)
+        {
+            return ReturnIfNotNull(Index);
         }
     }
 }

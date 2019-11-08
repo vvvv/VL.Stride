@@ -21,7 +21,9 @@ namespace VL.Xenko.Shaders.ShaderFX
     {
         public static IComputeVoid SomeComputeFXGraph(Buffer buffer)
         {
-            var getItem = new GetItemBuffer<float>(buffer, new ComputeValue<uint>());
+            var bufferDecl = new DeclBuffer();
+            bufferDecl.Buffer = buffer;
+            var getItem = new GetItemBuffer<float>(bufferDecl, new ComputeValue<uint>());
 
             var value1 = new ComputeValue<float>();
             var value2 = new ComputeValue<float>();

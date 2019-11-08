@@ -5,6 +5,8 @@ using Xenko.Rendering.Materials;
 using Xenko.Rendering.Materials.ComputeColors;
 using Xenko.Shaders;
 using Xenko.Core.Mathematics;
+using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+
 
 namespace VL.Xenko.Shaders.ShaderFX
 {

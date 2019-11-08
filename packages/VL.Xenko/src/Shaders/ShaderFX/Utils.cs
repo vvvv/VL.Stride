@@ -47,5 +47,12 @@ namespace VL.Xenko.Shaders.ShaderFX
 
             return shaderSource;
         }
+
+        public static IEnumerable<IComputeNode> ReturnIfNotNull(params IComputeNode[] children)
+        {
+            foreach (var child in children)
+                if (child != null)
+                    yield return child;
+        }
     }
 }

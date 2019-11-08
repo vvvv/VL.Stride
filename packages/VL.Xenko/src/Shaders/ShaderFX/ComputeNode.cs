@@ -10,13 +10,6 @@ namespace VL.Xenko.Shaders
 {
     public class ComputeNode<T> : ComputeNode
     {
-        public static IEnumerable<IComputeNode> ReturnIfNotNull(params IComputeNode[] children)
-        {
-            foreach (var child in children)
-                if (child != null)
-                    yield return child;
-        }
-
         public string ShaderName { get; set; } = "Compute";
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)

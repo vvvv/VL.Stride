@@ -5,6 +5,8 @@ using Xenko.Rendering.Materials;
 using Xenko.Rendering.Materials.ComputeColors;
 using Xenko.Shaders;
 using Xenko.Core.Mathematics;
+using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
@@ -14,7 +16,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
-            return ComputeNode<Vector4>.ReturnIfNotNull(Input);
+            return ReturnIfNotNull(Input);
         }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
