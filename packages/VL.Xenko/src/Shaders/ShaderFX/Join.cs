@@ -4,6 +4,7 @@ using System.Text;
 using Xenko.Rendering.Materials;
 using Xenko.Shaders;
 using Xenko.Core.Mathematics;
+using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
@@ -31,14 +32,14 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var shaderSource = GetShaderSourceForType(ShaderName);
+            var shaderSource = GetShaderSourceForType<T>(ShaderName);
 
             var xShaderSource = X?.GenerateShaderSource(context, baseKeys);
             var yShaderSource = Y?.GenerateShaderSource(context, baseKeys);
             var zShaderSource = Z?.GenerateShaderSource(context, baseKeys);
             var wShaderSource = W?.GenerateShaderSource(context, baseKeys);
 
-            var mixin = CreateMixin(shaderSource);
+            var mixin = shaderSource.CreateMixin();
 
             if (xShaderSource != null)
                 mixin.AddComposition("x", xShaderSource);

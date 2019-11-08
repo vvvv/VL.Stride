@@ -5,7 +5,6 @@ using System.Text;
 using VL.Xenko.Effects.ComputeFX;
 using VL.Xenko.Effects.TextureFX;
 using VL.Xenko.Rendering;
-using VL.Xenko.Shaders.ShaderFX.Operations;
 using Xenko.Core;
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;
@@ -14,49 +13,59 @@ using Xenko.Rendering.Images;
 using Xenko.Rendering.Materials;
 using Xenko.Rendering.Materials.ComputeColors;
 using Xenko.Shaders;
+using Buffer = Xenko.Graphics.Buffer;
 
-namespace VL.Xenko.Shaders
+namespace VL.Xenko.Shaders.ShaderFX
 {
     public static class ShaderGraph
     {
-        public static IComputeVoid SomeComputeFXGraph()
+        public static IComputeVoid SomeComputeFXGraph(Buffer buffer)
         {
+            var getItem = new GetItemBuffer<float>(buffer, new ComputeValue<uint>());
+
             var value1 = new ComputeValue<float>();
             var value2 = new ComputeValue<float>();
             var value3 = new ComputeValue<float>();
 
-            var var1 = new AssignVar<float>()
-            {
-                VarName = "var1",
-                Value = value1
-            };
+            var var1 = new AssignVar<float>(getItem);
 
-            var var2 = new AssignVar<float>()
-            {
-                VarName = "var2",
-                Value = value2
-            };
+            var var2 = new AssignVar<float>(value2);
 
-            var var3 = new AssignVar<float>()
-            {
-                VarName = "var3",
-                Value = value3
-            };
+            var var3 = new AssignVar<float>(value3);
 
             var assignVars = new ComputeOrder()
             {
                 Computes = new[] { var1, var2, var3 }
             };
 
-            var getter1 = new GetVar<float>()
+            var first = BuildPlus(var1, var2);
+            var second = BuildPlus(first, var1);
+            var third = BuildPlus(second, var3);
+
+            var root = new ComputeOrder()
             {
-                Var = var1,
+                Computes = new IComputeVoid[] { third }
             };
 
-            var getter2 = new GetVar<float>()
+            var tree = root.GetChildren();
+
+            var visited = new HashSet<IComputeNode>();
+            var flat = tree.TraversePostOrder(n => n.GetChildren(), visited).ToList();
+
+            var beforeRoot = flat.OfType<IComputeVoid>();
+
+            var finalOrder = new ComputeOrder()
             {
-                Var = var2,
+                Computes = beforeRoot
             };
+
+            return finalOrder;
+        }
+
+        static AssignVar<float> BuildPlus(AssignVar<float> var1, AssignVar<float> var2)
+        {
+            var getter1 = new GetVar<float>(var1);
+            var getter2 = new GetVar<float>(var2);
 
             var plus = new BinaryOperation<float>("Plus")
             {
@@ -64,27 +73,59 @@ namespace VL.Xenko.Shaders
                 Right = getter2
             };
 
-            var last = new AssignVar<float>()
+            return new AssignVar<float>(plus, "PlusResult");
+        }
+
+        public static IEnumerable<T> TraversePostOrder<T>(this IEnumerable<T> e, Func<T, IEnumerable<T>> f, HashSet<T> visited) where T : IComputeNode
+        {
+            foreach (var item in e)
             {
-                VarName = "result",
-                Value = plus
-            };
+                if (!visited.Contains(item))
+                {
+                    visited.Add(item);
 
-            var result = new ComputeOrder()
-            {
-                Computes = new IComputeVoid[] { assignVars, last }
-            };
+                    var children = f(item).TraversePostOrder(f, visited);
 
-            var tree = result.GetChildren();
+                    foreach (var child in children)
+                        yield return child;
 
-            var flat = tree.Flatten(n => n.GetChildren()).ToList();
-
-            return result;
+                    yield return item;
+                }
+            }
         }
 
         public static IEnumerable<T> Flatten<T>(this IEnumerable<T> e, Func<T, IEnumerable<T>> f)
         {
             return e.SelectMany(c => f(c).Flatten(f)).Concat(e);
+        }
+
+        public static IEnumerable<T> ExpandPreOrder<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> elementSelector)
+        {
+            var stack = new Stack<IEnumerator<T>>();
+            var e = source.GetEnumerator();
+            try
+            {
+                while (true)
+                {
+                    while (e.MoveNext())
+                    {
+                        var item = e.Current;
+                        yield return item;
+                        var elements = elementSelector(item);
+                        if (elements == null) continue;
+                        stack.Push(e);
+                        e = elements.GetEnumerator();
+                    }
+                    if (stack.Count == 0) break;
+                    e.Dispose();
+                    e = stack.Pop();
+                }
+            }
+            finally
+            {
+                e.Dispose();
+                while (stack.Count != 0) stack.Pop().Dispose();
+            }
         }
 
         public static ComputeEffectDispatcher ComposeComputeShader(GraphicsDevice graphicsDevice, IServiceRegistry services, IComputeVoid root)

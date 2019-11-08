@@ -2,8 +2,10 @@
 using System.Text;
 using Xenko.Rendering.Materials;
 using Xenko.Shaders;
+using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
-namespace VL.Xenko.Shaders
+
+namespace VL.Xenko.Shaders.ShaderFX
 {
     public interface IComputeValue<T> : IComputeNode
     {
@@ -14,7 +16,7 @@ namespace VL.Xenko.Shaders
     {
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            return GetShaderSourceForType(ShaderName);
+            return GetShaderSourceForType<T>(ShaderName);
         }
     }
 }

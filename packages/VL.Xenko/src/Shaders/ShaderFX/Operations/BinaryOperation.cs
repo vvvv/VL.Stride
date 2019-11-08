@@ -6,8 +6,10 @@ using Xenko.Core;
 using Xenko.Rendering.Materials;
 using Xenko.Shaders;
 using DataMemberAttribute = Xenko.Core.DataMemberAttribute;
+using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
-namespace VL.Xenko.Shaders.ShaderFX.Operations
+
+namespace VL.Xenko.Shaders.ShaderFX
 {
     public class BinaryOperation<T> : ComputeValue<T>
     {
@@ -43,12 +45,12 @@ namespace VL.Xenko.Shaders.ShaderFX.Operations
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var shaderSource = GetShaderSourceForType(ShaderName);
+            var shaderSource = GetShaderSourceForType<T>(ShaderName);
 
             var leftShaderSource = Left?.GenerateShaderSource(context, baseKeys);
             var rightShaderSource = Right?.GenerateShaderSource(context, baseKeys);
 
-            var mixin = CreateMixin(shaderSource);
+            var mixin = shaderSource.CreateMixin();
 
             if (leftShaderSource != null)
                 mixin.AddComposition("Left", leftShaderSource);
@@ -58,5 +60,9 @@ namespace VL.Xenko.Shaders.ShaderFX.Operations
             return mixin;
         }
 
+        public override string ToString()
+        {
+            return string.Format("Op {0} {1} {2}", Left, ShaderName, Right);
+        }
     }
 }

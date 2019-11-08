@@ -8,14 +8,19 @@ using Xenko.Rendering.Materials.ComputeColors;
 using Xenko.Shaders;
 using DataMemberAttribute = Xenko.Core.DataMemberAttribute;
 
-namespace VL.Xenko.Shaders
+namespace VL.Xenko.Shaders.ShaderFX
 {
     public interface IComputeVoid : IComputeNode
     {
 
     }
 
-    public class ComputeOrder : ComputeNode, IComputeVoid
+    public abstract class ComputeVoid : ComputeNode, IComputeVoid
+    {
+
+    }
+
+    public class ComputeOrder : ComputeVoid
     {
         /// <summary>
         /// The left (background) child node.

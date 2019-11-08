@@ -6,7 +6,7 @@ using Xenko.Rendering.Materials.ComputeColors;
 using Xenko.Shaders;
 using Xenko.Core.Mathematics;
 
-namespace VL.Xenko.Shaders.ShaderFX.Operations
+namespace VL.Xenko.Shaders.ShaderFX
 {
     public class Float4ToComputeColor : ComputeColor
     {

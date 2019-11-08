@@ -1,0 +1,10 @@
+﻿shader GetItemBufferFloat4<LinkType BufferName> : ComputeFloat4, BufferFloat4<BufferName, PerDispatch>
+{
+    compose ComputeUInt Index;
+
+    override float4 Compute()
+    {
+        return DynamicBuffer[Index.Compute()];
+    }
+   
+};

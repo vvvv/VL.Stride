@@ -5,6 +5,8 @@ using System.Text;
 using Xenko.Rendering.Materials;
 using Xenko.Shaders;
 using Xenko.Core.Mathematics;
+using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
@@ -20,7 +22,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            return GetShaderSourceForType(ShaderName, MaterialUtility.GetAsShaderString((dynamic)Value));
+            return GetShaderSourceForType<T>(ShaderName, MaterialUtility.GetAsShaderString((dynamic)Value));
         }
     }
 
@@ -91,6 +93,16 @@ namespace VL.Xenko.Shaders.ShaderFX
         public static string GetAsShaderString(float f)
         {
             return string.Format(CultureInfo.InvariantCulture, "float4({0}, {0}, {0}, {0})", f);
+        }
+
+        public static string GetAsShaderString(int f)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0}", f);
+        }
+
+        public static string GetAsShaderString(uint f)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0}", f);
         }
 
         public static string GetAsShaderString(object obj)
