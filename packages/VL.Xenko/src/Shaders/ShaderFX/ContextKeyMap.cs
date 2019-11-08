@@ -13,7 +13,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public static ObjectParameterKey<T> GetParameterKey(ShaderGeneratorContext context, T value)
         {
-            var keyMap = GetBufferMap(context);
+            var keyMap = GetContextMap(context);
             if (keyMap.TryGetValue(value, out ObjectParameterKey<T> key))
             {
                 return key;
@@ -25,7 +25,7 @@ namespace VL.Xenko.Shaders.ShaderFX
             return newObjectKey;
         }
 
-        static Dictionary<T, ObjectParameterKey<T>> GetBufferMap(ShaderGeneratorContext context)
+        static Dictionary<T, ObjectParameterKey<T>> GetContextMap(ShaderGeneratorContext context)
         {
             if (KeyValuesPerContext.TryGetValue(context, out Dictionary<T, ObjectParameterKey<T>> bufferMap))
             {
