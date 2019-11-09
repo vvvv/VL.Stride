@@ -66,11 +66,7 @@ namespace VL.Xenko.Shaders.ShaderFX
             var getter1 = new GetVar<float>(var1);
             var getter2 = new GetVar<float>(var2);
 
-            var plus = new BinaryOperation<float>("Plus")
-            {
-                Left = getter1,
-                Right = getter2
-            };
+            var plus = new BinaryOperation<float>("Plus", getter1, getter2);
 
             return new AssignVar<float>(plus, null, "PlusResult");
         }

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Xenko.Rendering;
 using Xenko.Rendering.Materials;
+using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
@@ -88,24 +90,24 @@ namespace VL.Xenko.Shaders.ShaderFX
         static ulong ValueKeyIDCounter;
 
         //shader compiler context to object key
-        static Dictionary<object, ValueParameterKey<T>> KeyValuesPerContext = new Dictionary<object, ValueParameterKey<T>>();
+        static Dictionary<object, ValueParameterKey<T>> KeyValuesPerReference = new Dictionary<object, ValueParameterKey<T>>();
 
         public static ValueParameterKey<T> GetParameterKey(object uniqueReference)
         {
-            if (KeyValuesPerContext.TryGetValue(uniqueReference, out ValueParameterKey<T> key))
+            if (KeyValuesPerReference.TryGetValue(uniqueReference, out ValueParameterKey<T> key))
             {
                 return key;
             }
 
-            var newObjectKey = ParameterKeys.NewValue<T>(default(T), "Value_fx" + (++ValueKeyIDCounter));
-            KeyValuesPerContext[uniqueReference] = newObjectKey;
+            var newObjectKey = ParameterKeys.NewValue<T>(default(T), "Value" + GetNameForType<T>() + "_fx" + (++ValueKeyIDCounter));
+            KeyValuesPerReference[uniqueReference] = newObjectKey;
 
             return newObjectKey;
         }
 
         public static bool RemoveContext(object uniqueReference)
         {
-            return KeyValuesPerContext.Remove(uniqueReference);
+            return KeyValuesPerReference.Remove(uniqueReference);
         }
     }
 }

@@ -8,25 +8,21 @@ using Xenko.Shaders;
 using DataMemberAttribute = Xenko.Core.DataMemberAttribute;
 using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
-
 namespace VL.Xenko.Shaders.ShaderFX
 {
-    public class BinaryOperation<T> : ComputeValue<T>
+    public class UnaryOperation<T> : ComputeValue<T>
     {
-        public BinaryOperation(string operatorName, IComputeValue<T> left, IComputeValue<T> right)
+        public UnaryOperation(string operatorName, IComputeValue<T> value)
         {
             ShaderName = operatorName;
-            Left = left;
-            Right = right;
+            Value = value;
         }
 
-        public IComputeValue<T> Left { get; }
-
-        public IComputeValue<T> Right { get; }
+        public IComputeValue<T> Value { get; }
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
-            return ReturnIfNotNull(Left, Right);
+            return ReturnIfNotNull(Value);
         }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
@@ -35,15 +31,14 @@ namespace VL.Xenko.Shaders.ShaderFX
 
             var mixin = shaderSource.CreateMixin();
 
-            mixin.AddComposition(Left,"Left", context, baseKeys);
-            mixin.AddComposition(Right, "Right", context, baseKeys);
+            mixin.AddComposition(Value, "Value", context, baseKeys);
 
             return mixin;
         }
 
         public override string ToString()
         {
-            return string.Format("Op {0} {1} {2}", Left, ShaderName, Right);
+            return string.Format("Op {0} {1}", Value, ShaderName);
         }
     }
 }
