@@ -82,4 +82,30 @@ namespace VL.Xenko.Shaders.ShaderFX
             return KeyValuesPerContext.Remove(context);
         }
     }
+
+    static class ContextValueKeyMap2<T> where T : struct
+    {
+        static ulong ValueKeyIDCounter;
+
+        //shader compiler context to object key
+        static Dictionary<object, ValueParameterKey<T>> KeyValuesPerContext = new Dictionary<object, ValueParameterKey<T>>();
+
+        public static ValueParameterKey<T> GetParameterKey(object uniqueReference)
+        {
+            if (KeyValuesPerContext.TryGetValue(uniqueReference, out ValueParameterKey<T> key))
+            {
+                return key;
+            }
+
+            var newObjectKey = ParameterKeys.NewValue<T>(default(T), "Value_fx" + (++ValueKeyIDCounter));
+            KeyValuesPerContext[uniqueReference] = newObjectKey;
+
+            return newObjectKey;
+        }
+
+        public static bool RemoveContext(object uniqueReference)
+        {
+            return KeyValuesPerContext.Remove(uniqueReference);
+        }
+    }
 }

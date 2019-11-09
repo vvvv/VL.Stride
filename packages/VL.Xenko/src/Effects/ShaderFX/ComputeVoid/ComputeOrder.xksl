@@ -1,15 +1,12 @@
-﻿namespace VL.Xenko.Effects.ComputeFX
+﻿shader ComputeOrder : ComputeVoid
 {
-    shader ComputeOrder : ComputeVoid
-    {
-        compose ComputeVoid Computes[];
+    compose ComputeVoid Computes[];
 
-        override void Compute()
+    override void Compute()
+    {
+        foreach (var computeVoid in Computes)
         {
-            foreach (var computeVoid in Computes)
-            {
-                computeVoid.Compute();
-            }
+            computeVoid.Compute();
         }
-    };
-}
+    }
+};

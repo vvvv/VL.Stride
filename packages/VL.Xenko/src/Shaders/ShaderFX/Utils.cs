@@ -11,27 +11,34 @@ namespace VL.Xenko.Shaders.ShaderFX
     {
         public static ShaderClassSource GetShaderSourceForType<T>(string shaderName, params object[] genericArguments)
         {
-            switch (default(T))
-            {
-                case float v:
-                    return new ShaderClassSource(shaderName + "Float", genericArguments);
-                case Vector2 v:
-                    return new ShaderClassSource(shaderName + "Float2", genericArguments);
-                case Vector3 v:
-                    return new ShaderClassSource(shaderName + "Float3", genericArguments);
-                case Vector4 v:
-                    return new ShaderClassSource(shaderName + "Float4", genericArguments);
-                case Matrix v:
-                    return new ShaderClassSource(shaderName + "Matrix", genericArguments);
-                case int v:
-                    return new ShaderClassSource(shaderName + "Int", genericArguments);
-                case uint v:
-                    return new ShaderClassSource(shaderName + "UInt", genericArguments);
-                case bool v:
-                    return new ShaderClassSource(shaderName + "Bool", genericArguments);
-                default:
-                    throw new NotImplementedException("No shader defined for type: " + typeof(T).Name);
-            }
+            return new ShaderClassSource(shaderName + GetNameForType<T>(), genericArguments);
+        }
+
+        public static ShaderClassSource GetShaderSourceForType2<T1, T2>(string shaderName, params object[] genericArguments)
+        {
+            return new ShaderClassSource(shaderName + GetNameForType<T1>() + GetNameForType<T2>(), genericArguments);
+        }
+
+        static Dictionary<Type, string> KnownTypes = new Dictionary<Type, string>();
+
+        static ShaderFXUtils()
+        {
+            KnownTypes.Add(typeof(float), "Float");
+            KnownTypes.Add(typeof(Vector2), "Float2");
+            KnownTypes.Add(typeof(Vector3), "Float3");
+            KnownTypes.Add(typeof(Vector4), "Float4");
+            KnownTypes.Add(typeof(Matrix), "Matrix");
+            KnownTypes.Add(typeof(int), "Int");
+            KnownTypes.Add(typeof(uint), "UInt");
+            KnownTypes.Add(typeof(bool), "Bool");
+        }
+
+        public static string GetNameForType<T>()
+        {
+            if (KnownTypes.TryGetValue(typeof(T), out var result))
+                return result;
+
+            throw new NotImplementedException("No shader defined for type: " + typeof(T).Name);            
         }
 
         public static ShaderMixinSource CreateMixin(this ShaderClassSource shaderClassSource)
