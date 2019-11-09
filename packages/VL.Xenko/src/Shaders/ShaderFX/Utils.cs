@@ -27,6 +27,8 @@ namespace VL.Xenko.Shaders.ShaderFX
                     return new ShaderClassSource(shaderName + "Int", genericArguments);
                 case uint v:
                     return new ShaderClassSource(shaderName + "UInt", genericArguments);
+                case bool v:
+                    return new ShaderClassSource(shaderName + "Bool", genericArguments);
                 default:
                     throw new NotImplementedException("No shader defined for type: " + typeof(T).Name);
             }

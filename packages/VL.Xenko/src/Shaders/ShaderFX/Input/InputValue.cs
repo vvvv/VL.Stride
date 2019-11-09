@@ -20,19 +20,21 @@ namespace VL.Xenko.Shaders.ShaderFX
 
             set
             {
-                if (!inputValue.Equals(value))
+                if (!inputValue.Equals(value) || compiled)
                 {
                     this.inputValue = value;
 
                     if (Parameters != null && ValueKey != null)
-                        Parameters.Set(ValueKey, this.inputValue); 
+                        Parameters.Set(ValueKey, inputValue);
+
+                    compiled = false;
                 }
             }
         }
 
         public ValueParameterKey<T> ValueKey { get; protected set; }
         ParameterCollection Parameters;
-
+        bool compiled;
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
             ValueKey = ContextValueKeyMap<T>.GetParameterKey(context, this);
@@ -42,8 +44,8 @@ namespace VL.Xenko.Shaders.ShaderFX
             // remember parameters for updates from main loop 
             Parameters = context.Parameters;
 
-            var shaderClassSource = GetShaderSourceForType<T>("InputValue", ValueKey, "PerDispatch");
-
+            var shaderClassSource = GetShaderSourceForType<T>("Input", ValueKey, "PerDraw");
+            compiled = true;
             //no shader source to create here, only the key
             return shaderClassSource;
         }

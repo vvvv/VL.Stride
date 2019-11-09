@@ -22,6 +22,11 @@ namespace VL.Xenko.Shaders.ShaderFX
 
     public class ComputeOrder : ComputeVoid
     {
+        public ComputeOrder(IEnumerable<IComputeVoid> computes)
+        {
+            Computes = computes;
+        }
+
         /// <summary>
         /// The left (background) child node.
         /// </summary>
@@ -30,7 +35,7 @@ namespace VL.Xenko.Shaders.ShaderFX
         /// </userdoc>
         [DataMember(20)]
         [Display("Computes")]
-        public IEnumerable<IComputeVoid> Computes { get; set; }
+        public IEnumerable<IComputeVoid> Computes { get; }
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
@@ -41,7 +46,7 @@ namespace VL.Xenko.Shaders.ShaderFX
         {
             var shaderSources = new ShaderArraySource();
 
-            if(Computes != null)
+            if (Computes != null)
                 foreach (var compute in Computes)
                     shaderSources.Add(compute.GenerateShaderSource(context, baseKeys));
 

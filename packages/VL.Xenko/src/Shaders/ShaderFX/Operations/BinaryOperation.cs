@@ -47,15 +47,10 @@ namespace VL.Xenko.Shaders.ShaderFX
         {
             var shaderSource = GetShaderSourceForType<T>(ShaderName);
 
-            var leftShaderSource = Left?.GenerateShaderSource(context, baseKeys);
-            var rightShaderSource = Right?.GenerateShaderSource(context, baseKeys);
-
             var mixin = shaderSource.CreateMixin();
 
-            if (leftShaderSource != null)
-                mixin.AddComposition("Left", leftShaderSource);
-            if (rightShaderSource != null)
-                mixin.AddComposition("Right", rightShaderSource);
+            mixin.AddComposition(Left,"Left", context, baseKeys);
+            mixin.AddComposition(Right, "Right", context, baseKeys);
 
             return mixin;
         }

@@ -1,10 +1,7 @@
-﻿namespace VL.Xenko.Effects.ShaderFX
+﻿shader GetVarFloat<MemberName VarName> : ComputeFloat, StreamVariableFloat<VarName>
 {
-    shader GetVarFloat<MemberName VarName> : ComputeFloat, StreamVariableFloat<VarName>
+    override float Compute()
     {
-        override float Compute()
-        {
-            return streams.VarName;
-        }
-    };
-}
+        return streams.VarName;
+    }
+};

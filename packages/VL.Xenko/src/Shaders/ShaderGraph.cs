@@ -35,20 +35,21 @@ namespace VL.Xenko.Shaders.ShaderFX
 
             var var3 = new AssignVar<float>(value3);
 
-            var assignVars = new ComputeOrder()
-            {
-                Computes = new[] { var1, var2, var3 }
-            };
+            var assignVars = new ComputeOrder(new[] { var1, var2, var3 });
 
             var first = BuildPlus(var1, var2);
             var second = BuildPlus(first, var1);
             var third = BuildPlus(second, var3);
 
-            var root = new ComputeOrder()
-            {
-                Computes = new IComputeVoid[] { third }
-            };
+            var root = new ComputeOrder(new IComputeVoid[] { third });
 
+            var finalOrder = BuildFinalShaderGraph(root);
+
+            return finalOrder;
+        }
+
+        public static ComputeOrder BuildFinalShaderGraph(IComputeNode root)
+        {
             var tree = root.GetChildren();
 
             var visited = new HashSet<IComputeNode>();
@@ -56,11 +57,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
             var beforeRoot = flat.OfType<IComputeVoid>();
 
-            var finalOrder = new ComputeOrder()
-            {
-                Computes = beforeRoot
-            };
-
+            var finalOrder = new ComputeOrder(beforeRoot);
             return finalOrder;
         }
 
@@ -75,7 +72,7 @@ namespace VL.Xenko.Shaders.ShaderFX
                 Right = getter2
             };
 
-            return new AssignVar<float>(plus, "PlusResult");
+            return new AssignVar<float>(plus, null, "PlusResult");
         }
 
         public static IEnumerable<T> TraversePostOrder<T>(this IEnumerable<T> e, Func<T, IEnumerable<T>> f, HashSet<T> visited) where T : IComputeNode

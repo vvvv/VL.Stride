@@ -26,9 +26,7 @@ namespace VL.Xenko.Shaders.ShaderFX
             var mixin = new ShaderMixinSource();
             mixin.Mixins.Add(shaderSource);
 
-            var inputShaderSource = Input?.GenerateShaderSource(context, baseKeys);
-            if (inputShaderSource != null)
-                mixin.AddComposition("Value", inputShaderSource);
+            mixin.AddComposition(Input, "Value", context, baseKeys);
 
             return mixin;
         }

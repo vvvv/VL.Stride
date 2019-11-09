@@ -2,7 +2,6 @@
 using Xenko.Core;
 using Xenko.Rendering.Materials;
 using Xenko.Shaders;
-using DataMemberAttribute = Xenko.Core.DataMemberAttribute;
 using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
 
@@ -12,25 +11,30 @@ namespace VL.Xenko.Shaders.ShaderFX
     {
         static ulong VarIDCounter;
 
-        public AssignVar(IComputeValue<T> value, string varName = "Var", bool appendID = true)
+        public AssignVar(IComputeValue<T> value, AssignVar<T> var = null, string varName = "Var", bool appendID = true)
         {
-            VarName = appendID ? varName + "_fx" + (++VarIDCounter) : varName;
+            if (var != null) //re-assign existing var
+            {
+                VarName = var.VarName;
+                Parent = var;
+            }
+            else
+            {
+                createVar = true;
+                VarName = appendID ? varName + "_fx" + (++VarIDCounter) : varName;
+            }
+
             Value = value;
         }
 
-        /// <summary>
-        /// The compute node that generates the value to be assigned.
-        /// </summary>
-        /// <userdoc>
-        /// The map used for the left (background) node.
-        /// </userdoc>
-        [DataMember(20)]
-        [Display("Value")]
         public IComputeValue<T> Value { get; }
 
-        [DataMember(30)]
-        [Display("Variable Name")]
         public string VarName { get; }
+
+        bool createVar;
+        AssignVar<T> Parent;
+        ShaderClassSource ShaderClassSource;
+         
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
@@ -40,6 +44,7 @@ namespace VL.Xenko.Shaders.ShaderFX
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
             var shaderSource = GetShaderSourceForType<T>("AssignVar", VarName);
+            ShaderClassSource = shaderSource;
 
             var mixin = shaderSource.CreateMixin();
 
