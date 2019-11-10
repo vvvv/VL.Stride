@@ -7,11 +7,19 @@ using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
-    public class AssignVar<T> : ComputeNode<T>, IComputeVoid
+    public class Var<T> : ComputeNode<T>, IComputeVoid
     {
         static ulong VarIDCounter;
 
-        public AssignVar(IComputeValue<T> value, AssignVar<T> var = null, string varName = "Var", bool appendID = true)
+        public Var(IComputeValue<T> value, string name)
+            : this(value, null, name)
+        { }
+
+        public Var(IComputeValue<T> value, Var<T> var)
+            : this(value, var, "")
+        { }
+
+        public Var(IComputeValue<T> value, Var<T> var = null, string varName = "Var", bool appendID = true)
         {
             if (var != null) //re-assign existing var
             {
@@ -21,7 +29,7 @@ namespace VL.Xenko.Shaders.ShaderFX
             else
             {
                 createVar = true;
-                VarName = appendID ? varName + "_fx" + (++VarIDCounter) : varName;
+                VarName = appendID ? varName + "_" + (++VarIDCounter) : varName;
             }
 
             Value = value;
@@ -32,7 +40,7 @@ namespace VL.Xenko.Shaders.ShaderFX
         public string VarName { get; }
 
         bool createVar;
-        AssignVar<T> Parent;
+        Var<T> Parent;
         ShaderClassSource ShaderClassSource;
          
 
@@ -55,7 +63,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override string ToString()
         {
-            return string.Format("Set {0}", VarName);
+            return string.Format("{0} {1}", createVar ? "": "Assign", VarName);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace VL.Xenko.Shaders.ShaderFX
             // remember parameters for updates from main loop 
             Parameters = context.Parameters;
 
-            var shaderClassSource = GetShaderSourceForType<T>("Input", ValueKey, "PerDraw");
+            var shaderClassSource = GetShaderSourceForType<T>("Input", ValueKey, "PerUpdate");
             compiled = true;
             //no shader source to create here, only the key
             return shaderClassSource;

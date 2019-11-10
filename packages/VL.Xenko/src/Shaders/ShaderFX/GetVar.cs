@@ -8,15 +8,15 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public class GetVar<T> : ComputeValue<T>
     {
-        public GetVar(AssignVar<T> var)
+
+        public GetVar(Var<T> var)
         {
             Var = var;
-            VarName = var.VarName;
         }
 
-        public AssignVar<T> Var { get; set; }
+        public Var<T> Var { get; }
 
-        public string VarName { get; set; }
+        string VarName => Var?.VarName ?? "NoVar";
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
@@ -25,14 +25,24 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var shaderSource = GetShaderSourceForType<T>("GetVar", Var?.VarName ?? VarName);
+            ShaderClassSource shaderSource;
+
+            if (Var is Constant<T> constant)
+                shaderSource = GetShaderSourceForType<T>("Constant", GetAsShaderString((dynamic)constant.ConstantValue));
+            else if (Var is Semantic<T> semantic)
+                shaderSource = GetShaderSourceForType<T>("GetSemantic", "SemanticValue", semantic.SemanticName);
+            else
+                shaderSource = Var != null ? GetShaderSourceForType<T>("GetVar", VarName) : GetShaderSourceForType<T>("Compute");
 
             return shaderSource;
         }
 
         public override string ToString()
         {
-            return string.Format("Get {0}", VarName);
+            if (Var is Semantic<T> semantic)
+                return string.Format("Semantic {0}", semantic.SemanticName);
+            else
+                return string.Format("Get {0}", VarName);
         }
     }
 }

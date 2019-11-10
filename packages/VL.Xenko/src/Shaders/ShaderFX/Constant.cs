@@ -10,19 +10,19 @@ using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
-    public class Constant<T> : ComputeValue<T>
+    public class Constant<T> : Var<T>
     {
-        private readonly T Value;
+        public readonly T ConstantValue;
 
         public Constant(T value)
+            : base(null, "Constant")
         {
-            ShaderName = "Constant";
-            Value = value;
+            ConstantValue = value;
         }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            return GetShaderSourceForType<T>(ShaderName, GetAsShaderString((dynamic)Value));
+            return new ShaderClassSource("ComputeVoid");
         }
     }
 }

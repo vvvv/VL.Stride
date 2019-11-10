@@ -29,11 +29,11 @@ namespace VL.Xenko.Shaders.ShaderFX
             var value2 = new ComputeValue<float>();
             var value3 = new ComputeValue<float>();
 
-            var var1 = new AssignVar<float>(getItem);
+            var var1 = new Var<float>(getItem);
 
-            var var2 = new AssignVar<float>(value2);
+            var var2 = new Var<float>(value2);
 
-            var var3 = new AssignVar<float>(value3);
+            var var3 = new Var<float>(value3);
 
             var assignVars = new ComputeOrder(new[] { var1, var2, var3 });
 
@@ -61,14 +61,14 @@ namespace VL.Xenko.Shaders.ShaderFX
             return finalOrder;
         }
 
-        static AssignVar<float> BuildPlus(AssignVar<float> var1, AssignVar<float> var2)
+        static Var<float> BuildPlus(Var<float> var1, Var<float> var2)
         {
             var getter1 = new GetVar<float>(var1);
             var getter2 = new GetVar<float>(var2);
 
             var plus = new BinaryOperation<float>("Plus", getter1, getter2);
 
-            return new AssignVar<float>(plus, null, "PlusResult");
+            return new Var<float>(plus, null, "PlusResult");
         }
 
         public static IEnumerable<T> TraversePostOrder<T>(this IEnumerable<T> e, Func<T, IEnumerable<T>> f, HashSet<T> visited) where T : IComputeNode
