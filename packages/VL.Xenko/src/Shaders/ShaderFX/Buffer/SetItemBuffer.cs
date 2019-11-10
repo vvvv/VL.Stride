@@ -26,6 +26,10 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
+
+            if (BufferDecl == null)
+                return GetShaderSourceForType<T>("ComputeVoid");
+
             BufferDecl.GenerateShaderSource(context, baseKeys);
 
             var shaderClassSource = GetShaderSourceForType<T>("SetItemRWBuffer", BufferDecl.BufferKey);
@@ -35,12 +39,12 @@ namespace VL.Xenko.Shaders.ShaderFX
             mixin.AddComposition(Value, "Value", context, baseKeys);
             mixin.AddComposition(Index, "Index", context, baseKeys);
 
-            return mixin;
+            return mixin; 
         }
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
-            return ReturnIfNotNull(Value, Index);
+            return ReturnIfNotNull(BufferDecl, Value, Index);
         }
     }
 }

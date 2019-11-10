@@ -5,6 +5,8 @@ using Xenko.Shaders;
 using Xenko.Core.Mathematics;
 using Xenko.Rendering.Materials;
 using System.Globalization;
+using Xenko.Graphics;
+using Buffer = Xenko.Graphics.Buffer;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
@@ -32,6 +34,8 @@ namespace VL.Xenko.Shaders.ShaderFX
             KnownTypes.Add(typeof(int), "Int");
             KnownTypes.Add(typeof(uint), "UInt");
             KnownTypes.Add(typeof(bool), "Bool");
+            KnownTypes.Add(typeof(Buffer), "Buffer");
+            KnownTypes.Add(typeof(Texture), "Texture");
         }
 
         public static string GetNameForType<T>()
@@ -39,7 +43,7 @@ namespace VL.Xenko.Shaders.ShaderFX
             if (KnownTypes.TryGetValue(typeof(T), out var result))
                 return result;
 
-            throw new NotImplementedException("No shader defined for type: " + typeof(T).Name);            
+            throw new NotImplementedException("No name defined for type: " + typeof(T).Name);            
         }
 
         public static ShaderMixinSource CreateMixin(this ShaderClassSource shaderClassSource)

@@ -12,21 +12,25 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public class ComputeColorToFloat4 : ComputeValue<Vector4>
     {
-        public IComputeColor Input { get; set; }
+        public ComputeColorToFloat4(IComputeColor value)
+        {
+            Value = value;
+        }
+
+        public IComputeColor Value { get; }
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
-            return ReturnIfNotNull(Input);
+            return ReturnIfNotNull(Value);
         }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
             var shaderSource = new ShaderClassSource("ColorToFloat4");
 
-            var mixin = new ShaderMixinSource();
-            mixin.Mixins.Add(shaderSource);
+            var mixin = shaderSource.CreateMixin();
 
-            mixin.AddComposition(Input, "Value", context, baseKeys);
+            mixin.AddComposition(Value, "Value", context, baseKeys);
 
             return mixin;
         }

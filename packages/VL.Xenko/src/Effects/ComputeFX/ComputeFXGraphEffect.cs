@@ -26,7 +26,7 @@ namespace VL.Xenko.Effects.ComputeFX
                 mixin.AddMacro("ThreadNumberX", context.GetParam(ComputeEffectShaderKeys.ThreadNumbers).X);
                 mixin.AddMacro("ThreadNumberY", context.GetParam(ComputeEffectShaderKeys.ThreadNumbers).Y);
                 mixin.AddMacro("ThreadNumberZ", context.GetParam(ComputeEffectShaderKeys.ThreadNumbers).Z);
-                context.Mixin(mixin, "ComputeFXBase");
+                context.Mixin(mixin, "ComputeFXGraph");
                 context.Mixin(mixin, context.GetParam(ComputeFXKeys.ComputeRoot));
             }
 

@@ -48,16 +48,16 @@ namespace VL.Xenko.Shaders.ShaderFX
             return finalOrder;
         }
 
-        public static ComputeOrder BuildFinalShaderGraph(IComputeNode root)
+        public static IComputeVoid BuildFinalShaderGraph(IComputeNode root)
         {
-            var tree = root.GetChildren();
+            var tree = root is IComputeVoid ? new[] { root } : root.GetChildren();
 
             var visited = new HashSet<IComputeNode>();
             var flat = tree.TraversePostOrder(n => n.GetChildren(), visited).ToList();
 
-            var beforeRoot = flat.OfType<IComputeVoid>();
+            var statements = flat.OfType<IComputeVoid>();
 
-            var finalOrder = new ComputeOrder(beforeRoot);
+            var finalOrder = new ComputeOrder(statements);
             return finalOrder;
         }
 
@@ -145,9 +145,9 @@ namespace VL.Xenko.Shaders.ShaderFX
             return computeEffect;
         }
 
-        public static TextureFXEffect ComposeShader(GraphicsDevice graphicsDevice, IComputeColor root)
+        public static TextureFXEffect ComposeShader(GraphicsDevice graphicsDevice, IComputeValue<Vector4> root)
         {
-            var effectImageShader = new TextureFXEffect("CCShaderGraphEffect");
+            var effectImageShader = new TextureFXEffect("TextureFXGraphEffect");
 
             if (root != null)
             {

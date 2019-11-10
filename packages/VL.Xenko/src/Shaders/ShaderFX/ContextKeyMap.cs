@@ -23,7 +23,7 @@ namespace VL.Xenko.Shaders.ShaderFX
                 return key;
             }
 
-            var newObjectKey = ParameterKeys.NewObject<T>(default(T), "Object_fx" + (++ObjectKeyIDCounter));
+            var newObjectKey = ParameterKeys.NewObject<T>(default(T), "Object" + GetNameForType<T>() + "_fx" + (++ObjectKeyIDCounter));
             keyMap[uniqueReference] = newObjectKey;
 
             return newObjectKey;

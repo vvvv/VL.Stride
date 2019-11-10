@@ -6,7 +6,7 @@ using Buffer = Xenko.Graphics.Buffer;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
-    public class DeclBuffer : ComputeValue<Buffer>
+    public class DeclBuffer : ComputeNode<Buffer>, IComputeVoid
     {
         private Buffer buffer;
 
@@ -19,7 +19,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
             set
             {
-                if (buffer != value)
+                if (buffer != value || compiled)
                 {
                     buffer = value;
 
@@ -31,6 +31,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public ObjectParameterKey<Buffer> BufferKey { get; protected set; }
         ParameterCollection Parameters;
+        private bool compiled;
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
@@ -41,8 +42,15 @@ namespace VL.Xenko.Shaders.ShaderFX
             // remember parameters for updates from main loop 
             Parameters = context.Parameters;
 
+            compiled = true;
+
             //no shader source to create here, only the key
-            return null;
+            return new ShaderClassSource("ComputeVoid");
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Buffer {0}", BufferKey.Name);
         }
     }
 }

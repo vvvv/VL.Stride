@@ -10,20 +10,28 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public class JoinVector4 : Join<Vector4>
     {
-
+        public JoinVector4(IComputeValue<float> x, IComputeValue<float> y, IComputeValue<float> z, IComputeValue<float> w) 
+            : base(x, y, z, w)
+        {
+        }
     }
 
     public class Join<T> : ComputeValue<T>
     {
-        public Join()
+        public Join(IComputeValue<float> x, IComputeValue<float> y, IComputeValue<float> z, IComputeValue<float> w)
         {
+            X = x;
+            Y = y;
+            Z = z;
+            W = w;
+
             ShaderName = "Join";
         }
 
-        public IComputeValue<float> X { get; set; }
-        public IComputeValue<float> Y { get; set; }
-        public IComputeValue<float> Z { get; set; }
-        public IComputeValue<float> W { get; set; }
+        public IComputeValue<float> X { get; }
+        public IComputeValue<float> Y { get; }
+        public IComputeValue<float> Z { get; }
+        public IComputeValue<float> W { get; }
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
@@ -34,21 +42,12 @@ namespace VL.Xenko.Shaders.ShaderFX
         {
             var shaderSource = GetShaderSourceForType<T>(ShaderName);
 
-            var xShaderSource = X?.GenerateShaderSource(context, baseKeys);
-            var yShaderSource = Y?.GenerateShaderSource(context, baseKeys);
-            var zShaderSource = Z?.GenerateShaderSource(context, baseKeys);
-            var wShaderSource = W?.GenerateShaderSource(context, baseKeys);
-
             var mixin = shaderSource.CreateMixin();
 
-            if (xShaderSource != null)
-                mixin.AddComposition("x", xShaderSource);
-            if (yShaderSource != null)
-                mixin.AddComposition("y", yShaderSource);
-            if (zShaderSource != null)
-                mixin.AddComposition("z", zShaderSource);
-            if (wShaderSource != null)
-                mixin.AddComposition("w", yShaderSource);
+            mixin.AddComposition(X, "x", context, baseKeys);
+            mixin.AddComposition(Y, "y", context, baseKeys);
+            mixin.AddComposition(Z, "z", context, baseKeys);
+            mixin.AddComposition(W, "w", context, baseKeys);
 
             return mixin;
         }

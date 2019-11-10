@@ -1,4 +1,4 @@
-﻿shader Simulation: ComputeShaderBase, Global, ParticleStruct
+﻿shader Simulation: ComputeShaderBase, Global, ParticleStructPos4Vel4
 {   
 
    // SETTINGS ---------------------------------------------------------------------
@@ -24,7 +24,7 @@
     override void Compute()
     {
         uint id = streams.DispatchThreadId.x;
-        if(id >= ParticlesCount) return;
+        if (id >= ParticlesCount) return;
 
         ParticlePos4Vel4 POut = ParticlesBuffer[id];
 
