@@ -1,7 +1,7 @@
 ﻿
 shader DrawParticles : Common_VS_PS_Base, ParticleStruct, Common_Utils
 {
-    StructuredBuffer<Particle> ParticlesBuffer;
+    StructuredBuffer<ParticlePos4Vel4> ParticlesBuffer;
 
     cbuffer PerFrame
     {
@@ -18,7 +18,7 @@ shader DrawParticles : Common_VS_PS_Base, ParticleStruct, Common_Utils
     stage override void VSMain() 
     {
         uint id = streams.VertexID;
-        Particle p = ParticlesBuffer[id];
+        ParticlePos4Vel4 p = ParticlesBuffer[id];
         streams.PositionWS = float4(p.Pos.xyz, 1);
     }
 

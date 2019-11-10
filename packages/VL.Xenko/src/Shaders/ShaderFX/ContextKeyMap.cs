@@ -6,7 +6,9 @@ using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
-    static class ContextObjectKeyMap<T>
+
+    //TODO: have one counter per context
+    static class ContextKeyMap<T>
     {
         static ulong ObjectKeyIDCounter;
 
@@ -99,7 +101,7 @@ namespace VL.Xenko.Shaders.ShaderFX
                 return key;
             }
 
-            var newObjectKey = ParameterKeys.NewValue<T>(default(T), "Value" + GetNameForType<T>() + "_fx" + (++ValueKeyIDCounter));
+            var newObjectKey = ParameterKeys.NewValue<T>(default, "Value" + GetNameForType<T>() + "_fx" + (++ValueKeyIDCounter));
             KeyValuesPerReference[uniqueReference] = newObjectKey;
 
             return newObjectKey;

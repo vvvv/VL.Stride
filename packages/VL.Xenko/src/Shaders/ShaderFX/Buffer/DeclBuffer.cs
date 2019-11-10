@@ -34,7 +34,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            BufferKey = ContextObjectKeyMap<Buffer>.GetParameterKey(context, this);
+            BufferKey = ContextKeyMap<Buffer>.GetParameterKey(context, this);
 
             context.Parameters.Set(BufferKey, Buffer);
 

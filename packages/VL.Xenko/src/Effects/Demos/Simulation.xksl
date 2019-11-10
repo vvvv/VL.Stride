@@ -14,7 +14,7 @@
 
     // RESOURCES ---------------------------------------------------------------------
 
-    stage RWStructuredBuffer<Particle> ParticlesBuffer;
+    stage RWStructuredBuffer<ParticlePos4Vel4> ParticlesBuffer;
     stage Buffer<float4> RandomValues;
 
     // =====================================================================
@@ -26,14 +26,14 @@
         uint id = streams.DispatchThreadId.x;
         if(id >= ParticlesCount) return;
 
-        Particle POut = ParticlesBuffer[id];
+        ParticlePos4Vel4 POut = ParticlesBuffer[id];
 
         float4 Rnd = RandomValues[id];
 
         // RESET ----------------------------------------------------------------------------
         if (Reset)
         {
-            POut = (Particle) 0;
+            POut = (ParticlePos4Vel4) 0;
             POut.Pos.xyz = Rnd.xyz;
             POut.Vel = 0;
         }
