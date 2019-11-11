@@ -9,6 +9,11 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public class InputValue<T> : ComputeValue<T> where T : struct
     {
+        public InputValue(ValueParameterKey<T> key)
+        {
+            Key = key;
+        }
+
         private T inputValue;
 
         /// <summary>
@@ -24,27 +29,35 @@ namespace VL.Xenko.Shaders.ShaderFX
                 {
                     this.inputValue = value;
 
-                    if (Parameters != null && ValueKey != null)
-                        Parameters.Set(ValueKey, inputValue);
+                    if (Parameters != null && UsedKey != null)
+                        Parameters.Set(UsedKey, inputValue);
 
                     compiled = false;
                 }
             }
         }
 
-        public ValueParameterKey<T> ValueKey { get; protected set; }
+        public ValueParameterKey<T> UsedKey { get; protected set; }
+        public ValueParameterKey<T> Key { get; }
+
         ParameterCollection Parameters;
         bool compiled;
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            ValueKey = ContextValueKeyMap2<T>.GetParameterKey(this);
+            UsedKey = Key ?? ContextValueKeyMap2<T>.GetParameterKey(this);
+            var cBuffer = "PerDraw";
 
-            context.Parameters.Set(ValueKey, Input);
+            if (Key == null)
+            {
+                context.Parameters.Set(UsedKey, Input);
 
-            // remember parameters for updates from main loop 
-            Parameters = context.Parameters;
+                // remember parameters for updates from main loop 
+                Parameters = context.Parameters;
 
-            var shaderClassSource = GetShaderSourceForType<T>("Input", ValueKey, "PerUpdate");
+                cBuffer = "PerUpdate";
+            }
+
+            var shaderClassSource = GetShaderSourceForType<T>("Input", UsedKey, cBuffer);
             compiled = true;
             //no shader source to create here, only the key
             return shaderClassSource;
