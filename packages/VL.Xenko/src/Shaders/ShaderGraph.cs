@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using VL.Xenko.Effects.ComputeFX;
+using VL.Xenko.Effects.ShaderFX;
 using VL.Xenko.Effects.TextureFX;
 using VL.Xenko.Rendering;
 using Xenko.Core;
@@ -140,7 +141,7 @@ namespace VL.Xenko.Shaders.ShaderFX
                 var mixin = new ShaderMixinSource();
                 mixin.AddComposition("Root", shaderSource);
 
-                computeEffect.Parameters.Set(ComputeFXKeys.ComputeRoot, mixin);
+                computeEffect.Parameters.Set(ComputeFXKeys.ComputeFXRoot, mixin);
             }
             return computeEffect;
         }
@@ -162,7 +163,31 @@ namespace VL.Xenko.Shaders.ShaderFX
                 var mixin = new ShaderMixinSource();
                 mixin.AddComposition("Root", shaderSource);
 
-                effectImageShader.Parameters.Set(TextureFXKeys.ComputeColorRoot, mixin); 
+                effectImageShader.Parameters.Set(TextureFXKeys.TextureFXRoot, mixin);
+            }
+            return effectImageShader;
+        }
+
+        public static DynamicEffectInstance ComposeDrawShader(GraphicsDevice graphicsDevice, IComputeValue<Vector4> vertexRoot, IComputeValue<Vector4> pixelRoot)
+        {
+            var effectImageShader = new DynamicEffectInstance("ShaderFXGraphEffect");
+
+            if (vertexRoot != null && pixelRoot != null)
+            {
+                var context = new ShaderGeneratorContext(graphicsDevice)
+                {
+                    Parameters = effectImageShader.Parameters,
+                };
+
+                var key = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
+                var vertexShaderSource = vertexRoot.GenerateShaderSource(context, key);
+                var pixelShaderSource = pixelRoot.GenerateShaderSource(context, key);
+
+                var mixin = new ShaderMixinSource();
+                mixin.AddComposition("VertexRoot", vertexShaderSource);
+                mixin.AddComposition("PixelRoot", pixelShaderSource);
+
+                effectImageShader.Parameters.Set(ShaderFXKeys.ShaderFXRoot, mixin);
             }
             return effectImageShader;
         }

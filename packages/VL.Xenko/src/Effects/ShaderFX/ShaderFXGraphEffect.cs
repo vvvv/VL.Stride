@@ -14,27 +14,23 @@ using Xenko.Shaders;
 using Xenko.Core.Mathematics;
 using Buffer = Xenko.Graphics.Buffer;
 
-using Xenko.Rendering.ComputeEffect;
-namespace VL.Xenko.Effects.ComputeFX
+namespace VL.Xenko.Effects.ShaderFX
 {
     internal static partial class ShaderMixins
     {
-        internal partial class ComputeFXGraphEffect  : IShaderMixinBuilder
+        internal partial class ShaderFXGraphEffect  : IShaderMixinBuilder
         {
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
-                mixin.AddMacro("ThreadNumberX", context.GetParam(ComputeEffectShaderKeys.ThreadNumbers).X);
-                mixin.AddMacro("ThreadNumberY", context.GetParam(ComputeEffectShaderKeys.ThreadNumbers).Y);
-                mixin.AddMacro("ThreadNumberZ", context.GetParam(ComputeEffectShaderKeys.ThreadNumbers).Z);
-                context.Mixin(mixin, "ComputeFXGraph");
-                context.Mixin(mixin, context.GetParam(ComputeFXKeys.ComputeFXRoot));
+                context.Mixin(mixin, "ShaderFXGraph");
+                context.Mixin(mixin, context.GetParam(ShaderFXKeys.ShaderFXRoot));
             }
 
             [ModuleInitializer]
             internal static void __Initialize__()
 
             {
-                ShaderMixinManager.Register("ComputeFXGraphEffect", new ComputeFXGraphEffect());
+                ShaderMixinManager.Register("ShaderFXGraphEffect", new ShaderFXGraphEffect());
             }
         }
     }

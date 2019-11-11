@@ -8,6 +8,6 @@ namespace VL.Xenko.Effects.ComputeFX
 {
     public class ComputeFXKeys
     {
-        public static readonly PermutationParameterKey<ShaderSource> ComputeRoot = ParameterKeys.NewPermutation<ShaderSource>();
+        public static readonly PermutationParameterKey<ShaderSource> ComputeFXRoot = ParameterKeys.NewPermutation<ShaderSource>();
     }
 }

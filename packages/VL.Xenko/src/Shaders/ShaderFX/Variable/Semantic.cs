@@ -10,8 +10,8 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public class Semantic<T> : Var<T>
     {
-        public Semantic(string semantic)
-            : base(null, "SemanticValue")
+        public Semantic(string semantic, string name = "SemanticValue")
+            : base(null, name)
         {
             SemanticName = semantic;
         }
