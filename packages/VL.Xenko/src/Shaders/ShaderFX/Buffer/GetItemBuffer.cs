@@ -13,15 +13,27 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public class GetItemBuffer<T> : ComputeValue<T>
     {
-        public GetItemBuffer(DeclBuffer buffer, IComputeValue<uint> index)
+
+        public GetItemBuffer(DeclBuffer buffer, IComputeValue<uint> index, bool isRW = false, bool isStructured = false)
         {
             BufferDecl = buffer;
             Index = index;
+            IsRW = isRW;
+            IsStructured = isStructured;
+
+            var prefix = IsRW ? "GetItemRW" : "GetItem";
+            var bufferType = IsStructured ? "StructuredBuffer" : "Buffer";
+
+            ShaderName = prefix + bufferType;
         }
 
         public DeclBuffer BufferDecl { get; }
 
         public IComputeValue<uint> Index { get; }
+
+        public bool IsRW { get; }
+
+        public bool IsStructured { get; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
@@ -30,7 +42,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
             BufferDecl.GenerateShaderSource(context, baseKeys);
 
-            var shaderClassSource = GetShaderSourceForType<T>("GetItemBuffer", BufferDecl.BufferKey);
+            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, BufferDecl.BufferKey);
 
             var mixin = shaderClassSource.CreateMixin();
 

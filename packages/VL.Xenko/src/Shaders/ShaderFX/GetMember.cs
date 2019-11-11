@@ -8,20 +8,20 @@ using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
-    public class GetSwizzle<TIn, TOut> : ComputeValue<TOut>
+    public class GetMember<TIn, TOut> : ComputeValue<TOut>
     {
-        public GetSwizzle(IComputeValue<TIn> value, string swizzle)
+        public GetMember(IComputeValue<TIn> value, string memberName)
         {
             Value = value;
-            Swizzle = swizzle;
+            MemberName = memberName;
         }
 
         public IComputeValue<TIn> Value { get; }
-        public string Swizzle { get; }
+        public string MemberName { get; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var shaderClassSource = GetShaderSourceForType2<TIn, TOut>("GetSwizzle", Swizzle);
+            var shaderClassSource = GetShaderSourceForType2<TIn, TOut>("GetMember", MemberName);
 
             var mixin = shaderClassSource.CreateMixin();
 
