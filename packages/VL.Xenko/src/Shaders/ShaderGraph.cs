@@ -36,24 +36,24 @@ namespace VL.Xenko.Shaders.ShaderFX
 
             var var3 = new Var<float>(value3);
 
-            var assignVars = new ComputeOrder(new[] { var1, var2, var3 });
+            var assignVars = new ComputeOrder(var1, var2, var3);
 
             var first = BuildPlus(var1, var2);
             var second = BuildPlus(first, var1);
             var third = BuildPlus(second, var3);
 
-            var root = new ComputeOrder(new IComputeVoid[] { third });
+            var root = new ComputeOrder(third);
 
             var finalOrder = BuildFinalShaderGraph(root);
 
             return finalOrder;
         }
 
-        public static IComputeVoid BuildFinalShaderGraph(IComputeNode root)
+        public static IComputeVoid BuildFinalShaderGraph(IComputeNode root, IEnumerable<IComputeNode> excludes = null)
         {
             var tree = root is IComputeVoid ? new[] { root } : root.GetChildren();
 
-            var visited = new HashSet<IComputeNode>();
+            var visited = excludes != null ? new HashSet<IComputeNode>(excludes) : new HashSet<IComputeNode>();
             var flat = tree.TraversePostOrder(n => n.GetChildren(), visited).ToList();
 
             var statements = flat.OfType<IComputeVoid>();

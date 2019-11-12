@@ -16,7 +16,7 @@ namespace VL.Xenko.Shaders.ShaderFX
         { }
 
         public Var(IComputeValue<T> value, Var<T> var)
-            : this(value, var, "")
+            : this(value, var, "Var")
         { }
 
         public Var(IComputeValue<T> value, Var<T> var = null, string varName = "Var", bool appendID = true)

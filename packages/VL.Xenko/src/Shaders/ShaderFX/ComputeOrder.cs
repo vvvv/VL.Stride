@@ -15,6 +15,12 @@ namespace VL.Xenko.Shaders.ShaderFX
                 Computes = computes.Where(c => c != null);
         }
 
+        public ComputeOrder(params IComputeVoid[] computes)
+        {
+            if (computes != null)
+                Computes = computes.Where(c => c != null);
+        }
+
         /// <summary>
         /// The left (background) child node.
         /// </summary>

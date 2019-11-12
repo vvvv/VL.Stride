@@ -9,9 +9,10 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public class InputValue<T> : ComputeValue<T> where T : struct
     {
-        public InputValue(ValueParameterKey<T> key)
+        public InputValue(ValueParameterKey<T> key, string constantBufferName = "PerUpdate")
         {
             Key = key;
+            ConstantBufferName = constantBufferName;
         }
 
         private T inputValue;
@@ -39,25 +40,32 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public ValueParameterKey<T> UsedKey { get; protected set; }
         public ValueParameterKey<T> Key { get; }
+        public string ConstantBufferName { get; private set; }
 
         ParameterCollection Parameters;
         bool compiled;
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
             UsedKey = Key ?? ContextValueKeyMap2<T>.GetParameterKey(this);
-            var cBuffer = "PerDraw";
+
+            ShaderClassSource shaderClassSource;
 
             if (Key == null)
             {
+                UsedKey = ContextValueKeyMap2<T>.GetParameterKey(this);
                 context.Parameters.Set(UsedKey, Input);
 
                 // remember parameters for updates from main loop 
                 Parameters = context.Parameters;
 
-                cBuffer = "PerUpdate";
+                shaderClassSource = GetShaderSourceForType<T>("Input", UsedKey, ConstantBufferName);
+            }
+            else
+            {
+                UsedKey = Key;
+                shaderClassSource = GetShaderSourceForType<T>("InputKey", UsedKey);
             }
 
-            var shaderClassSource = GetShaderSourceForType<T>("Input", UsedKey, cBuffer);
             compiled = true;
             //no shader source to create here, only the key
             return shaderClassSource;
