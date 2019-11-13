@@ -1,0 +1,9 @@
+﻿shader SphereSDF : SDF3D
+{
+    compose ComputeFloat Radius;
+
+    override float Compute(float3 p)
+    {
+        return length(p) - Radius.Compute();
+    }
+};
