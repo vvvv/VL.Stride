@@ -11,6 +11,20 @@
     <None Include="..\Demos\*.vl" Pack="true" PackagePath="Demos\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Effects\SDF\SDF3D.xksl" />
+    <None Remove="Effects\SDF\SphereSDF.xksl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Effects\SDF\SDF3D.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>SDF3D.cs</LastGenOutput>
+    </Compile>
+    <Compile Include="Effects\SDF\SphereSDF.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>SphereSDF.cs</LastGenOutput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <PackageReference Include="VL.Core" Version="2019.1.0-0942-g8423ca97d7" />
     <!-- A pure package dependency so on install all VL packages come in -->
@@ -97,6 +111,18 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>InstancedMeshStreamOut.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\SDF\SDF3D.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SDF3D.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\SDF\SphereSDF.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SphereSDF.xksl</DependentUpon>
     </Compile>
     <Compile Update="Effects\ShaderFX\Buffer\DeclBufferFloat.cs">
       <DesignTime>True</DesignTime>
