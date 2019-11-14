@@ -10,12 +10,12 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public class Raymarcher : ComputeValue<Vector4> 
     {
-        public Raymarcher(SDF3D sdf)
+        public Raymarcher(Funk1In1Out<Vector3, float> sdf)
         {
             SDF = sdf;
         }
 
-        public SDF3D SDF { get; }
+        public Funk1In1Out<Vector3, float> SDF { get; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
