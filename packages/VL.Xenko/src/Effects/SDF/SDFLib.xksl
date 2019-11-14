@@ -1,0 +1,210 @@
+shader SDFLib : VectorUtils
+{
+    // largley based on hg_sdf GLSL lib by MERCURY (CC BY-NC 2016)  http://mercury.sexy/hg_sdf
+
+    #ifndef PI
+    #define PI 3.1415926535897
+    #endif
+
+    #ifndef TWOPI
+    #define TWOPI 6.28318531
+    #endif
+
+    #ifndef TAU
+    #define TAU (2*PI)
+    #endif
+
+    #ifndef PHI
+    #define PHI (sqrt(5)*0.5 + 0.5)
+    #endif
+
+    // glsl style mod
+    #ifndef mod
+    #define mod(x, y) (x - y * floor((x) / y))
+    #endif
+
+    // simple operations
+    float U(float a, float b) {return min(a,b);}
+    float S(float a, float b) {return max(a,-b);}
+    float I(float a, float b) {return max(a,b);}
+
+
+    // simple operations w/ mat
+    float2 U(float2 a, float2 b) {return (a.x<b.x) ? a : b;}
+    float2 S(float2 a, float2 b) {return (a.x>-b.x) ? a : -b;}
+    float2 I(float2 a, float2 b) {return (a.x>b.x) ? a : b;}
+
+    ////////////////////////////////////////////////////////////////
+    //
+    //             3D DISTANCE FUNCTIONS
+    //
+    ////////////////////////////////////////////////////////////////
+
+
+    float fSphere(float3 p, float r) 
+    {
+	    return length(p) - r;
+    }
+
+    // Plane with normal n (n is normalized) at some distance from the origin
+    float fPlane(float3 p,  float distanceFromOrigin = 0, float3 n = float3(0,1,0)) 
+    {
+	    return dot(p, n) + distanceFromOrigin;
+    }
+
+    //Unsigned
+    float fTriangle( float3 p, float3 a, float3 b, float3 c )
+    {
+        float3 ba = b - a; float3 pa = p - a;
+        float3 cb = c - b; float3 pb = p - b;
+        float3 ac = a - c; float3 pc = p - c;
+        float3 nor = cross( ba, ac );
+
+        return sqrt(
+        (sign(dot(cross(ba,nor),pa)) +
+         sign(dot(cross(cb,nor),pb)) +
+         sign(dot(cross(ac,nor),pc))<2.0)
+         ?
+         min( min(
+         dot2(ba*clamp(dot(ba,pa)/dot2(ba),0.0,1.0)-pa),
+         dot2(cb*clamp(dot(cb,pb)/dot2(cb),0.0,1.0)-pb) ),
+         dot2(ac*clamp(dot(ac,pc)/dot2(ac),0.0,1.0)-pc) )
+         :
+         dot(nor,pa)*dot(nor,pa)/dot2(nor) );
+    }
+
+    // Cheap Box: distance to corners is overestimated
+    float fBoxCheap(float3 p, float3 b) 
+    { //cheap box
+	    return vmax(abs(p) - b);
+    }
+
+    // Box: correct distance to corners
+    float fBox(float3 p, float3 b) 
+    {
+	    float3 d = abs(p) - b;
+	    return length(max(d, 0)) + vmax(min(d, 0));
+    }
+
+    //Rounded Cubes: 
+    float fRBox(float3 p,float3 b,float rad ) { return length(max(abs(p)-b+rad,0.0))-rad; }
+
+    // Blobby ball object. You've probably seen it somewhere. This is not a correct distance bound, beware.
+    float fBlob(float3 p) 
+    {
+	    p = abs(p);
+	    if (p.x < max(p.y, p.z)) p = p.yzx;
+	    if (p.x < max(p.y, p.z)) p = p.yzx;
+	    float b = max(max(max(
+		    dot(p, normalize(float3(1, 1, 1))),
+		    dot(p.xz, normalize(float2(PHI+1, 1)))),
+		    dot(p.yx, normalize(float2(1, PHI)))),
+		    dot(p.xz, normalize(float2(1, PHI))));
+	    float l = length(p);
+	    return l - 1.5 - 0.2 * (1.5 / 2)* cos(min(sqrt(1.01 - b / l)*(PI / 0.25), PI));
+    }
+
+    // Cylinder standing upright on the xz plane
+    float fCylinder(float3 p, float r, float height) 
+    {
+	    float d = length(p.xz) - r;
+	    d = max(d, abs(p.y) - height);
+	    return d;
+    }
+
+    // Capsule: A Cylinder with round caps on both sides
+    float fCapsule(float3 p, float r, float c) 
+    {
+	    return lerp(length(p.xz) - r, length(float3(p.x, abs(p.y) - c, p.z)) - r, step(c, abs(p.y)));
+    }
+
+    // Distance to line segment between <a> and <b>, used for fCapsule() version 2below
+    float fLine(float3 p, float3 a, float3 b) 
+    {
+	    float3 ab = b - a;
+	    float t = saturate(dot(p - a, ab) / dot(ab, ab));
+	    return length((ab*t + a) - p);
+    }
+
+    // Capsule version 2: between two end points <a> and <b> with radius r 
+    float fCapsule(float3 p, float3 a, float3 b, float r) 
+    {
+	    return fLine(p, a, b) - r;
+    }
+
+    // Torus in the XZ-plane
+    float fTorus(float3 p, float smallRadius, float largeRadius) 
+    {
+	    return length(float2(length(p.xz) - largeRadius, p.y)) - smallRadius;
+    }
+
+    // A circle line. Can also be used to make a torus by subtracting the smaller radius of the torus.
+    float fCircle(float3 p, float r) 
+    {
+	    float l = length(p.xz) - r;
+	    return length(float2(p.y, l));
+    }
+
+    // A circular disc with no thickness (i.e. a cylinder with no height).
+    // Subtract some value to make a flat disc with rounded edge.
+    float fDisc(float3 p, float r) 
+    {
+	    float l = length(p.xz) - r;
+	    return l < 0 ? abs(p.y) : length(float2(p.y, l));
+    }
+
+    float fTriPrism( float3 p, float2 h )
+    {
+        float3 q = abs(p);
+        return max(q.z-h.y,max(q.x*0.866025+p.y*0.5,-p.y)-h.x*0.5);
+    }
+
+    float fPyramid(float3 p, float3 h ) 
+    {
+        float box = fBox( p - float3(0,-2.0*h.z,0),2.0*h.z); 
+        float d = 0.0;
+        d = max( d, abs( dot(p, float3( -h.x, h.y, 0 )) ));
+        d = max( d, abs( dot(p, float3(  h.x, h.y, 0 )) ));
+        d = max( d, abs( dot(p, float3(  0, h.y, h.x )) ));
+        d = max( d, abs( dot(p, float3(  0, h.y,-h.x )) ));
+        float octa = d - h.z;
+        return max(-box,octa);
+     }
+
+    // Hexagonal prism, circumcircle variant
+    float fHexagonCircumcircle(float3 p, float2 h) 
+    {
+	    float3 q = abs(p);
+	    return max(q.y - h.y, max(q.x*sqrt(3)*0.5 + q.z*0.5, q.z) - h.x);
+	    //this is mathematically equivalent to this line, but less efficient:
+	    //return max(q.y - h.y, max(dot(float2(cos(PI/3), sin(PI/3)), q.zx), q.z) - h.x);
+    }
+
+    // Hexagonal prism, incircle variant
+    float fHexagonIncircle(float3 p, float2 h) 
+    {
+	    return fHexagonCircumcircle(p, float2(h.x*sqrt(3)*0.5, h.y));
+    }
+
+    // Cone with correct distances to tip and base circle. Y is up, 0 is in the middle of the base.
+    float fCone(float3 p, float radius, float height) 
+    {
+	    float2 q = float2(length(p.xz), p.y);
+	    float2 tip = q - float2(0, height);
+	    float2 mantleDir = normalize(float2(height, radius));
+	    float mantle = dot(tip, mantleDir);
+	    float d = max(mantle, -q.y);
+	    float projected = dot(tip, float2(mantleDir.y, -mantleDir.x));
+	
+	    // distance to tip
+	    if ((q.y > height) && (projected < 0)) {
+		    d = max(d, length(tip));
+	    }
+	
+	    // distance to base ring
+	    if ((q.x > radius) && (projected > length(float2(height, radius)))) {
+		    d = max(d, length(q - float2(radius, 0)));
+	    }
+	    return d;
+    }  
+};

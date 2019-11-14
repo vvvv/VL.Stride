@@ -1,9 +1,10 @@
-﻿shader SphereSDF : SDF3D
+﻿shader SphereSDF : SDF3D, SDFLib
 {
     compose ComputeFloat Radius;
+    compose ComputeFloat3 Position;
 
     override float Compute(float3 p)
     {
-        return length(p) - Radius.Compute();
+        return fSphere(p - Position.Compute(),  Radius.Compute());
     }
 };

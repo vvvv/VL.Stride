@@ -1,0 +1,10 @@
+shader BoxSDF : SDF3D, SDFLib
+{
+    compose ComputeFloat3 Size;
+    compose ComputeFloat3 Position;
+
+    override float Compute(float3 p)
+    {
+        return fBox(p - Position.Compute(), Size.Compute());
+    }
+};
