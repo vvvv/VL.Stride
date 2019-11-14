@@ -1,7 +1,6 @@
-shader RaymarchTestFloat4 : ComputeFloat4, Texturing, Transformation
+shader Raymarcher : ShaderBaseStream, ComputeFloat4, Texturing, Transformation
 {
- 
-	compose SDF3D sdf;	
+	compose SDF3D SDF;
 
 	// Paramerters
 
@@ -20,7 +19,7 @@ shader RaymarchTestFloat4 : ComputeFloat4, Texturing, Transformation
 	#define calcDx3D(f, p, e) ( (f(p + float3(e,0,0)) - f(p - float3(e,0,0))) / (2*e) )
 	#define calcDy3D(f, p, e) ( (f(p + float3(0,e,0)) - f(p - float3(0,e,0))) / (2*e) )
 	#define calcDz3D(f, p, e) ( (f(p + float3(0,0,e)) - f(p - float3(0,0,e))) / (2*e) )
-	#define calcNormS3(f, p, e) normalize( float3(calcDx3D(f, p, e), calcDy3D(f, p, e), calcDz3D(f, p, e)) )
+	#define calcNormS3(f, p, e) normalize( float3(calcDx3D(f, p, e), calcDy3D(f, p, e), calcDz3D(f, p, e)))
 	////////////////////////////////////////////////////////////////
 	//
 	//             Ray Setup
@@ -43,7 +42,7 @@ shader RaymarchTestFloat4 : ComputeFloat4, Texturing, Transformation
 		maxDist -= minDist;
 		for(int i=0; i<maxIter; i++)
 		{
-			float dist = sdf.Compute(p);
+			float dist = SDF.Compute(p);
 			float rayStep = stepLength * dist;
 			p += rayDir * rayStep;	
 			z += rayStep;
@@ -59,13 +58,11 @@ shader RaymarchTestFloat4 : ComputeFloat4, Texturing, Transformation
 		float3 ro;
 		setupRay(uv, ro, rd);
 		p = rayMarch(ro, rd, marchStepLength, marchMinDistance, marchMaxDistance, marchMaxIterations);
-		float ff=sdf.Compute(p);
+		float ff=SDF.Compute(p);
 		if(abs(ff)>.5)discard;
 		z = length(p - ro);
-		n = calcNormS3(sdf.Compute, p, .01*sqrt(z));
+		n = calcNormS3(SDF.Compute, p, .01*sqrt(z));
 	}
-
-	compose ComputeFloat4 Color;
 
 	override float4 Compute()
 	{
@@ -83,8 +80,8 @@ shader RaymarchTestFloat4 : ComputeFloat4, Texturing, Transformation
 		//return float4(uv, 0,1);
 		return c;
 	
-		// can write to SV_Depth
-		//float4 PosWVP=mul(float4(p.xyz,1),tVP);
-		//Out.Depth=PosWVP.z/PosWVP.w;
+		//write to SV_Depth
+		float4 PosWVP = mul(float4(p.xyz,1), ViewProjection);
+		streams.Depth = PosWVP.z/PosWVP.w;
 	}
 };

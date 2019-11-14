@@ -16,7 +16,7 @@ using Buffer = Xenko.Graphics.Buffer;
 
 namespace Xenko.Rendering
 {
-    public static partial class RaymarchTestFloat4Keys
+    public static partial class RaymarcherKeys
     {
         public static readonly ValueParameterKey<int> marchMaxIterations = ParameterKeys.NewValue<int>(120);
         public static readonly ValueParameterKey<float> marchMaxDistance = ParameterKeys.NewValue<float>(200);
