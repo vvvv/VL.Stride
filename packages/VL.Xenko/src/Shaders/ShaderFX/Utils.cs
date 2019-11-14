@@ -12,6 +12,15 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public static class ShaderFXUtils
     {
+        public static Var<T> CreateAndInitVar<T>(string varName, IComputeValue<T> valueGetter)
+            => new Var<T>(valueGetter, varName);
+
+        public static Var<T> AssignVar<T>(this Var<T> existingVar, IComputeValue<T> valueGetter)
+            => new Var<T>(valueGetter, existingVar);
+
+        public static IComputeValue<T> Getter<T>(this Var<T> existingVar)
+            => new GetVar<T>(existingVar);
+
         public static ShaderClassSource GetShaderSourceForType<T>(string shaderName, params object[] genericArguments)
         {
             return new ShaderClassSource(shaderName + GetNameForType<T>(), genericArguments);

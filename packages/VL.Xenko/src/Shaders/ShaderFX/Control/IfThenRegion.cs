@@ -7,78 +7,76 @@ using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Xenko.Shaders.ShaderFX.Control
 {
-    //public class IfThenRegionBuilder
-    //{
-    //    public void Build()
-    //    {
-    //        var linksIntoRegion = new List<IComputeNode>();
-    //        var linksToBorder = new List<IComputeNode>();
-    //        var linksToInputPins = new List<IComputeNode>();
+    public class IfThenRegionBuilder
+    {
+        public void Build()
+        {
+            var linksIntoRegion = new List<IComputeNode>();
+            var linksToBorderCP = new List<IComputeNode>();
+            var linksToInputPins = new List<IComputeNode>();
 
-    //        //condition
-    //        var conditionValue = new Constant<bool>(true);
+            //init accum1
+            var accum1InitValue = new Constant<float>(-1);
 
-    //        //init accum1
-    //        var accum1InitValue = new Constant<float>(-1);
+            var getAccum1InitValue = accum1InitValue.Getter();
+            var accum1 = CreateAndInitVar("Accum", getAccum1InitValue);
 
-    //        var getAccum1InitValue = new GetVar<float>(accum1InitValue);
-    //        var accum1 = new Var<float>(getAccum1InitValue, "Accum");
+            //body patch begin ----
 
-    //        //body patch begin ----
+            var bodyConstant1 = new Constant<float>(1);
+            var bodyConstant2 = new Constant<float>(2);
 
-    //        var bodyConstant1 = new Constant<float>(1);
-    //        var bodyConstant2 = new Constant<float>(2);
+            var getPlusIn1 = bodyConstant1.Getter();
+            var getPlusIn2 = bodyConstant2.Getter();
+            var plusExpression = new BinaryOperation<float>("Plus", getPlusIn1, getPlusIn2);
+            var plusResult = CreateAndInitVar("PlusResult", plusExpression);
 
-    //        var getPlusIn1 = new GetVar<float>(bodyConstant1);
-    //        var getPlusIn2 = new GetVar<float>(bodyConstant2);
+            //re-assign accumulator 1
+            var getPlusResult = plusResult.Getter();
+            var accum1ReAssign = accum1.AssignVar(getPlusResult);
 
-    //        var plus = new BinaryOperation<float>("Plus", getPlusIn1, getPlusIn2);
+            //body patch end ----
 
-    //        var plusResult = new Var<float>(plus, "PlusResult");
+            //build body
+            var bodyStatements = ShaderGraph.BuildFinalShaderGraph(accum1ReAssign, excludes: linksIntoRegion);
 
-    //        //re-assign accumulator 1
-    //        var getPlusResult = new GetVar<float>(plusResult);
-    //        var accum1ReAssign = new Var<float>(getPlusResult, accum1);
+            //actual if expression
+            //condition
+            var conditionValue = new Constant<bool>(true);
 
-    //        //body patch end ----
+            var getConditionValue = conditionValue.Getter();
+            var ifThenRegion = new IfThenRegion(bodyStatements, getConditionValue, GenerateShaderSource, GetChildren);
 
-    //        //build body
-    //        var bodyStatements = ShaderGraph.BuildFinalShaderGraph(accum1ReAssign, excludes: linksIntoRegion);
+            //make sure accums are initialized before the region is called
+            var finalStatements = new ComputeOrder(accum1, ifThenRegion);
 
-    //        //actual if expression
-    //        var getConditionValue = new GetVar<bool>(conditionValue);
-    //        var ifThenRegion = new IfThenRegion(bodyStatements, getConditionValue, GenerateShaderSource, GetChildren);
+            //outputs
+            var regionBorderOutputs = new[] { accum1 };
 
-    //        var finalStatements = new ComputeOrder(accum1, ifThenRegion);
+        }
 
-    //        //do accums
+        public ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            var shaderClassSource = new ShaderClassSource("IfThen");
 
-    //        var regionBorderOutputs = new[] { accum1 };
+            var mixin = shaderClassSource.CreateMixin();
 
-    //    }
+            //mixin.AddComposition(then, "Then", context, baseKeys);
+            //mixin.AddComposition(condtion, "Condition", context, baseKeys);
 
-    //    public ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
-    //    {
-    //        var shaderClassSource = new ShaderClassSource("IfThen");
+            return mixin;
+        }
 
-    //        var mixin = shaderClassSource.CreateMixin();
+        public IEnumerable<IComputeNode> GetChildren(object context = null)
+        {
+            return GetInputLinks();
+        }
 
-    //        mixin.AddComposition(then, "Then", context, baseKeys);
-    //        mixin.AddComposition(condtion, "Condition", context, baseKeys);
-
-    //        return mixin;
-    //    }
-
-    //    public IEnumerable<IComputeNode> GetChildren(object context = null)
-    //    {
-    //        return GetInputLinks();
-    //    }
-
-    //    private IEnumerable<IComputeNode> GetInputLinks()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
+        private IEnumerable<IComputeNode> GetInputLinks()
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     public class IfThenRegion : ComputeVoid
     {
