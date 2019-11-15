@@ -26,6 +26,7 @@ namespace VL.Xenko.Shaders.ShaderFX.Control
             var bodyConstant1 = new Constant<float>(1);
             var bodyConstant2 = new Constant<float>(2);
 
+            //plus node
             var getPlusIn1 = bodyConstant1.Getter();
             var getPlusIn2 = bodyConstant2.Getter();
             var plusExpression = new BinaryOperation<float>("Plus", getPlusIn1, getPlusIn2);
