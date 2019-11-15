@@ -1,0 +1,15 @@
+﻿shader NoiseSDF : SDF3D, HappyNoise // general 3 in 1 out noise test, not really an SDF, but want to try importing noise lib
+{
+    compose ComputeFloat Frequency;
+    compose ComputeFloat3 DomainOffset;
+    compose ComputeFloat Amplitude;
+    compose ComputeFloat Center;
+
+    compose SDF3D NoiseFunc;
+
+    override float Compute(float3 p)
+    {
+        p = p * Frequency.Compute() + DomainOffset.Compute();
+        return NoiseFunc.Compute(p) * Amplitude.Compute() + Center.Compute();
+    }
+};
