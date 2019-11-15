@@ -5,9 +5,11 @@
     compose ComputeFloat Amplitude;
     compose ComputeFloat Center;
 
+    compose SDF3D NoiseFunc;
 
     override float Compute(float3 p)
     {
-        return perlin(p * Frequency.Compute() + DomainOffset.Compute()) * Amplitude.Compute() + Center.Compute();
+        p = p * Frequency.Compute() + DomainOffset.Compute();
+        return NoiseFunc.Compute(p) * Amplitude.Compute() + Center.Compute();
     }
 };

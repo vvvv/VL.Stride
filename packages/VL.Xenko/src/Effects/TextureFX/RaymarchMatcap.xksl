@@ -4,6 +4,14 @@ shader RaymarchMatcap : ShaderBaseStream, ComputeFloat4, Texturing, Transformati
 
     // Paramerters
 
+    Texture2D MatcapTexture;
+    SamplerState sMatCap <bool visible=false;>
+    {
+	    Filter=MIN_MAG_MIP_LINEAR;
+	    AddressU=CLAMP;
+	    AddressV=CLAMP;
+    };
+
     int marchMaxIterations = 120;
     float marchMaxDistance = 200;
     float marchMinDistance = 0.1f;
@@ -64,6 +72,36 @@ shader RaymarchMatcap : ShaderBaseStream, ComputeFloat4, Texturing, Transformati
         n = calcNormS3(SDF.Compute, p, .01*sqrt(z));
     }
 
+    float aoScale <string uiname="AO Scale";> = 0.5 ;
+    float aoBias <string uiname="AO Bias";float uimin=0.0; float uimax=1.0;> = 0.5;
+
+    ////////////////////////////////////////////////////////////////
+    // Function
+    float calcAO(float3 p, float3 n)
+    {
+	    float ao=1;
+	    float g=SDF.Compute(p).x;
+	    float shd=0;
+	    int iter=3;
+	    for(int i=0;i<iter;i++)
+	    {
+		    float ff=aoScale;
+		    ff*=pow(2,12*pow((float)i/iter,2));
+		    float smp=max(0,1-SDF.Compute(p+n*ff).x/ff);
+		    shd+=pow(smp,2)/iter*pow(0.5,(float)i/iter);
+	    }
+	    ao=1-shd;
+	    ao=saturate(ao);
+	    ao = (ao / ((((1.0/aoBias) - 2.0)*(1.0 - ao))+1.0));
+	    return ao;
+    }
+
+    float4 matCap(float3 vn)
+    {
+	    vn.y = -vn.y;
+	    return float4(MatcapTexture.Sample(sMatCap, vn.xy *.5+.5));
+    }
+
     override float4 Compute()
     {
         // Raymarcher 
@@ -74,14 +112,19 @@ shader RaymarchMatcap : ShaderBaseStream, ComputeFloat4, Texturing, Transformati
         ////////////////////////////////////////////////////////////////
     
         float4 c=1;
-        c.rgb = n;
-        c.rgb = c.rgb *0.5 + 0.5; // remap normals to 0-1
-        c.a = 1;
-        //return float4(uv, 0,1);
-        streams.Color = c;
-    
+	    float3 vn = mul(float4(n, 0), View).xyz;
+	    c = matCap(vn);
+
+
+	    float ao = calcAO(p,n);
+	    c.rgb *= ao;
+
+
         //write to SV_Depth
         float4 PosWVP = mul(float4(p.xyz,1), ViewProjection);
         streams.Depth = PosWVP.z/PosWVP.w;
+
+        //return float4(uv, 0,1);
+        return c;
     }
 };
