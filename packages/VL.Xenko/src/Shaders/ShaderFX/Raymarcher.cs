@@ -10,8 +10,9 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public class Raymarcher : ComputeValue<Vector4> 
     {
-        public Raymarcher(Funk1In1Out<Vector3, float> sdf)
+        public Raymarcher(string shaderName, Funk1In1Out<Vector3, float> sdf)
         {
+            ShaderName = shaderName;
             SDF = sdf;
         }
 
@@ -19,7 +20,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var shaderSource = new ShaderClassSource("Raymarcher");
+            var shaderSource = new ShaderClassSource(ShaderName);
 
             var mixin = shaderSource.CreateMixin();
 
@@ -35,7 +36,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override string ToString()
         {
-            return string.Format("Raymarcher {0}", SDF);
+            return string.Format("{0} {1}", ShaderName, SDF);
         }
     }
 }

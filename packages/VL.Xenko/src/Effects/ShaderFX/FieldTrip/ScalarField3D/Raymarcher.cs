@@ -23,5 +23,7 @@ namespace Xenko.Rendering
         public static readonly ValueParameterKey<float> marchMinDistance = ParameterKeys.NewValue<float>(0.1f);
         public static readonly ValueParameterKey<float> marchStepLength = ParameterKeys.NewValue<float>(0.75f);
         public static readonly ValueParameterKey<float> alpha = ParameterKeys.NewValue<float>(1);
+        public static readonly ValueParameterKey<float> aoScale = ParameterKeys.NewValue<float>(0.5f);
+        public static readonly ValueParameterKey<float> aoBias = ParameterKeys.NewValue<float>(0.5f);
     }
 }
