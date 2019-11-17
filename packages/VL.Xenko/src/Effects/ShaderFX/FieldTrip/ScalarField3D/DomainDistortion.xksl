@@ -1,10 +1,10 @@
 shader DomainDistortion : Float3ToFloat3
 {
     compose Float3ToFloat3 DistortionFunction;
-    //compose ComputeFloat Strength
+    compose ComputeFloat Strength;
 
-    override float Compute(float3 p)
+    override float3 Compute(float3 p)
     {
-        return p + DistortionFunction.Compute(p);
+        return p + DistortionFunction.Compute(p) * Strength.Compute();
     }
 };
