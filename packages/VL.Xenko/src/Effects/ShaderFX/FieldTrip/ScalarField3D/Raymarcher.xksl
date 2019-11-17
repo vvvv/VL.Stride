@@ -1,4 +1,4 @@
-shader Raymarcher : ShaderBaseStream, ComputeFloat4, Texturing, Transformation
+shader Raymarcher : ShaderBaseStream, Float2ToFloat4, Transformation
 {
     compose Float3ToFloat SDF;
 
@@ -87,11 +87,11 @@ shader Raymarcher : ShaderBaseStream, ComputeFloat4, Texturing, Transformation
         return ao;
     }
 
-    override float4 Compute()
+    override float4 Compute(float2 texCoord)
     {
         // Raymarcher 
         ////////////////////////////////////////////////////////////////
-        float2 uv = streams.TexCoord; // Takes uv as input
+        float2 uv = texCoord; // Takes uv as input
         float3 rd, p, n;   	float z; // Outputs surface posistion(p) & normals(n), ray direction(rd) & length(z) 
         rayMarcher(uv, p, n, rd, z);
         ////////////////////////////////////////////////////////////////

@@ -17,10 +17,10 @@ shader HappyRaymarch : HappyCalc
     #ifndef SF3D
     float placeHolderSDF(float3 p)
     {
-	    float d=9999999;
-	    d=min(d,length(p)-.25);
-	    d=min(d,dot(p, float3(0,1,0)));
-	    return d;
+        float d=9999999;
+        d=min(d,length(p)-.25);
+        d=min(d,dot(p, float3(0,1,0)));
+        return d;
     }
     #define SF3D placeHolderSDF
     #endif
@@ -29,19 +29,19 @@ shader HappyRaymarch : HappyCalc
 
     float3 rayMarch(float3 rayPos, float3 rayDir, float stepLength = .9, float minDist = 0.1, float maxDist = 200.0, int maxIter = 120)
     {
-	    float3 startPos = rayPos + rayDir * minDist;
-	    float3 p = startPos;
-	    float z = minDist;
-	    maxDist -= minDist;
-	    for(int i=0; i<maxIter; i++)
-	    {
-		    float dist = SF3D(p);
-		    float rayStep = stepLength * dist;
-		    p += rayDir * rayStep;	
-		    z += rayStep;
-		    if(abs(dist) < 0.0001 * z || z > maxDist) break;
-	    }
-	    return p;
+        float3 startPos = rayPos + rayDir * minDist;
+        float3 p = startPos;
+        float z = minDist;
+        maxDist -= minDist;
+        for(int i=0; i<maxIter; i++)
+        {
+            float dist = SF3D(p);
+            float rayStep = stepLength * dist;
+            p += rayDir * rayStep;	
+            z += rayStep;
+            if(abs(dist) < 0.0001 * z || z > maxDist) break;
+        }
+        return p;
     }
     ////////////////////////////////////////////////////////////////
 
@@ -77,36 +77,36 @@ shader HappyRaymarch : HappyCalc
     float2 r2d(float2 x,float a){a*=acos(-1)*2;return float2(cos(a)*x.x+sin(a)*x.y,cos(a)*x.y-sin(a)*x.x);}
     void setupRay(float2 uv, out float3 ro, out float3 rd)
     {	
-	    #ifdef PANO
-	    // equirectangular panorama version
-		    ro = tVI[3].xyz;
-		
-		    rd=float3(0,0,1);
-		    rd.yz=r2d(rd.yz,-(uv.y-.5)*.5);
-		    rd.xz=r2d(rd.xz,-uv.x);
+        #ifdef PANO
+        // equirectangular panorama version
+            ro = tVI[3].xyz;
+        
+            rd=float3(0,0,1);
+            rd.yz=r2d(rd.yz,-(uv.y-.5)*.5);
+            rd.xz=r2d(rd.xz,-uv.x);
 
-	    #elif defined(PANO3D)
-	    // ODS 3D panorama version
-		    #ifndef IPD
-		    #define IPD 0.065 	//interpupillary distance
-		    #endif
-		    #ifndef PI
-		    #define PI 3.14159265
-		    #endif
-		
-		    bool isLeft = bool(uv.y < 0.5);
-		    uv.y = frac(uv.y*2);	// repeat uv for split screen
-		    float theta = uv.x * 2 * PI - PI;
-		    float phi = PI / 2 - uv.y * PI;
-		    ro = float3(cos(theta), 0, sin(theta)) * IPD / 2 * (isLeft ? -1 : 1);
-		    ro += tVI[3].xyz;
-		    rd = float3(sin(theta) * cos(phi), sin(phi), -cos(theta) * cos(phi));
-	
-	    #else 
-	    // normal projection
-		    rd = normalize(mul(float4(mul(float4((uv.xy*2-1)*float2(1,-1),0,1),MBtPI).xy,1,0),MBtVI).xyz);
-		    ro = MBtVI[3].xyz;
-	    #endif
+        #elif defined(PANO3D)
+        // ODS 3D panorama version
+            #ifndef IPD
+            #define IPD 0.065 	//interpupillary distance
+            #endif
+            #ifndef PI
+            #define PI 3.14159265
+            #endif
+        
+            bool isLeft = bool(uv.y < 0.5);
+            uv.y = frac(uv.y*2);	// repeat uv for split screen
+            float theta = uv.x * 2 * PI - PI;
+            float phi = PI / 2 - uv.y * PI;
+            ro = float3(cos(theta), 0, sin(theta)) * IPD / 2 * (isLeft ? -1 : 1);
+            ro += tVI[3].xyz;
+            rd = float3(sin(theta) * cos(phi), sin(phi), -cos(theta) * cos(phi));
+    
+        #else 
+        // normal projection
+            rd = normalize(mul(float4(mul(float4((uv.xy*2-1)*float2(1,-1),0,1),MBtPI).xy,1,0),MBtVI).xyz);
+            ro = MBtVI[3].xyz;
+        #endif
     }
     ////////////////////////////////////////////////////////////////
 
@@ -119,13 +119,13 @@ shader HappyRaymarch : HappyCalc
     float2 PPDiR:INVTARGETSIZE;
     void calcPPD(float2 uv, float z, float3 rd, float3 n, out float3 ppdx, out float3 ppdy)
     {
-	    float2 uvx = uv+float2(PPDiR.x,0.0);
-	    float2 uvy = uv+float2(0.0,PPDiR.y);
-	    float3 dummy, rdx, rdy;
-	    setupRay(uvx, dummy, rdx);
-	    setupRay(uvy, dummy, rdy);
-	    ppdx = z * (rdx*dot(rd, n)/dot(rdx,n) - rd);
-	    ppdy = z * (rdy*dot(rd, n)/dot(rdy,n) - rd);
+        float2 uvx = uv+float2(PPDiR.x,0.0);
+        float2 uvy = uv+float2(0.0,PPDiR.y);
+        float3 dummy, rdx, rdy;
+        setupRay(uvx, dummy, rdx);
+        setupRay(uvy, dummy, rdy);
+        ppdx = z * (rdx*dot(rd, n)/dot(rdx,n) - rd);
+        ppdy = z * (rdy*dot(rd, n)/dot(rdy,n) - rd);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -134,13 +134,13 @@ shader HappyRaymarch : HappyCalc
     // Raymarch a scene.  Takes uv and returns pos(p), normals(n) & distance(z)
     void rayMarcher(float2 uv, out float3 p, out float3 n, out float3 rd, out float z)
     {
-	    float3 ro;
-	    setupRay(uv, ro, rd);
-	    p = rayMarch(ro, rd, marchStepLength, marchMinDistance, marchMaxDistance, marchMaxIterations);
-	    float ff=SF3D(p);
-	    if(abs(ff)>.5)discard;
-	    z = length(p - ro);
-	    n = calcNormS3(SF3D, p, .01*sqrt(z));
+        float3 ro;
+        setupRay(uv, ro, rd);
+        p = rayMarch(ro, rd, marchStepLength, marchMinDistance, marchMaxDistance, marchMaxIterations);
+        float ff=SF3D(p);
+        if(abs(ff)>.5)discard;
+        z = length(p - ro);
+        n = calcNormS3(SF3D, p, .01*sqrt(z));
     }
 
     // END RAYMARCHER
@@ -164,21 +164,21 @@ shader HappyRaymarch : HappyCalc
     // Function
     float calcAO(float3 p, float3 n)
     {
-	    float ao=1;
-	    float g=SF3D(p).x;
-	    float shd=0;
-	    int iter=3;
-	    for(int i=0;i<iter;i++)
-	    {
-		    float ff=aoScale;
-		    ff*=pow(2,12*pow((float)i/iter,2));
-		    float smp=max(0,1-SF3D(p+n*ff).x/ff);
-		    shd+=pow(smp,2)/iter*pow(0.5,(float)i/iter);
-	    }
-	    ao=1-shd;
-	    ao=saturate(ao);
-	    ao = (ao / ((((1.0/aoBias) - 2.0)*(1.0 - ao))+1.0));
-	    return ao;
+        float ao=1;
+        float g=SF3D(p).x;
+        float shd=0;
+        int iter=3;
+        for(int i=0;i<iter;i++)
+        {
+            float ff=aoScale;
+            ff*=pow(2,12*pow((float)i/iter,2));
+            float smp=max(0,1-SF3D(p+n*ff).x/ff);
+            shd+=pow(smp,2)/iter*pow(0.5,(float)i/iter);
+        }
+        ao=1-shd;
+        ao=saturate(ao);
+        ao = (ao / ((((1.0/aoBias) - 2.0)*(1.0 - ao))+1.0));
+        return ao;
     }
     #endif
     ////////////////////////////////////////////////////////////////
@@ -200,28 +200,28 @@ shader HappyRaymarch : HappyCalc
     // Function
     float calcShadow(float3 p)
     {
-	
-	    float mint = 0.1;
+    
+        float mint = 0.1;
         float res = 1.0;
-	    float3 ro = p;
-	    float3 rd = normalize(-shadowDir);
-	    float z = mint;
-	    uint i = 0;
-	    uint maxI = 16;
+        float3 ro = p;
+        float3 rd = normalize(-shadowDir);
+        float z = mint;
+        uint i = 0;
+        uint maxI = 16;
         while(z < shadowLength && i < maxI)
         {
-    	    p = ro + rd * z;
+            p = ro + rd * z;
             float d = SF3D(p).x;
             if( d<0.001 )
-    	    {
-    		    res = 0;
-    		    break;
-    	    }
+            {
+                res = 0;
+                break;
+            }
        
             res = min( res, shadowK*d/z );
             z += d;
         }
-	    return saturate(res +1-shadowAmt);
+        return saturate(res +1-shadowAmt);
     }
     #endif
     ////////////////////////////////////////////////////////////////
@@ -241,18 +241,18 @@ shader HappyRaymarch : HappyCalc
     // Function
     float calcSSS (float3 p, float3 rd)
     {
-	    float total = 0.0f;
-	    float weight = sssWeight;
+        float total = 0.0f;
+        float weight = sssWeight;
 
-	    [unroll]
-	    for ( int i = 0; i < 5; ++i )
-	    {
-		    float delta = pow ( i +1, 2.5f ) * sssFactor; //*eps?
-		    p = p + rd * delta;
-		    total += -weight *min ( 0, SF3D(p).x );
-		    weight *= 0.5f;
-	    }
-	    return saturate ( total );
+        [unroll]
+        for ( int i = 0; i < 5; ++i )
+        {
+            float delta = pow ( i +1, 2.5f ) * sssFactor; //*eps?
+            p = p + rd * delta;
+            total += -weight *min ( 0, SF3D(p).x );
+            weight *= 0.5f;
+        }
+        return saturate ( total );
     }
     #endif
     ////////////////////////////////////////////////////////////////
