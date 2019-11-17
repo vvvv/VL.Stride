@@ -1,13 +1,13 @@
-﻿shader NoiseFloat3ToFloat : Float3ToFloat 
+﻿shader NoiseFloat2ToFloat : Float2ToFloat // general 3 in 1 out noise test, not really an SDF, but want to try importing noise lib
 {
     compose ComputeFloat Frequency;
     compose ComputeFloat3 DomainOffset;
     compose ComputeFloat Amplitude;
     compose ComputeFloat Center;
 
-    compose Float3ToFloat NoiseFunc;
+    compose Float2ToFloat NoiseFunc;
 
-    override float Compute(float3 p)
+    override float Compute(float2 p)
     {
         p = p * Frequency.Compute() + DomainOffset.Compute();
         return NoiseFunc.Compute(p) * Amplitude.Compute() + Center.Compute();
