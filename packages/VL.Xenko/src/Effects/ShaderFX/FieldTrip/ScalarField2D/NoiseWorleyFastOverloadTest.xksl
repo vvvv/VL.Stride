@@ -1,12 +1,30 @@
-﻿shader NoiseWorleyFastOverloadTest :  HappyNoise
+﻿shader NoiseWorleyFastOverloadTest :  HappyNoise, Float2ToFloat, Float3ToFloat // , Float2ToFloat2, Float3ToFloat3
 {
-    float Compute(float2 p)
+
+    // these work
+
+    override float Compute(float2 p)
     {
         return worleyFast(p);
     }
 
-    float Compute(float3 p)
+    override float Compute(float3 p)
     {
         return worleyFast(p);
     }
+    
+    /*
+
+    Cann see here we come back to same signatures again
+
+    override float2 Compute(float2 p)
+    {
+        return worleyFast2(p);
+    }
+
+    override float3 Compute(float3 p)
+    {
+        return worleyFast3(p);
+    }
+    */
 };
