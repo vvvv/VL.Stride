@@ -1,11 +1,14 @@
-shader ToTextureSF2D : ShaderBaseStream, Float2ToFloat4, Transformation
+shader ToTextureSF2D : ShaderBaseStream, Float2ToFloat4
 {
-    compose Float2ToFloat SF2D;
+    compose Float2ToFloat Function;
 
    
     override float4 Compute(float2 texCoord)
     {
-        float result = SF2D.Compute(texCoord);
+        float2 p = texCoord * 2.0f - 1.0f;
+        p.y *= -1.0f;
+        float result = Function.Compute(p);
+        return float4(result.xxx, 1);
  
     }
 };
