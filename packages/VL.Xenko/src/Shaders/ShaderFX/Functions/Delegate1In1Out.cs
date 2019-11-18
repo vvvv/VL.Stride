@@ -4,22 +4,35 @@ using System.Linq;
 using System.Text;
 using Xenko.Rendering.Materials;
 using Xenko.Shaders;
+using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
-    public class Funk1In1Out<TIn, TOut> : ComputeNode<TOut>
+    public class Delegate1In1Out<TIn, TOut> : Funk1In1Out<TIn, TOut>
     {
-        public Funk1In1Out(string functionName, IEnumerable<KeyValuePair<string, IComputeNode>> inputs)
+        public Delegate1In1Out(Var<TIn> arg, Var<TOut> result, IComputeVoid body)
+            : base("Delegate", null)
         {
-            ShaderName = functionName;
-            Inputs = inputs?.Where(input => !string.IsNullOrWhiteSpace(input.Key) && input.Value != null).ToList();
+            Arg = arg;
+            Result = result;
+
+            if (body != null)
+            {
+                Inputs = new[]
+                       {
+                    new KeyValuePair<string, IComputeNode>("Body", body)
+                }; 
+            }
         }
 
         public IEnumerable<KeyValuePair<string, IComputeNode>> Inputs { get; private set; }
+        public Var<TIn> Arg { get; }
+        public Var<TOut> Result { get; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var shaderSource = new ShaderClassSource(ShaderName);
+            var shaderSource = GetShaderSourceFunkForType2<TIn, TOut>(ShaderName, Arg.VarName, Result.VarName);
 
             //compose if necessary
             if (Inputs != null && Inputs.Any())
