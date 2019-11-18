@@ -31,6 +31,11 @@ namespace VL.Xenko.Shaders.ShaderFX
             return new ShaderClassSource(shaderName + GetNameForType<T1>() + GetNameForType<T2>(), genericArguments);
         }
 
+        public static ShaderClassSource GetShaderSourceFunkForType2<T1, T2>(string shaderName, params object[] genericArguments)
+        {
+            return new ShaderClassSource(shaderName + GetNameForType<T1>() + "To" + GetNameForType<T2>(), genericArguments);
+        }
+
         static Dictionary<Type, string> KnownTypes = new Dictionary<Type, string>();
 
         static ShaderFXUtils()
