@@ -12,13 +12,33 @@ namespace VL.Xenko.Shaders.ShaderFX
 {
     public static class ShaderFXUtils
     {
-        public static Var<T> CreateAndInitVar<T>(string varName, IComputeValue<T> valueGetter)
+        /// <summary>
+        /// Declare a shader variable with a give name and initialize it with a value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="varName"></param>
+        /// <param name="valueGetter"></param>
+        /// <returns></returns>
+        public static Var<T> DeclAndInitVar<T>(string varName, IComputeValue<T> valueGetter)
             => new Var<T>(valueGetter, varName);
 
+        /// <summary>
+        /// Assigns a new value to an existing shader variable.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="existingVar"></param>
+        /// <param name="valueGetter"></param>
+        /// <returns></returns>
         public static Var<T> AssignVar<T>(this Var<T> existingVar, IComputeValue<T> valueGetter)
             => new Var<T>(valueGetter, existingVar);
 
-        public static IComputeValue<T> Getter<T>(this Var<T> existingVar)
+        /// <summary>
+        /// Retrieves the current value of an existing shader variable.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="existingVar"></param>
+        /// <returns></returns>
+        public static IComputeValue<T> GetVarValue<T>(this Var<T> existingVar)
             => new GetVar<T>(existingVar);
 
         public static ShaderClassSource GetShaderSourceForType<T>(string shaderName, params object[] genericArguments)

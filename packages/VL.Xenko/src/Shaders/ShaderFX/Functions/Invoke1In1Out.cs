@@ -7,7 +7,7 @@ using Xenko.Shaders;
 using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Xenko.Shaders.ShaderFX.Functions
 {
     public class Invoke1In1Out<TIn, TOut> : ComputeValue<TOut>
     {

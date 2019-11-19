@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VL.Xenko.Shaders.ShaderFX.Functions;
 using Xenko.Core.Mathematics;
 using Xenko.Rendering.Materials;
 using Xenko.Shaders;
