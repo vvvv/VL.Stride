@@ -5,7 +5,7 @@ using System.Text;
 using Xenko.Rendering.Materials;
 using Xenko.Shaders;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Xenko.Shaders.ShaderFX.Functions
 {
     public class Funk2In1Out<TIn1, TIn2, TOut> : ComputeNode<TOut>
     {

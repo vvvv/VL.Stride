@@ -18,8 +18,8 @@ namespace VL.Xenko.Shaders.ShaderFX.Control
             //init accum1
             var accum1InitValue = new Constant<float>(-1);
 
-            var getAccum1InitValue = accum1InitValue.Getter();
-            var accum1 = CreateAndInitVar("Accum", getAccum1InitValue);
+            var getAccum1InitValue = accum1InitValue.GetVarValue();
+            var accum1 = DeclAndInitVar("Accum", getAccum1InitValue);
 
             //body patch begin ----
 
@@ -27,13 +27,13 @@ namespace VL.Xenko.Shaders.ShaderFX.Control
             var bodyConstant2 = new Constant<float>(2);
 
             //plus node
-            var getPlusIn1 = bodyConstant1.Getter();
-            var getPlusIn2 = bodyConstant2.Getter();
+            var getPlusIn1 = bodyConstant1.GetVarValue();
+            var getPlusIn2 = bodyConstant2.GetVarValue();
             var plusExpression = new BinaryOperation<float>("Plus", getPlusIn1, getPlusIn2);
-            var plusResult = CreateAndInitVar("PlusResult", plusExpression);
+            var plusResult = DeclAndInitVar("PlusResult", plusExpression);
 
             //re-assign accumulator 1
-            var getPlusResult = plusResult.Getter();
+            var getPlusResult = plusResult.GetVarValue();
             var accum1ReAssign = accum1.AssignVar(getPlusResult);
 
             //body patch end ----
@@ -45,7 +45,7 @@ namespace VL.Xenko.Shaders.ShaderFX.Control
             //condition
             var conditionValue = new Constant<bool>(true);
 
-            var getConditionValue = conditionValue.Getter();
+            var getConditionValue = conditionValue.GetVarValue();
             var ifThenRegion = new IfThenRegion(bodyStatements, getConditionValue, GenerateShaderSource, GetChildren);
 
             //make sure accums are initialized before the region is called
