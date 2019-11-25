@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using VL.Xenko.Shaders.ShaderFX.Functions;
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;
 using Xenko.Rendering;
