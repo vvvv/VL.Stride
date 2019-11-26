@@ -51,7 +51,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override string ToString()
         {
-            return string.Format("Buffer {0}", TextureKey.Name);
+            return string.Format("Texture {0}", TextureKey.Name);
         }
     }
 }
