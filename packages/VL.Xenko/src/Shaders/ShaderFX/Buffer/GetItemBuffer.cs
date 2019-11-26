@@ -16,7 +16,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public GetItemBuffer(DeclBuffer buffer, IComputeValue<uint> index, bool isRW = false, bool isStructured = false)
         {
-            BufferDecl = buffer;
+            TextureDecl = buffer;
             Index = index;
             IsRW = isRW;
             IsStructured = isStructured;
@@ -27,7 +27,7 @@ namespace VL.Xenko.Shaders.ShaderFX
             ShaderName = prefix + bufferType;
         }
 
-        public DeclBuffer BufferDecl { get; }
+        public DeclBuffer TextureDecl { get; }
 
         public IComputeValue<uint> Index { get; }
 
@@ -37,12 +37,12 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            if (BufferDecl == null)
+            if (TextureDecl == null)
                 return GetShaderSourceForType<T>("Compute");
 
-            BufferDecl.GenerateShaderSource(context, baseKeys);
+            TextureDecl.GenerateShaderSource(context, baseKeys);
 
-            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, BufferDecl.BufferKey);
+            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, TextureDecl.BufferKey);
 
             var mixin = shaderClassSource.CreateMixin();
 
@@ -52,7 +52,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
-            return ReturnIfNotNull(BufferDecl, Index);
+            return ReturnIfNotNull(TextureDecl, Index);
         }
     }
 }

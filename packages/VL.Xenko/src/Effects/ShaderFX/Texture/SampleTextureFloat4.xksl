@@ -1,0 +1,16 @@
+﻿shader SampleTextureFloat4<LinkType TextureName> : ComputeFloat4, DeclTexture<TextureName, PerUpdate>
+{
+    compose ComputeFloat2 TexCd;
+
+    stage SamplerState LinearRepeatSampler
+    {
+        Filter = MIN_MAG_MIP_LINEAR;
+        AddressU = Wrap;
+        AddressV = Wrap;
+    };
+
+    override float4 Compute()
+    {
+        return DynamicTexture.Sample(LinearRepeatSampler, TexCd.Compute());
+    }  
+};
