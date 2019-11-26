@@ -46,13 +46,13 @@ namespace VL.Xenko.Shaders.ShaderFX
         bool compiled;
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            UsedKey = Key ?? ContextValueKeyMap2<T>.GetParameterKey(this);
+            UsedKey = Key ?? UsedKey ?? ContextValueKeyMap2<T>.GetParameterKey(this);
 
             ShaderClassSource shaderClassSource;
 
             if (Key == null)
             {
-                UsedKey = ContextValueKeyMap2<T>.GetParameterKey(this);
+                UsedKey = UsedKey ?? ContextValueKeyMap2<T>.GetParameterKey(this);
                 context.Parameters.Set(UsedKey, Input);
 
                 // remember parameters for updates from main loop 
