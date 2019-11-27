@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,7 +71,7 @@ namespace VL.Xenko.Assets
 
         internal static RuntimeDatabase Create(Game game)
         {
-            var builder = new AssetBuilderService("asset_build");
+            var builder = new AssetBuilderService(Path.Combine(PlatformFolders.ApplicationBinaryDirectory, "data"));
             var logger = new LoggerResult();
             return new RuntimeDatabase(logger, builder, game);
         }
