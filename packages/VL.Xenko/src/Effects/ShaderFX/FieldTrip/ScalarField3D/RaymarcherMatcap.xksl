@@ -87,10 +87,21 @@ shader RaymarcherMatcap : ShaderBaseStream, Float2ToFloat4, Transformation, Text
         return ao;
     }
 
-    float4 matCap(float3 vn)
+    float4 matCap(float3 p, float3 n)
     {
-        vn.y = -vn.y;
-        return float4(Texture0.Sample(LinearSampler, vn.xy *.5+.5));
+        //n.z = -n.z;
+        float3 r = reflect(normalize(p - Eye), n);
+        float m = 2.8284271247461903 * sqrt(r.z + 1.0);
+
+  //      float m = 2. * sqrt(
+  //  pow( r.x, 2. ) +
+  //  pow( r.y, 2. ) +
+  //  pow( r.z + 1., 2. )
+  //);
+
+        float2 vn = r.xy / m + 0.5;
+        //vn.y = -vn.y;
+        return Texture0.Sample(LinearSampler, vn.xy);
     }
 
     override float4 Compute(float2 texCoord)
@@ -109,7 +120,9 @@ shader RaymarcherMatcap : ShaderBaseStream, Float2ToFloat4, Transformation, Text
 
         float4 c=1;
         float3 vn = mul(float4(n, 0), View).xyz;
-        c = matCap(vn);
+
+        
+        c = matCap(p, vn);
 
         //AO working
         float ao = calcAO(p,n);
