@@ -6,6 +6,8 @@ using VL.Lib.Basics.Imaging;
 using VL.Lib.Collections;
 using Xenko.Graphics;
 using Buffer = Xenko.Graphics.Buffer;
+using XenkoPixelFormat = Xenko.Graphics.PixelFormat;
+using VLPixelFormat = VL.Lib.Basics.Imaging.PixelFormat;
 
 namespace VL.Xenko.Graphics
 {
@@ -54,7 +56,77 @@ namespace VL.Xenko.Graphics
             }
         }
 
-        
+        public static XenkoPixelFormat GetXenkoPixelFormat(ImageInfo info, bool isSRgb = true)
+        {
+            var format = info.Format;
+            switch (format)
+            {
+                case VLPixelFormat.Unknown:
+                    return XenkoPixelFormat.None;
+                case VLPixelFormat.R8:
+                    return XenkoPixelFormat.R8_UNorm;
+                case VLPixelFormat.R16:
+                    return XenkoPixelFormat.R16_UNorm;
+                case VLPixelFormat.R32F:
+                    return XenkoPixelFormat.R32_Float;
+                case VLPixelFormat.R8G8B8X8:
+                    return isSRgb ? XenkoPixelFormat.R8G8B8A8_UNorm_SRgb : XenkoPixelFormat.R8G8B8A8_UNorm;
+                case VLPixelFormat.R8G8B8A8:
+                    return isSRgb ? XenkoPixelFormat.R8G8B8A8_UNorm_SRgb : XenkoPixelFormat.R8G8B8A8_UNorm;
+                case VLPixelFormat.B8G8R8X8:
+                    return isSRgb ? XenkoPixelFormat.B8G8R8X8_UNorm_SRgb : XenkoPixelFormat.B8G8R8X8_UNorm;
+                case VLPixelFormat.B8G8R8A8:
+                    return isSRgb ? XenkoPixelFormat.B8G8R8A8_UNorm_SRgb : XenkoPixelFormat.B8G8R8A8_UNorm;
+                case VLPixelFormat.R32G32F:
+                    return XenkoPixelFormat.R32G32_Float;
+                case VLPixelFormat.R32G32B32A32F:
+                    return XenkoPixelFormat.R32G32B32A32_Float;
+                default:
+                    throw new UnsupportedPixelFormatException(format);
+            }
+        }
+
+        public static VLPixelFormat GetVLImagePixelFormat(Texture texture, out bool isSRgb)
+        {
+            isSRgb = false;
+
+            if (texture == null)
+                return VLPixelFormat.Unknown;
+
+                var format = texture.Format;
+            switch (format)
+            {
+                case XenkoPixelFormat.None:
+                    return VLPixelFormat.Unknown;
+                case XenkoPixelFormat.R8_UNorm:
+                    return VLPixelFormat.R8;
+                case XenkoPixelFormat.R16_UNorm:
+                    return VLPixelFormat.R16;
+                case XenkoPixelFormat.R32_Float:
+                    return VLPixelFormat.R32F;
+                case XenkoPixelFormat.R8G8B8A8_UNorm:
+                    return VLPixelFormat.R8G8B8A8;
+                case XenkoPixelFormat.R8G8B8A8_UNorm_SRgb:
+                    isSRgb = true;
+                    return VLPixelFormat.R8G8B8A8;
+                case XenkoPixelFormat.B8G8R8X8_UNorm:
+                    return VLPixelFormat.B8G8R8X8;
+                case XenkoPixelFormat.B8G8R8X8_UNorm_SRgb:
+                    isSRgb = true;
+                    return VLPixelFormat.B8G8R8X8;
+                case XenkoPixelFormat.B8G8R8A8_UNorm:
+                    return VLPixelFormat.B8G8R8A8;
+                case XenkoPixelFormat.B8G8R8A8_UNorm_SRgb:
+                    isSRgb = true;
+                    return VLPixelFormat.B8G8R8A8;
+                case XenkoPixelFormat.R32G32_Float:
+                    return VLPixelFormat.R32G32F;
+                case XenkoPixelFormat.R32G32B32A32_Float:
+                    return VLPixelFormat.R32G32B32A32F;
+                default:
+                    throw new Exception("Unsupported Pixel Format");
+            }
+        }
 
     }
 }
