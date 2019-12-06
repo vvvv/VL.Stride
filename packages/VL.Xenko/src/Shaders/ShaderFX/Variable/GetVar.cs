@@ -9,10 +9,13 @@ namespace VL.Xenko.Shaders.ShaderFX
     public class GetVar<T> : ComputeValue<T>
     {
 
-        public GetVar(Var<T> var)
+        public GetVar(Var<T> var, bool evaluateChildren = true)
         {
+            EvaluateChildren = evaluateChildren;
             Var = var;
         }
+
+        bool EvaluateChildren { get; }
 
         public Var<T> Var { get; }
 
@@ -20,7 +23,7 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
-            return ReturnIfNotNull(Var);
+            return EvaluateChildren ? ReturnIfNotNull(Var) : ReturnIfNotNull();
         }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)

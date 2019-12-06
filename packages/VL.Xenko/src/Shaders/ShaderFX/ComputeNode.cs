@@ -6,9 +6,9 @@ using Xenko.Core.Mathematics;
 using System.Collections.Generic;
 using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
 
-namespace VL.Xenko.Shaders
+namespace VL.Xenko.Shaders.ShaderFX
 {
-    public class ComputeNode<T> : ComputeNode
+    public class ComputeNode<T> : ComputeNode, IComputeValue<T>
     {
         public string ShaderName { get; set; } = "Compute";
 
