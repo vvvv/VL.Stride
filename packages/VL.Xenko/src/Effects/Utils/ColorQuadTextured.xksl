@@ -1,0 +1,17 @@
+﻿namespace VL.Xenko.Effects.Utils
+{
+    shader ColorQuadTextured : Common_VS_PS_Base, ColorBase, Common_ShaderUtils, Texturing
+    {
+        stage float4 ColorInput;
+
+        override stage void VSMain()
+        {
+            streams.ShadingPosition = mul(streams.Position, WorldViewProjection);
+        }
+
+        override stage void PSMain() 
+        {
+            streams.ColorTarget = Texture0.Sample(LinearSampler, streams.TexCoord) * ColorInput * ColorInput.a;
+        }
+    };
+}
