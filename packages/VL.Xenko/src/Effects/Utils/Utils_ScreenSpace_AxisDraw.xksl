@@ -1,0 +1,21 @@
+﻿namespace VL.Xenko.Effects.Utils
+{
+    
+    shader Utils_ScreenSpace_AxisDraw : Common_VS_PS_Base, ColorBase, Common_ShaderUtils
+    {
+
+        override stage void VSMain()
+        {
+            float4 pos = streams.Position;
+            streams.Color = BitsToColor(pos.w);
+            pos.w = 1;
+
+            streams.ShadingPosition = mul(pos, Projection);
+        }
+
+        override stage void PSMain() 
+        {
+            streams.ColorTarget = streams.Color * streams.Color.a;
+        }
+    };
+}
