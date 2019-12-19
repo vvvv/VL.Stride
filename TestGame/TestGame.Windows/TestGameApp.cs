@@ -14,7 +14,7 @@ namespace TestGame.Windows
 #if DEBUG
                 game.GraphicsDeviceManager.DeviceCreationFlags |= Xenko.Graphics.DeviceCreationFlags.Debug;
 #endif
-                game.AttachVL(VLScript.MainVLDocSrc);
+                game.AttachVL();
                 game.Run();
             }
         }
