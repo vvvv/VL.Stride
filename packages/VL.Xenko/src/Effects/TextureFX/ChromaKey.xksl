@@ -1,10 +1,10 @@
 ﻿shader ChromaKey : TextureFX
 {
     // convert rgb to yuv
-	static const float4x4 RGBtoYUV = float4x4(	0.257,  0.439, -0.148, 0.0,
-                     			    0.504, -0.368, -0.291, 0.0,
-                     			    0.098, -0.071,  0.439, 0.0,
-                     			    0.0625, 0.500,  0.500, 1.0 );
+    static const float4x4 RGBtoYUV = float4x4(	0.257,  0.439, -0.148, 0.0,
+                                    0.504, -0.368, -0.291, 0.0,
+                                    0.098, -0.071,  0.439, 0.0,
+                                    0.0625, 0.500,  0.500, 1.0 );
 
     //color to be removed
     [Color]
@@ -24,9 +24,9 @@
         float tmp = sqrt(pow(keyYuv.g - yuv.g, 2.0) + pow(keyYuv.b - yuv.b, 2.0));
         if (tmp < maskRange.x)
           return 0.0;
-   	    else if (tmp < maskRange.y)
+        else if (tmp < maskRange.y)
           return (tmp - maskRange.x)/(maskRange.y - maskRange.x);
-   	    else
+        else
           return 1.0;
     }
 
@@ -35,15 +35,15 @@
         float4 col = InTex();
 
         // convert to YUV
-	    float4 keyYUV =  mul(chromaKey, RGBtoYUV );
-	    float4 yuv = mul(col, RGBtoYUV );
+        float4 keyYUV =  mul(chromaKey, RGBtoYUV );
+        float4 yuv = mul(col, RGBtoYUV );
 
         float mask = 1.0 - CalcMask(yuv.rgb, keyYUV.rgb);
-	
-	    //float4 bg = float4(BackgroundColor.r, BackgroundColor.g, BackgroundColor.b, Alpha);
-	
-	    float4 blend = max(col - mask * chromaKey, 0.0) + BackgroundColor * mask;
-	
-	    return blend * blend.a;
+    
+        //float4 bg = float4(BackgroundColor.r, BackgroundColor.g, BackgroundColor.b, Alpha);
+    
+        float4 blend = max(col - mask * chromaKey, 0.0) + BackgroundColor * mask;
+    
+        return blend * blend.a;
     }
 };
