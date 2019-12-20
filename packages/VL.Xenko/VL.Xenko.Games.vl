@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="MZmd92n0x8tLLBfKYOnxOx" LanguageVersion="2019.1.0-0942-g8423ca97d7" Version="0.128">
-  <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="0.38.1043" />
+<Document xmlns:p="property" Id="TKd6ghpgGDHNmeYBg8KG3T" LanguageVersion="2019.2.0-0122-5ab0213702" Version="0.128">
+  <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="2019.2.0-0122-g5ab0213702" />
   <Patch Id="AXcrkz7wtuiLTLQMfXYFvQ">
     <Canvas Id="UNxfqzqFZ0sNZX8LT3rUat" DefaultCategory="Xenko" CanvasType="FullCategory">
       <Canvas Id="LvdNqVGlsMYOrCOnnDb5vm" Name="Utils" Position="330,254" DefaultCategory="Utils">
@@ -281,6 +281,106 @@
           </Patch>
         </Node>
       </Canvas>
+      <!--
+
+    ************************ Game ************************
+
+-->
+      <Node Name="Game" Bounds="349,315" Id="VjRIMPQZ8EGMcj2feRlta0">
+        <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+          <Choice Kind="ContainerDefinition" Name="Process" />
+        </p:NodeReference>
+        <Patch Id="CKroABqvDRcNI1PgsbMHqI">
+          <Canvas Id="N7EroSdhTH8NKB4uNgLI4O" CanvasType="Group">
+            <Node Bounds="363,236,107,86" Id="R0EzOb8Ybh7LJXqOD3d5Cm">
+              <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                <Choice Kind="ProcessStatefulRegion" Name="Cache" />
+                <CategoryReference Kind="Category" Name="Primitive" />
+              </p:NodeReference>
+              <Pin Id="QwmXxUeJhtFPBAbM9U4peL" Name="Force" Kind="InputPin" />
+              <Pin Id="F3wICqLyE9ROuf1Fv8AAVx" Name="Dispose Cached Outputs" Kind="InputPin" />
+              <Pin Id="MkRwdNDeXxnLiL2936Wfy5" Name="Has Changed" Kind="OutputPin" />
+              <Patch Id="H4lo3BuPFZjP1S3XF4XjwY" ManuallySortedPins="true">
+                <Patch Id="Ppm7B6n7wWcLuqyjHxlxKx" Name="Create" ManuallySortedPins="true" />
+                <Patch Id="P04VFm5KOPmMHEg8QUEHXY" Name="Then" ManuallySortedPins="true" />
+                <Node Bounds="375,275,83,19" Id="UK2xPOxdrg6LpArNb9wyx1">
+                  <p:NodeReference LastCategoryFullName="VL.Xenko.GameExtensions" LastSymbolSource="VL.Xenko.Integration.dll">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <Choice Kind="OperationCallFlag" Name="CreateVLGame" />
+                  </p:NodeReference>
+                  <Pin Id="MMuu9f828s6QOoBANn3at7" Name="Output" Kind="OutputPin" />
+                  <Pin Id="EYRe7bVQMcnNUZ6Cj2iCSI" Name="Run Callback" Kind="OutputPin" />
+                </Node>
+              </Patch>
+              <ControlPoint Id="LSdijtukhgnPkJKhTdD5sM" Bounds="377,316" Alignment="Bottom" />
+              <ControlPoint Id="DAYm5SugY57PRsBjlSJAUZ" Bounds="455,316" Alignment="Bottom" />
+            </Node>
+            <Pad Id="SwHW0FdIOVHNbh77ZpIj1c" Comment="Dispose Cached Outputs" Bounds="499,203,35,35" ShowValueBox="true" isIOBox="true" Value="True">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pad>
+            <Node Bounds="363,198,54,19" Id="Ou9zV0jNxnHQRgqsSHPc8e">
+              <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="ProcessAppFlag" Name="OnOpen" />
+              </p:NodeReference>
+              <Pin Id="TL1C6HFHGOPO3lGYOOEtJB" Name="Simulate" Kind="InputPin" />
+              <Pin Id="M2hE9sPK6QgPADDJOIAolE" Name="Output" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="453,373,79,26" Id="CpgnVym06yBOq6c87G14c7">
+              <p:NodeReference LastCategoryFullName="Primitive.Delegates.Delegate (0 -&gt; 0)" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="OperationCallFlag" Name="Invoke" />
+                <CategoryReference Kind="FuncType" Name="Delegate (0 -&gt; 0)" NeedsToBeDirectParent="true" />
+              </p:NodeReference>
+              <Pin Id="OdZQTbwKrnTPuOxnXpVdWb" Name="Input" Kind="StateInputPin" />
+            </Node>
+            <Node Bounds="375,458,58,26" Id="O7AvPat3pKhO3nq5vc2NDS">
+              <p:NodeReference LastCategoryFullName="Primitive.IDisposable" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="OperationCallFlag" Name="Dispose" />
+                <CategoryReference Kind="MutableInterfaceType" Name="IDisposable" NeedsToBeDirectParent="true" />
+              </p:NodeReference>
+              <Pin Id="G8XT9Us8pfJLdSGjW06TTR" Name="Input" Kind="StateInputPin" />
+              <Pin Id="GOASE0YzF9HNXIMKzYpfPk" Name="Output" Kind="StateOutputPin" />
+              <Pin Id="JZUtyEJ7P1CM5PuNQLlziB" Name="Apply" Kind="InputPin" />
+            </Node>
+            <Pad Id="NW6plmZC0YqNfrtSg6GGGP" Bounds="377,374" />
+            <Node Bounds="428,427,65,19" Id="Oq0ave0NUVHODxlCnP47Gi">
+              <p:NodeReference LastCategoryFullName="Primitive.Object" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="OperationCallFlag" Name="IsAssigned" />
+              </p:NodeReference>
+              <Pin Id="PNB0lVAHLwaMy39aug5yCp" Name="X" Kind="InputPin" />
+              <Pin Id="BDgDu7XF3ziMtBPBHoxlVj" Name="Result" Kind="OutputPin" />
+              <Pin Id="PZyKl8TtAsRMocuNwhBfO8" Name="Not Assigned" Kind="OutputPin" />
+            </Node>
+          </Canvas>
+          <Patch Id="S2hFhXrbAGWMqrgzeCRdkB" Name="Create" />
+          <Patch Id="VZ3OkBxJjQ4Pgmza6myOwb" Name="Update" />
+          <!--
+
+    ************************  ************************
+
+-->
+          <ProcessDefinition Id="VvP4MIoLX81LOUQCCvIgH9">
+            <Fragment Id="LO6JW8PE0doL6gZH8oJVes" Patch="S2hFhXrbAGWMqrgzeCRdkB" Enabled="true" />
+            <Fragment Id="MjP0LBCt9D9QOfegzibVVP" Patch="VZ3OkBxJjQ4Pgmza6myOwb" Enabled="true" />
+          </ProcessDefinition>
+          <Link Id="K4MTGtTWj9RQJSlViCv9e1" Ids="MMuu9f828s6QOoBANn3at7,LSdijtukhgnPkJKhTdD5sM" />
+          <Link Id="UvEEkbUvJf1Pea8Scxsfai" Ids="SwHW0FdIOVHNbh77ZpIj1c,F3wICqLyE9ROuf1Fv8AAVx" />
+          <Link Id="S9pog2VrKggPhvYwkT2N89" Ids="M2hE9sPK6QgPADDJOIAolE,QwmXxUeJhtFPBAbM9U4peL" />
+          <Link Id="HVNfRIj04x8N9DdzZLwbBB" Ids="EYRe7bVQMcnNUZ6Cj2iCSI,DAYm5SugY57PRsBjlSJAUZ" />
+          <Link Id="PKDgIsUMJ0uLWwby9e0Jdp" Ids="DAYm5SugY57PRsBjlSJAUZ,OdZQTbwKrnTPuOxnXpVdWb" />
+          <Link Id="CvpA978fXiEOjOv4mqgetJ" Ids="LSdijtukhgnPkJKhTdD5sM,NW6plmZC0YqNfrtSg6GGGP" />
+          <Link Id="RZEeBFmatu5PTEomC1eUTp" Ids="NW6plmZC0YqNfrtSg6GGGP,G8XT9Us8pfJLdSGjW06TTR" />
+          <Patch Id="AVDx5l4ZbtaPu1lIJCjuoj" Name="Dispose" ParticipatingElements="O7AvPat3pKhO3nq5vc2NDS" />
+          <Link Id="D4TZHupOphMNeMmnpi8I4c" Ids="NW6plmZC0YqNfrtSg6GGGP,PNB0lVAHLwaMy39aug5yCp" />
+          <Link Id="CghapnZYe8ROYTSKMpHGcu" Ids="BDgDu7XF3ziMtBPBHoxlVj,JZUtyEJ7P1CM5PuNQLlziB" />
+        </Patch>
+      </Node>
     </Canvas>
     <!--
 
@@ -304,7 +404,7 @@
     </Node>
   </Patch>
   <PlatformDependency Id="TMI8jITdsS1QKApDrv4Kdv" Location="Xenko.Games.dll" />
-  <NugetDependency Id="JnPskjfgPGKL2mkHfNrEdv" Location="VL.EditingFramework" Version="0.80.30-g3ec2f7f8b9" />
+  <NugetDependency Id="JnPskjfgPGKL2mkHfNrEdv" Location="VL.EditingFramework" Version="2019.2.0-0122-g5ab0213702" />
   <DocumentDependency Id="QUggDmcmD0YNlHmzZzNsbh" Location="./VL.Xenko.Core.vl" />
   <PlatformDependency Id="PupkTNp5oPYMzWTVyECG99" Location="Xenko.Core.Serialization.dll" />
   <PlatformDependency Id="INnrQ9GPYZTMAZC0NEEXLD" Location="Xenko.Engine.dll" />

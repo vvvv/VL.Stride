@@ -1,14 +1,49 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using VL.Core;
 using VL.Xenko.Assets;
+using VL.Xenko.Games;
 using Xenko.Engine;
+using Xenko.Games;
+using Xenko.Graphics;
 
 namespace VL.Xenko
 {
     public static class GameExtensions
     {
+        public static void CreateVLGame(out VLGame output, out Action runCallback)
+        {
+            var game = new VLGame();
+#if DEBUG
+            game.GraphicsDeviceManager.DeviceCreationFlags |= DeviceCreationFlags.Debug;
+#endif
+            // Register the Xenko game in our registry so node factories can fetch it later
+            ServiceRegistry.Default.RegisterService(game);
+
+            // Register the main synchronization context
+            ServiceRegistry.Default.RegisterService(SynchronizationContext.Current);
+           
+            Game.GameStarted += (s, e) =>
+            {
+                if (s == game)
+                {
+                    var script = new VLScript(null, game, false);
+                    var assetBuildService = new AssetBuildService();
+                    game.Services.AddService(assetBuildService);
+                    game.Script.Add(assetBuildService);
+                    game.Window.AllowUserResizing = true;
+                }
+            };
+
+            var context = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
+            game.Run(context);
+            runCallback = context.RunCallback;
+
+            output = game;
+        }
+
 
         /// <summary>
         /// Attaches VL to the game.
@@ -28,10 +63,10 @@ namespace VL.Xenko
                 useInternalTimer: false,
                 lazy: true);
 
-            // Register the context and the session in Xenko so we can fetch it later
-            game.Services.AddService(context);
-            game.Services.AddService(context.Session);
-            game.Services.AddService(context.Runtime);
+            //// Register the context and the session in Xenko so we can fetch it later
+            //game.Services.AddService(context);
+            //game.Services.AddService(context.Session);
+            //game.Services.AddService(context.Runtime);
 
             // Register the Xenko game in our registry so node factories can fetch it later
             ServiceRegistry.Default.RegisterService(game);
@@ -39,8 +74,8 @@ namespace VL.Xenko
             // Register the main synchronization context
             ServiceRegistry.Default.RegisterService(SynchronizationContext.Current);
 
-            // Game is driving the message loop so tell windows forms about it
-            Application.RegisterMessageLoop(() => game.IsRunning);
+            //// Game is driving the message loop so tell windows forms about it
+            //Application.RegisterMessageLoop(() => game.IsRunning);
 
             Game.GameStarted += (s, e) =>
             {

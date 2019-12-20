@@ -11,7 +11,7 @@ namespace VL.Xenko.Games
         public VLGame()
             : base()
         {
-            //InternalTick = false;
         }
+
     }
 }
