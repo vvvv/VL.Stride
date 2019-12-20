@@ -37,9 +37,11 @@ namespace VL.Xenko
                 }
             };
 
+            
             var context = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
             game.Run(context);
             runCallback = context.RunCallback;
+            context.Control.Show();
 
             output = game;
         }

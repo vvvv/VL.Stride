@@ -30,7 +30,9 @@ namespace VL.Xenko
             FGoFullscreen = goFullscreen;
             Game = game;
             GameInstance = game;
-            VLUpdate = FContext.Update;
+
+            if (FContext != null)   
+                VLUpdate = FContext.Update;
         }
 
         public new Game Game { get; }
@@ -60,7 +62,7 @@ namespace VL.Xenko
                 await Script.NextFrame();
                 // Update all VL root nodes
                 //await Task.Run(VLUpdate);
-                FContext.Update();
+                FContext?.Update();
             }
         }
     }
