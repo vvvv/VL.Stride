@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using VL.Lang.Platforms.CIL;
 using VL.Xenko.Core;
 using Xenko.Engine;
 using Xenko.Graphics;

@@ -63,10 +63,6 @@ namespace VL.Xenko
                 useInternalTimer: false,
                 lazy: true);
 
-            //// Register the context and the session in Xenko so we can fetch it later
-            //game.Services.AddService(context);
-            //game.Services.AddService(context.Session);
-            //game.Services.AddService(context.Runtime);
 
             // Register the Xenko game in our registry so node factories can fetch it later
             ServiceRegistry.Default.RegisterService(game);
@@ -79,15 +75,20 @@ namespace VL.Xenko
 
             Game.GameStarted += (s, e) =>
             {
-                if (s == game)
-                {
-                    var script = new VLScript(context, game, goFullscreen);
-                    var assetBuildService = new AssetBuildService();
-                    game.Services.AddService(assetBuildService);
-                    game.Script.Add(script);
-                    game.Script.Add(assetBuildService);
-                    game.Window.AllowUserResizing = true;
-                }
+                // Raise Idle - needed by VL context to initiailize
+                Application.RaiseIdle(System.EventArgs.Empty);
+
+                // Register the context and the session in Xenko so we can fetch it later
+                game.Services.AddService(context);
+                game.Services.AddService(context.Session);
+                game.Services.AddService(context.Runtime);
+
+                var script = new VLScript(context, game, goFullscreen);
+                var assetBuildService = new AssetBuildService();
+                game.Services.AddService(assetBuildService);
+                game.Script.Add(script);
+                game.Script.Add(assetBuildService);
+                game.Window.AllowUserResizing = true;
             };
 
             // Shutdown the game when VL editor shuts down
