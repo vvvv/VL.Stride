@@ -128,7 +128,7 @@ namespace VL.Xenko.Rendering
                 }
 
                 //render tooltip
-                if(Tooltip != null)
+                if (Tooltip != null)
                 try
                 {
                     using (context.PushRenderTargetsAndRestore())
