@@ -157,7 +157,7 @@ namespace VL.Xenko.Assets
         /// </summary>
         public event EventHandler<ContentLoadEventArgs> AssetLoaded;
 
-        public T GetRuntimeObject<T>(AssetItem assetItem)
+        public T GetRuntimeObject<T>(AssetItem assetItem) where T : class
         {
             if (assetItem == null) throw new ArgumentNullException(nameof(assetItem));
 
