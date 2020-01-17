@@ -23,11 +23,11 @@ namespace VL.Xenko.EffectLib
 
         public EffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext, description)
         {
-            graphicsDevice = description.Factory.DeviceManager.GraphicsDevice;
+            graphicsDevice = description.GameFactory.DeviceManager.GraphicsDevice;
             instance = new DynamicEffectInstance(description.Name);
             try
             {
-                instance.Initialize(description.Factory.ServiceRegistry);
+                instance.Initialize(description.GameFactory.ServiceRegistry);
                 instance.UpdateEffect(graphicsDevice);
             }
             catch (Exception e)

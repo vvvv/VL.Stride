@@ -8,6 +8,7 @@ using VL.Xenko.Games;
 using Xenko.Engine;
 using Xenko.Games;
 using Xenko.Graphics;
+using VL.Xenko.EffectLib;
 
 namespace VL.Xenko
 {
@@ -19,12 +20,7 @@ namespace VL.Xenko
 #if DEBUG
             game.GraphicsDeviceManager.DeviceCreationFlags |= DeviceCreationFlags.Debug;
 #endif
-            // Register the Xenko game in our registry so node factories can fetch it later
-            ServiceRegistry.Default.RegisterService(game);
 
-            // Register the main synchronization context
-            ServiceRegistry.Default.RegisterService(SynchronizationContext.Current);
-           
             Game.GameStarted += (s, e) =>
             {
                 if (s == game)
@@ -34,13 +30,25 @@ namespace VL.Xenko
                     game.Services.AddService(assetBuildService);
                     game.Script.Add(assetBuildService);
                     game.Window.AllowUserResizing = true;
+
+                    MultiGameEffectNodeFactory.Instance?.AddGame(game, SynchronizationContext.Current);
+
                 }
             };
 
-            
+            Game.GameDestroyed += (s, e) =>
+            {
+                if (s == game)
+                {
+                    MultiGameEffectNodeFactory.Instance?.RemoveGame(game);
+                }
+            };
+
             var context = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
             game.Run(context);
+            game.AddLayerRenderFeature();
             runCallback = context.RunCallback;
+
             context.Control.Show();
 
             output = game;

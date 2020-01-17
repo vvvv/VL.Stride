@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,10 +22,82 @@ using Xenko.Shaders;
 using Xenko.Shaders.Compiler;
 using VLServiceRegistry = VL.Core.ServiceRegistry;
 
-[assembly: NodeFactory(typeof(VL.Xenko.EffectLib.EffectNodeFactory))]
+[assembly: NodeFactory(typeof(VL.Xenko.EffectLib.MultiGameEffectNodeFactory))]
 
 namespace VL.Xenko.EffectLib
 {
+    public class MultiGameEffectNodeFactory : IVLNodeDescriptionFactory
+    {
+        public static MultiGameEffectNodeFactory Instance { get; private set; }
+
+        Dictionary<Game, EffectNodeFactory> gameFactories = new Dictionary<Game, EffectNodeFactory>();
+
+        ObservableCollection<IVLNodeDescription> nodeDescriptions = new ObservableCollection<IVLNodeDescription>();
+
+        public ReadOnlyObservableCollection<IVLNodeDescription> NodeDescriptions { get; }
+
+        public MultiGameEffectNodeFactory()
+        {
+            NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(nodeDescriptions);
+            Instance = this;
+        }
+
+        public void AddGame(Game game, SynchronizationContext mainContext = null)
+        {
+            if (!gameFactories.ContainsKey(game))
+            {
+                var factory = new EffectNodeFactory(game, this, mainContext);
+
+                foreach (var item in factory.NodeDescriptions)
+                    nodeDescriptions.Add(item);
+
+                ((INotifyCollectionChanged)factory.NodeDescriptions).CollectionChanged += GameEffectNodeFactory_CollectionChanged;
+
+                gameFactories[game] = factory;
+            }
+        }
+
+        public void RemoveGame(Game game)
+        {
+            if (gameFactories.TryGetValue(game, out var factory))
+            {
+                ((INotifyCollectionChanged)factory.NodeDescriptions).CollectionChanged -= GameEffectNodeFactory_CollectionChanged;
+
+                foreach (var item in factory.NodeDescriptions)
+                    nodeDescriptions.Remove(item);
+
+                gameFactories.Remove(game);
+            }
+        }
+
+        private void GameEffectNodeFactory_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (var item in e.NewItems)
+                        nodeDescriptions.Add((IVLNodeDescription)item);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (var item in e.OldItems)
+                        nodeDescriptions.Remove((IVLNodeDescription)item);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    nodeDescriptions[e.OldStartingIndex] = ((IEnumerable<IVLNodeDescription>)e.NewItems).FirstOrDefault();
+                    break;
+                case NotifyCollectionChangedAction.Move:
+                    nodeDescriptions.Move(e.OldStartingIndex, e.NewStartingIndex);
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    foreach (var item in e.OldItems)
+                        nodeDescriptions.Remove((IVLNodeDescription)item);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     public class EffectNodeFactory : IVLNodeDescriptionFactory
     {
         const string xkslFileFilter = "*.xksl";
@@ -41,12 +114,14 @@ namespace VL.Xenko.EffectLib
         readonly ObservableCollection<IVLNodeDescription> nodeDescriptions;
         readonly DirectoryWatcher directoryWatcher;
         readonly SynchronizationContext mainContext;
+        readonly MultiGameEffectNodeFactory parentFactory;
         Timer timer;
 
-        public EffectNodeFactory()
+        public EffectNodeFactory(Game game, MultiGameEffectNodeFactory parentFactory, SynchronizationContext syncContext = null)
         {
-            mainContext = VLServiceRegistry.Default.GetService<SynchronizationContext>();
-            var game = VLServiceRegistry.Default.GetService<Game>();
+            this.parentFactory = parentFactory;
+            mainContext = syncContext ?? SynchronizationContext.Current;
+
             ServiceRegistry = game?.Services;
             ContentManger = game?.Content;
             EffectSystem = game?.EffectSystem;
@@ -215,7 +290,7 @@ namespace VL.Xenko.EffectLib
                 foreach (var file in files)
                 {
                     var effectName = Path.GetFileNameWithoutExtension(file);
-                    yield return new EffectNodeDescription(this, effectName);
+                    yield return new EffectNodeDescription(this, parentFactory, effectName);
                 }
             }
         }
@@ -238,7 +313,7 @@ namespace VL.Xenko.EffectLib
                 if (description == null || !description.IsInUse)
                     continue;
 
-                var updatedDescription = new EffectNodeDescription(this, description.Name);
+                var updatedDescription = new EffectNodeDescription(this, parentFactory, description.Name);
                 if (updatedDescription.HasCompilerErrors != description.HasCompilerErrors ||
                     !updatedDescription.Inputs.SequenceEqual(description.Inputs, PinComparer.Instance) ||
                     !updatedDescription.Outputs.SequenceEqual(description.Outputs, PinComparer.Instance))
@@ -246,7 +321,7 @@ namespace VL.Xenko.EffectLib
                     if (updatedDescription.HasCompilerErrors)
                     {
                         // Keep the signature of previous description but show errors and since we have errors kill all living instances so they don't have to deal with it
-                        nodeDescriptions[i] = new EffectNodeDescription(description, updatedDescription.CompilerResults);
+                        nodeDescriptions[i] = new EffectNodeDescription(description, parentFactory, updatedDescription.CompilerResults);
                     }
                     else
                     {

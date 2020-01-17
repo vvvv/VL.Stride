@@ -47,18 +47,20 @@ namespace VL.Xenko.EffectLib
         bool? isCompute;
         CompilerResults compilerResults;
 
-        public EffectNodeDescription(EffectNodeFactory factory, string effectName)
+        public EffectNodeDescription(EffectNodeFactory factory, IVLNodeDescriptionFactory parentFactory, string effectName)
         {
-            Factory = factory;
+            GameFactory = factory;
+            Factory = parentFactory;
             Name = effectName;
         }
 
         // Used when effect has errors - we keep the signature from the previous one but show the compiler errors
         // Because we have errors VL will dispose all previous instances of ours and not create any new ones but the type information of our pins we keep on
         // to so other parts of patch won't break due to loss of typing information
-        public EffectNodeDescription(EffectNodeDescription previous, CompilerResults compilerResults)
+        public EffectNodeDescription(EffectNodeDescription previous, IVLNodeDescriptionFactory parentFactory, CompilerResults compilerResults)
         {
-            Factory = previous.Factory;
+            GameFactory = previous.GameFactory;
+            Factory = parentFactory;
             Name = previous.Name;
             inputs = previous.Inputs;
             outputs = previous.Outputs;
@@ -66,7 +68,8 @@ namespace VL.Xenko.EffectLib
             this.compilerResults = compilerResults;
         }
 
-        public EffectNodeFactory Factory { get; }
+        public EffectNodeFactory GameFactory { get; }
+        public IVLNodeDescriptionFactory Factory { get; }
 
         public string Name { get; }
 
@@ -85,7 +88,7 @@ namespace VL.Xenko.EffectLib
 
         public bool HasCompilerErrors => CompilerResults.HasErrors || CompilerResults.Bytecode.WaitForResult().CompilationLog.HasErrors;
 
-        public CompilerResults CompilerResults => compilerResults ?? (compilerResults = Factory.GetCompilerResults(Name));
+        public CompilerResults CompilerResults => compilerResults ?? (compilerResults = GameFactory.GetCompilerResults(Name));
 
         public EffectBytecode Bytecode => CompilerResults.Bytecode.WaitForResult().Bytecode;
 
@@ -125,7 +128,7 @@ namespace VL.Xenko.EffectLib
             return result;
         }
 
-        IVLNodeDescriptionFactory IVLNodeDescription.Factory => Factory;
+        IVLNodeDescriptionFactory IVLNodeDescription.Factory => GameFactory;
         IReadOnlyList<IVLPinDescription> IVLNodeDescription.Inputs => Inputs;
         IReadOnlyList<IVLPinDescription> IVLNodeDescription.Outputs => Outputs;
 
@@ -171,8 +174,8 @@ namespace VL.Xenko.EffectLib
                     parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, Name);
                     parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
                 }
-                dummyInstance.Initialize(Factory.ServiceRegistry);
-                dummyInstance.UpdateEffect(Factory.DeviceManager.GraphicsDevice);
+                dummyInstance.Initialize(GameFactory.ServiceRegistry);
+                dummyInstance.UpdateEffect(GameFactory.DeviceManager.GraphicsDevice);
 
                 var usedNames = new HashSet<string>();
                 usedNames.Add(ParameterSetterInput.Name);
@@ -266,7 +269,7 @@ namespace VL.Xenko.EffectLib
 
         public bool OpenEditor()
         {
-            var path = Factory.GetPathOfXkslShader(Name);
+            var path = GameFactory.GetPathOfXkslShader(Name);
             Process.Start(path);
 
             var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();

@@ -32,14 +32,14 @@ namespace VL.Xenko.EffectLib
 
         public ComputeEffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext, description)
         {
-            graphicsDevice = description.Factory.DeviceManager.GraphicsDevice;
+            graphicsDevice = description.GameFactory.DeviceManager.GraphicsDevice;
             instance = new DynamicEffectInstance("ComputeEffectShader");
             // TODO: Same code as in description
             instance.Parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, description.Name);
             instance.Parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
             try
             {
-                instance.Initialize(description.Factory.ServiceRegistry);
+                instance.Initialize(description.GameFactory.ServiceRegistry);
                 instance.UpdateEffect(graphicsDevice);
             }
             catch (Exception e)
