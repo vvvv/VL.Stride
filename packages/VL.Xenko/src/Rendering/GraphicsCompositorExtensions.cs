@@ -19,12 +19,13 @@ namespace VL.Xenko.Rendering
             return compositor;
         }
 
-        public static ForwardRenderer SetClearOptions(this ForwardRenderer forwardRenderer, Color4 color, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
+        public static ForwardRenderer SetClearOptions(this ForwardRenderer forwardRenderer, Color4 color, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth, bool enabled = true)
         {
-            forwardRenderer.Clear.Color = new XenkoMath.Color4(color.R, color.G, color.B, color.A);
+            forwardRenderer.Clear.Color = color;
             forwardRenderer.Clear.ClearFlags = clearFlags;
             forwardRenderer.Clear.Depth = depth;
             forwardRenderer.Clear.Stencil = stencilValue;
+            forwardRenderer.Clear.Enabled = enabled;
             return forwardRenderer;
         }
     }

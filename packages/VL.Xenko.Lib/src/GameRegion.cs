@@ -9,9 +9,11 @@ using VL.Core;
 using VL.Lang.PublicAPI;
 using VL.Xenko.Games;
 using VL.Xenko.Layer;
+using VL.Xenko.Rendering;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Games;
+using Xenko.Rendering;
 
 namespace VL.Xenko
 {
@@ -19,12 +21,11 @@ namespace VL.Xenko
     public abstract class GameRegionBase : INotifyHotSwapped
     {
         protected VLGame game;
-        protected GameWindow form;
+        protected GameWindow gameWindow;
         protected Action runCallback;
         protected SceneLink sceneLink;
         protected EntitySceneLink entitySceneLink;
-        protected SerialDisposable locationChangedSubscription = new SerialDisposable();
-        protected SerialDisposable orientationChangedSubscription = new SerialDisposable();
+        protected SerialDisposable sizeChangedSubscription = new SerialDisposable();
 
         void INotifyHotSwapped.SwappedOut(object newInstance)
         {
@@ -32,9 +33,8 @@ namespace VL.Xenko
             if (that != null)
             {
                 that.game = game;
-                that.form = form;
-                that.locationChangedSubscription = locationChangedSubscription;
-                that.orientationChangedSubscription = orientationChangedSubscription;
+                that.gameWindow = gameWindow;
+                that.sizeChangedSubscription = sizeChangedSubscription;
                 that.runCallback = runCallback;
                 that.sceneLink = sceneLink;
                 that.entitySceneLink = entitySceneLink;
@@ -52,24 +52,30 @@ namespace VL.Xenko
     {
         TState FState;
         TOutput FLastOutput;
-        NodeContext FNodeContext;
-        RectangleF FBounds = RectangleF.Empty;
+        private readonly NodeContext FNodeContext;
+        private RectangleF FBounds = RectangleF.Empty;
+        private readonly bool FSaveBounds;
+        private readonly bool FBoundToDocument;
+        private readonly bool FShowDialogIfDocumentChanged;
         private Int2 FLastPosition;
 
-        public GameRegion(NodeContext nodeContext, RectangleF bounds)
+        public GameRegion(NodeContext nodeContext, RectangleF bounds, bool saveBounds = true, bool boundToDocument = false, bool dialogIfDocumentChanged = false)
         {
             FNodeContext = nodeContext;
             FBounds = bounds;
+            FSaveBounds = saveBounds;
+            FBoundToDocument = boundToDocument;
+            FShowDialogIfDocumentChanged = dialogIfDocumentChanged;
         }
 
-        public TOutput Update(Func<TState> create, Func<TState, Tuple<TState, Entity, Scene, TOutput>> update, out GameWindow window, bool enabled = true, bool reset = false)
+        public TOutput Update(Func<TState> create, Func<TState, Tuple<TState, Entity, Scene, TOutput>> update, out GameWindow window, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, bool reset = false, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
         {
             if (FState == null || reset)
             {
                 Dispose();
-                LibGameExtensions.CreateVLGameWinForms(FBounds, out game, out runCallback, out form);
-                SetupBoundsEvents();
-                FLastPosition = form.Position;
+                LibGameExtensions.CreateVLGameWinForms((Rectangle)FBounds, out game, out runCallback, out gameWindow);
+                SetupEvents();
+                FLastPosition = gameWindow.Position;
                 RuntimeTreeRegistry<Game>.AddItem(FNodeContext, game);
                 var rootScene = game.SceneSystem.SceneInstance.RootScene;
                 sceneLink = new SceneLink(rootScene);
@@ -77,13 +83,22 @@ namespace VL.Xenko
                 FState = create();
             }
 
-            if (form != null && form.Position != FLastPosition)
+            if (verticalSync != game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace)
             {
-                UpdateBounds(null);
-                FLastPosition = form.Position;
+                game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace = verticalSync;
+                game.GraphicsDeviceManager.ApplyChanges();
             }
 
-            window = form;
+            if (gameWindow != null && gameWindow.Position != FLastPosition)
+            {
+                UpdateBounds(null);
+                FLastPosition = gameWindow.Position;
+            }
+
+            game.SceneSystem.GraphicsCompositor.GetFirstForwardRenderer(out var forwardRenderer);
+            forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
+
+            window = gameWindow;
             if (enabled)
             {
                 var t = update(FState);
@@ -98,22 +113,40 @@ namespace VL.Xenko
                 return FLastOutput;
         }
 
-        void SetupBoundsEvents()
+        void SetupEvents()
         {
-            locationChangedSubscription.Disposable = Observable.FromEventPattern(form, nameof(form.ClientSizeChanged))
+            //register events handlers
+            sizeChangedSubscription.Disposable = Observable.Merge(
+                Observable.FromEventPattern(gameWindow, nameof(gameWindow.ClientSizeChanged)), 
+                Observable.FromEventPattern(gameWindow, nameof(gameWindow.OrientationChanged)))
+                .Throttle(TimeSpan.FromSeconds(0.5))
                 .Subscribe(UpdateBounds);
-            orientationChangedSubscription.Disposable = Observable.FromEventPattern(form, nameof(form.OrientationChanged))
-                .Subscribe(UpdateBounds);
+
+            if (gameWindow != null)
+                gameWindow.Closing += Window_Closing;
         }
 
         private void UpdateBounds(EventPattern<object> obj)
         {
-            var b = form.ClientBounds;
-            var p = form.Position;
-            FBounds = new RectangleF(p.X, p.Y, b.Width, b.Height);
-            var solution = VL.Model.VLSession.Instance.CurrentSolution;
-            var newSolution = solution.SetPinValue(FNodeContext.Path.Stack.Peek(), "Bounds", FBounds);
-            newSolution.Confirm(Model.SolutionUpdateKind.DontCompile);
+            //write bounds into pin
+            if (FSaveBounds)
+            {
+                var b = gameWindow.ClientBounds;
+                var p = gameWindow.Position;
+                FBounds = new RectangleF(p.X, p.Y, b.Width, b.Height);
+                var solution = VL.Model.VLSession.Instance.CurrentSolution as ISolution;
+                solution = solution?.SetPinValue(FNodeContext.Path.Stack.Peek(), "Bounds", FBounds);
+                solution?.Confirm(Model.SolutionUpdateKind.DontCompile); 
+            }
+        }
+        private void Window_Closing(object sender, EventArgs e)
+        {
+            //close doument, if requested
+            if (FBoundToDocument)
+                Session.CloseDocumentOfNode(FNodeContext.Path.Stack.Peek(), FShowDialogIfDocumentChanged);
+
+            if (gameWindow != null)
+                gameWindow.Closing -= Window_Closing;
         }
 
         public void Dispose()
@@ -125,7 +158,8 @@ namespace VL.Xenko
         {
             try
             {
-                RuntimeTreeRegistry<Game>.RemoveItem(FNodeContext);
+                if (game != null)
+                    RuntimeTreeRegistry<Game>.RemoveItem(FNodeContext);
                 (FState as IDisposable)?.Dispose();
                 game?.Dispose();
             }

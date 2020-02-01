@@ -6,6 +6,7 @@ using VL.Xenko.Rendering;
 using Xenko.Engine;
 using Xenko.Games;
 using Xenko.Rendering;
+using Xenko.Engine.Design;
 
 namespace VL.Xenko.Games
 {
@@ -14,6 +15,13 @@ namespace VL.Xenko.Games
         public VLGame()
             : base()
         {
+        }
+
+        protected override void Initialize()
+        {
+            Settings.EffectCompilation = EffectCompilationMode.Local;
+            Settings.RecordUsedEffects = false;
+            base.Initialize();
         }
 
         public void AddLayerRenderFeature()
