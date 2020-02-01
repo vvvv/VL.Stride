@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="MZmd92n0x8tLLBfKYOnxOx" LanguageVersion="2019.1.0-0978-gabb4253318" Version="0.128">
-  <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="0.38.1043" />
+<Document xmlns:p="property" Id="Orkp2kiNPUBPMlPvrLMGzJ" LanguageVersion="2019.2.0-0219-d9f465bf22" Version="0.128">
+  <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="2019.2.0-0230-gbd69ab0175" />
   <Patch Id="AXcrkz7wtuiLTLQMfXYFvQ">
     <Canvas Id="UNxfqzqFZ0sNZX8LT3rUat" DefaultCategory="Xenko" CanvasType="FullCategory">
       <Canvas Id="LvdNqVGlsMYOrCOnnDb5vm" Name="Utils" Position="309,649" DefaultCategory="Utils">
@@ -19,6 +19,7 @@
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="OperationCallFlag" Name="GetFirstCamera" />
               </p:NodeReference>
+              <Pin Id="VJOQ4mpdzjdOCNogfbyjZc" Name="Game Instance" Kind="InputPin" />
               <Pin Id="KZe5fJrlQBcQAOXimPvEMw" Name="Result" Kind="OutputPin" />
             </Node>
             <Node Bounds="-304,331,39,13" Id="GdQYOGpFcPSN05VXR1UFlD">
@@ -144,6 +145,7 @@
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="OperationCallFlag" Name="GetFirstCamera" />
               </p:NodeReference>
+              <Pin Id="QXVTIqaMk6kQcBrBj6QJ6I" Name="Game Instance" Kind="InputPin" />
               <Pin Id="OdAHxQGplDaMpLTIdjvu7D" Name="Result" Kind="OutputPin" />
             </Node>
             <Node Bounds="-100,181,143,13" Id="JuYnVMmG9krMPaHAT5LTOz">
@@ -200,21 +202,14 @@
         </Node>
         <!--
 
-    ************************ Input ************************
+    ************************ GetInputManager ************************
 
 -->
-        <Node Name="Input" Bounds="653,370,116,165" Id="BHAET3AwnVwO1QZY8Kslxm">
+        <Node Name="GetInputManager" Bounds="653,411,104,122" Id="BHAET3AwnVwO1QZY8Kslxm">
           <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="Builtin">
             <Choice Kind="OperationDefinition" Name="Operation" />
           </p:NodeReference>
           <Patch Id="TjhEIchWVQ7LHVsCaqaJIb">
-            <Node Bounds="666,393,91,13" Id="OMQw8H22okdOAtf5zyqmtE">
-              <p:NodeReference LastCategoryFullName="Xenko.Utils" LastSymbolSource="VL.Xenko.Games.vl">
-                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                <Choice Kind="OperationCallFlag" Name="GameInstance" />
-              </p:NodeReference>
-              <Pin Id="JLYdcux36FPO7WHOW5B3D5" Name="Game Instance" Kind="OutputPin" />
-            </Node>
             <Node Bounds="665,455,40,22" Id="Ci7Sb8ij1yRQW2iczrMxrX">
               <p:NodeReference LastCategoryFullName="Xenko.Engine.Game" LastSymbolSource="Xenko.Engine.dll">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -225,11 +220,16 @@
               <Pin Id="AFcH3fGz0NxOiP7vPD3rRM" Name="Output" Kind="StateOutputPin" />
               <Pin Id="C9SgAeeWJHIM6YV7XIsiH0" Name="Input" Kind="OutputPin" />
             </Node>
-            <Link Id="Tf43RNrwT8iPo1pqqQ3qZG" Ids="JLYdcux36FPO7WHOW5B3D5,D1Oaue2RHGYQA8vKdtU41a" />
             <ControlPoint Id="GqiZFofYxXINBVC58Uy0gR" Bounds="705,516" />
             <Link Id="H71StrLxkfqP9x6XJae3SW" Ids="C9SgAeeWJHIM6YV7XIsiH0,GqiZFofYxXINBVC58Uy0gR" />
             <Pin Id="T8SlTuHOqdeLrYa4YrY5UJ" Name="Input" Kind="OutputPin" Bounds="2279,368" />
             <Link Id="UTbhfw4JLsBPKRbb1i9x8j" Ids="GqiZFofYxXINBVC58Uy0gR,T8SlTuHOqdeLrYa4YrY5UJ" IsHidden="true" />
+            <ControlPoint Id="KyouArnCVg7Pv6HPTmMdVb" Bounds="667,429" />
+            <Pin Id="GMdAk4128wQP5qp5dW6Kf9" Name="Game Instance" Kind="InputPin" Bounds="265,291">
+              <p:Exposition p:Assembly="VL.Lang" p:Type="VL.Model.PinExpositionMode">Expose</p:Exposition>
+            </Pin>
+            <Link Id="Jk2puqnW0MPN7s2JysOWMF" Ids="GMdAk4128wQP5qp5dW6Kf9,KyouArnCVg7Pv6HPTmMdVb" IsHidden="true" />
+            <Link Id="CRskHsMrPegN80QEzFNopH" Ids="KyouArnCVg7Pv6HPTmMdVb,D1Oaue2RHGYQA8vKdtU41a" />
           </Patch>
         </Node>
         <!--
@@ -237,18 +237,11 @@
     ************************ MouseButton ************************
 
 -->
-        <Node Name="MouseButton" Bounds="947,346,309,260" Id="Ly44OYVzvaFOfnjr8M2rGs">
+        <Node Name="MouseButton" Bounds="947,386,311,224" Id="Ly44OYVzvaFOfnjr8M2rGs">
           <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="Builtin">
             <Choice Kind="OperationDefinition" Name="Operation" />
           </p:NodeReference>
           <Patch Id="GhktXQlqP89Opwto8pYSX4">
-            <Node Bounds="960,369,91,13" Id="K2jStRdQFsjMgZRmp8lz2o">
-              <p:NodeReference LastCategoryFullName="Xenko.Utils" LastSymbolSource="VL.Xenko.Games.vl">
-                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                <Choice Kind="OperationCallFlag" Name="GameInstance" />
-              </p:NodeReference>
-              <Pin Id="MsJYyQotmt2LxqTZ32tTg7" Name="Game Instance" Kind="OutputPin" />
-            </Node>
             <Node Bounds="959,431,40,22" Id="JQoZ3H8MbVJNTOnqGdXA0q">
               <p:NodeReference LastCategoryFullName="Xenko.Engine.Game" LastSymbolSource="Xenko.Engine.dll">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -259,7 +252,6 @@
               <Pin Id="AL8x6PLZAeCLscEfFNK0FO" Name="Output" Kind="StateOutputPin" />
               <Pin Id="VoYt4AtTmpELQr5KoRzBnp" Name="Input" Kind="OutputPin" />
             </Node>
-            <Link Id="GeRhxNEklByMrFgjGENUli" Ids="MsJYyQotmt2LxqTZ32tTg7,BR1HZQgV9RWOEcas4P9uLv" />
             <ControlPoint Id="SWyNOjdv4KCQL5QnU41JSC" Bounds="1002,561" />
             <Link Id="S8ukBhfUXGEO7owKYnJ0MD" Ids="VoYt4AtTmpELQr5KoRzBnp,SWyNOjdv4KCQL5QnU41JSC" />
             <Link Id="FI0TWsI5U81MzVZL4hrBhM" Ids="SWyNOjdv4KCQL5QnU41JSC,MKN1PLc2xrmMMcuphyCkBW" IsHidden="true" />
@@ -306,6 +298,12 @@
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="MKN1PLc2xrmMMcuphyCkBW" Name="Input" Kind="OutputPin" Bounds="2279,368" />
+            <ControlPoint Id="V2h3Qbqtaa2OXk63nG7uZ3" Bounds="961,404" />
+            <Pin Id="EY265YvXsZKLCgz2k1PoaI" Name="Game Instance" Kind="InputPin" Bounds="265,291">
+              <p:Exposition p:Assembly="VL.Lang" p:Type="VL.Model.PinExpositionMode">Expose</p:Exposition>
+            </Pin>
+            <Link Id="HWueLd982N6O0ClA3m3tja" Ids="EY265YvXsZKLCgz2k1PoaI,V2h3Qbqtaa2OXk63nG7uZ3" IsHidden="true" />
+            <Link Id="OTfzvhuRg69P6Xv35Xs3Yq" Ids="V2h3Qbqtaa2OXk63nG7uZ3,BR1HZQgV9RWOEcas4P9uLv" />
           </Patch>
         </Node>
         <!--
@@ -329,6 +327,7 @@
               </Pin>
               <Pin Id="IHLWbtjrp4YLnidT54tAoM" Name="Enable Controls" Kind="InputPin" />
               <Pin Id="MqMGga3ZTOzODG3BHrhRmt" Name="Camera Controls" Kind="OutputPin" />
+              <Pin Id="H7ZJfbpozBQPCOq6h8trTP" Name="Game Instance" Kind="InputPin" />
             </Patch>
             <Canvas Id="HrCCp7NupWLNx91vPWYIXz">
               <Pad Id="GoeABimy3nnL9R8Xoigh4E" Comment="FOV Delta Speed" Bounds="607,417,35,15" ShowValueBox="true" isIOBox="true" Value="0.015">
@@ -336,14 +335,12 @@
                   <Choice Kind="TypeFlag" Name="Float32" />
                   <CategoryReference Kind="Category" Name="Primitive" />
                 </p:TypeAnnotation>
-                <p:ValueBoxSettings />
               </Pad>
               <Pad Id="GpU9NWb9gpQPBpcLBt1niW" Comment="Time" Bounds="1250,296,32,18" ShowValueBox="true" isIOBox="true" Value="0.5">
                 <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                   <Choice Kind="TypeFlag" Name="Float32" />
                   <CategoryReference Kind="Category" Name="Primitive" />
                 </p:TypeAnnotation>
-                <p:ValueBoxSettings />
               </Pad>
               <Node Bounds="293,672,627,26" Id="TBh2CgPffiRMhHX3CoULtk">
                 <p:NodeReference LastCategoryFullName="Editors.3D.CameraControls" LastSymbolSource="VL.Cameras.vl">
@@ -588,11 +585,12 @@
               </Node>
               <ControlPoint Id="QuAvUdYEmSUQL43HBYQvqB" Bounds="728,489" />
               <Node Bounds="1211,-365,50,19" Id="UnFatjUJDisNce7fmdw1Z6">
-                <p:NodeReference LastCategoryFullName="Xenko.Input" LastSymbolSource="VL.Xenko.Input.vl">
+                <p:NodeReference>
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                  <Choice Kind="OperationCallFlag" Name="Input" />
                   <CategoryReference Kind="Category" Name="Input" NeedsToBeDirectParent="true" />
+                  <Choice Kind="OperationCallFlag" Name="GetInputManager" />
                 </p:NodeReference>
+                <Pin Id="RYJAH6VdxCeMLwx1pZEXHK" Name="Game Instance" Kind="InputPin" />
                 <Pin Id="Hdzcl6dVtBpMWMCsD0nm0V" Name="Input" Kind="OutputPin" />
               </Node>
               <Node Bounds="1211,-244,128,26" Id="L0ypUuoFt7tMXveWyDeoiV">
@@ -744,10 +742,12 @@
                 <Pin Id="RXkXew5flhfMPtiGaMtW4t" Name="Input" Kind="InputPin" />
                 <Pin Id="Vu8xjoLUdzuQZjBjttVBLc" Name="Output" Kind="OutputPin" />
               </Node>
+              <ControlPoint Id="ERyAV774Jy0MIIMUKVL2id" Bounds="1213,-401" />
             </Canvas>
             <ProcessDefinition Id="KdWWAwPNxg3LUbIYs9RXKa">
               <Fragment Id="Te66Gexf4OtOicN2MgtkkQ" Patch="J2A5bkfQcO8K96h0bhzGhD" Enabled="true" />
               <Fragment Id="CNRxItvx1yKNzBNCZpohKR" Patch="VQlc0XLk84aPm4OECAcGB0" Enabled="true" />
+              <Fragment Id="NPMSH13qOHfNJaJo25GYlO" Patch="Fizx1oNHlFtLtsImaoeltq" Enabled="true" />
             </ProcessDefinition>
             <Link Id="RfwxrdKdd3jM1cY1YN0Zfi" Ids="KWz3zx9S41qPDM8UEuQqQy,QyJEKUQpkpTMYUonDYGnNh" IsHidden="true" />
             <Link Id="RU7RHwMQ7cSL3dCaLDqTzj" Ids="IHLWbtjrp4YLnidT54tAoM,JrUdPpKnBb1LLY8xln9l0l" IsHidden="true" />
@@ -827,6 +827,9 @@
             <Link Id="Qk1Ey9QMTvhPmTdxphpcRL" Ids="Vu8xjoLUdzuQZjBjttVBLc,F1ZCD5wDzxSPwTyBNTcpH3" />
             <Link Id="K235X4npxM6M9sLxhefN1I" Ids="Vu8xjoLUdzuQZjBjttVBLc,K961YAA004DLAFVV2wKaiP" />
             <Link Id="AMCk9DjabTDPGXqRnKG4FI" Ids="Ouu0jFOU9k3Lyruz9pY5Ki,OBNj8oxE59zOPLTTvYQbvM" />
+            <Patch Id="Fizx1oNHlFtLtsImaoeltq" Name="Update" />
+            <Link Id="LsziDvgcIdnMt5y6c5TUzY" Ids="H7ZJfbpozBQPCOq6h8trTP,ERyAV774Jy0MIIMUKVL2id" IsHidden="true" />
+            <Link Id="E1EfUH9Ugg7Pnv0tMYgcVs" Ids="ERyAV774Jy0MIIMUKVL2id,RYJAH6VdxCeMLwx1pZEXHK" />
           </Patch>
         </Node>
         <!--
@@ -855,6 +858,7 @@
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                   <Choice Kind="OperationCallFlag" Name="GetInputManager" />
                 </p:NodeReference>
+                <Pin Id="QMs0opjN7fxMiDrgdQi7Bd" Name="Game Instance" Kind="InputPin" />
                 <Pin Id="FJXomvShwPrPx3P4cpB9mU" Name="Input" Kind="OutputPin" />
               </Node>
               <Node Bounds="349,367,82,26" Id="Lqjha2ySsTsPa8pdI9EXLI">
@@ -872,6 +876,7 @@
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                   <Choice Kind="OperationCallFlag" Name="GetFirstCamera" />
                 </p:NodeReference>
+                <Pin Id="I4M4rJBrheqNVVBCV1aD5W" Name="Game Instance" Kind="InputPin" />
                 <Pin Id="GeHxpuXLBZdLo0dap1eau9" Name="Result" Kind="OutputPin" />
               </Node>
               <ControlPoint Id="MkAl6In7rc8QFbWh5ny7tJ" Bounds="334,511" />
@@ -915,7 +920,7 @@
     </Node>
   </Patch>
   <PlatformDependency Id="KZ2Il2bAZwZOVmmSd5V54B" Location="Xenko.Input.dll" />
-  <NugetDependency Id="JnPskjfgPGKL2mkHfNrEdv" Location="VL.EditingFramework" Version="0.80.30-g3ec2f7f8b9" />
+  <NugetDependency Id="JnPskjfgPGKL2mkHfNrEdv" Location="VL.EditingFramework" Version="2019.2.0-0230-gbd69ab0175" />
   <DocumentDependency Id="AlvCAPtKN3hMlngBaQQ934" Location="./VL.Xenko.Core.vl" />
   <PlatformDependency Id="QtvMQ5MrJ9OO11pRUk3jup" Location="Xenko.Core.Mathematics.dll" />
   <PlatformDependency Id="LKafet4R7MdPHJQ13R8Qz5" Location="VL.Xenko.dll" />

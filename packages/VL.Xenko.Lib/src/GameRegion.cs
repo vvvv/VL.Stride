@@ -11,6 +11,7 @@ using VL.Xenko.Games;
 using VL.Xenko.Layer;
 using VL.Xenko.Rendering;
 using Xenko.Core.Mathematics;
+using Xenko.Core.MicroThreading;
 using Xenko.Engine;
 using Xenko.Games;
 using Xenko.Rendering;
@@ -27,7 +28,7 @@ namespace VL.Xenko
         protected EntitySceneLink entitySceneLink;
         protected SerialDisposable sizeChangedSubscription = new SerialDisposable();
 
-        void INotifyHotSwapped.SwappedOut(object newInstance)
+        public virtual void SwappedOut(object newInstance)
         {
             var that = newInstance as GameRegionBase;
             if (that != null)
@@ -57,7 +58,22 @@ namespace VL.Xenko
         private readonly bool FSaveBounds;
         private readonly bool FBoundToDocument;
         private readonly bool FShowDialogIfDocumentChanged;
+        //private UpdateScript<TState, TOutput> updateScript;
         private Int2 FLastPosition;
+
+        //public override void SwappedOut(object newInstance)
+        //{
+        //    base.SwappedOut(newInstance);
+        //    var that = newInstance as GameRegion<TState, TOutput>;
+        //    if (that != null)
+        //    {
+        //        game.Script.Remove(updateScript);
+        //        game.Script.Add(that.updateScript);
+        //    }
+        //    else
+        //        DisposeInternalState();
+
+        //}
 
         public GameRegion(NodeContext nodeContext, RectangleF bounds, bool saveBounds = true, bool boundToDocument = false, bool dialogIfDocumentChanged = false)
         {
@@ -66,9 +82,10 @@ namespace VL.Xenko
             FSaveBounds = saveBounds;
             FBoundToDocument = boundToDocument;
             FShowDialogIfDocumentChanged = dialogIfDocumentChanged;
+            //updateScript = new UpdateScript<TState, TOutput>();
         }
 
-        public TOutput Update(Func<TState> create, Func<TState, Tuple<TState, Entity, Scene, TOutput>> update, out GameWindow window, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, bool reset = false, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
+        public TOutput Update(Func<TState> create, Func<TState, Game, Tuple<TState, Entity, Scene, TOutput>> update, out GameWindow window, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, bool reset = false, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
         {
             if (FState == null || reset)
             {
@@ -76,11 +93,11 @@ namespace VL.Xenko
                 LibGameExtensions.CreateVLGameWinForms((Rectangle)FBounds, out game, out runCallback, out gameWindow);
                 SetupEvents();
                 FLastPosition = gameWindow.Position;
-                RuntimeTreeRegistry<Game>.AddItem(FNodeContext, game);
                 var rootScene = game.SceneSystem.SceneInstance.RootScene;
                 sceneLink = new SceneLink(rootScene);
                 entitySceneLink = new EntitySceneLink(rootScene);
                 FState = create();
+                //game.Script.Add(updateScript);
             }
 
             if (verticalSync != game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace)
@@ -95,18 +112,24 @@ namespace VL.Xenko
                 FLastPosition = gameWindow.Position;
             }
 
-            game.SceneSystem.GraphicsCompositor.GetFirstForwardRenderer(out var forwardRenderer);
-            forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
-
             window = gameWindow;
             if (enabled)
             {
-                var t = update(FState);
-                runCallback?.Invoke();
-                FState = t.Item1;
-                entitySceneLink?.Update(t.Item2);
-                sceneLink?.Update(t.Item3);
-                FLastOutput = t.Item4;           
+                //updateScript.UpdateFunc = () => update(FState, game);
+                //runCallback?.Invoke(); //calls Game.Tick();
+                //var result = updateScript.UpdateResult;
+
+                var result = update(FState, game);
+                runCallback?.Invoke(); //calls Game.Tick();
+
+                game.SceneSystem.GraphicsCompositor.GetFirstForwardRenderer(out var forwardRenderer);
+                forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
+
+                FState = result.Item1;
+                entitySceneLink?.Update(result.Item2);
+                sceneLink?.Update(result.Item3);
+                FLastOutput = result.Item4;  
+                
                 return FLastOutput;
             }
             else
@@ -158,14 +181,36 @@ namespace VL.Xenko
         {
             try
             {
-                if (game != null)
-                    RuntimeTreeRegistry<Game>.RemoveItem(FNodeContext);
+                //if (game != null)
+                //{
+                //    game.Script.Remove(updateScript);
+                //}
                 (FState as IDisposable)?.Dispose();
                 game?.Dispose();
+            }
+            catch (Exception e)
+            {
+                var m = e.Message;
             }
             finally
             {
                 FState = default;
+            }
+        }
+    }
+
+    public class UpdateScript<TState, TOutput> : AsyncScript
+    {
+        public Tuple<TState, Entity, Scene, TOutput> UpdateResult;
+        public Func<Tuple<TState, Entity, Scene, TOutput>> UpdateFunc;
+
+        public override async Task Execute()
+        {
+            while (Game.IsRunning)
+            {
+                //await Task.Run(VLUpdate);
+                UpdateResult = UpdateFunc();
+                await Script.NextFrame();
             }
         }
     }

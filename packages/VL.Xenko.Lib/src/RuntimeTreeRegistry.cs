@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using VL.Core;
 
 namespace VL.Xenko
@@ -9,7 +10,10 @@ namespace VL.Xenko
 
         public static void AddItem(NodeContext nodeContext, T item)
         {
-            map[nodeContext.Path.Stack.Pop().Peek()] = item;
+            var id = nodeContext.Path.Stack.Pop().Peek();
+            //if (map.ContainsKey(id))
+            //    throw new NotSupportedException("A VL patch can only contain one Game directly. Try moving the game one level deeper, i.e. into it's own process node.");
+            map[id] = item;
         }
 
         public static bool RemoveItem(NodeContext nodeContext)
@@ -17,9 +21,9 @@ namespace VL.Xenko
             return map.Remove(nodeContext.Path.Stack.Pop().Peek());
         }
 
-        public static bool FindClosestParent(NodeContext nodeContext, out T item)
+        public static bool FindClosestParent(IEnumerable<uint> nodePath, out T item)
         {
-            foreach(var nodeId in nodeContext.Path.Stack)
+            foreach(var nodeId in nodePath)
             {
                 if (map.TryGetValue(nodeId, out item))
                     return true;
