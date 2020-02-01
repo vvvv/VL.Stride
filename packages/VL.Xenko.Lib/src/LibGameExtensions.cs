@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using System.Windows.Forms;
 using VL.Core;
 using VL.Xenko.Assets;
 using VL.Xenko.Games;
@@ -9,12 +8,13 @@ using Xenko.Engine;
 using Xenko.Games;
 using Xenko.Graphics;
 using VL.Xenko.EffectLib;
+using Xenko.Core.Mathematics;
 
 namespace VL.Xenko
 {
     public static class LibGameExtensions
     {
-        public static void CreateVLGame(out VLGame output, out Action runCallback)
+        public static void CreateVLGameWinForms(RectangleF bounds, out VLGame output, out Action runCallback, out GameWindow window)
         {
             var game = new VLGame();
 #if DEBUG
@@ -49,7 +49,18 @@ namespace VL.Xenko
             game.AddLayerRenderFeature();
             runCallback = context.RunCallback;
 
-            context.Control.Show();
+            window = game.Window;
+
+            if (bounds.Width > 1 && bounds.Height > 1)
+            {
+                window.Position = new Int2((int)bounds.X, (int)bounds.Y);
+                game.GraphicsDeviceManager.PreferredBackBufferWidth = (int)bounds.Width;
+                game.GraphicsDeviceManager.PreferredBackBufferHeight = (int)bounds.Height;
+                game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace = false;
+                game.GraphicsDeviceManager.ApplyChanges();
+            }
+
+            game.Window.Visible = true;
 
             output = game;
         }
