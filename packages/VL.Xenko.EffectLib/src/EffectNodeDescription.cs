@@ -128,7 +128,7 @@ namespace VL.Xenko.EffectLib
             return result;
         }
 
-        IVLNodeDescriptionFactory IVLNodeDescription.Factory => GameFactory;
+        IVLNodeDescriptionFactory IVLNodeDescription.Factory => Factory;
         IReadOnlyList<IVLPinDescription> IVLNodeDescription.Inputs => Inputs;
         IReadOnlyList<IVLPinDescription> IVLNodeDescription.Outputs => Outputs;
 

@@ -26,6 +26,36 @@ using VLServiceRegistry = VL.Core.ServiceRegistry;
 
 namespace VL.Xenko.EffectLib
 {
+    class NodeComparer : IEqualityComparer<IVLNodeDescription>
+    {
+        public static readonly IEqualityComparer<IVLNodeDescription> Instance = new NodeComparer();
+
+        public bool Equals(IVLNodeDescription x, IVLNodeDescription y)
+        {
+            if (x == y)
+                return true;
+
+            if (x.Name != y.Name)
+                return false;
+
+            if (x.Category != y.Category)
+                return false;
+
+            //if (!x.Outputs.SequenceEqual(y.Outputs, PinComparer.Instance))
+            //    return false;
+
+            //if (!x.Inputs.SequenceEqual(y.Inputs, PinComparer.Instance))
+            //    return false;
+
+            return true;
+        }
+
+        public int GetHashCode(IVLNodeDescription obj)
+        {
+            return obj.Name.GetHashCode();
+        }
+    }
+
     public class MultiGameEffectNodeFactory : IVLNodeDescriptionFactory
     {
         public static MultiGameEffectNodeFactory Instance { get; private set; }
@@ -48,8 +78,9 @@ namespace VL.Xenko.EffectLib
             {
                 var factory = new EffectNodeFactory(game, this, mainContext);
 
-                foreach (var item in factory.NodeDescriptions)
-                    nodeDescriptions.Add(item);
+                foreach (var nd in factory.NodeDescriptions)
+                    if (!nodeDescriptions.Contains(nd, NodeComparer.Instance))
+                        nodeDescriptions.Add(nd);
 
                 ((INotifyCollectionChanged)factory.NodeDescriptions).CollectionChanged += GameEffectNodeFactory_CollectionChanged;
 
@@ -76,7 +107,11 @@ namespace VL.Xenko.EffectLib
             {
                 case NotifyCollectionChangedAction.Add:
                     foreach (var item in e.NewItems)
-                        nodeDescriptions.Add((IVLNodeDescription)item);
+                    {
+                        var nd = (IVLNodeDescription)item;
+                        if (!nodeDescriptions.Contains(nd, NodeComparer.Instance))
+                            nodeDescriptions.Add(nd);
+                    }
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (var item in e.OldItems)
@@ -336,20 +371,19 @@ namespace VL.Xenko.EffectLib
                 }
             }
         }
+    }
+    class PinComparer : IEqualityComparer<IVLPinDescription>
+    {
+        public static readonly PinComparer Instance = new PinComparer();
 
-        class PinComparer : IEqualityComparer<IVLPinDescription>
+        public bool Equals(IVLPinDescription x, IVLPinDescription y)
         {
-            public static readonly PinComparer Instance = new PinComparer();
+            return x.Name == y.Name && x.Type == y.Type;
+        }
 
-            public bool Equals(IVLPinDescription x, IVLPinDescription y)
-            {
-                return x.Name == y.Name && x.Type == y.Type;
-            }
-
-            public int GetHashCode(IVLPinDescription obj)
-            {
-                return obj.Name.GetHashCode();
-            }
+        public int GetHashCode(IVLPinDescription obj)
+        {
+            return obj.Name.GetHashCode();
         }
     }
 }
