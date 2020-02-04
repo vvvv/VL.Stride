@@ -104,7 +104,7 @@ namespace VL.Xenko.EffectLib
 
         void ILowLevelAPIRender.Draw(RenderContext renderContext, RenderDrawContext drawContext, RenderView renderView, RenderViewStage renderViewStage, CommandList commandList)
         {
-            using (drawContext.QueryManager.BeginProfile(Color.Green, profilingKey))
+            using (drawContext.QueryManager.BeginProfile(Color.LightGreen, profilingKey))
             {
                 if (!enabledPin.Value || description.HasCompilerErrors)
                     return;

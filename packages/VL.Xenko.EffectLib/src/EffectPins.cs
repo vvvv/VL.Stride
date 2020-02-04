@@ -78,10 +78,12 @@ namespace VL.Xenko.EffectLib
 
     abstract class ParameterPin
     {
+        public ParameterCollection Parameters;
         public readonly ParameterKey ParameterKey;
 
-        public ParameterPin(ParameterKey key)
+        public ParameterPin(ParameterCollection parameters, ParameterKey key)
         {
+            Parameters = parameters;
             ParameterKey = key;
         }
 
@@ -90,7 +92,8 @@ namespace VL.Xenko.EffectLib
 
     abstract class PermutationParameterPin : ParameterPin
     {
-        public PermutationParameterPin(ParameterKey key) : base(key)
+        public PermutationParameterPin(ParameterCollection parameters, ParameterKey key) 
+            : base(parameters, key)
         {
         }
 
@@ -100,29 +103,30 @@ namespace VL.Xenko.EffectLib
     class PermutationParameterPin<T> : PermutationParameterPin, IVLPin
     {
         public readonly PermutationParameterKey<T> Key;
-        readonly ParameterCollection parameters;
         readonly EqualityComparer<T> comparer = EqualityComparer<T>.Default;
         PermutationParameter<T> accessor;
 
-        public PermutationParameterPin(ParameterCollection parameters, PermutationParameterKey<T> key) : base(key)
+        public PermutationParameterPin(ParameterCollection parameters, PermutationParameterKey<T> key) 
+            : base(parameters, key)
         {
-            this.parameters = parameters;
+            this.Parameters = parameters;
             this.Key = key;
             this.accessor = parameters.GetAccessor(key);
         }
 
         public override void Update(ParameterCollection parameters)
         {
+            Parameters = parameters;
             accessor = parameters.GetAccessor(Key);
         }
 
         public T Value
         {
-            get => parameters.Get(accessor);
+            get => Parameters.Get(accessor);
             set
             {
                 HasChanged = !comparer.Equals(value, Value);
-                parameters.Set(accessor, value);
+                Parameters.Set(accessor, value);
             }
         }
 
@@ -136,15 +140,14 @@ namespace VL.Xenko.EffectLib
     class ConvertedPermutationParameterPin<TShader, TPin> : ParameterPin, IVLPin
     {
         public readonly PermutationParameterKey<TShader> Key;
-        readonly ParameterCollection parameters;
         readonly ValueConverter<TPin, TShader> pinToShader;
         readonly ValueConverter<TShader, TPin> shaderToPin;
         PermutationParameter<TShader> accessor;
 
-        public ConvertedPermutationParameterPin(ParameterCollection parameters, PermutationParameterKey<TShader> key) : base(key)
+        public ConvertedPermutationParameterPin(ParameterCollection parameters, PermutationParameterKey<TShader> key) 
+            : base(parameters, key)
         {
             Key = key;
-            this.parameters = parameters;
             this.accessor = parameters.GetAccessor(key);
             this.pinToShader = TypeConversions.GetConverter<TPin, TShader>();
             this.shaderToPin = TypeConversions.GetConverter<TShader, TPin>();
@@ -152,19 +155,20 @@ namespace VL.Xenko.EffectLib
 
         public override void Update(ParameterCollection parameters)
         {
+            Parameters = parameters;
             accessor = parameters.GetAccessor(Key);
         }
 
-        public TShader ShaderValue => parameters.Get(accessor);
+        public TShader ShaderValue => Parameters.Get(accessor);
 
         public TPin Value
         {
             get
             {
-                var value = parameters.Get(accessor);
+                var value = Parameters.Get(accessor);
                 return shaderToPin(ref value);
             }
-            set => parameters.Set(accessor, pinToShader(ref value));
+            set => Parameters.Set(accessor, pinToShader(ref value));
         }
 
         object IVLPin.Value
@@ -177,25 +181,25 @@ namespace VL.Xenko.EffectLib
     class ValueParameterPin<T> : ParameterPin, IVLPin where T : struct
     {
         public readonly ValueParameterKey<T> Key;
-        readonly ParameterCollection parameters;
         ValueParameter<T> accessor;
 
-        public ValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key) : base(key)
+        public ValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key) 
+            : base(parameters, key)
         {
-            this.parameters = parameters;
             this.Key = key;
             this.accessor = parameters.GetAccessor(key);
         }
 
         public override void Update(ParameterCollection parameters)
         {
+            Parameters = parameters;
             accessor = parameters.GetAccessor(Key);
         }
 
         public T Value
         {
-            get => parameters.Get(accessor);
-            set => parameters.Set(accessor, value);
+            get => Parameters.Get(accessor);
+            set => Parameters.Set(accessor, value);
         }
 
         object IVLPin.Value
@@ -208,26 +212,26 @@ namespace VL.Xenko.EffectLib
     class ArrayValueParameterPin<T> : ParameterPin, IVLPin where T : struct
     {
         public readonly ValueParameterKey<T> Key;
-        readonly ParameterCollection parameters;
 
-        public ArrayValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key) : base(key)
+        public ArrayValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key) 
+            : base(parameters, key)
         {
-            this.parameters = parameters;
             this.Key = key;
         }
 
         public override void Update(ParameterCollection parameters)
         {
+            Parameters = parameters;
         }
 
         // TODO: Add overloads to Xenko wich take accessor instead of less optimal key
         public T[] Value
         {
-            get => parameters.GetValues(Key);
+            get => Parameters.GetValues(Key);
             set
             {
                 if (value.Length > 0)
-                    parameters.Set(Key, value);
+                    Parameters.Set(Key, value);
             }
         }
 
@@ -243,15 +247,14 @@ namespace VL.Xenko.EffectLib
         where TPin : struct
     {
         public readonly ValueParameterKey<TShader> Key;
-        readonly ParameterCollection parameters;
         readonly ValueConverter<TPin, TShader> pinToShader;
         readonly ValueConverter<TShader, TPin> shaderToPin;
         ValueParameter<TShader> accessor;
 
-        public ConvertedValueParameterPin(ParameterCollection parameters, ValueParameterKey<TShader> key) : base(key)
+        public ConvertedValueParameterPin(ParameterCollection parameters, ValueParameterKey<TShader> key) 
+            : base(parameters, key)
         {
             Key = key;
-            this.parameters = parameters;
             this.accessor = parameters.GetAccessor(key);
             this.pinToShader = TypeConversions.GetConverter<TPin, TShader>();
             this.shaderToPin = TypeConversions.GetConverter<TShader, TPin>();
@@ -259,23 +262,24 @@ namespace VL.Xenko.EffectLib
 
         public override void Update(ParameterCollection parameters)
         {
+            Parameters = parameters;
             accessor = parameters.GetAccessor(Key);
         }
 
         public TShader ShaderValue
         {
-            get => parameters.Get(accessor);
-            set => parameters.Set(accessor, value);
+            get => Parameters.Get(accessor);
+            set => Parameters.Set(accessor, value);
         }
 
         public TPin Value
         {
             get
             {
-                var value = parameters.Get(accessor);
+                var value = Parameters.Get(accessor);
                 return shaderToPin(ref value);
             }
-            set => parameters.Set(accessor, pinToShader(ref value));
+            set => Parameters.Set(accessor, pinToShader(ref value));
         }
 
         object IVLPin.Value
@@ -290,23 +294,23 @@ namespace VL.Xenko.EffectLib
         where TPin : struct
     {
         public readonly ValueParameterKey<TShader> Key;
-        readonly ParameterCollection parameters;
         readonly ValueConverter<TPin, TShader> pinToShader;
         readonly ValueConverter<TShader, TPin> shaderToPin;
 
-        public ConvertedArrayValueParameterPin(ParameterCollection parameters, ValueParameterKey<TShader> key) : base(key)
+        public ConvertedArrayValueParameterPin(ParameterCollection parameters, ValueParameterKey<TShader> key) 
+            : base(parameters, key)
         {
             Key = key;
-            this.parameters = parameters;
             this.pinToShader = TypeConversions.GetConverter<TPin, TShader>();
             this.shaderToPin = TypeConversions.GetConverter<TShader, TPin>();
         }
 
         public override void Update(ParameterCollection parameters)
         {
+            Parameters = parameters;
         }
 
-        public TShader[] ShaderValue => parameters.GetValues(Key);
+        public TShader[] ShaderValue => Parameters.GetValues(Key);
 
         public TPin[] Value
         {
@@ -332,7 +336,7 @@ namespace VL.Xenko.EffectLib
                     shaderValue[i] = pinToShader(ref c);
                 }
                 if (shaderValue.Length > 0)
-                    parameters.Set(Key, shaderValue);
+                    Parameters.Set(Key, shaderValue);
             }
         }
 
@@ -346,25 +350,26 @@ namespace VL.Xenko.EffectLib
     class ResourceParameterPin<T> : ParameterPin, IVLPin where T : class
     {
         public readonly ObjectParameterKey<T> Key;
-        readonly ParameterCollection parameters;
         ObjectParameterAccessor<T> accessor;
 
-        public ResourceParameterPin(ParameterCollection parameters, ObjectParameterKey<T> key) : base(key)
+        public ResourceParameterPin(ParameterCollection parameters, ObjectParameterKey<T> key) 
+            : base(parameters, key)
         {
-            this.parameters = parameters;
+            this.Parameters = parameters;
             this.Key = key;
             this.accessor = parameters.GetAccessor(key);
         }
 
         public override void Update(ParameterCollection parameters)
         {
+            Parameters = parameters;
             accessor = parameters.GetAccessor(Key);
         }
 
         public T Value
         {
-            get => parameters.Get(accessor);
-            set => parameters.Set(accessor, value ?? Key.DefaultValueMetadataT?.DefaultValue);
+            get => Parameters.Get(accessor);
+            set => Parameters.Set(accessor, value ?? Key.DefaultValueMetadataT?.DefaultValue);
         }
 
         object IVLPin.Value

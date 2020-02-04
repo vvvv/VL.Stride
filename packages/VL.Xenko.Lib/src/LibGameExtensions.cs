@@ -24,8 +24,6 @@ namespace VL.Xenko
 
             SetupGameEvents(game);
 
-
-
             var context = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
             game.Run(context);
             game.AddLayerRenderFeature();

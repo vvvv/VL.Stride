@@ -12,6 +12,7 @@ using VL.Xenko.Rendering;
 using VL.Xenko.Shaders;
 using Xenko.Core.Diagnostics;
 using Xenko.Core.Mathematics;
+using Xenko.Engine;
 using Xenko.Graphics;
 using Xenko.Rendering;
 using Xenko.Rendering.ComputeEffect;
@@ -26,6 +27,8 @@ namespace VL.Xenko.EffectLib
         public static readonly PinDescription<IEffect> EffectMainOutput = new PinDescription<IEffect>("Output");
 
         public static readonly PinDescription<ILowLevelAPIRender> ComputeMainOutput = new PinDescription<ILowLevelAPIRender>("Output");
+
+        public static readonly PinDescription<Game> GameInput = new PinDescription<Game>("Game Instance");
 
         public static readonly PinDescription<Int3> ComputeDispatchCountInput = new PinDescription<Int3>("Dispatch Count", new Int3(1));
 
@@ -165,6 +168,7 @@ namespace VL.Xenko.EffectLib
 
         IEnumerable<EffectPinDescription> GetInputs()
         {
+            yield return GameInput;
             var effectName = IsCompute ? "ComputeEffectShader" : Name;
             using (var dummyInstance = new DynamicEffectInstance(effectName))
             {

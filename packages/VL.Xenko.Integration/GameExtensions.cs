@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using VL.Core;
 using VL.Xenko.Assets;
+using VL.Xenko.EffectLib;
 using Xenko.Engine;
 
 namespace VL.Xenko
@@ -54,6 +55,9 @@ namespace VL.Xenko
                 game.Script.Add(script);
                 game.Script.Add(assetBuildService);
                 game.Window.AllowUserResizing = true;
+
+                MultiGameEffectNodeFactory.WaitingGame = game;
+
             };
 
             // Shutdown the game when VL editor shuts down
