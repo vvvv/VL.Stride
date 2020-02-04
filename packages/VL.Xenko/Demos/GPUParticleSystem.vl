@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="Kt7CnuSJVdXLFP4N8SdYIc" LanguageVersion="2019.1.0-0627-ga6d9286527" Version="0.128">
-  <NugetDependency Id="JOOzxi7fxV6Ophle2ITp7x" Location="VL.CoreLib" Version="0.96.27" />
+<Document xmlns:p="property" Id="Kt7CnuSJVdXLFP4N8SdYIc" LanguageVersion="2019.2.0-0197-a168e3b40d" Version="0.128">
+  <NugetDependency Id="JOOzxi7fxV6Ophle2ITp7x" Location="VL.CoreLib" Version="2019.2.0-0247-g4019877cb1" />
   <Patch Id="EJT0yLYfAGwNR7tpYBJmBm">
     <Canvas Id="LBo7nYieMfpM38JulchoIJ" DefaultCategory="Xenko.Demos.GPUParticleSystem" CanvasType="FullCategory">
       <!--
@@ -42,6 +42,7 @@
                 <Choice Kind="ProcessNode" Name="Simulation" />
               </p:NodeReference>
               <Pin Id="KHB8SCDfFkHLRTI4w7CI1a" Name="Count" Kind="InputPin" />
+              <Pin Id="F3dor35LPIENhbO6HsGuWg" Name="Game Instance" Kind="InputPin" />
               <Pin Id="Fw39rEVVUngQMhXdqNMaGg" Name="Particles Buffer" Kind="InputPin" />
               <Pin Id="CvwA5UUl9CDQMBUweMsMY8" Name="Reset" Kind="InputPin">
                 <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
@@ -57,6 +58,7 @@
               <p:NodeReference LastCategoryFullName="Xenko.Demos.GPUParticleSystem" LastSymbolSource="GPUParticleSystem.vl">
                 <Choice Kind="ProcessNode" Name="Draw" />
               </p:NodeReference>
+              <Pin Id="SCCLs2Q6sn9MnRX1P7MjqN" Name="Game Instance" Kind="InputPin" />
               <Pin Id="CA0X46wCfS4MzSfFP2s8OK" Name="Count" Kind="InputPin" />
               <Pin Id="C4B0gyXrnkgQdZqQKxzpuh" Name="Particles Buffer" Kind="InputPin" />
               <Pin Id="ChTQm2In3zHNtXNdppFRHS" Name="Color" Kind="InputPin" />
@@ -72,26 +74,31 @@
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="ProcessAppFlag" Name="StructuredBuffer" />
               </p:NodeReference>
-              <Pin Id="N7gbGhTQG0BMK7SVcjsl7L" Name="Force Recreate" Kind="InputPin" />
+              <Pin Id="N7gbGhTQG0BMK7SVcjsl7L" Name="Force Recreate" Kind="InputPin">
+                <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="TypeFlag" Name="Boolean" />
+                </p:TypeAnnotation>
+              </Pin>
               <Pin Id="QmJfX5uCSEUMkKT69b3cBd" Name="Element Count" Kind="InputPin" />
               <Pin Id="PjYutza3D3aN5RWiKyM2pB" Name="Element Size" Kind="InputPin" />
               <Pin Id="SkIPmJsLMHdL6rLqLxp9Je" Name="Is Unordered Access" Kind="InputPin" />
+              <Pin Id="Dd9QswUnbssM1vq6rHNeim" Name="Game Instance" Kind="InputPin" />
               <Pin Id="EaJbieSRdcvNqa6LCyu1a4" Name="Has Changed" Kind="OutputPin" />
               <Pin Id="MnIHo1K6ihNL5ieRHiSJsf" Name="Output" Kind="OutputPin" />
             </Node>
-            <ControlPoint Id="NQeca7Gz0SsNlP9Vi4Cagp" Bounds="542,102" />
-            <Pad Id="DZ8Qp8flot7MrlrqiXfkez" Comment="Element Size" Bounds="572,128,35,15" ShowValueBox="true" isIOBox="true" Value="32">
+            <ControlPoint Id="NQeca7Gz0SsNlP9Vi4Cagp" Bounds="523,77" />
+            <Pad Id="DZ8Qp8flot7MrlrqiXfkez" Comment="Element Size" Bounds="553,103,35,15" ShowValueBox="true" isIOBox="true" Value="32">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Integer32" />
               </p:TypeAnnotation>
             </Pad>
-            <Pad Id="HNIWptVB8m8NbH9CuiA7zy" Comment="Is Unordered Access" Bounds="601,156,35,35" ShowValueBox="true" isIOBox="true" Value="True">
+            <Pad Id="HNIWptVB8m8NbH9CuiA7zy" Comment="Is Unordered Access" Bounds="582,131,35,35" ShowValueBox="true" isIOBox="true" Value="True">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pad>
             <ControlPoint Id="NyjtE5AWQV8LhI1NYQHwan" Bounds="317,311" />
-            <ControlPoint Id="AVNVbbgudvDOdV32ulGqrX" Bounds="577,423" />
+            <ControlPoint Id="AVNVbbgudvDOdV32ulGqrX" Bounds="581,410" />
             <ControlPoint Id="Ma6YOsYLX88MLhqvGVRV34" Bounds="632,386" />
             <Node Bounds="805,268,119,242" Id="NvZkm3k7MMgQF6HAPwHG9w">
               <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
@@ -99,7 +106,11 @@
                 <Choice Kind="ApplicationStatefulRegion" Name="If" />
                 <FullNameCategoryReference ID="Primitive" />
               </p:NodeReference>
-              <Pin Id="Rx7Djx4M6VFOCL8tKhrcV9" Name="Condition" Kind="InputPin" />
+              <Pin Id="Rx7Djx4M6VFOCL8tKhrcV9" Name="Condition" Kind="InputPin">
+                <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="TypeFlag" Name="Boolean" />
+                </p:TypeAnnotation>
+              </Pin>
               <Patch Id="Np38R7gfp85LMbr6yJe2fZ" ManuallySortedPins="true">
                 <Patch Id="F331sGHLkQANTzcZUG6H6C" Name="Create" ManuallySortedPins="true" />
                 <Patch Id="FDwIz80gsMxM3hM9dYaHBu" Name="Then" ManuallySortedPins="true" />
@@ -108,6 +119,7 @@
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                     <Choice Kind="ProcessAppFlag" Name="ReadBackVec4" />
                   </p:NodeReference>
+                  <Pin Id="McrevzF5cxULCAgY61RPVA" Name="Game Instance" Kind="InputPin" />
                   <Pin Id="RiD91ummQcQPPAh7utAnF6" Name="Buffer" Kind="InputPin" />
                   <Pin Id="TErYB4DyRVPN8wskZkiFx7" Name="Element Count" Kind="InputPin" />
                   <Pin Id="MFdwFTidm4LLmd6m0yeNaG" Name="Elements Per Buffer Structure" Kind="InputPin" />
@@ -144,8 +156,14 @@
               <Pin Id="F53h5rvZRGMNwef0JFwCDE" Name="Result" Kind="OutputPin" />
               <Pin Id="MF5mhmx9344OBkJhCkVByQ" Name="Unchanged" Kind="OutputPin" />
             </Node>
+            <ControlPoint Id="LTiWBfXAZU4O9KGMncK8fX" Bounds="358,116" />
+            <Pad Id="ITwD4b6QyyrLH66nX97K53" SlotId="AQGzPekiMWWPxA4q8AWYbY" Bounds="373,166" />
+            <ControlPoint Id="J4K9CvbpF0bNi7fyza6ulG" Bounds="525,381" />
+            <Pad Id="J39TLQP8leZPZx1ZTdBOGa" SlotId="AQGzPekiMWWPxA4q8AWYbY" Bounds="755,354" />
           </Canvas>
-          <Patch Id="NRqxI69LD33NsZLzTIiUZe" Name="Create" />
+          <Patch Id="NRqxI69LD33NsZLzTIiUZe" Name="Create">
+            <Pin Id="OLEi2xPquSzL7dWxbPMSXt" Name="Game Instance" Kind="InputPin" />
+          </Patch>
           <Patch Id="LTIjyJk4xhhPp3s2tMMrl6" Name="Update">
             <Pin Id="J13G8FfKt0APUXnTVqtN3F" Name="Reset" Kind="InputPin" Bounds="381,363" />
             <Pin Id="OkUCfAlNvxEPvjR0IRor6y" Name="Target Pos" Kind="InputPin" Bounds="408,422" />
@@ -194,6 +212,14 @@
           <Link Id="AjKwNhZfZ2XL7sAYXyl6cq" Ids="NyjtE5AWQV8LhI1NYQHwan,QFxRIBuTFreQG6c1ZWOEDk" />
           <Link Id="M9GJQXbJl0TLm330OIEbbU" Ids="F53h5rvZRGMNwef0JFwCDE,BS9IJmQr5uXOFBPfwcctY8" />
           <Link Id="HuSGo8udXF2McMRKgcavCF" Ids="C2I19uJUD3BLMpuJTUGaz2,VtPLJMx7ETgP0XjtdBSFsK" />
+          <Link Id="CMPZfcBHwguLAIAtZBGlrh" Ids="LTiWBfXAZU4O9KGMncK8fX,ITwD4b6QyyrLH66nX97K53" />
+          <Link Id="TtRFmVo9zrYOTrSNvkkkFZ" Ids="OLEi2xPquSzL7dWxbPMSXt,LTiWBfXAZU4O9KGMncK8fX" IsHidden="true" />
+          <Slot Id="AQGzPekiMWWPxA4q8AWYbY" Name="Game Instance" />
+          <Link Id="IcgdBJSgWZfNDGVSR8jnJ0" Ids="ITwD4b6QyyrLH66nX97K53,F3dor35LPIENhbO6HsGuWg" />
+          <Link Id="SJw5hBKrco6M4LnzCxuA6t" Ids="ITwD4b6QyyrLH66nX97K53,Dd9QswUnbssM1vq6rHNeim" />
+          <Link Id="RzA7FrQBpqePGukbhuERqu" Ids="OLEi2xPquSzL7dWxbPMSXt,J4K9CvbpF0bNi7fyza6ulG" IsHidden="true" />
+          <Link Id="ShQA8Egl3EbOsl7lTA7Vss" Ids="J4K9CvbpF0bNi7fyza6ulG,SCCLs2Q6sn9MnRX1P7MjqN" />
+          <Link Id="IvT8vXdIYnDNkhxTsZVI2f" Ids="J39TLQP8leZPZx1ZTdBOGa,McrevzF5cxULCAgY61RPVA" />
         </Patch>
       </Node>
       <!--
@@ -285,7 +311,7 @@
               <ControlPoint Id="EwZpOZcDay8L9UyVD0L2Zx" Bounds="279,188" Alignment="Top" />
               <ControlPoint Id="T5QLweMhT78MG0m4Ymu9kB" Bounds="198,349" Alignment="Bottom" />
             </Node>
-            <Node Bounds="195,375,139,19" Id="JUU2Jo35SlcNGc3OyDYIdu">
+            <Node Bounds="200,396,139,19" Id="JUU2Jo35SlcNGc3OyDYIdu">
               <p:NodeReference LastCategoryFullName="Xenko.LowLevelAPI.Buffers" LastSymbolSource="VL.Xenko.Graphics.vl">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="ProcessAppFlag" Name="ImmutableStructuredBuffer" />
@@ -294,6 +320,7 @@
               <Pin Id="BXTlKUnUuZ1PiyQjmFimgj" Name="Is Unordered Access" Kind="InputPin" />
               <Pin Id="QBV2XWAKCW6MlhOz1X3FVj" Name="Is Vertex Buffer" Kind="InputPin" />
               <Pin Id="OZBYN5zmyvDNN4Nl9HSv4r" Name="Force Recreate" Kind="InputPin" />
+              <Pin Id="T6YcB6haZfjO7ixjuidTMw" Name="Game Instance" Kind="InputPin" />
               <Pin Id="HVeSAVXYRUjO7YtH3mmoSy" Name="Has Changed" Kind="OutputPin" />
               <Pin Id="S5dOaCQkb84MwEJdFTn9Td" Name="Output" Kind="OutputPin" />
             </Node>
@@ -304,6 +331,7 @@
                 <CategoryReference Kind="Category" Name="EffectLib" NeedsToBeDirectParent="true" />
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               </p:NodeReference>
+              <Pin Id="S7wzHz7JiF8OkxfNDoK6la" Name="Game Instance" Kind="InputPin" />
               <Pin Id="DsGcyQh2zz9Qcq9BsZr2TN" Name="Thread Numbers" Kind="InputPin" />
               <Pin Id="Fw2FH9JguN8Pmepx4TkUC9" Name="Dispatch Count" Kind="InputPin" />
               <Pin Id="AqLmi3gXtPMNGmOXWbzD8Y" Name="Random Values" Kind="InputPin" />
@@ -390,6 +418,40 @@
             <ControlPoint Id="SF3UVMoVf2eMankTOM0MrJ" Bounds="907,569" />
             <ControlPoint Id="LUDCieeIcnDOwuCi8wvs5L" Bounds="643,425" />
             <ControlPoint Id="O41NQUQrVRnQbEwgk8QKr9" Bounds="676,465" />
+            <ControlPoint Id="Lvht5MTp7ZlQKhdlL2r6fW" Bounds="356,371" />
+            <Node Bounds="-206,514,119,242" Id="VSF4IP5a9OMQWEitQJ8i5U">
+              <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                <Choice Kind="ApplicationStatefulRegion" Name="If" />
+                <FullNameCategoryReference ID="Primitive" />
+              </p:NodeReference>
+              <Pin Id="Le6721W4W9jQVxhCVlTufi" Name="Condition" Kind="InputPin">
+                <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="TypeFlag" Name="Boolean" />
+                </p:TypeAnnotation>
+              </Pin>
+              <Patch Id="UPhy6CkEqiCNTK3zoGdhb0" ManuallySortedPins="true">
+                <Patch Id="H86qQn6V1y5QMabZL3zK8R" Name="Create" ManuallySortedPins="true" />
+                <Patch Id="U6jryS8d1s6LEcdHJrVxPy" Name="Then" ManuallySortedPins="true" />
+                <Node Bounds="-208,639,81,19" Id="HDjaTGy1x52Og6LXbYc0BT">
+                  <p:NodeReference LastCategoryFullName="Xenko.LowLevelAPI.Buffers.ReadBack" LastSymbolSource="VL.Xenko.Graphics.vl">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <Choice Kind="ProcessAppFlag" Name="ReadBackVec4" />
+                  </p:NodeReference>
+                  <Pin Id="Dd4aLEJOoVsMnT0NxwbonQ" Name="Game Instance" Kind="InputPin" />
+                  <Pin Id="JWroxr1TM3wQVptxeZsLTy" Name="Buffer" Kind="InputPin" />
+                  <Pin Id="Hcgeg1q9EpxLZAKDHukwlS" Name="Element Count" Kind="InputPin" />
+                  <Pin Id="VnjcHPAxEUBLXF60tpsnnZ" Name="Elements Per Buffer Structure" Kind="InputPin" />
+                  <Pin Id="Dm58pwhc49xMxl8FRZdbty" Name="Output" Kind="OutputPin" />
+                </Node>
+                <Pad Id="OOrIt8EgX5ZMETnJapdvmA" Comment="Elements Per Buffer Structure" Bounds="-133,606,35,15" ShowValueBox="true" isIOBox="true" Value="2">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Integer32" />
+                  </p:TypeAnnotation>
+                </Pad>
+                <Pad Id="LJVacz3epvdL33GxSu2wil" Comment="" Bounds="-205,687,162,347" ShowValueBox="true" isIOBox="true" />
+              </Patch>
+            </Node>
           </Canvas>
           <Patch Id="Sc46gglfNDCQAdtDxKUrFe" Name="Create" />
           <Patch Id="Js7NeXU5d2jL5k0qgKkD5E" Name="Update">
@@ -404,6 +466,9 @@
             </Pin>
             <Pin Id="KA2Qdmde5IXMmVtS3Hsm5t" Name="Enabled" Kind="InputPin" Bounds="907,569" />
             <Pin Id="SZqiHcZhOmZNzYTeiPO8Lf" Name="Output" Kind="OutputPin" Bounds="335,649" />
+            <Pin Id="Out9KbzY67NNdVcB58B0gM" Name="Game Instance" Kind="InputPin" Bounds="403,753">
+              <p:Exposition p:Assembly="VL.Lang" p:Type="VL.Model.PinExpositionMode">Expose</p:Exposition>
+            </Pin>
           </Patch>
           <ProcessDefinition Id="Lo0QqgvcK8LPnN2WIAI9m1">
             <Fragment Id="HxlKRiU5y1qNdKAI7jDonU" Patch="Sc46gglfNDCQAdtDxKUrFe" Enabled="true" />
@@ -443,6 +508,12 @@
           <Link Id="RghO31qP8xxNpPU5RPLcZS" Ids="P24qSThps0RLJQdRk5PGzV,LUDCieeIcnDOwuCi8wvs5L" IsHidden="true" />
           <Link Id="EmgGqClTjsaPvOUQYvL1da" Ids="O41NQUQrVRnQbEwgk8QKr9,H5WWpRsZgCvPruOQKimI7G" />
           <Link Id="Hr1X3npTNoNLZLmEDlA3Qz" Ids="FAiMuUJatooNFNFaCzvOh4,O41NQUQrVRnQbEwgk8QKr9" IsHidden="true" />
+          <Link Id="D5qmbmZ1qwYNWxKsyqiNra" Ids="Out9KbzY67NNdVcB58B0gM,Lvht5MTp7ZlQKhdlL2r6fW" IsHidden="true" />
+          <Link Id="DaegSRGUQQOPFeWXp9RzaO" Ids="Lvht5MTp7ZlQKhdlL2r6fW,T6YcB6haZfjO7ixjuidTMw" />
+          <Link Id="DeactFesXcIP9shMPmP4iE" Ids="OOrIt8EgX5ZMETnJapdvmA,VnjcHPAxEUBLXF60tpsnnZ" />
+          <Link Id="LVOdd9niUSbM3DUR59XWr5" Ids="Dm58pwhc49xMxl8FRZdbty,LJVacz3epvdL33GxSu2wil" />
+          <Link Id="FkzSTErEoHfQdeGafH0RYT" Ids="Lvht5MTp7ZlQKhdlL2r6fW,Dd4aLEJOoVsMnT0NxwbonQ" />
+          <Link Id="OiIrpFB8RoENFcwAML3mjk" Ids="S5dOaCQkb84MwEJdFTn9Td,JWroxr1TM3wQVptxeZsLTy" />
         </Patch>
       </Node>
       <!--
@@ -457,12 +528,13 @@
         </p:NodeReference>
         <Patch Id="Ob6dfFo4q64NoS0QfvPlkl">
           <Canvas Id="Aq5cgqJpbPqOgKhvHqcnTU" CanvasType="Group">
-            <ControlPoint Id="RtjjxBgFmJMPe11cRYmyLk" Bounds="688,363" />
+            <ControlPoint Id="RtjjxBgFmJMPe11cRYmyLk" Bounds="719,362" />
             <Node Bounds="647,612,125,19" Id="PNCNDsff8jjMTyginfQXjt">
               <p:NodeReference LastCategoryFullName="Xenko.Rendering.Shaders" LastSymbolSource="VL.Xenko.Rendering.vl">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="ProcessAppFlag" Name="NullDrawer" />
               </p:NodeReference>
+              <Pin Id="Mmjv4VpfYWhP7YJMKjPhfj" Name="Game Instance" Kind="InputPin" />
               <Pin Id="QWGzVVgnnHROxg3Pk5iite" Name="Vertex Count Per Instance" Kind="InputPin" />
               <Pin Id="MygLDHIJCXQOkBEwBg1KAr" Name="Effect Instance" Kind="InputPin" />
               <Pin Id="EmuoPgpOzXLQawLO49Wk4y" Name="Instance Count" Kind="InputPin" />
@@ -474,18 +546,19 @@
               <Pin Id="UOZh0D0S3bKORkODS6d0ux" Name="Output" Kind="StateOutputPin" />
             </Node>
             <ControlPoint Id="VTQxg2ndcbFPr3gTrngAaP" Bounds="649,671" />
-            <ControlPoint Id="Ra4Z4K54sStOJr6lq9d8YG" Bounds="774,395" />
+            <ControlPoint Id="Ra4Z4K54sStOJr6lq9d8YG" Bounds="770,409" />
             <ControlPoint Id="Fk22ENL4OkINhgTvAW8vsM" Bounds="638,575" />
             <Pad Id="KlP5yxu0LYnLzhTdivbJCB" Comment="Topology" Bounds="708,580,152,19" ShowValueBox="true" isIOBox="true" Value="TriangleStrip">
               <p:TypeAnnotation LastCategoryFullName="Xenko.LowLevelAPI.Rendering" LastSymbolSource="VL.Xenko.Graphics.vl">
                 <Choice Kind="TypeFlag" Name="PrimitiveType" />
               </p:TypeAnnotation>
             </Pad>
-            <Node Bounds="687,467,262,19" Id="Gx6RE4lLYFzPB6Fv2wBzRe">
+            <Node Bounds="665,476,262,19" Id="Gx6RE4lLYFzPB6Fv2wBzRe">
               <p:NodeReference LastCategoryFullName="Xenko.EffectLib" LastSymbolSource="VL.Xenko.EffectLib.dll">
                 <Choice Kind="ProcessNode" Name="DrawParticles" />
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               </p:NodeReference>
+              <Pin Id="NAjamlL04arLgtw9NzWnDf" Name="Game Instance" Kind="InputPin" />
               <Pin Id="BaMZ4F6zdxPNI77h3ZV6n4" Name="Particles Buffer" Kind="InputPin" />
               <Pin Id="JCU3zY9ukEdQXO1aggQ1lG" Name="Col" Kind="InputPin" />
               <Pin Id="QynhQi9h7WBMpkEBqa8rjR" Name="Particle Size" Kind="InputPin" />
@@ -493,14 +566,20 @@
               <Pin Id="PxgXd8SxbAEQNvnDQXFsO8" Name="Parameter Setter" Kind="InputPin" />
               <Pin Id="N36MisjZBcMNJOCNu4GtY2" Name="Output" Kind="OutputPin" />
             </Node>
-            <ControlPoint Id="ElTtaaDbtWsN5wZBozLHN0" Bounds="859,395" />
+            <ControlPoint Id="ElTtaaDbtWsN5wZBozLHN0" Bounds="824,451" />
             <Pad Id="C31j24ssWz5MzjQb8eIkAl" Comment="Profiling Name" Bounds="835,537,91,9" ShowValueBox="true" isIOBox="true" Value="Particle Drawer">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="String" />
               </p:TypeAnnotation>
             </Pad>
+            <ControlPoint Id="Nll3rQlGiFwPcqxm2hL7xK" Bounds="419,330" />
+            <Pad Id="Vr6BcoMO7raN29gSq0zx8D" SlotId="OwHFd0TblZSNmCSf8CbmW2" Bounds="618,405" />
           </Canvas>
-          <Patch Id="NiAWgbc1k1nMvQtSnc4bk9" Name="Create" />
+          <Patch Id="NiAWgbc1k1nMvQtSnc4bk9" Name="Create">
+            <Pin Id="MghZgAtMl9BPLd79kgGcyC" Name="Game Instance" Kind="InputPin">
+              <p:Exposition p:Assembly="VL.Lang" p:Type="VL.Model.PinExpositionMode">Expose</p:Exposition>
+            </Pin>
+          </Patch>
           <Patch Id="FfdYujPx1D3MYDn56DJYvH" Name="Update">
             <Pin Id="G0U6072bYoXLuq6AvLexGU" Name="Count" Kind="InputPin" Bounds="636,543" />
             <Pin Id="R4vM3yQAAkVP9saEslhg0w" Name="Particles Buffer" Kind="InputPin" />
@@ -533,6 +612,11 @@
           <Link Id="DIPr9w8BcWSMBFnAOdsybT" Ids="RtjjxBgFmJMPe11cRYmyLk,BaMZ4F6zdxPNI77h3ZV6n4" />
           <Link Id="O0Ps8zgL2I5N0dC5VL9Xsk" Ids="C31j24ssWz5MzjQb8eIkAl,UBjRRZFAtXQLnCOW1PmpXm" />
           <Link Id="E9VhdnCGEvBLd2WtblC5fC" Ids="Ra4Z4K54sStOJr6lq9d8YG,JCU3zY9ukEdQXO1aggQ1lG" />
+          <Link Id="QotDdYPewLaPnpk7GJsbrR" Ids="Nll3rQlGiFwPcqxm2hL7xK,Mmjv4VpfYWhP7YJMKjPhfj" />
+          <Link Id="IBZC79UUuDYL5wZJN39fv9" Ids="MghZgAtMl9BPLd79kgGcyC,Nll3rQlGiFwPcqxm2hL7xK" IsHidden="true" />
+          <Slot Id="OwHFd0TblZSNmCSf8CbmW2" Name="Game Instance" />
+          <Link Id="CnU9GPvy1xOOteQqAtaifk" Ids="Nll3rQlGiFwPcqxm2hL7xK,Vr6BcoMO7raN29gSq0zx8D" />
+          <Link Id="QqZumFtL5MoQAAbBeIzyKN" Ids="Vr6BcoMO7raN29gSq0zx8D,NAjamlL04arLgtw9NzWnDf" />
         </Patch>
       </Node>
     </Canvas>
@@ -557,7 +641,7 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Vh12RBvvvpGO73VxoxKYKS" Location="VL.Core" Version="0.96.27-g8978b8f112" />
-  <NugetDependency Id="C0337TLQb9GPqBpq8R3pwC" Location="VL.Xenko" Version="0.3.60-g9cb25d38bf" />
-  <NugetDependency Id="BSJWXJDRcvtNXI5oBx0Kix" Location="VL.Xenko.EffectLib" Version="0.3.60-g9cb25d38bf" />
+  <NugetDependency Id="Vh12RBvvvpGO73VxoxKYKS" Location="VL.Core" Version="2019.2.0-0247-g4019877cb1" />
+  <NugetDependency Id="C0337TLQb9GPqBpq8R3pwC" Location="VL.Xenko" Version="0.6.118-g48e5aec9aa" />
+  <NugetDependency Id="BSJWXJDRcvtNXI5oBx0Kix" Location="VL.Xenko.EffectLib" Version="0.6.119-g1cae504353" />
 </Document>

@@ -168,7 +168,6 @@ namespace VL.Xenko.EffectLib
 
         IEnumerable<EffectPinDescription> GetInputs()
         {
-            yield return GameInput;
             var effectName = IsCompute ? "ComputeEffectShader" : Name;
             using (var dummyInstance = new DynamicEffectInstance(effectName))
             {
@@ -178,6 +177,13 @@ namespace VL.Xenko.EffectLib
                     parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, Name);
                     parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
                 }
+                else
+                {
+                    // only normal effect nodes need the game input, but might change for symmetry reasons
+                    yield return GameInput;
+
+                }
+
                 dummyInstance.Initialize(GameFactory.ServiceRegistry);
                 dummyInstance.UpdateEffect(GameFactory.DeviceManager.GraphicsDevice);
 

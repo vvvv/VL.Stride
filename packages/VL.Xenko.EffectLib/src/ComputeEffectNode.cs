@@ -3,8 +3,10 @@ using System.Linq;
 using VL.Core;
 using VL.Xenko.Rendering;
 using VL.Xenko.Shaders;
+using Xenko.Core;
 using Xenko.Core.Diagnostics;
 using Xenko.Core.Mathematics;
+using Xenko.Engine;
 using Xenko.Graphics;
 using Xenko.Rendering;
 using Xenko.Rendering.ComputeEffect;
@@ -13,12 +15,12 @@ namespace VL.Xenko.EffectLib
 {
     class ComputeEffectNode : EffectNodeBase, IVLNode, ILowLevelAPIRender
     {
-        readonly DynamicEffectInstance instance;
-        readonly GraphicsDevice graphicsDevice;
-        readonly PerFrameParameters[] perFrameParams;
-        readonly PerViewParameters[] perViewParams;
-        readonly PerDrawParameters[] perDrawParams;
-        readonly ParameterCollection parameters;
+        DynamicEffectInstance instance;
+        GraphicsDevice graphicsDevice;
+        PerFrameParameters[] perFrameParams;
+        PerViewParameters[] perViewParams;
+        PerDrawParameters[] perDrawParams;
+        ParameterCollection parameters;
         Pin<Int3> dispatchCountPin, threadNumbersPin;
         Pin<int> iterationCountPin;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> parameterSetterPin;
@@ -29,6 +31,7 @@ namespace VL.Xenko.EffectLib
         MutablePipelineState pipelineState;
         bool pipelineStateDirty = true;
         ProfilingKey profilingKey;
+        private bool initialized;
 
         public ComputeEffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext, description)
         {
@@ -49,6 +52,37 @@ namespace VL.Xenko.EffectLib
             parameters = instance.Parameters;
             Inputs = description.CreateNodeInputs(this, parameters);
             Outputs = description.CreateNodeOutputs(this, parameters);
+
+            profilingKey = new ProfilingKey(description.Name);
+        }
+
+        void Initialize(GraphicsDevice device, IServiceRegistry services)
+        {
+
+            instance?.Dispose();
+            instance = null;
+
+            if (device == null || services == null)
+                return;
+
+            graphicsDevice = device;
+
+            instance = new DynamicEffectInstance("ComputeEffectShader");
+            // TODO: Same code as in description
+            instance.Parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, description.Name);
+            instance.Parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
+            try
+            {
+                instance.Initialize(services);
+                instance.UpdateEffect(graphicsDevice);
+            }
+            catch (Exception e)
+            {
+                ReportException(e);
+            }
+            parameters = instance.Parameters;
+            Inputs.OfType<ParameterPin>().Do(p => p.Update(parameters));
+            Outputs.OfType<ParameterPin>().Do(p => p.Update(parameters));
             perFrameParams = parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
             perViewParams = parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
             perDrawParams = parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
@@ -63,7 +97,7 @@ namespace VL.Xenko.EffectLib
             Inputs.SelectPin(EffectNodeDescription.ProfilerNameInput, ref profilerNameInput);
             Inputs.SelectPin(EffectNodeDescription.ComputeEnabledInput, ref enabledPin);
 
-            profilingKey = new ProfilingKey(description.Name);
+            initialized = true;
         }
 
         public IVLPin[] Inputs { get; }
@@ -72,6 +106,9 @@ namespace VL.Xenko.EffectLib
 
         public void Update()
         {
+            if (!initialized)
+                return;
+
             var profilerName = profilerNameInput.Value;
 
             if (string.IsNullOrWhiteSpace(profilerName))
@@ -104,6 +141,11 @@ namespace VL.Xenko.EffectLib
 
         void ILowLevelAPIRender.Draw(RenderContext renderContext, RenderDrawContext drawContext, RenderView renderView, RenderViewStage renderViewStage, CommandList commandList)
         {
+            if (!initialized)
+            {
+                Initialize(renderContext.GraphicsDevice, renderContext.Services);
+            }
+
             using (drawContext.QueryManager.BeginProfile(Color.LightGreen, profilingKey))
             {
                 if (!enabledPin.Value || description.HasCompilerErrors)
