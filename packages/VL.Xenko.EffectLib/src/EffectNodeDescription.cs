@@ -28,8 +28,6 @@ namespace VL.Xenko.EffectLib
 
         public static readonly PinDescription<ILowLevelAPIRender> ComputeMainOutput = new PinDescription<ILowLevelAPIRender>("Output");
 
-        public static readonly PinDescription<Game> GameInput = new PinDescription<Game>("Game Instance");
-
         public static readonly PinDescription<Int3> ComputeDispatchCountInput = new PinDescription<Int3>("Dispatch Count", new Int3(1));
 
         public static readonly PinDescription<Int3> ComputeThreadNumbersInput = new PinDescription<Int3>("Thread Numbers", new Int3(1));
@@ -176,12 +174,6 @@ namespace VL.Xenko.EffectLib
                 {
                     parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, Name);
                     parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
-                }
-                else
-                {
-                    // only normal effect nodes need the game input, but might change for symmetry reasons
-                    yield return GameInput;
-
                 }
 
                 dummyInstance.Initialize(GameFactory.ServiceRegistry);

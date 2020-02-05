@@ -85,12 +85,17 @@ namespace VL.Xenko
             //updateScript = new UpdateScript<TState, TOutput>();
         }
 
-        public TOutput Update(Func<TState> create, Func<TState, Game, Tuple<TState, Entity, Scene, TOutput>> update, out GameWindow window, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, bool reset = false, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
+        Game PrevGame;
+        public TOutput Update(Func<TState> create, Func<TState, Tuple<TState, Entity, Scene, TOutput>> update, out GameWindow window, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, bool reset = false, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
         {
+            PrevGame = VLGame.GameInstance;
+            VLGame.GameInstance = game;
+
             if (FState == null || reset)
             {
                 Dispose();
                 LibGameExtensions.CreateVLGameWinForms((Rectangle)FBounds, out game, out runCallback, out gameWindow);
+                VLGame.GameInstance = game;
                 SetupEvents();
                 FLastPosition = gameWindow.Position;
                 var rootScene = game.SceneSystem.SceneInstance.RootScene;
@@ -118,8 +123,7 @@ namespace VL.Xenko
                 //updateScript.UpdateFunc = () => update(FState, game);
                 //runCallback?.Invoke(); //calls Game.Tick();
                 //var result = updateScript.UpdateResult;
-
-                var result = update(FState, game);
+                var result = update(FState);
                 runCallback?.Invoke(); //calls Game.Tick();
 
                 game.SceneSystem.GraphicsCompositor.GetFirstForwardRenderer(out var forwardRenderer);
@@ -128,12 +132,14 @@ namespace VL.Xenko
                 FState = result.Item1;
                 entitySceneLink?.Update(result.Item2);
                 sceneLink?.Update(result.Item3);
-                FLastOutput = result.Item4;  
-                
-                return FLastOutput;
+                FLastOutput = result.Item4;
             }
-            else
-                return FLastOutput;
+
+            if (PrevGame != null)
+                VLGame.GameInstance = PrevGame;
+
+            return FLastOutput;
+            
         }
 
         void SetupEvents()

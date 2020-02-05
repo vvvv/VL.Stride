@@ -12,6 +12,15 @@ namespace VL.Xenko.Games
 {
     public class VLGame : Game
     {
+        /// <summary>
+        /// The current game instance, each game region sets this field before its inner Create/Update.
+        /// It gets restored to the previouse value (if it was not null) after Update of the region.
+        /// </summary>
+        // TODO: Get rid of me once we have scoped variables
+
+        [ThreadStatic]
+        public static Game GameInstance;
+
         public VLGame()
             : base()
         {

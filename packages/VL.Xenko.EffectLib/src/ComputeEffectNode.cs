@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using VL.Core;
+using VL.Xenko.Games;
 using VL.Xenko.Rendering;
 using VL.Xenko.Shaders;
 using Xenko.Core;
@@ -56,16 +57,14 @@ namespace VL.Xenko.EffectLib
             profilingKey = new ProfilingKey(description.Name);
         }
 
-        void Initialize(GraphicsDevice device, IServiceRegistry services)
+        void Initialize()
         {
-
+            var game = VLGame.GameInstance;
             instance?.Dispose();
             instance = null;
 
-            if (device == null || services == null)
+            if (game == null)
                 return;
-
-            graphicsDevice = device;
 
             instance = new DynamicEffectInstance("ComputeEffectShader");
             // TODO: Same code as in description
@@ -73,8 +72,8 @@ namespace VL.Xenko.EffectLib
             instance.Parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
             try
             {
-                instance.Initialize(services);
-                instance.UpdateEffect(graphicsDevice);
+                instance.Initialize(game.Services);
+                instance.UpdateEffect(game.GraphicsDevice);
             }
             catch (Exception e)
             {
@@ -106,6 +105,9 @@ namespace VL.Xenko.EffectLib
 
         public void Update()
         {
+            if (!initialized)
+                Initialize();
+
             if (!initialized)
                 return;
 
@@ -142,9 +144,7 @@ namespace VL.Xenko.EffectLib
         void ILowLevelAPIRender.Draw(RenderContext renderContext, RenderDrawContext drawContext, RenderView renderView, RenderViewStage renderViewStage, CommandList commandList)
         {
             if (!initialized)
-            {
-                Initialize(renderContext.GraphicsDevice, renderContext.Services);
-            }
+                return;
 
             using (drawContext.QueryManager.BeginProfile(Color.LightGreen, profilingKey))
             {

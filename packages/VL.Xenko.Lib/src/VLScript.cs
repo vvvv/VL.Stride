@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VL.Xenko.Core;
+using VL.Xenko.Games;
 using Xenko.Engine;
 using Xenko.Graphics;
 
@@ -16,9 +17,6 @@ namespace VL.Xenko
         /// </summary>
         public static string MainVLDocSrc => Path.Combine(Application.StartupPath,"..", "..", "..", "vl", "Main.vl");
 
-        // TODO: Get rid of me
-        public static Game GameInstance { get; private set; }
-
         private readonly Action VLUpdate;
         readonly VLContext FContext;
         readonly bool FGoFullscreen;
@@ -29,7 +27,7 @@ namespace VL.Xenko
             FContext = context;
             FGoFullscreen = goFullscreen;
             Game = game;
-            GameInstance = game;
+            VLGame.GameInstance = game;
 
             if (FContext != null)   
                 VLUpdate = FContext.Update;

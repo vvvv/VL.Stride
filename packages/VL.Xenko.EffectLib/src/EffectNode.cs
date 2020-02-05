@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using VL.Core;
+using VL.Xenko.Games;
 using VL.Xenko.Rendering;
 using VL.Xenko.Shaders;
 using Xenko.Core.Mathematics;
@@ -45,7 +46,7 @@ namespace VL.Xenko.EffectLib
 
         public void Initialize()
         {
-            var game = Inputs.FirstOrDefault().Value as Game;
+            var game = VLGame.GameInstance;
             instance?.Dispose();
             instance = null;
 
