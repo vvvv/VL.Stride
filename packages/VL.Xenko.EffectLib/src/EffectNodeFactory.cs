@@ -72,18 +72,19 @@ namespace VL.Xenko.EffectLib
 
         public MultiGameEffectNodeFactory()
         {
-            if (VLGame.GameInstance != null)
-            {
-                CreateTempGame(new Rectangle(), out var game, out var update);
-                AddGame(game);
-            }
-
-            NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(nodeDescriptions);
             Instance = this;
-            if (WaitingGame != null)
+
+            if (WaitingGame == null)
+            {
+                AddTempGame();
+                //AddGame(game);
+            }
+            else
             {
                 AddGame(WaitingGame);
             }
+
+            NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(nodeDescriptions);
         }
 
         public void AddGame(Game game, SynchronizationContext mainContext = null)
@@ -146,29 +147,20 @@ namespace VL.Xenko.EffectLib
             }
         }
 
-        public static void CreateTempGame(Rectangle bounds, out VLGame output, out Action runCallback)
+        private static void AddTempGame()
         {
             var game = new VLGame();
 #if DEBUG
             game.GraphicsDeviceManager.DeviceCreationFlags |= DeviceCreationFlags.Debug;
 #endif
-
-            SetupGameEvents(game);
-
-
+            SetupTempGameEvents(game);
 
             var context = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
             game.Run(context);
-            game.AddLayerRenderFeature();
-            runCallback = context.RunCallback;
 
-
-            //game.Window.Visible = true;
-
-            output = game;
         }
 
-        private static void SetupGameEvents(VLGame game)
+        private static void SetupTempGameEvents(VLGame game)
         {
             var wrStarted = new WeakReference(null);
 
@@ -178,7 +170,7 @@ namespace VL.Xenko.EffectLib
                 {
                     game.Window.AllowUserResizing = true;
 
-                    MultiGameEffectNodeFactory.Instance?.AddGame(game, SynchronizationContext.Current);
+                    Instance?.AddGame(game, SynchronizationContext.Current);
 
                     Game.GameStarted -= wrStarted.Target as EventHandler;
                 }
@@ -193,7 +185,7 @@ namespace VL.Xenko.EffectLib
             {
                 if (s == game)
                 {
-                    MultiGameEffectNodeFactory.Instance?.RemoveGame(game);
+                    Instance?.RemoveGame(game);
                     Game.GameDestroyed -= wrDestroyed.Target as EventHandler;
                 }
             };
