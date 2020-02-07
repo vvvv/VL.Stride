@@ -54,7 +54,6 @@ namespace VL.Xenko
             {
                 if (s == game)
                 {
-                    var script = new VLScript(null, game, false);
                     var assetBuildService = new AssetBuildService();
                     game.Services.AddService(assetBuildService);
                     game.Script.Add(assetBuildService);

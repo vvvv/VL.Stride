@@ -74,14 +74,14 @@ namespace VL.Xenko.EffectLib
         {
             Instance = this;
 
-            if (WaitingGame == null)
-            {
-                AddTempGame();
-                //AddGame(game);
-            }
-            else
+            //check whether a game was created before the factory
+            if (WaitingGame != null)
             {
                 AddGame(WaitingGame);
+            }
+            else //if not, use a temporary one to find all effects
+            {
+                AddTempGame();
             }
 
             NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(nodeDescriptions);
@@ -153,48 +153,12 @@ namespace VL.Xenko.EffectLib
 #if DEBUG
             game.GraphicsDeviceManager.DeviceCreationFlags |= DeviceCreationFlags.Debug;
 #endif
-            SetupTempGameEvents(game);
-
             var context = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
             game.Run(context);
 
+            Instance?.AddGame(game, SynchronizationContext.Current);
+
         }
-
-        private static void SetupTempGameEvents(VLGame game)
-        {
-            var wrStarted = new WeakReference(null);
-
-            EventHandler started = (s, e) =>
-            {
-                if (s == game)
-                {
-                    game.Window.AllowUserResizing = true;
-
-                    Instance?.AddGame(game, SynchronizationContext.Current);
-
-                    Game.GameStarted -= wrStarted.Target as EventHandler;
-                }
-            };
-
-            wrStarted.Target = started;
-
-            Game.GameStarted += started;
-
-            var wrDestroyed = new WeakReference(null);
-            EventHandler destroyed = (s, e) =>
-            {
-                if (s == game)
-                {
-                    Instance?.RemoveGame(game);
-                    Game.GameDestroyed -= wrDestroyed.Target as EventHandler;
-                }
-            };
-
-            wrDestroyed.Target = destroyed;
-
-            Game.GameDestroyed += destroyed;
-        }
-
     }
 
     public class EffectNodeFactory : IVLNodeDescriptionFactory
