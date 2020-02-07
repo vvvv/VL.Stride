@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="DLbPUfgFMXLPoRKR0E0WbF" LanguageVersion="2019.1.0-0978-gabb4253318" Version="0.128">
-  <NugetDependency Id="FeSAYsTHh3BMyO28kRm6jL" Location="VL.CoreLib" Version="0.96.6" />
+<Document xmlns:p="property" Id="DLbPUfgFMXLPoRKR0E0WbF" LanguageVersion="2019.2.0-0197-a168e3b40d" Version="0.128">
+  <NugetDependency Id="FeSAYsTHh3BMyO28kRm6jL" Location="VL.CoreLib" Version="2019.2.0-0197-ga168e3b40d" />
   <Patch Id="LJ2kmwJCTUoLVzSBB1MlJA">
     <Canvas Id="VGizQ5KZ7t2OVrOfNroTum" DefaultCategory="Main" CanvasType="FullCategory">
       <!--
@@ -230,7 +230,7 @@
               </p:TypeAnnotation>
             </Pad>
             <Node Bounds="298,205,374,123" Id="HB4Pz1PntyjNXKQqwdZ9aa">
-              <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="VL.CoreLib.vl">
+              <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                 <Choice Kind="ApplicationStatefulRegion" Name="Repeat" />
                 <CategoryReference Kind="Category" Name="Primitive" />
@@ -460,6 +460,34 @@
           <Link Id="GpK91FcDdpjOd244XHPfIc" Ids="DRI9TguZ0yGNqaqD8sgeke,UJ9PHMIiDY0NoflNc8y2BA" IsHidden="true" />
         </Patch>
       </Node>
+      <!--
+
+    ************************ RegisterServices ************************
+
+-->
+      <Node Name="RegisterServices" Bounds="520,239,80,80" Id="HBZoYLEazKBOodyszXY7D7">
+        <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+          <Choice Kind="OperationDefinition" Name="Operation" />
+        </p:NodeReference>
+        <Patch Id="IuCOb4axlYJPQzDEC36zRD">
+          <Pin Id="PFD55HxgGRkOWSCSWACkS2" Name="Input" Kind="InputPin" />
+          <ControlPoint Id="DnxwWJRcjNGOWEo2OOkZSi" Bounds="547,266" />
+          <Link Id="MLEBCcytOHkQURMcQOzPzL" Ids="PFD55HxgGRkOWSCSWACkS2,DnxwWJRcjNGOWEo2OOkZSi" IsHidden="true" />
+          <Node Bounds="561,295" Id="N87ThnbIbfOM7ie6p3q9ak">
+            <p:NodeReference LastCategoryFullName="System.Windows.Forms.MessageBox" LastSymbolSource="System.Windows.Forms.dll">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <CategoryReference Kind="AssemblyCategory" Name="MessageBox" />
+              <Choice Kind="OperationCallFlag" Name="Show" />
+            </p:NodeReference>
+            <Pin Id="A61xsKZI0krLZv3Vizqgbc" Name="Text" Kind="InputPin" DefaultValue="Main">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="String" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="URb7MXo4CL4M9GEU9u6z2i" Name="Result" Kind="OutputPin" />
+          </Node>
+        </Patch>
+      </Node>
     </Canvas>
     <!--
 
@@ -663,14 +691,15 @@
             <Pin Id="JYIzz04ZuInMPd90qFssjV" Name="Texture" Kind="InputPin" />
             <Pin Id="QaMcHOajtY1M0OL0QdHm0o" Name="Transformation" Kind="InputPin" />
             <Pin Id="OvNxO0aaK47NPTx9NEwRIa" Name="Color" Kind="InputPin" />
-            <Pin Id="BSAsMNNZMHAL9tjh4xxI8X" Name="keep Aspect" Kind="InputPin" />
+            <Pin Id="BjchzRr9XQmNzgclhFlhBd" Name="Screen Space" Kind="InputPin" />
+            <Pin Id="J79yA0H2m3cNy9Ir4yq27s" Name="Enabled" Kind="InputPin" />
+            <Pin Id="CMSFTZg8NsnPR0TBX3FpnS" Name="Keep Aspect" Kind="InputPin" />
+            <Pin Id="IDbcptMYsxdNRSQBAF625M" Name="Entity" Kind="OutputPin" />
             <Pin Id="OawKNlFxS4FP6rx1gH3JcT" Name="ScreenSpace" Kind="InputPin" DefaultValue="True">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="J79yA0H2m3cNy9Ir4yq27s" Name="Enabled" Kind="InputPin" />
-            <Pin Id="IDbcptMYsxdNRSQBAF625M" Name="Entity" Kind="OutputPin" />
           </Node>
           <Node Bounds="1355,225,80,19" Id="Fkd3Zs3Q0NjMlNDhuk8EJq">
             <p:NodeReference LastCategoryFullName="2D.Transform" LastSymbolSource="CoreLibBasics.vl">
@@ -757,12 +786,13 @@
   <DocumentDependency Id="OUQtl5vYkgmLU2G6DzqTke" Location="../../packages/VL.Xenko/VL.Xenko.vl" />
   <PlatformDependency Id="J1Izg3cpgTcPLqtngY7QYK" Location="VL.Xenko.EffectLib.dll" />
   <DocumentDependency Id="TbjDeprQbgILGDXzRtQrnZ" Location="../../packages/VL.Xenko.Windows/VL.Xenko.Windows.vl" />
-  <NugetDependency Id="Ks662q1kET1Mr9dcAdydpc" Location="VL.Skia" Version="2019.1.0-0663-gfad572835f" />
-  <NugetDependency Id="MpQFvNFnPaINDP3Cvfs6nx" Location="VL.EditingFramework" Version="2019.1.0-0684-gbaa03719b2" />
+  <NugetDependency Id="Ks662q1kET1Mr9dcAdydpc" Location="VL.Skia" Version="2019.2.0-0197-ga168e3b40d" />
+  <NugetDependency Id="MpQFvNFnPaINDP3Cvfs6nx" Location="VL.EditingFramework" Version="2019.2.0-0197-ga168e3b40d" />
   <DocumentDependency Id="IOE3PH7wVaVLYk8oDarW7k" Location="./RaymarchTest.vl" />
   <DocumentDependency Id="G9PSlnot3QTNMkTyvpREVE" Location="./ShaderFX.vl" />
   <DocumentDependency Id="N98PFGhNRNxNPqr9MCuxCs" Location="./Video.vl" />
   <DocumentDependency Id="RvwiCpRaGGYOSsqC91QSsd" Location="./SimpleEntitiesTest.vl" />
   <DocumentDependency Id="NERlpMgoCmEM3R9mx0owJA" Location="./ChromaKeyTest.vl" />
   <DocumentDependency Id="FOZ0QlVVv7yLn40jEfX9fU" Location="./VideoDemo.vl" />
+  <PlatformDependency Id="GtrL6SqGLkxNHBkU2Ml5L4" Location="System.Windows.Forms" />
 </Document>

@@ -37,6 +37,8 @@ namespace VL.Xenko
 
         public override async Task Execute()
         {
+            VLGame.GameInstance = Game;
+
             if (FGoFullscreen)
             {
                 //if (FContext.Runtime is RuntimeHost rth)

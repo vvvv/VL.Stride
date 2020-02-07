@@ -72,8 +72,12 @@ namespace VL.Xenko.EffectLib
 
         public MultiGameEffectNodeFactory()
         {
-            CreateTempGame(new Rectangle(), out var game, out var update);
-            AddGame(game);
+            if (VLGame.GameInstance != null)
+            {
+                CreateTempGame(new Rectangle(), out var game, out var update);
+                AddGame(game);
+            }
+
             NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(nodeDescriptions);
             Instance = this;
             if (WaitingGame != null)
