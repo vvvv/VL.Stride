@@ -39,7 +39,7 @@ namespace VL.Xenko.Assets
             {
                 await Script.NextFrame();
                 if (!workQueue.IsEmpty)
-                    await ContentLoader?.BuildAndReloadAssets(DequeueItems());
+                    ContentLoader?.BuildAndReloadAssets(DequeueItems());
             }
         }
 

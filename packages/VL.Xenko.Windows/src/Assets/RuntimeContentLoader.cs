@@ -185,12 +185,20 @@ namespace VL.Xenko.Assets
         {
         }
 
-        public async Task<Dictionary<AssetItem, object>> BuildAndReloadAssets(IEnumerable<AssetItem> assetsToRebuild)
+        public void BuildAndReloadAssets(IEnumerable<AssetItem> assetsToRebuild)
         {
             var assetList = assetsToRebuild.ToList();
             if (assetList.Count == 0)
-                return null;
+                return;
 
+            Game.Script.AddTask(async () =>
+            {
+                await BuildAndReloadAssetsInternal(assetList);
+            });
+        }
+
+        public async Task<Dictionary<AssetItem, object>> BuildAndReloadAssetsInternal(List<AssetItem> assetList)
+        {
             logger?.Debug($"Starting BuildAndReloadAssets for assets {string.Join(", ", assetList.Select(x => x.Location))}");
             var value = Interlocked.Increment(ref loadingAssetCount);
             AssetLoading?.Invoke(this, new ContentLoadEventArgs(value));
