@@ -61,6 +61,7 @@ namespace VL.Xenko.EffectLib
     public class MultiGameEffectNodeFactory : IVLNodeDescriptionFactory
     {
         public static Game WaitingGame;
+        public static SynchronizationContext WaitingSyncContext;
         public static Action WaitingRunCallback;
         public static MultiGameEffectNodeFactory Instance { get; private set; }
 
@@ -77,7 +78,7 @@ namespace VL.Xenko.EffectLib
             //check whether a game was created before the factory
             if (WaitingGame != null)
             {
-                AddGame(WaitingGame);
+                AddGame(WaitingGame, WaitingSyncContext);
             }
             else //if not, use a temporary one to find all effects
             {

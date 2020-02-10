@@ -57,6 +57,7 @@ namespace VL.Xenko
                 game.Window.AllowUserResizing = true;
 
                 MultiGameEffectNodeFactory.WaitingGame = game;
+                MultiGameEffectNodeFactory.WaitingSyncContext = ServiceRegistry.Default.GetService<SynchronizationContext>();
 
             };
 
