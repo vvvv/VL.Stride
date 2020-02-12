@@ -26,7 +26,6 @@ namespace VL.Xenko
 
             var context = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
             game.Run(context);
-            game.AddLayerRenderFeature();
             runCallback = context.RunCallback;
 
             window = game.Window;

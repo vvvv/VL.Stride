@@ -86,6 +86,8 @@ namespace VL.Xenko
         }
 
         Game PrevGame;
+        private bool FSceneGraphInitialized;
+
         public TOutput Update(Func<TState> create, Func<TState, Tuple<TState, Entity, Scene, TOutput>> update, out GameWindow window, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, bool reset = false, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
         {
             PrevGame = VLGame.GameInstance;
@@ -98,19 +100,18 @@ namespace VL.Xenko
                 VLGame.GameInstance = game;
                 SetupEvents();
                 FLastPosition = gameWindow.Position;
-                var rootScene = game.SceneSystem.SceneInstance.RootScene;
-                sceneLink = new SceneLink(rootScene);
-                entitySceneLink = new EntitySceneLink(rootScene);
                 FState = create();
                 //game.Script.Add(updateScript);
             }
 
+            //v-sync
             if (verticalSync != game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace)
             {
                 game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace = verticalSync;
                 game.GraphicsDeviceManager.ApplyChanges();
             }
 
+            //write bounts to patch?
             if (gameWindow != null && gameWindow.Position != FLastPosition)
             {
                 UpdateBounds(null);
@@ -118,7 +119,18 @@ namespace VL.Xenko
             }
 
             window = gameWindow;
-            if (enabled)
+            
+            //init scene graph links and add layer renderer
+            if (entitySceneLink == null && game.SceneSystem.SceneInstance != null)
+            {
+                game.AddLayerRenderFeature();
+                var rootScene = game.SceneSystem.SceneInstance.RootScene;
+                sceneLink = new SceneLink(rootScene);
+                entitySceneLink = new EntitySceneLink(rootScene);
+                FSceneGraphInitialized = true;
+            }
+
+            if (enabled && FSceneGraphInitialized)
             {
                 //updateScript.UpdateFunc = () => update(FState, game);
                 //runCallback?.Invoke(); //calls Game.Tick();
@@ -128,11 +140,18 @@ namespace VL.Xenko
 
                 game.SceneSystem.GraphicsCompositor.GetFirstForwardRenderer(out var forwardRenderer);
                 forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
-
+                
                 FState = result.Item1;
-                entitySceneLink?.Update(result.Item2);
-                sceneLink?.Update(result.Item3);
+
+
+                entitySceneLink.Update(result.Item2);
+                sceneLink.Update(result.Item3);
+
                 FLastOutput = result.Item4;
+            }
+            else if (enabled) //update game, e.g. splash screen is showing
+            {
+                runCallback?.Invoke(); //calls Game.Tick();
             }
 
             if (PrevGame != null)
