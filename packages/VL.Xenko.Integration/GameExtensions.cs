@@ -33,9 +33,6 @@ namespace VL.Xenko
             // Register the Xenko game in our registry so node factories can fetch it later
             ServiceRegistry.Default.RegisterService(game);
 
-            // Register the main synchronization context
-            ServiceRegistry.Default.RegisterService(SynchronizationContext.Current);
-
             //// Game is driving the message loop so tell windows forms about it
             //Application.RegisterMessageLoop(() => game.IsRunning);
 
@@ -43,6 +40,9 @@ namespace VL.Xenko
             {
                 // Raise Idle - needed by VL context to initiailize
                 Application.RaiseIdle(System.EventArgs.Empty);
+
+                // Register the main synchronization context
+                ServiceRegistry.Default.RegisterService(SynchronizationContext.Current);
 
                 // Register the context and the session in Xenko so we can fetch it later
                 game.Services.AddService(context);

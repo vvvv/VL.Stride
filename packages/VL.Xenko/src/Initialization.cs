@@ -1,13 +1,15 @@
 ﻿using VL.Core;
+using VL.Core.CompilerServices;
 
-namespace VL.Lib
+[assembly: AssemblyInitializer(typeof(VL.Xenko.Core.Initialization))]
+
+namespace VL.Xenko.Core
 {
-    // Importer will look for static class VL.Lib.Initialization in each assembly
-    static class Initialization
+    public sealed class Initialization : AssemblyInitializer<Initialization>
     {
-        public static void RegisterServices(IVLFactory factory)
+        protected override void RegisterServices(IVLFactory factory)
         {
-            VL.Xenko.Core.Serialization.RegisterSerializers(factory);
+            Serialization.RegisterSerializers(factory);
         }
     }
 }
