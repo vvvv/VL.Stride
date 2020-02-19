@@ -100,6 +100,7 @@ namespace VL.Xenko
                 VLGame.GameInstance = game;
                 SetupEvents();
                 FLastPosition = gameWindow.Position;
+                gameWindow.Title = "Game";
                 FState = create();
                 //game.Script.Add(updateScript);
             }
@@ -131,10 +132,7 @@ namespace VL.Xenko
             }
 
             if (enabled && FSceneGraphInitialized)
-            {
-                //updateScript.UpdateFunc = () => update(FState, game);
-                //runCallback?.Invoke(); //calls Game.Tick();
-                //var result = updateScript.UpdateResult;
+            { 
                 var result = update(FState);
                 runCallback?.Invoke(); //calls Game.Tick();
 
