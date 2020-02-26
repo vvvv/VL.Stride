@@ -7,6 +7,7 @@ using Xenko.Rendering.Materials;
 using System.Globalization;
 using Xenko.Graphics;
 using Buffer = Xenko.Graphics.Buffer;
+using System.Linq;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
@@ -56,6 +57,17 @@ namespace VL.Xenko.Shaders.ShaderFX
             return new ShaderClassSource(shaderName + GetNameForType<T1>() + "To" + GetNameForType<T2>(), genericArguments);
         }
 
+        public static ShaderClassSource GetShaderSourceForInputs<TOut>(string shaderName, IEnumerable<IComputeNode> inputs, params object[] genericArguments)
+        {
+            var inputTypeNames = inputs.Select(i => i.GetType())
+                .Where(t => t.IsGenericType)
+                .Select(t => t.GenericTypeArguments.Last())
+                .Select(t => GetNameForType(t));
+
+            var inputTypesString = string.Join("", inputTypeNames);
+            return new ShaderClassSource(shaderName + inputTypesString + GetNameForType<TOut>(), genericArguments);
+        }
+
         static Dictionary<Type, string> KnownTypes = new Dictionary<Type, string>();
 
         static ShaderFXUtils()
@@ -77,10 +89,15 @@ namespace VL.Xenko.Shaders.ShaderFX
 
         public static string GetNameForType<T>()
         {
-            if (KnownTypes.TryGetValue(typeof(T), out var result))
+            return GetNameForType(typeof(T));        
+        }
+
+        public static string GetNameForType(Type t)
+        {
+            if (KnownTypes.TryGetValue(t, out var result))
                 return result;
 
-            throw new NotImplementedException("No name defined for type: " + typeof(T).Name);            
+            throw new NotImplementedException("No name defined for type: " + t.Name);
         }
 
         public static ShaderMixinSource CreateMixin(this ShaderClassSource shaderClassSource)
@@ -100,6 +117,13 @@ namespace VL.Xenko.Shaders.ShaderFX
         }
 
         public static IEnumerable<IComputeNode> ReturnIfNotNull(params IComputeNode[] children)
+        {
+            foreach (var child in children)
+                if (child != null)
+                    yield return child;
+        }
+
+        public static IEnumerable<IComputeNode> ReturnIfNotNull(IEnumerable<IComputeNode> children)
         {
             foreach (var child in children)
                 if (child != null)
