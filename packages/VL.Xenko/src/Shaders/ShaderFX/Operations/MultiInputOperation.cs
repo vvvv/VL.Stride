@@ -11,15 +11,10 @@ using System.Linq;
 
 namespace VL.Xenko.Shaders.ShaderFX
 {
-    public class CompositionShaderInput
-    {
-        public IComputeNode Shader;
-        public string CompositionName; 
-    }
 
     public class MultiInputOperation<TOut> : ComputeValue<TOut>
     {
-        public MultiInputOperation(string operatorName, IEnumerable<CompositionShaderInput> inputs, bool nameOnlyDependsOnOutput, params object[] genericArguments)
+        public MultiInputOperation(string operatorName, IEnumerable<ShaderInput> inputs, bool nameOnlyDependsOnOutput, params object[] genericArguments)
         {
             ShaderName = operatorName;
             Inputs = inputs.ToList();
@@ -27,7 +22,7 @@ namespace VL.Xenko.Shaders.ShaderFX
             NameOnlyDependsOnOutput = nameOnlyDependsOnOutput;
         }
 
-        List<CompositionShaderInput> Inputs { get; }
+        List<ShaderInput> Inputs { get; }
         public object[] GenericArguments { get; }
 
         public bool NameOnlyDependsOnOutput { get; }
