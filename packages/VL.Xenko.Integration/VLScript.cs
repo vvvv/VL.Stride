@@ -57,6 +57,9 @@ namespace VL.Xenko
                 Game.GraphicsDeviceManager.ApplyChanges();
             }
 
+            if (Game is VLGame vlGame)
+                vlGame.AddLayerRenderFeature();
+
             while (true)
             {
                 await Script.NextFrame();

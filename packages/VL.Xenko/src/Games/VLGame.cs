@@ -38,7 +38,7 @@ namespace VL.Xenko.Games
             var renderStages = SceneSystem.GraphicsCompositor.RenderStages;
             var opaqueStage = renderStages.FirstOrDefault(s => s.Name == "Opaque") ?? renderStages.FirstOrDefault();
 
-            if (opaqueStage != null)
+            if (opaqueStage != null && SceneSystem.GraphicsCompositor.RenderFeatures.None(rf => rf is LayerRenderFeature))
             {
                 var stageSelector = new SimpleGroupToRenderStageSelector()
                 {
