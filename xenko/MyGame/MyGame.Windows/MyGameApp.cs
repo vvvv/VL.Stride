@@ -1,6 +1,6 @@
 using System;
-using Xenko.Engine;
 using VL.Xenko;
+using VL.Xenko.Games;
 
 namespace MyGame.Windows
 {
@@ -9,10 +9,9 @@ namespace MyGame.Windows
         [STAThread]
         static void Main(string[] args)
         {
-            using (var game = new Game())
+            using (var game = new VLGame())
             {
-                var vlMainDoc = @"..\..\..\vl\Main.vl";
-                game.AttachVL(vlMainDoc);
+                game.AttachVL(VLScript.MainVLDocSrc);
                 game.Run();
             }
         }
