@@ -8,13 +8,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="VL.UI.Forms" Version="2019.2.0-0236-g52759e123e" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\VL.Xenko.EffectLib\src\VL.Xenko.EffectLib.csproj" />
     <ProjectReference Include="..\..\VL.Xenko.Windows\src\VL.Xenko.Windows.csproj" />
     <ProjectReference Include="..\..\VL.Xenko\src\VL.Xenko.csproj" />
     <ProjectReference Include="..\..\XenkoLiveEditor\XenkoLiveEditor\XenkoLiveEditor.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(SolutionName)' == 'VL'">
+    <ProjectReference Include="..\..\..\..\..\vvvv50\VL.UI.Forms\VL.UI.Forms.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(SolutionName)' != 'VL'">
+    <PackageReference Include="VL.UI.Core" Version="2019.2.0-0236-g52759e123e" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="Nerdbank.GitVersioning" Version="2.3.186">

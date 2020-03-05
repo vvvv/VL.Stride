@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
-    <PackageReference Include="VL.Core" Version="2019.2.0-0236-g52759e123e" />
     <!-- A pure package dependency so on install all VL packages come in -->
     <PackageReference Include="Xenko.Core" Version="3.2.0.1-beta02-vvvv-0833" />
     <PackageReference Include="Xenko.Core.Assets.CompilerApp" Version="3.2.0.1-beta02-vvvv-0833" IncludeAssets="build;buildTransitive" />
@@ -26,6 +25,12 @@
   <Target Name="IncludeXenkoPackageContent" BeforeTargets="InferPackageContents" DependsOnTargets="_XenkoPrepareAssetsForPack">
     <Message Importance="high" Text="Called Xenko package targets" />
   </Target>
+  <ItemGroup Condition="'$(SolutionName)' == 'VL'">
+    <ProjectReference Include="..\..\..\..\VL.Core\src\VL.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(SolutionName)' != 'VL'">
+    <PackageReference Include="VL.Core" Version="2019.2.0-0236-g52759e123e" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Update="Effects\Common\Common_BufferUtils.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -315,6 +320,48 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>FloatToScalar.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Distance\DistanceFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DistanceFloat.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Distance\DistanceFloat2.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DistanceFloat2.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Distance\DistanceFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DistanceFloat3.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Divide\DivideFloat2.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DivideFloat2.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Divide\DivideFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DivideFloat3.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Divide\DivideFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DivideFloat4.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Divide\DivideInt.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DivideInt.xksl</DependentUpon>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Operations\DivMod\DivModUInt.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -333,6 +380,30 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>LengthFloat4.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Lerp\LerpFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LerpFloat.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Lerp\LerpFloat2.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LerpFloat2.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Lerp\LerpFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LerpFloat3.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\Lerp\LerpFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LerpFloat4.xksl</DependentUpon>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Operations\Minus\MinusFloat.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -350,6 +421,30 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>PlusFloat.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\SmoothStep\SmoothStepFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SmoothStepFloat.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\SmoothStep\SmoothStepFloat2.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SmoothStepFloat2.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\SmoothStep\SmoothStepFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SmoothStepFloat3.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Operations\SmoothStep\SmoothStepFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SmoothStepFloat4.xksl</DependentUpon>
     </Compile>
     <Compile Update="Effects\ShaderFX\Operations\Transform\TransformFloat4.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -689,6 +784,34 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>FloatToScalar.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Operations\Distance\DistanceFloat.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>DistanceFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\Distance\DistanceFloat2.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>DistanceFloat2.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\Distance\DistanceFloat3.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>DistanceFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\Divide\DivideFloat2.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>DivideFloat2.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\Divide\DivideFloat3.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>DivideFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\Divide\DivideFloat4.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>DivideFloat4.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\Divide\DivideInt.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>DivideInt.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Operations\DivMod\DivModUInt.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>DivModUInt.xksl.cs</LastGenOutput>
@@ -701,6 +824,22 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>LengthFloat4.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Operations\Lerp\LerpFloat.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>LerpFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\Lerp\LerpFloat2.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>LerpFloat2.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\Lerp\LerpFloat3.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>LerpFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\Lerp\LerpFloat4.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>LerpFloat4.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Operations\Minus\MinusFloat.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>MinusFloat.xksl.cs</LastGenOutput>
@@ -712,6 +851,22 @@
     <None Update="Effects\ShaderFX\Operations\Plus\PlusFloat.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>PlusFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\SmoothStep\SmoothStepFloat.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>SmoothStepFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\SmoothStep\SmoothStepFloat2.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>SmoothStepFloat2.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\SmoothStep\SmoothStepFloat3.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>SmoothStepFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Operations\SmoothStep\SmoothStepFloat4.xksl">
+      <Generator>XenkoShaderKeyGenerator</Generator>
+      <LastGenOutput>SmoothStepFloat4.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\Operations\Transform\TransformFloat4.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
