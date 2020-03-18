@@ -38,7 +38,7 @@ namespace VL.Xenko.Graphics
         {
             using (var data = image.GetData())
             {
-                var dp = new DataPointer(data.Pointer, data.Size);
+                var dp = new DataPointer(data.Bytes.Pin().Pointer, data.Bytes.Length);
                 texture.SetData(commandList, dp, arraySlice, mipSlice, region);
             }
 
