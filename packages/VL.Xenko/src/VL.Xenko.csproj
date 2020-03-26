@@ -29,7 +29,7 @@
     <ProjectReference Include="..\..\..\..\VL.Core\src\VL.Core.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(SolutionName)' != 'VL'">
-    <PackageReference Include="VL.Core" Version="2020.1.0-0011-gf364e3a421" />
+    <PackageReference Include="VL.Core" Version="2020.1.0-0035-g6884c85aae" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Effects\Common\Common_BufferUtils.xksl.cs">
@@ -68,6 +68,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>HappyCalc.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\HappyLibs\HappyNoise.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\HappyLibs\HappyRaymarch.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -80,11 +85,46 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>HappySDF.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\HappyLibs\HappyTransform.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\HappyLibs\VectorUtils.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\InstancedMeshStreamOut.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>InstancedMeshStreamOut.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\AzureKinect\ReconstructPointCloud.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Buffer\DeclBufferFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Buffer\DeclBufferFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Buffer\DeclRWBufferFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Buffer\GetItemBufferFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\Buffer\GetItemBufferFloat4.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -92,17 +132,42 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>GetItemBufferFloat4.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Buffer\GetItemRWBufferFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Buffer\SetItemRWBufferFloat4.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>SetItemRWBufferFloat4.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\ComputeValue\ComputeBool.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\ComputeValue\ComputeFloat.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>ComputeFloat.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\ComputeValue\ComputeFloat2.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\ComputeValue\ComputeFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\ComputeValue\ComputeFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\ComputeValue\ComputeInt.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -128,17 +193,37 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ComputeUInt.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\ComputeVoid\ComputeOrder.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\ComputeVoid\ComputeVoid.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>ComputeVoid.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Constant\ConstantFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Constant\ConstantFloat2.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Constant\ConstantFloat3.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>ConstantFloat3.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Constant\ConstantFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\Constant\ConstantUInt.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -158,6 +243,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DoFloat4.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Control\IfThen.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Control\IfThenElse.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField2D\FbMFloat2ToFloat.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -169,6 +264,16 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>NoiseFloat2ToFloat.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField2D\NoisePerlinFloat2ToFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField2D\NoiseWorleyFastFloat2ToFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField2D\NoiseWorleyFastOverloadTest.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -187,6 +292,16 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>ToTextureSF2D.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\AddSDF.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\BoxSDF.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\CombineSDF.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -212,6 +327,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DomainRepeat2DSF3D.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\DomainRepeatSF3D.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\IntersectSDF.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\JuliaSDF.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -224,17 +349,97 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>NoiseFloat3ToFloat.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\NoisePerlin.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\NoiseWorleyFast.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\PlaneSDF.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\Raymarcher.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\RaymarcherMatcap.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\SDF3D.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\SphereSDF.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\ToTextureSF3D.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\UnionSDF.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>UnionSDF.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\ScalarField3D\UnionStairsSDF.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\VectorField3D\DomainOpVF3D.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\FieldTrip\VectorField3D\NoiseFloat3ToFloat3.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>NoiseFloat3ToFloat3.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\VectorField3D\NoisePerlinFloat3ToFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\VectorField3D\NoiseWorleyFastFloat3ToFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\FieldTrip\VertexTest.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\DelegateFloat2ToFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\DelegateFloat3ToFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\Float2ToFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\Functions\Float2ToFloat2.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -248,6 +453,26 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Float2ToFloat4.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\Float3ToFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\Float3ToFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\Float3ToFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\Float4ToFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Functions\FloatFloatToFloat.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -259,6 +484,26 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>InvokeFloat2ToFloat.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\InvokeFloat2ToFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\InvokeFloat3ToFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Functions\InvokeFloat4ToFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Input\DeclBool.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\Input\DeclFloat.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -284,6 +529,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DeclFloat4.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Input\DeclMatrix.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Input\DeclUInt.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -302,17 +552,47 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>InputFloat.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Input\InputFloat2.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Input\InputFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Input\InputFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Input\InputKeyMatrix.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>InputKeyMatrix.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Input\InputMatrix.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Input\InputUInt.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>InputUInt.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Join\JoinFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Join\JoinInt2.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\Operations\Conversion\FloatToScalar.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -464,11 +744,36 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ShaderFXGraphEffect.xkfx</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Split\GetMemberFloat2Float.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Split\GetMemberFloat4Float.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Split\GetMemberFloat4Float3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Texture\DeclTexture.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Texture\LoadTextureFloat.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>LoadTextureFloat.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Texture\LoadTextureFloat2.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\Texture\LoadTextureFloat3.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -476,11 +781,26 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>LoadTextureFloat3.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\ShaderFX\Texture\LoadTextureFloat4.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Texture\SampleTextureFloat.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\ShaderFX\Texture\SampleTextureFloat2.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>SampleTextureFloat2.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\ShaderFX\Texture\SampleTextureFloat3.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\ShaderFX\Texture\SampleTextureFloat4.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -560,11 +880,36 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>StreamVariableFloat4.xksl</DependentUpon>
     </Compile>
+    <Compile Update="Effects\TextureFX\ChromaKey.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\TextureFX\Invert.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Effects\TextureFX\TextureFX.xksl.cs">
       <DesignTime>True</DesignTime>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>TextureFX.xksl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\TextureFX\TextureFXGraph.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\TextureFX\TextureFXGraphEffect.xkfx.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Effects\TextureFX\Threshold.xksl.cs">
+      <DesignTime>True</DesignTime>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Effects\Utils\Utils_AxisDraw.xksl.cs">
       <DesignTime>True</DesignTime>
@@ -616,6 +961,9 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>HappyCalc.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\HappyLibs\HappyNoise.xksl">
+      <LastGenOutput>HappyNoise.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\HappyLibs\HappyRaymarch.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>HappyRaymarch.xksl.cs</LastGenOutput>
@@ -624,21 +972,57 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>HappySDF.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\HappyLibs\HappyTransform.xksl">
+      <LastGenOutput>HappyTransform.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\HappyLibs\VectorUtils.xksl">
+      <LastGenOutput>VectorUtils.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\InstancedMeshStreamOut.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>InstancedMeshStreamOut.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\AzureKinect\ReconstructPointCloud.xksl">
+      <LastGenOutput>ReconstructPointCloud.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Buffer\DeclBufferFloat.xksl">
+      <LastGenOutput>DeclBufferFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Buffer\DeclBufferFloat4.xksl">
+      <LastGenOutput>DeclBufferFloat4.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Buffer\DeclRWBufferFloat4.xksl">
+      <LastGenOutput>DeclRWBufferFloat4.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Buffer\GetItemBufferFloat.xksl">
+      <LastGenOutput>GetItemBufferFloat.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\Buffer\GetItemBufferFloat4.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>GetItemBufferFloat4.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Buffer\GetItemRWBufferFloat4.xksl">
+      <LastGenOutput>GetItemRWBufferFloat4.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Buffer\SetItemRWBufferFloat4.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>SetItemRWBufferFloat4.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\ComputeValue\ComputeBool.xksl">
+      <LastGenOutput>ComputeBool.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\ComputeValue\ComputeFloat.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>ComputeFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\ComputeValue\ComputeFloat2.xksl">
+      <LastGenOutput>ComputeFloat2.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\ComputeValue\ComputeFloat3.xksl">
+      <LastGenOutput>ComputeFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\ComputeValue\ComputeFloat4.xksl">
+      <LastGenOutput>ComputeFloat4.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\ComputeValue\ComputeInt.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -656,13 +1040,25 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>ComputeUInt.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\ComputeVoid\ComputeOrder.xksl">
+      <LastGenOutput>ComputeOrder.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\ComputeVoid\ComputeVoid.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>ComputeVoid.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Constant\ConstantFloat.xksl">
+      <LastGenOutput>ConstantFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Constant\ConstantFloat2.xksl">
+      <LastGenOutput>ConstantFloat2.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Constant\ConstantFloat3.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>ConstantFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Constant\ConstantFloat4.xksl">
+      <LastGenOutput>ConstantFloat4.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\Constant\ConstantUInt.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -676,6 +1072,12 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>DoFloat4.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Control\IfThen.xksl">
+      <LastGenOutput>IfThen.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Control\IfThenElse.xksl">
+      <LastGenOutput>IfThenElse.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\FieldTrip\ScalarField2D\FbMFloat2ToFloat.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>FbMFloat2ToFloat.xksl.cs</LastGenOutput>
@@ -683,6 +1085,12 @@
     <None Update="Effects\ShaderFX\FieldTrip\ScalarField2D\NoiseFloat2ToFloat.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>NoiseFloat2ToFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField2D\NoisePerlinFloat2ToFloat.xksl">
+      <LastGenOutput>NoisePerlinFloat2ToFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField2D\NoiseWorleyFastFloat2ToFloat.xksl">
+      <LastGenOutput>NoiseWorleyFastFloat2ToFloat.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\FieldTrip\ScalarField2D\NoiseWorleyFastOverloadTest.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -695,6 +1103,12 @@
     <None Update="Effects\ShaderFX\FieldTrip\ScalarField2D\ToTextureSF2D.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>ToTextureSF2D.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\AddSDF.xksl">
+      <LastGenOutput>AddSDF.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\BoxSDF.xksl">
+      <LastGenOutput>BoxSDF.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\CombineSDF.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -712,6 +1126,12 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>DomainRepeat2DSF3D.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\DomainRepeatSF3D.xksl">
+      <LastGenOutput>DomainRepeatSF3D.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\IntersectSDF.xksl">
+      <LastGenOutput>IntersectSDF.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\JuliaSDF.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>JuliaSDF.xksl.cs</LastGenOutput>
@@ -720,13 +1140,61 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>NoiseFloat3ToFloat.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\NoisePerlin.xksl">
+      <LastGenOutput>NoisePerlin.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\NoiseWorleyFast.xksl">
+      <LastGenOutput>NoiseWorleyFast.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\PlaneSDF.xksl">
+      <LastGenOutput>PlaneSDF.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\Raymarcher.xksl">
+      <LastGenOutput>Raymarcher.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\RaymarcherMatcap.xksl">
+      <LastGenOutput>RaymarcherMatcap.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\SDF3D.xksl">
+      <LastGenOutput>SDF3D.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\SphereSDF.xksl">
+      <LastGenOutput>SphereSDF.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\ToTextureSF3D.xksl">
+      <LastGenOutput>ToTextureSF3D.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\UnionSDF.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>UnionSDF.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\FieldTrip\ScalarField3D\UnionStairsSDF.xksl">
+      <LastGenOutput>UnionStairsSDF.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\VectorField3D\DomainOpVF3D.xksl">
+      <LastGenOutput>DomainOpVF3D.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\FieldTrip\VectorField3D\NoiseFloat3ToFloat3.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>NoiseFloat3ToFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\VectorField3D\NoisePerlinFloat3ToFloat3.xksl">
+      <LastGenOutput>NoisePerlinFloat3ToFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\VectorField3D\NoiseWorleyFastFloat3ToFloat3.xksl">
+      <LastGenOutput>NoiseWorleyFastFloat3ToFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\FieldTrip\VertexTest.xksl">
+      <LastGenOutput>VertexTest.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Functions\DelegateFloat2ToFloat4.xksl">
+      <LastGenOutput>DelegateFloat2ToFloat4.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Functions\DelegateFloat3ToFloat.xksl">
+      <LastGenOutput>DelegateFloat3ToFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Functions\Float2ToFloat.xksl">
+      <LastGenOutput>Float2ToFloat.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\Functions\Float2ToFloat2.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -736,6 +1204,18 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>Float2ToFloat4.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Functions\Float3ToFloat.xksl">
+      <LastGenOutput>Float3ToFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Functions\Float3ToFloat3.xksl">
+      <LastGenOutput>Float3ToFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Functions\Float3ToFloat4.xksl">
+      <LastGenOutput>Float3ToFloat4.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Functions\Float4ToFloat4.xksl">
+      <LastGenOutput>Float4ToFloat4.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Functions\FloatFloatToFloat.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>FloatFloatToFloat.xksl.cs</LastGenOutput>
@@ -743,6 +1223,18 @@
     <None Update="Effects\ShaderFX\Functions\InvokeFloat2ToFloat.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>InvokeFloat2ToFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Functions\InvokeFloat2ToFloat4.xksl">
+      <LastGenOutput>InvokeFloat2ToFloat4.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Functions\InvokeFloat3ToFloat.xksl">
+      <LastGenOutput>InvokeFloat3ToFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Functions\InvokeFloat4ToFloat4.xksl">
+      <LastGenOutput>InvokeFloat4ToFloat4.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Input\DeclBool.xksl">
+      <LastGenOutput>DeclBool.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\Input\DeclFloat.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -760,6 +1252,9 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>DeclFloat4.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Input\DeclMatrix.xksl">
+      <LastGenOutput>DeclMatrix.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Input\DeclUInt.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>DeclUInt.xksl.cs</LastGenOutput>
@@ -772,13 +1267,31 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>InputFloat.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Input\InputFloat2.xksl">
+      <LastGenOutput>InputFloat2.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Input\InputFloat3.xksl">
+      <LastGenOutput>InputFloat3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Input\InputFloat4.xksl">
+      <LastGenOutput>InputFloat4.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Input\InputKeyMatrix.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>InputKeyMatrix.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Input\InputMatrix.xksl">
+      <LastGenOutput>InputMatrix.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Input\InputUInt.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>InputUInt.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Join\JoinFloat4.xksl">
+      <LastGenOutput>JoinFloat4.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Join\JoinInt2.xksl">
+      <LastGenOutput>JoinInt2.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\Operations\Conversion\FloatToScalar.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -880,17 +1393,41 @@
       <Generator>XenkoEffectCodeGenerator</Generator>
       <LastGenOutput>ShaderFXGraphEffect.xkfx.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Split\GetMemberFloat2Float.xksl">
+      <LastGenOutput>GetMemberFloat2Float.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Split\GetMemberFloat4Float.xksl">
+      <LastGenOutput>GetMemberFloat4Float.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Split\GetMemberFloat4Float3.xksl">
+      <LastGenOutput>GetMemberFloat4Float3.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Texture\DeclTexture.xksl">
+      <LastGenOutput>DeclTexture.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Texture\LoadTextureFloat.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>LoadTextureFloat.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Texture\LoadTextureFloat2.xksl">
+      <LastGenOutput>LoadTextureFloat2.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\Texture\LoadTextureFloat3.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>LoadTextureFloat3.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\ShaderFX\Texture\LoadTextureFloat4.xksl">
+      <LastGenOutput>LoadTextureFloat4.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Texture\SampleTextureFloat.xksl">
+      <LastGenOutput>SampleTextureFloat.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\ShaderFX\Texture\SampleTextureFloat2.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>SampleTextureFloat2.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\ShaderFX\Texture\SampleTextureFloat3.xksl">
+      <LastGenOutput>SampleTextureFloat3.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\ShaderFX\Texture\SampleTextureFloat4.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
@@ -944,9 +1481,24 @@
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>StreamVariableFloat4.xksl.cs</LastGenOutput>
     </None>
+    <None Update="Effects\TextureFX\ChromaKey.xksl">
+      <LastGenOutput>ChromaKey.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\TextureFX\Invert.xksl">
+      <LastGenOutput>Invert.xksl.cs</LastGenOutput>
+    </None>
     <None Update="Effects\TextureFX\TextureFX.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
       <LastGenOutput>TextureFX.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\TextureFX\TextureFXGraph.xksl">
+      <LastGenOutput>TextureFXGraph.xksl.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\TextureFX\TextureFXGraphEffect.xkfx">
+      <LastGenOutput>TextureFXGraphEffect.xkfx.cs</LastGenOutput>
+    </None>
+    <None Update="Effects\TextureFX\Threshold.xksl">
+      <LastGenOutput>Threshold.xksl.cs</LastGenOutput>
     </None>
     <None Update="Effects\Utils\Utils_AxisDraw.xksl">
       <Generator>XenkoShaderKeyGenerator</Generator>
