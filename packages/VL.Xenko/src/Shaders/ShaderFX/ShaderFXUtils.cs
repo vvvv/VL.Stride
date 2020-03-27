@@ -68,7 +68,8 @@ namespace VL.Xenko.Shaders.ShaderFX
             return new ShaderClassSource(shaderName + inputTypesString + GetNameForType<TOut>(), genericArguments);
         }
 
-        static Dictionary<Type, string> KnownTypes = new Dictionary<Type, string>();
+        public static Dictionary<Type, string> KnownTypes = new Dictionary<Type, string>();
+        public static Dictionary<Type, string> KnownShaderTypes = new Dictionary<Type, string>();
 
         static ShaderFXUtils()
         {
@@ -82,9 +83,18 @@ namespace VL.Xenko.Shaders.ShaderFX
             KnownTypes.Add(typeof(Int3), "Int3");
             KnownTypes.Add(typeof(Int4), "Int4");
             KnownTypes.Add(typeof(uint), "UInt");
+            KnownTypes.Add(typeof(UInt4), "UInt4");
             KnownTypes.Add(typeof(bool), "Bool");
             KnownTypes.Add(typeof(Buffer), "Buffer");
             KnownTypes.Add(typeof(Texture), "Texture");
+
+            foreach (var item in KnownTypes)
+            {
+                if (item.Value == "Matrix")
+                    KnownShaderTypes.Add(item.Key, "float4x4");
+                else
+                    KnownShaderTypes.Add(item.Key, item.Value.ToLowerInvariant());
+            }
         }
 
         public static string GetNameForType<T>()
@@ -100,7 +110,20 @@ namespace VL.Xenko.Shaders.ShaderFX
             throw new NotImplementedException("No name defined for type: " + t.Name);
         }
 
-        public static ShaderMixinSource CreateMixin(this ShaderClassSource shaderClassSource)
+        public static string GetTypeNameForType<T>()
+        {
+            return GetTypeNameForType(typeof(T));
+        }
+
+        public static string GetTypeNameForType(Type t)
+        {
+            if (KnownShaderTypes.TryGetValue(t, out var result))
+                return result;
+
+            throw new NotImplementedException("No type defined for type: " + t.Name);
+        }
+
+        public static ShaderMixinSource CreateMixin(this ShaderClassCode shaderClassSource)
         {
             var mixin = new ShaderMixinSource();
             mixin.Mixins.Add(shaderClassSource);

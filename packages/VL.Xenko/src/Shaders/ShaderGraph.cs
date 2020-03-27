@@ -8,6 +8,7 @@ using VL.Xenko.Effects.TextureFX;
 using VL.Xenko.Rendering;
 using Xenko.Core;
 using Xenko.Core.Mathematics;
+using Xenko.Engine;
 using Xenko.Graphics;
 using Xenko.Rendering;
 using Xenko.Rendering.Images;
@@ -168,13 +169,13 @@ namespace VL.Xenko.Shaders.ShaderFX
             return effectImageShader;
         }
 
-        public static DynamicEffectInstance ComposeDrawShader(GraphicsDevice graphicsDevice, IComputeValue<Vector4> vertexRoot, IComputeValue<Vector4> pixelRoot)
+        public static DynamicEffectInstance ComposeDrawShader(Game game, IComputeValue<Vector4> vertexRoot, IComputeValue<Vector4> pixelRoot)
         {
             var effectImageShader = new DynamicEffectInstance("ShaderFXGraphEffect");
 
             if (vertexRoot != null && pixelRoot != null)
             {
-                var context = new ShaderGeneratorContext(graphicsDevice)
+                var context = new ShaderFXGeneratorContext(game.GraphicsDevice, game.EffectSystem)
                 {
                     Parameters = effectImageShader.Parameters,
                 };
