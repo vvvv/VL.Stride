@@ -25,10 +25,10 @@ namespace VL.Xenko.Shaders.ShaderFX
             //var shaderClassSource = GetShaderSourceForType2<TIn, TOut>("GetMember", MemberName);
             var shaderClassSource = GetMemberStrings.GetShaderSourceStringForType2<TIn, TOut>("GetMember", MemberName);
 
-            if (context is ShaderFXGeneratorContext fxc)
-                fxc.CompileShader(shaderClassSource);
-
             var mixin = shaderClassSource.CreateMixin();
+
+            if (context is ShaderFXGeneratorContext fxc)
+                fxc.CompileShader(mixin);
 
             mixin.AddComposition(Value, "Value", context, baseKeys);
 

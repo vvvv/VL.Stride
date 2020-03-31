@@ -397,14 +397,14 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessNode" Name="SetBackgroundColor" />
             </p:NodeReference>
-            <Pin Id="C3gjmmqh5KgLCKVKH93i5X" Name="Color" Kind="InputPin">
+            <Pin Id="C3gjmmqh5KgLCKVKH93i5X" Name="Color" Kind="InputPin" DefaultValue="0, 0, 0, 1">
               <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="RGBA" />
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="MXNQLOrWIVUNcXjDjHl0CL" Name="Force" Kind="InputPin" />
           </Node>
-          <Pad Id="H5wYFDPDkg9LWQ78ROxvee" Comment="FPS" Bounds="103,363,48,15" ShowValueBox="true" isIOBox="true" Value="120">
+          <Pad Id="H5wYFDPDkg9LWQ78ROxvee" Comment="FPS" Bounds="103,363,48,15" ShowValueBox="true" isIOBox="true" Value="10">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Integer32" />
             </p:TypeAnnotation>
@@ -516,24 +516,6 @@
             <Pin Id="KNhdiOU1eUnOOAToyKfQNh" Name="Target FrameRate" Kind="InputPin" />
             <Pin Id="MaYbbH9hLD8NrH1a3PDVHO" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="457,456,60,19" Id="NHGtyDZ2whMPrBcSj8vzBc">
-            <p:NodeReference LastCategoryFullName="Xenko.Demos" LastSymbolSource="VL.Xenko.Demos.vl">
-              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="AllDemos" />
-            </p:NodeReference>
-            <Pin Id="IJmTjVnSjmAOOzbHKVWUxI" Name="Index" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Integer32" />
-              </p:TypeAnnotation>
-            </Pin>
-            <Pin Id="ABVlVO7Ent0LUj9Pm5kZXL" Name="Init Physics" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Boolean" />
-              </p:TypeAnnotation>
-            </Pin>
-            <Pin Id="RXEmg5jQfiCMmpRoR4NomD" Name="Output" Kind="OutputPin" />
-            <Pin Id="HgMIEKmcie9MIKzWrmghns" Name="Demo Name" Kind="OutputPin" />
-          </Node>
           <Pad Id="LT6YlLl4DkYOMs3oVGhsc0" Comment="Index" Bounds="459,395,35,15" ShowValueBox="true" isIOBox="true" Value="1">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Integer32" />
@@ -558,7 +540,37 @@
             <Pin Id="GPA1081J9Z8MXmInA4VifG" Name="Roll" Kind="InputPin" />
             <Pin Id="D1hWoSPWRMeMrkpEuOurBq" Name="Result" Kind="OutputPin" />
           </Node>
-          <Pad Id="EWwyvw03lelLU7VsixRuC9" Comment="Demo Name" Bounds="513,505,111,31" ShowValueBox="true" isIOBox="true" />
+          <Node Bounds="457,453,245,76" Id="KJt6VQyzhxgPWwMd5bYqdS">
+            <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+              <Choice Kind="ApplicationStatefulRegion" Name="If" />
+              <FullNameCategoryReference ID="Primitive" />
+            </p:NodeReference>
+            <Pin Id="P720v2rYUpePuL8qMm0nOW" Name="Condition" Kind="InputPin" />
+            <Patch Id="Kz2Lr0XhDEXMrBDJ3hA2fz" ManuallySortedPins="true">
+              <Patch Id="ImqDe5fIhA5OuPd8E8SUux" Name="Create" ManuallySortedPins="true" />
+              <Patch Id="DhitTZkoJpTPik2bwjNQbZ" Name="Then" ManuallySortedPins="true" />
+              <Node Bounds="457,456,60,19" Id="NHGtyDZ2whMPrBcSj8vzBc">
+                <p:NodeReference LastCategoryFullName="Xenko.Demos" LastSymbolSource="VL.Xenko.Demos.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="AllDemos" />
+                </p:NodeReference>
+                <Pin Id="IJmTjVnSjmAOOzbHKVWUxI" Name="Index" Kind="InputPin">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Integer32" />
+                  </p:TypeAnnotation>
+                </Pin>
+                <Pin Id="ABVlVO7Ent0LUj9Pm5kZXL" Name="Init Physics" Kind="InputPin">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Boolean" />
+                  </p:TypeAnnotation>
+                </Pin>
+                <Pin Id="RXEmg5jQfiCMmpRoR4NomD" Name="Output" Kind="OutputPin" />
+                <Pin Id="HgMIEKmcie9MIKzWrmghns" Name="Demo Name" Kind="OutputPin" />
+              </Node>
+              <Pad Id="EWwyvw03lelLU7VsixRuC9" Comment="Demo Name" Bounds="513,505,111,31" ShowValueBox="true" isIOBox="true" />
+            </Patch>
+          </Node>
         </Canvas>
         <Patch Id="O83s8L1ielBOdVBpuwVvjH" Name="Create" />
         <Patch Id="V6pD3pcgBJ3OcJfTtYxkGp" Name="Update" />
@@ -574,9 +586,8 @@
         <Link Id="IMk57EtYoP3LNwsAtj7Lgn" Ids="LT6YlLl4DkYOMs3oVGhsc0,IJmTjVnSjmAOOzbHKVWUxI" />
         <Link Id="LNYw6gYCMEtOU9J1G5j2Uo" Ids="D1hWoSPWRMeMrkpEuOurBq,LEiHQl4gjWEM3zUKv4pdLv" />
         <Link Id="TisZbvl0MtiO2c56xllfj1" Ids="HcVS8YRpgxcMZ0ANTLvyMP,DjGGaWiTea5MfAP2kvWz9O" />
-        <Link Id="SmeK4MMKSMvNPNjDbE0GJG" Ids="HgMIEKmcie9MIKzWrmghns,EWwyvw03lelLU7VsixRuC9" />
-        <Link Id="OJF8YcpcwJuPjEYhIMKnaK" Ids="RXEmg5jQfiCMmpRoR4NomD,PFjB3pFNJ6WPDz2CtrOvIb" />
         <Link Id="UlXN1hVLTedM6v4TeH27Ra" Ids="BryYNR3EbmwOSgfZ28CJhh,Fsk2TarPhxyLEHxZ0XAOjd" />
+        <Link Id="SmeK4MMKSMvNPNjDbE0GJG" Ids="HgMIEKmcie9MIKzWrmghns,EWwyvw03lelLU7VsixRuC9" />
       </Patch>
     </Node>
   </Patch>

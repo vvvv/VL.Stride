@@ -22,7 +22,7 @@ namespace VL.Xenko.Shaders
             EffectSystem = effectSystem;
         }
 
-        public void CompileShader(ShaderClassCode source)
+        public void CompileShader(ShaderSource source)
         {
             // Setup compilation parameters
             var compilerParameters = new CompilerParameters();
