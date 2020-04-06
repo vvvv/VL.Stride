@@ -37,8 +37,9 @@ namespace VL.Xenko.Graphics
         public static unsafe Texture SetDataFromIImage(this Texture texture, CommandList commandList, IImage image, int arraySlice, int mipSlice, ResourceRegion? region)
         {
             using (var data = image.GetData())
+            using (var handle = data.Bytes.Pin())
             {
-                var dp = new DataPointer(data.Bytes.Pin().Pointer, data.Bytes.Length);
+                var dp = new DataPointer(handle.Pointer, data.Bytes.Length);
                 texture.SetData(commandList, dp, arraySlice, mipSlice, region);
             }
 
