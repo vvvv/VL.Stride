@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Description>$(AssemblyName)</Description>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Xenko.Engine" Version="3.2.0.1-vvvv-0888" />
+    <PackageReference Include="Xenko.Video" Version="3.2.0.1-vvvv-0888" />
+    <PackageReference Include="Xenko.Physics" Version="3.2.0.1-vvvv-0888" />
+    <PackageReference Include="Xenko.Navigation" Version="3.2.0.1-vvvv-0888" />
+    <PackageReference Include="Xenko.Particles" Version="3.2.0.1-vvvv-0888" />
+    <PackageReference Include="Xenko.UI" Version="3.2.0.1-vvvv-0888" />
+    <PackageReference Include="Xenko.Core.Assets.CompilerApp" Version="3.2.0.1-vvvv-0888" IncludeAssets="build;buildTransitive" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <Target Name="IncludeXenkoPackageContent" BeforeTargets="InferPackageContents" DependsOnTargets="_XenkoPrepareAssetsForPack">
+    <Message Importance="high" Text="Called Xenko package targets" />
+  </Target>
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="2.3.186">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

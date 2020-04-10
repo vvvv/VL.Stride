@@ -1,0 +1,9 @@
+﻿shader LoadTextureFloat<LinkType TextureName> : ComputeFloat, DeclTexture<TextureName, PerMaterial>
+{
+    compose ComputeInt2 TexCd;
+
+    override float Compute()
+    {
+        return DynamicTexture.Load(int3(TexCd.Compute(), 0)).x;
+    }  
+};

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Description>$(AssemblyName)</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\*.vl" Pack="true" TargetPath="." />
+    <None Include="..\Demos\*.vl" Pack="true" PackagePath="Demos\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xenko.Assets" Version="3.2.0.1-vvvv-0888" />
+    <PackageReference Include="Xenko.Assets.Models" Version="3.2.0.1-vvvv-0888" />
+    <!-- A pure package dependency so on install all VL packages come in -->
+    <PackageReference Include="Xenko.TextureConverter" Version="3.2.0.1-vvvv-0888" />
+  </ItemGroup>
+  <Target Name="IncludeXenkoPackageContent" BeforeTargets="InferPackageContents" DependsOnTargets="_XenkoPrepareAssetsForPack">
+    <Message Importance="high" Text="Called Xenko package targets" />
+  </Target>
+  <ItemGroup>
+    <ProjectReference Include="..\..\VL.Xenko\src\VL.Xenko.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="msdfgen.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="2.3.186">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

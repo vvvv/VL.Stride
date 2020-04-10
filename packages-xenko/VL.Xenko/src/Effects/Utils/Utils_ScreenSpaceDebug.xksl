@@ -1,0 +1,13 @@
+﻿
+shader Utils_ScreenSpaceDebug : ShaderBase, PositionStream4, Transformation
+{
+    stage override void VSMain()
+    { 
+        streams.ShadingPosition = mul(streams.Position, World);
+    }
+
+    stage override void PSMain()
+    { 
+        streams.ColorTarget = 2;
+    }
+};
