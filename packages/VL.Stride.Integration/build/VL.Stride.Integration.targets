@@ -23,38 +23,38 @@
 
   <Target Name="_GetVLXenkoManifestFromPackage" Condition=" '$(_BuildingLocally)' == 'false' ">
     <PropertyGroup>
-      <_VLXenkoManifest>$(MsBuildThisFileDirectory)..\vl.xenko.integration.nuspec</_VLXenkoManifest>
+      <_VLStrideManifest>$(MsBuildThisFileDirectory)..\vl.stride.integration.nuspec</_VLStrideManifest>
     </PropertyGroup>
   </Target>
 
   <Target Name="_GetVLXenkoManifestFromProject" Condition=" '$(_BuildingLocally)' == 'true' ">
-    <MSBuild Projects="$(MsBuildThisFileDirectory)..\VL.Xenko.Integration.csproj"
+    <MSBuild Projects="$(MsBuildThisFileDirectory)..\VL.Stride.Integration.csproj"
              Properties="Configuration=$(Configuration)"
              Targets="GetTargetPath" >
       <Output TaskParameter="TargetOutputs" ItemName="_IntegrationAssembly" />
     </MSBuild>
     <PropertyGroup>
-      <_VLXenkoManifest>@(_IntegrationAssembly->'%(RootDir)%(Directory)%(Filename)').nuspec</_VLXenkoManifest>
+      <_VLStrideManifest>@(_IntegrationAssembly->'%(RootDir)%(Directory)%(Filename)').nuspec</_VLStrideManifest>
     </PropertyGroup>
   </Target>
 
   <Target Name="_GetVLXenkoManifest" DependsOnTargets="_GetVLXenkoManifestFromPackage;_GetVLXenkoManifestFromProject">
-    <Message Importance="high" Text="Using $(_VLXenkoManifest)" />
+    <Message Importance="high" Text="Using $(_VLStrideManifest)" />
   </Target>
 
-  <Target Name="GetVLXenkoVersion" DependsOnTargets="_GetVLXenkoManifest">
+  <Target Name="GetVLStrideVersion" DependsOnTargets="_GetVLXenkoManifest">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;" 
-             XmlInputPath="$(_VLXenkoManifest)" 
+             XmlInputPath="$(_VLStrideManifest)" 
              Query="/n:package/n:metadata/n:version/text()">
-      <Output TaskParameter="Result" PropertyName="VLXenkoVersion" />
+      <Output TaskParameter="Result" PropertyName="VLStrideVersion" />
     </XmlPeek>
-    <Message Importance="high" Text="Using VL.Xenko version $(VLXenkoVersion)" />
+    <Message Importance="high" Text="Using VL.Stride version $(VLStrideVersion)" />
   </Target>
   
   <!-- Live Editor -->
   <Target Name="GetXenkoLiveEditorVersion" DependsOnTargets="_GetVLXenkoManifest">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
-             XmlInputPath="$(_VLXenkoManifest)"
+             XmlInputPath="$(_VLStrideManifest)"
              Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='XenkoLiveEditor']/@version">
       <Output TaskParameter="Result" PropertyName="XenkoLiveEditorVersion" />
     </XmlPeek>
@@ -64,7 +64,7 @@
   <!-- MahApps.Metro -->
   <Target Name="GetMahAppsMetroVersion" DependsOnTargets="_GetVLXenkoManifest">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
-             XmlInputPath="$(_VLXenkoManifest)"
+             XmlInputPath="$(_VLStrideManifest)"
              Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='MahApps.Metro']/@version">
       <Output TaskParameter="Result" PropertyName="MahAppsMetroVersion" />
     </XmlPeek>
@@ -74,7 +74,7 @@
   <!-- ControlzEx -->
   <Target Name="GetControlzExVersion" DependsOnTargets="_GetVLXenkoManifest">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
-             XmlInputPath="$(_VLXenkoManifest)"
+             XmlInputPath="$(_VLStrideManifest)"
              Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='ControlzEx']/@version">
       <Output TaskParameter="Result" PropertyName="ControlzExVersion" />
     </XmlPeek>
@@ -84,7 +84,7 @@
   <!-- Xenko.TextureConverter -->
   <Target Name="GetXenkoTextureConverterVersion" DependsOnTargets="_GetVLXenkoManifest">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;"
-             XmlInputPath="$(_VLXenkoManifest)"
+             XmlInputPath="$(_VLStrideManifest)"
              Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='Xenko.TextureConverter']/@version">
       <Output TaskParameter="Result" PropertyName="XenkoTextureConverterVersion" />
     </XmlPeek>
@@ -92,9 +92,9 @@
   </Target>
 
   <Target Name="GetVLVersion"
-          DependsOnTargets="GetVLXenkoVersion">
+          DependsOnTargets="GetVLStrideVersion">
     <XmlPeek Namespaces="&lt;Namespace Prefix='n' Uri='$(_ManifestNamespace)'/&gt;" 
-             XmlInputPath="$(_VLXenkoManifest)" 
+             XmlInputPath="$(_VLStrideManifest)" 
              Query="/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='VL.Meta.Gamma']/@version">
       <Output TaskParameter="Result" PropertyName="VLVersion" />
     </XmlPeek>
@@ -102,39 +102,39 @@
   </Target>
 
   <Target Name="_GetManifests"
-          DependsOnTargets="GetVLVersion;GetVLXenkoVersion;GetXenkoLiveEditorVersion;GetMahAppsMetroVersion;GetControlzExVersion;GetXenkoTextureConverterVersion;_GetVLXenkoManifest">
+          DependsOnTargets="GetVLVersion;GetVLStrideVersion;GetXenkoLiveEditorVersion;GetMahAppsMetroVersion;GetControlzExVersion;GetXenkoTextureConverterVersion;_GetVLXenkoManifest">
     <ItemGroup>
       <_Manifests Include="$(NuGetPackageRoot)VL.Meta.Gamma\$(VLVersion)\vl.meta.gamma.nuspec">
         <OutputManifest>$(_PackageInstallDirectory)VL.Meta.Gamma.$(VLVersion)\VL.Meta.Gamma.nuspec</OutputManifest>
         <PackageId>VL.Meta.Gamma</PackageId>
         <PackageVersion>$(VLVersion)</PackageVersion>
       </_Manifests>
-      <_Manifests Include="$(_VLXenkoManifest)">
-        <OutputManifest>$(_PackageInstallDirectory)VL.Xenko.EffectLib.$(VLXenkoVersion)\VL.Xenko.EffectLib.nuspec</OutputManifest>
-        <PackageId>VL.Xenko.EffectLib</PackageId>
-        <PackageVersion>$(VLXenkoVersion)</PackageVersion>
+      <_Manifests Include="$(_VLStrideManifest)">
+        <OutputManifest>$(_PackageInstallDirectory)VL.Stride.EffectLib.$(VLStrideVersion)\VL.Stride.EffectLib.nuspec</OutputManifest>
+        <PackageId>VL.Stride.EffectLib</PackageId>
+        <PackageVersion>$(VLStrideVersion)</PackageVersion>
       </_Manifests>
-      <_Manifests Include="$(_VLXenkoManifest)">
-        <OutputManifest>$(_PackageInstallDirectory)VL.Xenko.Windows.$(VLXenkoVersion)\VL.Xenko.Windows.nuspec</OutputManifest>
-        <PackageId>VL.Xenko.Windows</PackageId>
-        <PackageVersion>$(VLXenkoVersion)</PackageVersion>
+      <_Manifests Include="$(_VLStrideManifest)">
+        <OutputManifest>$(_PackageInstallDirectory)VL.Stride.Windows.$(VLStrideVersion)\VL.Stride.Windows.nuspec</OutputManifest>
+        <PackageId>VL.Stride.Windows</PackageId>
+        <PackageVersion>$(VLStrideVersion)</PackageVersion>
       </_Manifests>
-      <_Manifests Include="$(_VLXenkoManifest)">
+      <_Manifests Include="$(_VLStrideManifest)">
         <OutputManifest>$(_PackageInstallDirectory)XenkoLiveEditor.$(XenkoLiveEditorVersion)\XenkoLiveEditor.nuspec</OutputManifest>
         <PackageId>XenkoLiveEditor</PackageId>
         <PackageVersion>$(XenkoLiveEditorVersion)</PackageVersion>
       </_Manifests>
-      <_Manifests Include="$(_VLXenkoManifest)">
+      <_Manifests Include="$(_VLStrideManifest)">
         <OutputManifest>$(_PackageInstallDirectory)MahApps.Metro.$(MahAppsMetroVersion)\MahApps.Metro.nuspec</OutputManifest>
         <PackageId>MahApps.Metro</PackageId>
         <PackageVersion>$(MahAppsMetroVersion)</PackageVersion>
       </_Manifests>
-      <_Manifests Include="$(_VLXenkoManifest)">
+      <_Manifests Include="$(_VLStrideManifest)">
         <OutputManifest>$(_PackageInstallDirectory)ControlzEx.$(ControlzExVersion)\ControlzEx.nuspec</OutputManifest>
         <PackageId>ControlzEx</PackageId>
         <PackageVersion>$(ControlzExVersion)</PackageVersion>
       </_Manifests>
-      <_Manifests Include="$(_VLXenkoManifest)">
+      <_Manifests Include="$(_VLStrideManifest)">
         <OutputManifest>$(_PackageInstallDirectory)Xenko.TextureConverter.$(XenkoTextureConverterVersion)\Xenko.TextureConverter.nuspec</OutputManifest>
         <PackageId>Xenko.TextureConverter</PackageId>
         <PackageVersion>$(XenkoTextureConverterVersion)</PackageVersion>
@@ -153,7 +153,7 @@
     </ItemGroup>
     <RemoveDir Directories="@(_OldDirectories)" />    
     
-    <Message Importance="high" Text="Installing VL $(VLVersion), VL.Xenko $(VLXenkoVersion), VL.Xenko.Windows $(VLXenkoVersion) and XenkoLiveEditor $(XenkoLiveEditorVersion) packages to $(_PackageInstallDirectory)" />
+    <Message Importance="high" Text="Installing VL $(VLVersion), VL.Stride $(VLStrideVersion), VL.Stride.Windows $(VLStrideVersion) and StrideLiveEditor $(XenkoLiveEditorVersion) packages to $(_PackageInstallDirectory)" />
     <NuGetInstall StandardOutputImportance="high"
                   ToolPath="$(NugetExePath)"
                   Package="%(_Manifests.PackageId)"
