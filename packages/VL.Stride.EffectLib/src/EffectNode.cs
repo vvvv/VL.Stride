@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using VL.Core;
-using VL.Xenko.Games;
+using VL.Lib.Basics.Resources;
 using VL.Xenko.Rendering;
 using VL.Xenko.Shaders;
 using Xenko.Core.Mathematics;
-using Xenko.Engine;
+using Xenko.Games;
 using Xenko.Graphics;
 using Xenko.Rendering;
 
@@ -13,7 +13,6 @@ namespace VL.Xenko.EffectLib
 {
     class EffectNode : EffectNodeBase, IVLNode, IEffect
     {
-
         DynamicEffectInstance instance;
         GraphicsDevice graphicsDevice;
         PerFrameParameters[] perFrameParams;
@@ -26,11 +25,11 @@ namespace VL.Xenko.EffectLib
 
         public EffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext, description)
         {
-            graphicsDevice = description.GameFactory.DeviceManager.GraphicsDevice;
+            graphicsDevice = Game.GraphicsDevice;
             instance = new DynamicEffectInstance(description.Name);
             try
             {
-                instance.Initialize(description.GameFactory.ServiceRegistry);
+                instance.Initialize(Game.Services);
                 instance.UpdateEffect(graphicsDevice);
             }
             catch (Exception e)
@@ -46,7 +45,7 @@ namespace VL.Xenko.EffectLib
 
         public void Initialize()
         {
-            var game = VLGame.GameInstance;
+            var game = Game;
             instance?.Dispose();
             instance = null;
 

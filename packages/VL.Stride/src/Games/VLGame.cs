@@ -21,6 +21,8 @@ namespace VL.Xenko.Games
         [ThreadStatic]
         public static Game GameInstance;
 
+        public Action RunCallback { get; set; }
+
         public VLGame()
             : base()
         {
@@ -29,6 +31,12 @@ namespace VL.Xenko.Games
         protected override void PrepareContext()
         {
             base.PrepareContext();
+        }
+
+        protected override void OnWindowCreated()
+        {
+            Window.AllowUserResizing = true;
+            base.OnWindowCreated();
         }
 
         protected override void Initialize()

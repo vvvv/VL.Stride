@@ -48,20 +48,18 @@ namespace VL.Xenko.EffectLib
         bool? isCompute;
         CompilerResults compilerResults;
 
-        public EffectNodeDescription(EffectNodeFactory factory, IVLNodeDescriptionFactory parentFactory, string effectName)
+        public EffectNodeDescription(EffectNodeFactory factory, string effectName)
         {
             GameFactory = factory;
-            Factory = parentFactory;
             Name = effectName;
         }
 
         // Used when effect has errors - we keep the signature from the previous one but show the compiler errors
         // Because we have errors VL will dispose all previous instances of ours and not create any new ones but the type information of our pins we keep on
         // to so other parts of patch won't break due to loss of typing information
-        public EffectNodeDescription(EffectNodeDescription previous, IVLNodeDescriptionFactory parentFactory, CompilerResults compilerResults)
+        public EffectNodeDescription(EffectNodeDescription previous, CompilerResults compilerResults)
         {
             GameFactory = previous.GameFactory;
-            Factory = parentFactory;
             Name = previous.Name;
             inputs = previous.Inputs;
             outputs = previous.Outputs;
@@ -70,7 +68,7 @@ namespace VL.Xenko.EffectLib
         }
 
         public EffectNodeFactory GameFactory { get; }
-        public IVLNodeDescriptionFactory Factory { get; }
+        public IVLNodeDescriptionFactory Factory => GameFactory;
 
         public string Name { get; }
 
@@ -176,8 +174,8 @@ namespace VL.Xenko.EffectLib
                     parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
                 }
 
-                dummyInstance.Initialize(GameFactory.ServiceRegistry);
-                dummyInstance.UpdateEffect(GameFactory.DeviceManager.GraphicsDevice);
+                dummyInstance.Initialize(GameFactory.DummyGame.Services);
+                dummyInstance.UpdateEffect(GameFactory.DummyGame.GraphicsDevice);
 
                 var usedNames = new HashSet<string>();
                 usedNames.Add(ParameterSetterInput.Name);

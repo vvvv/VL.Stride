@@ -24,7 +24,7 @@ using Xenko.Shaders;
 using Xenko.Shaders.Compiler;
 using VLServiceRegistry = VL.Core.ServiceRegistry;
 
-[assembly: NodeFactory(typeof(VL.Xenko.EffectLib.MultiGameEffectNodeFactory))]
+[assembly: NodeFactory(typeof(VL.Xenko.EffectLib.EffectNodeFactory))]
 
 namespace VL.Xenko.EffectLib
 {
@@ -58,97 +58,9 @@ namespace VL.Xenko.EffectLib
         }
     }
 
-    public class MultiGameEffectNodeFactory : IVLNodeDescriptionFactory
+    public class EffectNodeFactory : IVLNodeDescriptionFactory
     {
-        public static Game WaitingGame;
-        public static SynchronizationContext WaitingSyncContext;
-        public static Action WaitingRunCallback;
-        public static MultiGameEffectNodeFactory Instance { get; private set; }
-
-        Dictionary<Game, EffectNodeFactory> gameFactories = new Dictionary<Game, EffectNodeFactory>();
-
-        ObservableCollection<IVLNodeDescription> nodeDescriptions = new ObservableCollection<IVLNodeDescription>();
-
-        public ReadOnlyObservableCollection<IVLNodeDescription> NodeDescriptions { get; }
-
-        public MultiGameEffectNodeFactory()
-        {
-            Instance = this;
-
-            //check whether a game was created before the factory
-            if (WaitingGame != null)
-            {
-                AddGame(WaitingGame, WaitingSyncContext);
-            }
-            else //if not, use a temporary one to find all effects
-            {
-                AddTempGame();
-            }
-
-            NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(nodeDescriptions);
-        }
-
-        public void AddGame(Game game, SynchronizationContext mainContext = null)
-        {
-            if (!gameFactories.ContainsKey(game))
-            {
-                var factory = new EffectNodeFactory(game, this, mainContext);
-
-                foreach (var nd in factory.NodeDescriptions)
-                    if (!nodeDescriptions.Contains(nd, NodeComparer.Instance))
-                        nodeDescriptions.Add(nd);
-
-                ((INotifyCollectionChanged)factory.NodeDescriptions).CollectionChanged += GameEffectNodeFactory_CollectionChanged;
-
-                gameFactories[game] = factory;
-            }
-        }
-
-        public void RemoveGame(Game game)
-        {
-            if (gameFactories.TryGetValue(game, out var factory))
-            {
-                ((INotifyCollectionChanged)factory.NodeDescriptions).CollectionChanged -= GameEffectNodeFactory_CollectionChanged;
-
-                //foreach (var item in factory.NodeDescriptions)
-                //    nodeDescriptions.Remove(item);
-
-                gameFactories.Remove(game);
-            }
-        }
-
-        private void GameEffectNodeFactory_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    foreach (var item in e.NewItems)
-                    {
-                        var nd = (IVLNodeDescription)item;
-                        if (!nodeDescriptions.Contains(nd, NodeComparer.Instance))
-                            nodeDescriptions.Add(nd);
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    foreach (var item in e.OldItems)
-                        nodeDescriptions.Remove((IVLNodeDescription)item);
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    nodeDescriptions[e.OldStartingIndex] = ((IEnumerable<IVLNodeDescription>)e.NewItems).FirstOrDefault();
-                    break;
-                case NotifyCollectionChangedAction.Move:
-                    nodeDescriptions.Move(e.OldStartingIndex, e.NewStartingIndex);
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    foreach (var item in e.OldItems)
-                        nodeDescriptions.Remove((IVLNodeDescription)item);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private static void AddTempGame()
+        private static Game CreateDummyGame()
         {
             var game = new VLGame();
 #if DEBUG
@@ -156,52 +68,37 @@ namespace VL.Xenko.EffectLib
 #endif
             var context = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
             game.Run(context);
-
-            Instance?.AddGame(game, SynchronizationContext.Current);
+            return game;
 
         }
-    }
 
-    public class EffectNodeFactory : IVLNodeDescriptionFactory
-    {
         const string xkslFileFilter = "*.xksl";
         const string CompiledShadersKey = "__shaders_bytecode__"; // Taken from EffectCompilerCache.cs
 
         private EffectCompilerParameters effectCompilerParameters = EffectCompilerParameters.Default;
 
-        public readonly ContentManager ContentManger;
-        public readonly EffectSystem EffectSystem;
-        public readonly IServiceRegistry ServiceRegistry;
-        public readonly GraphicsDeviceManager DeviceManager;
-        public readonly ScriptSystem ScriptSystem;
-
         readonly ObservableCollection<IVLNodeDescription> nodeDescriptions;
         readonly DirectoryWatcher directoryWatcher;
         readonly SynchronizationContext mainContext;
-        readonly MultiGameEffectNodeFactory parentFactory;
         Timer timer;
 
-        public EffectNodeFactory(Game game, MultiGameEffectNodeFactory parentFactory, SynchronizationContext syncContext = null)
+        public EffectNodeFactory()
         {
-            this.parentFactory = parentFactory;
-            mainContext = syncContext ?? SynchronizationContext.Current;
+            var game = DummyGame = CreateDummyGame();
+            mainContext = game.Services.GetService<SynchronizationContext>() ?? SynchronizationContext.Current;
 
-            ServiceRegistry = game?.Services;
-            ContentManger = game?.Content;
-            EffectSystem = game?.EffectSystem;
-            DeviceManager = game?.GraphicsDeviceManager;
-            ScriptSystem = game?.Script;
-            nodeDescriptions = new ObservableCollection<IVLNodeDescription>(GetNodeDescriptions());
+            nodeDescriptions = new ObservableCollection<IVLNodeDescription>(GetNodeDescriptions(game));
             NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(nodeDescriptions);
 
-            if (EffectSystem != null)
+            var effectSystem = game.EffectSystem;
+            if (effectSystem != null)
             {
                 // Leads to deadlocks
-                ((EffectCompilerCache)EffectSystem.Compiler).CompileEffectAsynchronously = false;
+                ((EffectCompilerCache)effectSystem.Compiler).CompileEffectAsynchronously = false;
 
                 // Ensure the effect system tracks the same files as we do
                 var fieldInfo = typeof(EffectSystem).GetField("directoryWatcher", BindingFlags.NonPublic | BindingFlags.Instance);
-                directoryWatcher = fieldInfo.GetValue(EffectSystem) as DirectoryWatcher;
+                directoryWatcher = fieldInfo.GetValue(effectSystem) as DirectoryWatcher;
             }
             else
             {
@@ -214,8 +111,7 @@ namespace VL.Xenko.EffectLib
 
         public readonly object SyncRoot = new object();
 
-        protected GraphicsDevice GraphicsDevice => DeviceManager?.GraphicsDevice;
-        protected DatabaseFileProvider FileProvider => ContentManger?.FileProvider;
+        public Game DummyGame { get; }
 
         public CompilerResults GetCompilerResults(string effectName)
         {
@@ -228,14 +124,17 @@ namespace VL.Xenko.EffectLib
             if (compilerParameters == null) throw new ArgumentNullException("compilerParameters");
 
             // Setup compilation parameters
+            var game = DummyGame;
+            var deviceManager = game.GraphicsDeviceManager;
+            var graphicsDevice = game.GraphicsDevice;
             compilerParameters.EffectParameters.Platform = GraphicsDevice.Platform;
-            compilerParameters.EffectParameters.Profile = DeviceManager?.ShaderProfile ?? GraphicsDevice.Features.RequestedProfile;
+            compilerParameters.EffectParameters.Profile = deviceManager?.ShaderProfile ?? graphicsDevice.Features.RequestedProfile;
             // Copy optimization/debug levels
             compilerParameters.EffectParameters.OptimizationLevel = effectCompilerParameters.OptimizationLevel;
             compilerParameters.EffectParameters.Debug = effectCompilerParameters.Debug;
 
             var source = GetShaderSource(effectName);
-            var compiler = EffectSystem.Compiler;
+            var compiler = game.EffectSystem.Compiler;
             var compilerResults = compiler.Compile(source, compilerParameters);
 
             // Watch the source code files
@@ -254,7 +153,7 @@ namespace VL.Xenko.EffectLib
                 foreach (var type in bytecode.HashSources.Keys)
                 {
                     // TODO: the "/path" is hardcoded, used in ImportStreamCommand and ShaderSourceManager. Find a place to share this correctly.
-                    using (var pathStream = FileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(type) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
+                    using (var pathStream = game.Content.FileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(type) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
                     using (var reader = new StreamReader(pathStream))
                     {
                         var path = reader.ReadToEnd();
@@ -332,7 +231,8 @@ namespace VL.Xenko.EffectLib
 
         public string GetPathOfXkslShader(string effectName)
         {
-            using (var pathStream = FileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(effectName) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
+            var fileProvider = DummyGame.Content.FileProvider;
+            using (var pathStream = fileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(effectName) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
             using (var reader = new StreamReader(pathStream))
             {
                 return reader.ReadToEnd();
@@ -345,16 +245,16 @@ namespace VL.Xenko.EffectLib
             return null;
         }
 
-        IEnumerable<IVLNodeDescription> GetNodeDescriptions()
+        IEnumerable<IVLNodeDescription> GetNodeDescriptions(GameBase game)
         {
-            var nodeDescriptions = new Dictionary<string, IVLNodeDescription>();
-            if (ContentManger != null)
+            var contentManager = game.Content;
+            if (contentManager != null)
             {
-                var files = ContentManger.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, xkslFileFilter, VirtualSearchOption.AllDirectories);
+                var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, xkslFileFilter, VirtualSearchOption.AllDirectories);
                 foreach (var file in files)
                 {
                     var effectName = Path.GetFileNameWithoutExtension(file);
-                    yield return new EffectNodeDescription(this, parentFactory, effectName);
+                    yield return new EffectNodeDescription(this, effectName);
                 }
             }
         }
@@ -377,7 +277,7 @@ namespace VL.Xenko.EffectLib
                 if (description == null || !description.IsInUse)
                     continue;
 
-                var updatedDescription = new EffectNodeDescription(this, parentFactory, description.Name);
+                var updatedDescription = new EffectNodeDescription(this, description.Name);
                 if (updatedDescription.HasCompilerErrors != description.HasCompilerErrors ||
                     !updatedDescription.Inputs.SequenceEqual(description.Inputs, PinComparer.Instance) ||
                     !updatedDescription.Outputs.SequenceEqual(description.Outputs, PinComparer.Instance))
@@ -385,7 +285,7 @@ namespace VL.Xenko.EffectLib
                     if (updatedDescription.HasCompilerErrors)
                     {
                         // Keep the signature of previous description but show errors and since we have errors kill all living instances so they don't have to deal with it
-                        nodeDescriptions[i] = new EffectNodeDescription(description, parentFactory, updatedDescription.CompilerResults);
+                        nodeDescriptions[i] = new EffectNodeDescription(description, updatedDescription.CompilerResults);
                     }
                     else
                     {
