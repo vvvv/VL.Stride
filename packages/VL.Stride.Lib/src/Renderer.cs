@@ -23,15 +23,15 @@ namespace VL.Xenko
     {
         private readonly NodeContext FNodeContext;
         private readonly IResourceHandle<Game> FGameHandle;
-        private readonly VLGame FGame;
+        private readonly IResourceHandle<GameWindow> FWindowHandle;
         private RectangleF FBounds = RectangleF.Empty;
         private readonly bool FSaveBounds;
         private readonly bool FBoundToDocument;
         private readonly bool FShowDialogIfDocumentChanged;
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
+        private readonly SceneLink FSceneLink;
+        private readonly EntitySceneLink FEntitySceneLink;
         private Int2 FLastPosition;
-        private SceneLink sceneLink;
-        private EntitySceneLink entitySceneLink;
 
         public Renderer(NodeContext nodeContext, RectangleF bounds, bool saveBounds = true, bool boundToDocument = false, bool dialogIfDocumentChanged = false)
         {
@@ -42,11 +42,9 @@ namespace VL.Xenko
             FShowDialogIfDocumentChanged = dialogIfDocumentChanged;
 
             FGameHandle = nodeContext.GetGameHandle();
-            var game = FGame = (VLGame)FGameHandle.Resource;
+            FWindowHandle = nodeContext.GetGameWindowProvider().GetHandle();
 
-            Window = game.Window;
-            Window.Title = "Game";
-
+            var game = FGameHandle.Resource;
             if (bounds.Width > 1 && bounds.Height > 1)
             {
                 game.GraphicsDeviceManager.PreferredBackBufferWidth = (int)bounds.Width;
@@ -57,22 +55,25 @@ namespace VL.Xenko
                 Window.Position = new Int2((int)bounds.X, (int)bounds.Y);
             }
 
-            SetupEvents();
+            SetupEvents(Window);
 
-            Window.Visible = true;
+            //init scene graph links 
+            var rootScene = game.SceneSystem.SceneInstance.RootScene;
+            FSceneLink = new SceneLink(rootScene);
+            FEntitySceneLink = new EntitySceneLink(rootScene);
         }
 
-        private bool FSceneGraphInitialized;
-
-        public GameWindow Window { get; }
+        public GameWindow Window => FWindowHandle.Resource;
 
         public void Update(Entity entity, Scene scene, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, bool reset = false, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
         {
+            var game = (VLGame)FGameHandle.Resource;
+
             //v-sync
-            if (verticalSync != FGame.GraphicsDeviceManager.SynchronizeWithVerticalRetrace)
+            if (verticalSync != game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace)
             {
-                FGame.GraphicsDeviceManager.SynchronizeWithVerticalRetrace = verticalSync;
-                FGame.GraphicsDeviceManager.ApplyChanges();
+                game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace = verticalSync;
+                game.GraphicsDeviceManager.ApplyChanges();
             }
 
             //write bounds to patch?
@@ -82,42 +83,28 @@ namespace VL.Xenko
                 FLastPosition = Window.Position;
             }
 
-            //init scene graph links and add layer renderer
-            if (entitySceneLink == null && FGame.SceneSystem.SceneInstance != null)
-            {
-                var rootScene = FGame.SceneSystem.SceneInstance.RootScene;
-                sceneLink = new SceneLink(rootScene);
-                entitySceneLink = new EntitySceneLink(rootScene);
-                FSceneGraphInitialized = true;
-            }
-
-            if (enabled && FSceneGraphInitialized)
+            if (enabled)
             { 
-                FGame.RunCallback.Invoke(); //calls Game.Tick();
+                game.RunCallback.Invoke(); //calls Game.Tick();
 
-                FGame.SceneSystem.GraphicsCompositor.GetFirstForwardRenderer(out var forwardRenderer);
+                game.SceneSystem.GraphicsCompositor.GetFirstForwardRenderer(out var forwardRenderer);
                 forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
                 
-                entitySceneLink.Update(entity);
-                sceneLink.Update(scene);
+                FEntitySceneLink.Update(entity);
+                FSceneLink.Update(scene);
             }
-            else if (enabled) //update game, e.g. splash screen is showing
-            {
-                FGame.RunCallback.Invoke(); //calls Game.Tick();
-            }
-            
         }
 
-        void SetupEvents()
+        void SetupEvents(GameWindow window)
         {
             //register events handlers
             sizeChangedSubscription.Disposable = Observable.Merge(
-                Observable.FromEventPattern(Window, nameof(Window.ClientSizeChanged)), 
-                Observable.FromEventPattern(Window, nameof(Window.OrientationChanged)))
+                Observable.FromEventPattern(window, nameof(Window.ClientSizeChanged)), 
+                Observable.FromEventPattern(window, nameof(Window.OrientationChanged)))
                 .Throttle(TimeSpan.FromSeconds(0.5))
                 .Subscribe(UpdateBounds);
 
-            Window.Closing += Window_Closing;
+            window.Closing += Window_Closing;
         }
 
         private void UpdateBounds(EventPattern<object> obj)
@@ -144,6 +131,9 @@ namespace VL.Xenko
 
         public void Dispose()
         {
+            FEntitySceneLink.Dispose();
+            FSceneLink.Dispose();
+            FWindowHandle.Dispose();
             FGameHandle.Dispose();
         }
     }

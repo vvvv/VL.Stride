@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using VL.Core;
 using VL.Core.CompilerServices;
 using VL.Lib.Basics.Resources;
@@ -19,8 +20,8 @@ namespace VL.Stride.Lib
         {
             factory.RegisterService<NodeContext, IResourceProvider<Game>>(nodeContext =>
             {
-                var rootId = nodeContext.Path.Stack.Last();
-                return ResourceProvider.NewPooled(rootId,
+                var key = nodeContext.GetResourceKey();
+                return ResourceProvider.NewPooled(key,
                     factory: _ =>
                     {
                         var game = new VLGame();
