@@ -60,9 +60,6 @@ namespace VL.Xenko
                 game.Script.Add(assetBuildService);
                 game.Window.AllowUserResizing = true;
 
-                MultiGameEffectNodeFactory.WaitingGame = game;
-                MultiGameEffectNodeFactory.WaitingSyncContext = context.Session.MainContext;
-
             };
 
             // Shutdown the game when VL editor shuts down
