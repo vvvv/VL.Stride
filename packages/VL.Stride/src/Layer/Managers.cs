@@ -18,14 +18,10 @@ namespace VL.Xenko.Layer
         public EntityChildrenManager(Entity entity)
         {
             this.entity = entity;
-            this.entity.Transform.UseTRS = false;
         }
 
-        public Entity Update(Spread<Entity> children, ref Matrix transform, string name = "Children Manager")
+        public Entity Update(Spread<Entity> children)
         {
-            entity.Name = name;
-            entity.Transform.LocalMatrix = transform;
-
             // Quick change check
             if (children != this.children)
                 this.children = children;

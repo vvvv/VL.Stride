@@ -58,15 +58,4 @@ namespace VL.Xenko.Layer
                 upstreamLayer?.SetEntityWorldMatrix(entityWorld);
         }
     }
-
-    /// <summary>
-    /// Groups a spread of entities into one.
-    /// </summary>
-    public sealed class SpectralEntityGroup : IDisposable
-    {
-        readonly EntityChildrenManager manager = new EntityChildrenManager(new Entity());
-
-        public Entity Update(Spread<Entity> input, ref Matrix transform, string name = "Spectral Group") => manager.Update(input, ref transform, name);
-        public void Dispose() => manager.Dispose();
-    }
 }
