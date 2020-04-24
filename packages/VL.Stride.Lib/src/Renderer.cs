@@ -70,7 +70,7 @@ namespace VL.Xenko
 
         public GameWindow Window => FWindowHandle.Resource;
 
-        public void Update(Entity entity, Scene scene, SceneCameraSlotId cameraSlotId, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth, string cameraSlotName = "Main")
+        public void Update(Entity entity, Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth, string cameraSlotName = "Main")
         {
             var game = (VLGame)FGameHandle.Resource;
 
@@ -94,6 +94,7 @@ namespace VL.Xenko
 
                 // Point our camera slot to the upstream camera
                 var ourCameraSlot = compositor.Cameras[0];
+                var cameraSlotId = camera?.Slot ?? default;
                 var cameraId = cameraSlotId.IsEmpty ? FFallbackSlotId : cameraSlotId;
                 if (ourCameraSlot.Id != cameraId.Id)
                 {
