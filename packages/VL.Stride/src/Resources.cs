@@ -26,20 +26,7 @@ namespace VL.Xenko
 
         public static IResourceProvider<GameWindow> GetGameWindowProvider(this NodeContext nodeContext)
         {
-            var key = nodeContext.GetResourceKey();
-            return ResourceProvider.NewPooled(key, k =>
-            {
-                var gameProvider = nodeContext.GetGameProvider();
-                return gameProvider
-                    .Bind(game =>
-                    {
-                        game.Window.Visible = true;
-                        return ResourceProvider.Return(game.Window, disposeAction: (window) =>
-                        {
-                            window.Visible = false;
-                        });
-                    });
-            });
+            return nodeContext.Factory.CreateService<IResourceProvider<GameWindow>>(nodeContext);
         }
     }
 }

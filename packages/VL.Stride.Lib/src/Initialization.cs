@@ -50,6 +50,24 @@ namespace VL.Stride.Lib
                     }
                     , delayDisposalInMilliseconds: 0);
             });
+
+            factory.RegisterService<NodeContext, IResourceProvider<GameWindow>>(nodeContext =>
+            {
+                var key = nodeContext.GetResourceKey();
+                return ResourceProvider.NewPooled(key, k =>
+                {
+                    var gameProvider = nodeContext.GetGameProvider();
+                    return gameProvider
+                        .Bind(game =>
+                        {
+                            game.Window.Visible = true;
+                            return ResourceProvider.Return(game.Window, disposeAction: (window) =>
+                            {
+                                window.Visible = false;
+                            });
+                        });
+                });
+            });
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Threading;
 using System.Windows.Forms;
 using VL.Core;
 using VL.Xenko.Assets;
-using VL.Xenko.EffectLib;
 using Xenko.Engine;
 
 namespace VL.Xenko
@@ -42,6 +41,9 @@ namespace VL.Xenko
 
             Game.GameStarted += (s, e) =>
             {
+                if (s != game)
+                    return;
+
                 // Raise Idle - needed by VL context to initiailize
                 Application.RaiseIdle(System.EventArgs.Empty);
 
@@ -58,17 +60,16 @@ namespace VL.Xenko
                 game.Services.AddService(assetBuildService);
                 game.Script.Add(script);
                 game.Script.Add(assetBuildService);
-                game.Window.AllowUserResizing = true;
-
-                MultiGameEffectNodeFactory.WaitingGame = game;
-                MultiGameEffectNodeFactory.WaitingSyncContext = context.Session.MainContext;
-
             };
 
             // Shutdown the game when VL editor shuts down
             context.ThreadExit += (s, e) => game.Exit();
             // Shutdown VL when game shuts down
-            game.Exiting += (s, e) => context.Dispose();
+            game.Exiting += (s, e) =>
+            {
+                if (s == game)
+                    context.Dispose();
+            };
         }
 
         private static bool CheckBuild(Game game)
