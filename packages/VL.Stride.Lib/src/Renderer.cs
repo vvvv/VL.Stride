@@ -16,6 +16,7 @@ using Xenko.Core.MicroThreading;
 using Xenko.Engine;
 using Xenko.Games;
 using Xenko.Rendering;
+using Xenko.Rendering.Compositing;
 
 namespace VL.Xenko
 {
@@ -31,6 +32,7 @@ namespace VL.Xenko
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
         private readonly SceneLink FSceneLink;
         private readonly EntitySceneLink FEntitySceneLink;
+        private readonly SceneCameraSlotId FFallbackSlotId;
         private Int2 FLastPosition;
 
         public Renderer(NodeContext nodeContext, RectangleF bounds, bool saveBounds = true, bool boundToDocument = false, bool dialogIfDocumentChanged = false)
@@ -57,15 +59,18 @@ namespace VL.Xenko
 
             SetupEvents(Window);
 
-            //init scene graph links 
+            // Init scene graph links 
             var rootScene = game.SceneSystem.SceneInstance.RootScene;
             FSceneLink = new SceneLink(rootScene);
             FEntitySceneLink = new EntitySceneLink(rootScene);
+
+            // Save initial set camera slot id
+            FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
         }
 
         public GameWindow Window => FWindowHandle.Resource;
 
-        public void Update(Entity entity, Scene scene, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, bool reset = false, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
+        public void Update(Entity entity, Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth, string cameraSlotName = "Main")
         {
             var game = (VLGame)FGameHandle.Resource;
 
@@ -84,10 +89,23 @@ namespace VL.Xenko
             }
 
             if (enabled)
-            { 
+            {
+                var compositor = game.SceneSystem.GraphicsCompositor;
+
+                // Point our camera slot to the upstream camera
+                var ourCameraSlot = compositor.Cameras[0];
+                var cameraSlotId = camera?.Slot ?? default;
+                var cameraId = cameraSlotId.IsEmpty ? FFallbackSlotId : cameraSlotId;
+                if (ourCameraSlot.Id != cameraId.Id)
+                {
+                    ourCameraSlot.Id = cameraId.Id;
+                    // Notify the camera processor about the updated id
+                    compositor.Cameras[0] = ourCameraSlot;
+                }
+
                 game.RunCallback.Invoke(); //calls Game.Tick();
 
-                game.SceneSystem.GraphicsCompositor.GetFirstForwardRenderer(out var forwardRenderer);
+                compositor.GetFirstForwardRenderer(out var forwardRenderer);
                 forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
                 
                 FEntitySceneLink.Update(entity);
