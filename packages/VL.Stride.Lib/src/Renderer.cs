@@ -31,7 +31,6 @@ namespace VL.Xenko
         private readonly bool FShowDialogIfDocumentChanged;
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
         private readonly SceneLink FSceneLink;
-        private readonly EntitySceneLink FEntitySceneLink;
         private readonly SceneCameraSlotId FFallbackSlotId;
         private Int2 FLastPosition;
 
@@ -62,7 +61,6 @@ namespace VL.Xenko
             // Init scene graph links 
             var rootScene = game.SceneSystem.SceneInstance.RootScene;
             FSceneLink = new SceneLink(rootScene);
-            FEntitySceneLink = new EntitySceneLink(rootScene);
 
             // Save initial set camera slot id
             FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
@@ -70,7 +68,7 @@ namespace VL.Xenko
 
         public GameWindow Window => FWindowHandle.Resource;
 
-        public void Update(Entity entity, Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth, string cameraSlotName = "Main")
+        public void Update(Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth, string cameraSlotName = "Main")
         {
             var game = (VLGame)FGameHandle.Resource;
 
@@ -108,7 +106,6 @@ namespace VL.Xenko
                 compositor.GetFirstForwardRenderer(out var forwardRenderer);
                 forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
                 
-                FEntitySceneLink.Update(entity);
                 FSceneLink.Update(scene);
             }
         }
@@ -149,7 +146,6 @@ namespace VL.Xenko
 
         public void Dispose()
         {
-            FEntitySceneLink.Dispose();
             FSceneLink.Dispose();
             FWindowHandle.Dispose();
             FGameHandle.Dispose();
