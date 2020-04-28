@@ -68,7 +68,7 @@ namespace VL.Xenko
 
         public GameWindow Window => FWindowHandle.Resource;
 
-        public void Update(Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth, string cameraSlotName = "Main")
+        public void Update(Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
         {
             var game = (VLGame)FGameHandle.Resource;
 
