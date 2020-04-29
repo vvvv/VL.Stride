@@ -1,4 +1,5 @@
 ﻿using System;
+using VL.Xenko.Games;
 using Xenko.Engine;
 
 namespace VL.Xenko.Layer
@@ -9,10 +10,12 @@ namespace VL.Xenko.Layer
     public sealed class EntityLink : IDisposable
     {
         readonly Entity parent;
+        readonly VLGame game;
         Entity child;
 
-        public EntityLink(Entity parent)
+        public EntityLink(VLGame game, Entity parent)
         {
+            this.game = game;
             this.parent = parent;
         }
 
@@ -33,6 +36,8 @@ namespace VL.Xenko.Layer
             {
                 if (value != child)
                 {
+                    //bad patches can lead to scene graphs that don't reflect all links
+                    //let's only disconnect the old child if this link may be responsible for the parent-child-relationship
                     if (child != null && child.GetParent() == parent)
                     {
                         // Unlink
@@ -40,11 +45,15 @@ namespace VL.Xenko.Layer
                         child.Scene = null;
                         child = null;
                     }
-                    if (value != null && value.GetParent() == null)
+                    if (value != null)
                     {
-                        // Link
-                        value.SetParent(parent);
-                        child = value;
+                        if (value.GetParent() == null)
+                        {
+                            // Link
+                            value.SetParent(parent);
+                            child = value;
+                        }
+                        SceneGraphManager.ParentGotSet(game, value);
                     }
                 }
             }
@@ -57,10 +66,12 @@ namespace VL.Xenko.Layer
     public sealed class EntitySceneLink : IDisposable
     {
         readonly Scene parent;
+        readonly VLGame game;
         Entity child;
 
-        public EntitySceneLink(Scene parent)
+        public EntitySceneLink(VLGame game, Scene parent)
         {
+            this.game = game;
             this.parent = parent;
         }
 
@@ -91,6 +102,7 @@ namespace VL.Xenko.Layer
                     {
                         // Link
                         value.Scene = parent;
+                        SceneGraphManager.ParentGotSet(game, value);
                         child = value;
                     }
                 }
@@ -104,10 +116,12 @@ namespace VL.Xenko.Layer
     public sealed class SceneLink : IDisposable
     {
         readonly Scene parent;
+        readonly VLGame game;
         Scene child;
 
-        public SceneLink(Scene parent)
+        public SceneLink(VLGame game, Scene parent)
         {
+            this.game = game;
             this.parent = parent;
         }
 
@@ -138,6 +152,7 @@ namespace VL.Xenko.Layer
                     {
                         // Link
                         value.Parent = parent;
+                        SceneGraphManager.ParentGotSet(game, value);
                         child = value;
                     }
                 }
@@ -151,10 +166,12 @@ namespace VL.Xenko.Layer
     public sealed class ComponentLink : IDisposable
     {
         readonly Entity entity;
+        readonly VLGame game;
         EntityComponent component;
 
-        public ComponentLink(Entity entity)
+        public ComponentLink(VLGame game, Entity entity)
         {
+            this.game = game;
             this.entity = entity;
         }
 
@@ -185,6 +202,7 @@ namespace VL.Xenko.Layer
                     {
                         // Link
                         entity.Add(value);
+                        SceneGraphManager.ParentGotSet(game, value);
                         component = value;
                     }
                 }

@@ -1,22 +1,74 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using VL.Lib.Collections;
+using VL.Xenko.Games;
 using Xenko.Core.Collections;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
+using Xenko.Games;
 
 namespace VL.Xenko.Layer
 {
+    public class SceneGraphManager
+    {
+        public SceneGraphManager(VLGame vLGame)
+        {
+            ManagerForGame.Add(vLGame, this);
+        }
+
+        static Dictionary<VLGame, SceneGraphManager> ManagerForGame = new Dictionary<VLGame, SceneGraphManager>();
+        Dictionary<object, int> ParentChangesLastFrame = new Dictionary<object, int>();
+        HashSet<object> TroublesomeEntityOrComponent = new HashSet<object>();
+
+        public void OncePerFrame(GameTime gameTime)
+        {
+            TroublesomeEntityOrComponent.Clear();
+            var objs = ParentChangesLastFrame
+                .Where(pair => pair.Value > 1)
+                .Select(pair => pair.Key);
+            TroublesomeEntityOrComponent.AddRange(objs);
+            ParentChangesLastFrame.Clear();
+        }
+
+        /// <summary>
+        /// To be called by all components and entities once per frame to inform the user of weird scene graphs.
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="entityOrComponent"></param>
+        public static void ComplainIfParentGotChangedMoreThanOncePerFrame(VLGame game, object entityOrComponent)
+        {
+            var manager = ManagerForGame[game];
+            if (manager.TroublesomeEntityOrComponent.Contains(entityOrComponent))
+                throw new Exception($"Many parents for {entityOrComponent} detected. Make sure you only draw one link.");
+        }
+
+        internal static void ParentGotSet(VLGame game, object entityOrComponent)
+        {
+            var manager = ManagerForGame[game];
+            if (manager.ParentChangesLastFrame.TryGetValue(entityOrComponent, out int c))
+            {
+                c++;
+                manager.ParentChangesLastFrame[entityOrComponent] = c;
+            }
+            else
+                manager.ParentChangesLastFrame[entityOrComponent] = 1;
+        }
+    }
+
     /// <summary>
     /// Manages the children of an <see cref="Entity"/>.
     /// </summary>
     public sealed class EntityChildrenManager : IDisposable
     {
         readonly Entity entity;
+        readonly VLGame game;
         readonly FastList<EntityLink> links = new FastList<EntityLink>();
         Spread<Entity> children;
 
-        public EntityChildrenManager(Entity entity)
+        public EntityChildrenManager(VLGame game, Entity entity)
         {
+            this.game = game;
             this.entity = entity;
         }
 
@@ -35,7 +87,7 @@ namespace VL.Xenko.Layer
                 var link = links.ElementAtOrDefault(i);
                 if (link == null)
                 {
-                    link = new EntityLink(entity);
+                    link = new EntityLink(game, entity);
                     links.Add(link);
                 }
                 link.Child = array[i];
@@ -62,11 +114,13 @@ namespace VL.Xenko.Layer
     public sealed class EntityComponentsManager : IDisposable
     {
         readonly Entity entity;
+        readonly VLGame game;
         readonly FastList<ComponentLink> links = new FastList<ComponentLink>();
         Spread<EntityComponent> components;
 
-        public EntityComponentsManager(Entity entity)
+        public EntityComponentsManager(VLGame game, Entity entity)
         {
+            this.game = game;
             this.entity = entity;
         }
 
@@ -85,7 +139,7 @@ namespace VL.Xenko.Layer
                 var link = links.ElementAtOrDefault(i);
                 if (link == null)
                 {
-                    link = new ComponentLink(entity);
+                    link = new ComponentLink(game, entity);
                     links.Add(link);
                 }
                 link.Component = array[i];
@@ -113,11 +167,13 @@ namespace VL.Xenko.Layer
     public sealed class SceneEntitiesManager : IDisposable
     {
         readonly Scene scene;
+        readonly VLGame game;
         readonly FastList<EntitySceneLink> links = new FastList<EntitySceneLink>();
         Spread<Entity> entities;
 
-        public SceneEntitiesManager(Scene scene)
+        public SceneEntitiesManager(VLGame game, Scene scene)
         {
+            this.game = game;
             this.scene = scene;
         }
 
@@ -136,7 +192,7 @@ namespace VL.Xenko.Layer
                 var link = links.ElementAtOrDefault(i);
                 if (link == null)
                 {
-                    link = new EntitySceneLink(scene);
+                    link = new EntitySceneLink(game, scene);
                     links.Add(link);
                 }
                 link.Child = array[i];
@@ -163,11 +219,13 @@ namespace VL.Xenko.Layer
     public sealed class SceneChildrenManager : IDisposable
     {
         readonly Scene scene;
+        readonly VLGame game;
         readonly FastList<SceneLink> links = new FastList<SceneLink>();
         Spread<Scene> children;
 
-        public SceneChildrenManager(Scene scene)
+        public SceneChildrenManager(VLGame game, Scene scene)
         {
+            this.game = game;
             this.scene = scene;
         }
 
@@ -186,7 +244,7 @@ namespace VL.Xenko.Layer
                 var link = links.ElementAtOrDefault(i);
                 if (link == null)
                 {
-                    link = new SceneLink(scene);
+                    link = new SceneLink(game, scene);
                     links.Add(link);
                 }
                 link.Child = array[i];

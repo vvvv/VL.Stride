@@ -60,7 +60,7 @@ namespace VL.Xenko
 
             // Init scene graph links 
             var rootScene = game.SceneSystem.SceneInstance.RootScene;
-            FSceneLink = new SceneLink(rootScene);
+            FSceneLink = new SceneLink((VLGame)game, rootScene);
 
             // Save initial set camera slot id
             FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();

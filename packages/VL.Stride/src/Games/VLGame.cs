@@ -7,6 +7,7 @@ using Xenko.Engine;
 using Xenko.Games;
 using Xenko.Rendering;
 using Xenko.Engine.Design;
+using VL.Xenko.Layer;
 
 namespace VL.Xenko.Games
 {
@@ -21,11 +22,16 @@ namespace VL.Xenko.Games
         [ThreadStatic]
         public static Game GameInstance;
 
+        //public event EventHandler<GameTime> BeforeUpdating; 
+
+        SceneGraphManager SceneGraphManager;
+
         public Action RunCallback { get; set; }
 
         public VLGame()
             : base()
         {
+            SceneGraphManager = new SceneGraphManager(this);
         }
 
         protected override void PrepareContext()
@@ -44,6 +50,14 @@ namespace VL.Xenko.Games
             Settings.EffectCompilation = EffectCompilationMode.Local;
             Settings.RecordUsedEffects = false;
             base.Initialize();
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            SceneGraphManager.OncePerFrame(gameTime);
+
+            //BeforeUpdating?.Invoke(this, gameTime);
+            base.Update(gameTime);
         }
 
         public void AddLayerRenderFeature()
