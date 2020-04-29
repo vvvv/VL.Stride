@@ -9,7 +9,7 @@ using VL.Core;
 using VL.Lang.PublicAPI;
 using VL.Lib.Basics.Resources;
 using VL.Xenko.Games;
-using VL.Xenko.Layer;
+using VL.Xenko.Engine;
 using VL.Xenko.Rendering;
 using Xenko.Core.Mathematics;
 using Xenko.Core.MicroThreading;
@@ -17,6 +17,7 @@ using Xenko.Engine;
 using Xenko.Games;
 using Xenko.Rendering;
 using Xenko.Rendering.Compositing;
+using VL.Lib.Collections;
 
 namespace VL.Xenko
 {
@@ -30,7 +31,7 @@ namespace VL.Xenko
         private readonly bool FBoundToDocument;
         private readonly bool FShowDialogIfDocumentChanged;
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
-        private readonly SceneLink FSceneLink;
+        private readonly SceneChildrenManager FSceneManager;
         private readonly SceneCameraSlotId FFallbackSlotId;
         private Int2 FLastPosition;
 
@@ -60,13 +61,15 @@ namespace VL.Xenko
 
             // Init scene graph links 
             var rootScene = game.SceneSystem.SceneInstance.RootScene;
-            FSceneLink = new SceneLink(rootScene);
+            FSceneManager = new SceneChildrenManager(rootScene);
 
             // Save initial set camera slot id
             FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
         }
 
         public GameWindow Window => FWindowHandle.Resource;
+
+        Spread<Scene> scenes = Spread<Scene>.Empty;
 
         public void Update(Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
         {
@@ -105,8 +108,11 @@ namespace VL.Xenko
 
                 compositor.GetFirstForwardRenderer(out var forwardRenderer);
                 forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
-                
-                FSceneLink.Update(scene);
+
+                if (scene != scenes.FirstOrDefault())
+                    scenes = scene != null ? Spread.Create(scene) : Spread<Scene>.Empty;
+
+                FSceneManager.Update(scenes);
             }
         }
 
@@ -146,7 +152,7 @@ namespace VL.Xenko
 
         public void Dispose()
         {
-            FSceneLink.Dispose();
+            FSceneManager.Dispose();
             FWindowHandle.Dispose();
             FGameHandle.Dispose();
         }
