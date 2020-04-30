@@ -1,8 +1,8 @@
-﻿using System;
-using VL.Xenko.Rendering;
-using Xenko.Engine;
+using System;
+using VL.Stride.Rendering;
+using Stride.Engine;
 
-namespace VL.Xenko.Layer
+namespace VL.Stride.Layer
 {
     /// <summary>
     /// Renders a layer from within the view of the main camera.

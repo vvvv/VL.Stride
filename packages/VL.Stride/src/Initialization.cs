@@ -1,9 +1,9 @@
-﻿using VL.Core;
+using VL.Core;
 using VL.Core.CompilerServices;
 
-[assembly: AssemblyInitializer(typeof(VL.Xenko.Core.Initialization))]
+[assembly: AssemblyInitializer(typeof(VL.Stride.Core.Initialization))]
 
-namespace VL.Xenko.Core
+namespace VL.Stride.Core
 {
     public sealed class Initialization : AssemblyInitializer<Initialization>
     {

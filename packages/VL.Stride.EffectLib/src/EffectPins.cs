@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using VL.Core;
-using Xenko.Rendering;
+using Stride.Rendering;
 
-namespace VL.Xenko.EffectLib
+namespace VL.Stride.EffectLib
 {
     static class EffectPins
     {

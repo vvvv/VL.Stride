@@ -1,15 +1,15 @@
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VL.Xenko.Utils
+namespace VL.Stride.Utils
 {
     public static class CollectionUtils
     {

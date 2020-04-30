@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using VL.Core;
 using VL.Lib.Basics.Resources;
-using VL.Xenko.Shaders;
-using Xenko.Core.Mathematics;
-using Xenko.Games;
+using VL.Stride.Shaders;
+using Stride.Core.Mathematics;
+using Stride.Games;
 
-namespace VL.Xenko.EffectLib
+namespace VL.Stride.EffectLib
 {
     abstract class EffectNodeBase : VLObject, IDisposable
     {

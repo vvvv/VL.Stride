@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
 
-namespace VL.Xenko.Shaders.ShaderFX.Functions
+namespace VL.Stride.Shaders.ShaderFX.Functions
 {
     public class Funk2In1Out<TIn1, TIn2, TOut> : ComputeNode<TOut>
     {

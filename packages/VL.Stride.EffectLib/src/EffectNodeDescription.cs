@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,19 +8,19 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using VL.Core;
 using VL.Core.Diagnostics;
-using VL.Xenko.Rendering;
-using VL.Xenko.Shaders;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.ComputeEffect;
-using Xenko.Shaders;
-using Xenko.Shaders.Compiler;
-using Buffer = Xenko.Graphics.Buffer;
+using VL.Stride.Rendering;
+using VL.Stride.Shaders;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.ComputeEffect;
+using Stride.Shaders;
+using Stride.Shaders.Compiler;
+using Buffer = Stride.Graphics.Buffer;
 
-namespace VL.Xenko.EffectLib
+namespace VL.Stride.EffectLib
 {
     public class EffectNodeDescription : IVLNodeDescription
     {
@@ -72,7 +72,7 @@ namespace VL.Xenko.EffectLib
 
         public string Name { get; }
 
-        public string Category => "Xenko.EffectLib";
+        public string Category => "Stride.EffectLib";
 
         public EffectPinDescription[] Inputs => inputs ?? (inputs = GetInputsSafe());
 
@@ -269,7 +269,7 @@ namespace VL.Xenko.EffectLib
 
         public bool OpenEditor()
         {
-            var path = GameFactory.GetPathOfXkslShader(Name);
+            var path = GameFactory.GetPathOfSdslShader(Name);
             Process.Start(path);
 
             var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();

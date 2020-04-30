@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xenko.Rendering;
+using Stride.Rendering;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     /// <summary>
     /// Extension methods for <see cref="Material"/>.

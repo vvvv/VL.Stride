@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xenko.Core.Mathematics;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
-using XenkoMath = Xenko.Core.Mathematics;
+using Stride.Core.Mathematics;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
+using StrideMath = Stride.Core.Mathematics;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     public static class GraphicsCompositorExtensions
     {

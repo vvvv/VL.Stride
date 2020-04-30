@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using VL.Core;
-using Xenko.Core.Mathematics;
+using Stride.Core.Mathematics;
 
-namespace VL.Xenko.Core
+namespace VL.Stride.Core
 {
     static partial class Serialization
     {

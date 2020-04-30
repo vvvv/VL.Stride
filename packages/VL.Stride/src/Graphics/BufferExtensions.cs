@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Core.IO;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Core.IO;
 using System.Buffers;
 using System.IO;
-using Buffer = Xenko.Graphics.Buffer;
+using Buffer = Stride.Graphics.Buffer;
 using VL.Core;
 
-namespace VL.Xenko.Graphics
+namespace VL.Stride.Graphics
 {
     public static class BufferExtensions
     {

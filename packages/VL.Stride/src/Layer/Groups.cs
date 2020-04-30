@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using VL.Lib.Collections;
-using VL.Xenko.Rendering;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Rendering;
+using VL.Stride.Rendering;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Rendering;
 
-namespace VL.Xenko.Layer
+namespace VL.Stride.Layer
 {
     /// <summary>
     /// Groups a sequence of layers into one.

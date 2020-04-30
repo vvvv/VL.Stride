@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using VL.Lib.Collections;
-using VL.Xenko.Games;
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Games;
+using VL.Stride.Games;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Games;
 
-namespace VL.Xenko.Engine
+namespace VL.Stride.Engine
 {
     /// <summary>
     /// Manages the children of an <see cref="Entity"/>.

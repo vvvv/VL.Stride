@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
-using Xenko.Core;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
-using DataMemberAttribute = Xenko.Core.DataMemberAttribute;
-using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+using Stride.Core;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
+using DataMemberAttribute = Stride.Core.DataMemberAttribute;
+using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public class UnaryOperation2<TIn, TOut> : ComputeValue<TOut>
     {

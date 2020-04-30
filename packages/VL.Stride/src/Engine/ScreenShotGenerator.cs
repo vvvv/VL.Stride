@@ -1,9 +1,9 @@
-﻿using System;
-using VL.Xenko.Graphics;
-using Xenko.Games;
-using Xenko.Graphics;
+using System;
+using VL.Stride.Graphics;
+using Stride.Games;
+using Stride.Graphics;
 
-namespace VL.Xenko.Engine
+namespace VL.Stride.Engine
 {
     public static class ScreenshotBuilder
     {

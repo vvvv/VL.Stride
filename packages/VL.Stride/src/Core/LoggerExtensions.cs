@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Xenko.Core.Diagnostics;
+using Stride.Core.Diagnostics;
 
-namespace VL.Xenko.Core
+namespace VL.Stride.Core
 {
     public static class LoggerExtensions
     {

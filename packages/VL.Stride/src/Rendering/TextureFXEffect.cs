@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Xenko.Rendering;
-using Xenko.Rendering.Images;
+using Stride.Rendering;
+using Stride.Rendering.Images;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     public class TextureFXEffect : ImageEffectShader
     {

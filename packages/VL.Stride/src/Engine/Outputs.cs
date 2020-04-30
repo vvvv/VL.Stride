@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Xenko.Engine;
+using Stride.Engine;
 
-namespace VL.Xenko.Engine
+namespace VL.Stride.Engine
 {
     public class ComponentOutput
     {

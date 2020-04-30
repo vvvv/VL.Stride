@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xenko.Engine;
-using Xenko.Rendering;
+using Stride.Engine;
+using Stride.Rendering;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     public class DrawEffectRenderStageSelector : RenderStageSelector
     {

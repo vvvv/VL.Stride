@@ -1,11 +1,11 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using VL.Xenko.Assets;
-using Xenko.Core.Assets;
-using Xenko.Engine;
+using VL.Stride.Assets;
+using Stride.Core.Assets;
+using Stride.Engine;
 
-namespace VL.Xenko.Assets
+namespace VL.Stride.Assets
 {
     /// <summary>
     /// Custom vl script that sets MSBuild

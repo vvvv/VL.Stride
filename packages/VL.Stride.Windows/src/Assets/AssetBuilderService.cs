@@ -1,15 +1,15 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.BuildEngine;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Assets;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.BuildEngine;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Core.Assets;
 
-namespace VL.Xenko.Assets
+namespace VL.Stride.Assets
 {
     public class AssetBuilderService : IBuildService, IDisposable
     {

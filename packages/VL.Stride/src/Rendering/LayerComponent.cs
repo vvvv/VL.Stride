@@ -1,8 +1,8 @@
-﻿using Xenko.Core;
-using Xenko.Engine;
-using Xenko.Engine.Design;
+using Stride.Core;
+using Stride.Engine;
+using Stride.Engine.Design;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     /// <summary>
     /// Layer components get picked up by the <see cref="LayerProcessor"/> for low level rendering.

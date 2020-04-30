@@ -1,6 +1,6 @@
-﻿using Xenko.Core.Diagnostics;
+using Stride.Core.Diagnostics;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     public static class VLProfilerKeys
     {

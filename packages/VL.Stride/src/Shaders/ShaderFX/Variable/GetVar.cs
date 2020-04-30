@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using Xenko.Core;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
-using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+using System.Collections.Generic;
+using Stride.Core;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
+using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public class GetVar<T> : ComputeValue<T>
     {

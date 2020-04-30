@@ -1,6 +1,6 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
-namespace VL.Xenko.Shaders
+namespace VL.Stride.Shaders
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct DispatchArgs

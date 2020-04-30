@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,25 +8,25 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using VL.Core;
-using VL.Xenko.Games;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Storage;
-using Xenko.Engine;
-using Xenko.Engine.Processors;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Shaders;
-using Xenko.Shaders.Compiler;
+using VL.Stride.Games;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Storage;
+using Stride.Engine;
+using Stride.Engine.Processors;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Shaders;
+using Stride.Shaders.Compiler;
 using VLServiceRegistry = VL.Core.ServiceRegistry;
 
-[assembly: NodeFactory(typeof(VL.Xenko.EffectLib.EffectNodeFactory))]
+[assembly: NodeFactory(typeof(VL.Stride.EffectLib.EffectNodeFactory))]
 
-namespace VL.Xenko.EffectLib
+namespace VL.Stride.EffectLib
 {
     class NodeComparer : IEqualityComparer<IVLNodeDescription>
     {
@@ -72,7 +72,7 @@ namespace VL.Xenko.EffectLib
 
         }
 
-        const string xkslFileFilter = "*.xksl";
+        const string sdslFileFilter = "*.sdsl";
         const string CompiledShadersKey = "__shaders_bytecode__"; // Taken from EffectCompilerCache.cs
 
         private EffectCompilerParameters effectCompilerParameters = EffectCompilerParameters.Default;
@@ -102,7 +102,7 @@ namespace VL.Xenko.EffectLib
             }
             else
             {
-                directoryWatcher = new DirectoryWatcher(xkslFileFilter);
+                directoryWatcher = new DirectoryWatcher(sdslFileFilter);
             }
             directoryWatcher.Modified += DirectoryWatcher_Modified;
         }
@@ -190,8 +190,8 @@ namespace VL.Xenko.EffectLib
 
         private static ShaderSource GetShaderSource(string effectName)
         {
-            var isXkfx = ShaderMixinManager.Contains(effectName);
-            if (isXkfx)
+            var isXdfx = ShaderMixinManager.Contains(effectName);
+            if (isXdfx)
                 return new ShaderMixinGeneratorSource(effectName);
             return new ShaderClassSource(effectName);
         }
@@ -218,7 +218,7 @@ namespace VL.Xenko.EffectLib
 
                 if (mixinToCompile == null)
                 {
-                    throw new ArgumentException("Unsupported ShaderSource type [{0}]. Supporting only ShaderMixinSource/xkfx, ShaderClassSource", "shaderSource");
+                    throw new ArgumentException("Unsupported ShaderSource type [{0}]. Supporting only ShaderMixinSource/sdfx, ShaderClassSource", "shaderSource");
                 }
                 if (string.IsNullOrEmpty(mixinToCompile.Name))
                 {
@@ -229,7 +229,7 @@ namespace VL.Xenko.EffectLib
             return mixinToCompile;
         }
 
-        public string GetPathOfXkslShader(string effectName)
+        public string GetPathOfSdslShader(string effectName)
         {
             var fileProvider = DummyGame.Content.FileProvider;
             using (var pathStream = fileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(effectName) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
@@ -250,7 +250,7 @@ namespace VL.Xenko.EffectLib
             var contentManager = game.Content;
             if (contentManager != null)
             {
-                var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, xkslFileFilter, VirtualSearchOption.AllDirectories);
+                var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.AllDirectories);
                 foreach (var file in files)
                 {
                     var effectName = Path.GetFileNameWithoutExtension(file);

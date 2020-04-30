@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Xenko.Rendering;
-using Xenko.Shaders;
+using Stride.Rendering;
+using Stride.Shaders;
 
-namespace VL.Xenko.Effects.TextureFX
+namespace VL.Stride.Effects.TextureFX
 {
     class TextureFXKeys
     {

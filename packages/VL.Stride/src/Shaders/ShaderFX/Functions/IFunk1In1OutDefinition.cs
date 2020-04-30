@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace VL.Xenko.Shaders.ShaderFX.Functions
+namespace VL.Stride.Shaders.ShaderFX.Functions
 {
     public interface IFunk1In1OutDefinition<TIn, TOut>
     {

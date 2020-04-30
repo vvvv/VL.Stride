@@ -1,15 +1,15 @@
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Shaders;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Buffer = Xenko.Graphics.Buffer;
+using Buffer = Stride.Graphics.Buffer;
 
-namespace VL.Xenko.Shaders
+namespace VL.Stride.Shaders
 {
     public static class NativeDeviceUtils
     {
@@ -41,27 +41,27 @@ namespace VL.Xenko.Shaders
 
         static NativeDeviceUtils()
         {
-            var comandListType = Type.GetType("Xenko.Graphics.CommandList, Xenko.Graphics");
+            var comandListType = Type.GetType("Stride.Graphics.CommandList, Stride.Graphics");
             var comandListTypeFields = comandListType.GetRuntimeFields();
             nativeDeviceContextFi = comandListTypeFields.Where(fi => fi.Name == "nativeDeviceContext").First();
             unorderedAccessViewsFi = comandListTypeFields.Where(fi => fi.Name == "unorderedAccessViews").First();
 
-            var graphicsResourceBaseType = Type.GetType("Xenko.Graphics.GraphicsResourceBase, Xenko.Graphics");
+            var graphicsResourceBaseType = Type.GetType("Stride.Graphics.GraphicsResourceBase, Stride.Graphics");
             nativeDeviceChildFi = graphicsResourceBaseType.GetFieldWithName("nativeDeviceChild");
 
-            var graphicsResourceType = Type.GetType("Xenko.Graphics.GraphicsResource, Xenko.Graphics");
+            var graphicsResourceType = Type.GetType("Stride.Graphics.GraphicsResource, Stride.Graphics");
             unorderedAccessViewFi = graphicsResourceType.GetFieldWithName("unorderedAccessView");
 
-            var pipelineStateType = Type.GetType("Xenko.Graphics.PipelineState, Xenko.Graphics");
+            var pipelineStateType = Type.GetType("Stride.Graphics.PipelineState, Stride.Graphics");
             geometryShaderFi = pipelineStateType.GetFieldWithName("geometryShader");
  
             //graphics device native device
-            var graphicsDeviceType = Type.GetType("Xenko.Graphics.GraphicsDevice, Xenko.Graphics");
+            var graphicsDeviceType = Type.GetType("Stride.Graphics.GraphicsDevice, Stride.Graphics");
             nativeDeviceFi = graphicsDeviceType.GetFieldWithName("nativeDevice");
             registerBufferMemoryUsageMi = graphicsDeviceType.GetmethodWithName("RegisterBufferMemoryUsage");
 
             //buffer
-            var bufferType = Type.GetType("Xenko.Graphics.Buffer, Xenko.Graphics");
+            var bufferType = Type.GetType("Stride.Graphics.Buffer, Stride.Graphics");
             var bufferTypeInfo = bufferType.GetTypeInfo();
             bufferCi = bufferTypeInfo.DeclaredConstructors.Where(ci => ci.GetParameters().Count() == 1).First();
             bufferDescriptionFi = bufferType.GetFieldWithName("bufferDescription");
@@ -71,7 +71,7 @@ namespace VL.Xenko.Shaders
             viewFormatPi = bufferType.GetPropertyWithName("ViewFormat");
             initializeViewsMi = bufferType.GetmethodWithName("InitializeViews");
 
-            var fastTextRendererType = Type.GetType("Xenko.Graphics.FastTextRenderer, Xenko.Graphics");
+            var fastTextRendererType = Type.GetType("Stride.Graphics.FastTextRenderer, Stride.Graphics");
             simpleEffectFi = fastTextRendererType.GetFieldWithName("simpleEffect");
 
             if(fastTextRendererType.GetRuntimeProperties().Any(pi => pi.Name == "MatrixTransform"))

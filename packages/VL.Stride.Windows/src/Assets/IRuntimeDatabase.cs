@@ -1,13 +1,13 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
-using Xenko.Core;
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Analysis;
+using Stride.Core;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Analysis;
 
-namespace VL.Xenko.Assets
+namespace VL.Stride.Assets
 {
     public interface IRuntimeDatabase
     {

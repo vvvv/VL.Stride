@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -6,11 +6,11 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using VL.Core;
 using VL.Core.Diagnostics;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Rendering;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Rendering;
 
-namespace VL.Xenko.EffectLib
+namespace VL.Stride.EffectLib
 {
     static class EffectUtils
     {

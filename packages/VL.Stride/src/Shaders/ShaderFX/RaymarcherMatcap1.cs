@@ -1,16 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using VL.Xenko.Shaders.ShaderFX.Functions;
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
-using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+using VL.Stride.Shaders.ShaderFX.Functions;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
+using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public class RaymarcherMatcap : Funk1In1Out<Vector2, Vector4>
     {

@@ -1,16 +1,16 @@
 using System;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Core.Mathematics;
-using Xenko.Shaders;
-using Xenko.Rendering.ComputeEffect;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Core.Mathematics;
+using Stride.Shaders;
+using Stride.Rendering.ComputeEffect;
 using System.Reflection;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Buffer = Xenko.Graphics.Buffer;
+using Buffer = Stride.Graphics.Buffer;
 
-namespace VL.Xenko.Shaders
+namespace VL.Stride.Shaders
 {
     public class ComputeEffectDispatcher : DrawEffect
     {

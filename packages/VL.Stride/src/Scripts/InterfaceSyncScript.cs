@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
+using Stride.Core.Mathematics;
+using Stride.Engine;
 
-namespace VL.Xenko.Scripts
+namespace VL.Stride.Scripts
 {
     public class InterfaceSyncScript : SyncScript
     {

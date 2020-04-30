@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.IO.MemoryMappedFiles;
-using Xenko.Graphics;
+using Stride.Graphics;
 
-namespace VL.Xenko.Spout
+namespace VL.Stride.Spout
 {
     public abstract class SpoutThing : IDisposable
     {

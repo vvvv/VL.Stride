@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
-using Xenko.Core;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
-using DataMemberAttribute = Xenko.Core.DataMemberAttribute;
+using Stride.Core;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
+using DataMemberAttribute = Stride.Core.DataMemberAttribute;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public class ComputeOrder : ComputeVoid
     {
