@@ -72,7 +72,7 @@ namespace VL.Stride.EffectLib
 
         }
 
-        const string xkslFileFilter = "*.xksl";
+        const string sdslFileFilter = "*.sdsl";
         const string CompiledShadersKey = "__shaders_bytecode__"; // Taken from EffectCompilerCache.cs
 
         private EffectCompilerParameters effectCompilerParameters = EffectCompilerParameters.Default;
@@ -102,7 +102,7 @@ namespace VL.Stride.EffectLib
             }
             else
             {
-                directoryWatcher = new DirectoryWatcher(xkslFileFilter);
+                directoryWatcher = new DirectoryWatcher(sdslFileFilter);
             }
             directoryWatcher.Modified += DirectoryWatcher_Modified;
         }
@@ -190,8 +190,8 @@ namespace VL.Stride.EffectLib
 
         private static ShaderSource GetShaderSource(string effectName)
         {
-            var isXkfx = ShaderMixinManager.Contains(effectName);
-            if (isXkfx)
+            var isXdfx = ShaderMixinManager.Contains(effectName);
+            if (isXdfx)
                 return new ShaderMixinGeneratorSource(effectName);
             return new ShaderClassSource(effectName);
         }
@@ -218,7 +218,7 @@ namespace VL.Stride.EffectLib
 
                 if (mixinToCompile == null)
                 {
-                    throw new ArgumentException("Unsupported ShaderSource type [{0}]. Supporting only ShaderMixinSource/xkfx, ShaderClassSource", "shaderSource");
+                    throw new ArgumentException("Unsupported ShaderSource type [{0}]. Supporting only ShaderMixinSource/sdfx, ShaderClassSource", "shaderSource");
                 }
                 if (string.IsNullOrEmpty(mixinToCompile.Name))
                 {
@@ -229,7 +229,7 @@ namespace VL.Stride.EffectLib
             return mixinToCompile;
         }
 
-        public string GetPathOfXkslShader(string effectName)
+        public string GetPathOfSdslShader(string effectName)
         {
             var fileProvider = DummyGame.Content.FileProvider;
             using (var pathStream = fileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(effectName) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
@@ -250,7 +250,7 @@ namespace VL.Stride.EffectLib
             var contentManager = game.Content;
             if (contentManager != null)
             {
-                var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, xkslFileFilter, VirtualSearchOption.AllDirectories);
+                var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.AllDirectories);
                 foreach (var file in files)
                 {
                     var effectName = Path.GetFileNameWithoutExtension(file);

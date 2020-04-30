@@ -269,7 +269,7 @@ namespace VL.Stride.EffectLib
 
         public bool OpenEditor()
         {
-            var path = GameFactory.GetPathOfXkslShader(Name);
+            var path = GameFactory.GetPathOfSdslShader(Name);
             Process.Start(path);
 
             var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();
