@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
@@ -11,18 +11,19 @@
     <None Include="..\*.vl" Pack="true" TargetPath="." />
     <None Include="..\..\stride_package_logo.png">
       <Pack>True</Pack>
-      <PackagePath></PackagePath>
+      <PackagePath>
+      </PackagePath>
     </None>
     <None Include="..\Demos\*.vl" Pack="true" PackagePath="Demos\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xenko.Assets" Version="3.2.0.1-vvvv-0894" />
-    <PackageReference Include="Xenko.Assets.Models" Version="3.2.0.1-vvvv-0894" />
+    <PackageReference Include="Stride.Assets" Version="4.0.0.1-vvvv-0908" />
+    <PackageReference Include="Stride.Assets.Models" Version="4.0.0.1-vvvv-0908" />
     <!-- A pure package dependency so on install all VL packages come in -->
-    <PackageReference Include="Xenko.TextureConverter" Version="3.2.0.1-vvvv-0894" />
+    <PackageReference Include="Stride.TextureConverter" Version="4.0.0.1-vvvv-0908" />
   </ItemGroup>
-  <Target Name="IncludeXenkoPackageContent" BeforeTargets="InferPackageContents" DependsOnTargets="_XenkoPrepareAssetsForPack">
-    <Message Importance="high" Text="Called Xenko package targets" />
+  <Target Name="IncludeStridePackageContent" BeforeTargets="InferPackageContents" DependsOnTargets="_StridePrepareAssetsForPack">
+    <Message Importance="high" Text="Called Stride package targets" />
   </Target>
   <ItemGroup>
     <ProjectReference Include="..\..\VL.Stride\src\VL.Stride.csproj" />

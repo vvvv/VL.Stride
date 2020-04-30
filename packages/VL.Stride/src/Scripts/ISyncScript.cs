@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Xenko.Engine;
+using Stride.Engine;
 
-namespace VL.Xenko.Scripts
+namespace VL.Stride.Scripts
 {
     public interface ISyncScript
     {

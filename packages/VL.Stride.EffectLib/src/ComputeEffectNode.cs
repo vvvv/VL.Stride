@@ -1,18 +1,18 @@
-﻿using System;
+using System;
 using System.Linq;
 using VL.Core;
-using VL.Xenko.Games;
-using VL.Xenko.Rendering;
-using VL.Xenko.Shaders;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.ComputeEffect;
+using VL.Stride.Games;
+using VL.Stride.Rendering;
+using VL.Stride.Shaders;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.ComputeEffect;
 
-namespace VL.Xenko.EffectLib
+namespace VL.Stride.EffectLib
 {
     class ComputeEffectNode : EffectNodeBase, IVLNode, ILowLevelAPIRender
     {

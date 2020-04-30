@@ -1,4 +1,4 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -8,32 +8,32 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.MicroThreading;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Storage;
-using Xenko.Assets;
-using Xenko.Assets.Entities;
-using Xenko.Assets.Materials;
-using Xenko.Assets.Navigation;
-using Xenko.Assets.Textures;
-using Xenko.Graphics;
-using Xenko.Navigation;
-using Xenko.Engine;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Compiler;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.MicroThreading;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Storage;
+using Stride.Assets;
+using Stride.Assets.Entities;
+using Stride.Assets.Materials;
+using Stride.Assets.Navigation;
+using Stride.Assets.Textures;
+using Stride.Graphics;
+using Stride.Navigation;
+using Stride.Engine;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
 using System.Reactive;
-using Xenko.Core.IO;
-using Xenko.Core.BuildEngine;
+using Stride.Core.IO;
+using Stride.Core.BuildEngine;
 using System.Reactive.Threading.Tasks;
-using Xenko.Assets.Rendering;
+using Stride.Assets.Rendering;
 
-namespace VL.Xenko.Assets
+namespace VL.Stride.Assets
 { 
     /// <summary>
     /// A class that handles loading/unloading referenced resources for a game used in an editor.

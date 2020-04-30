@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
-using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+using System.Collections.Generic;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
+using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
 
     //TODO: have one counter per context

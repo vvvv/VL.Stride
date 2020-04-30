@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xenko.Audio;
-using Xenko.Engine;
+using Stride.Audio;
+using Stride.Engine;
 
-namespace VL.Xenko.Audio
+namespace VL.Stride.Audio
 {
     public static class AudioEmitterExtensions
     {

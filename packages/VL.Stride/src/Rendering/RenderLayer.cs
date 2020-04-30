@@ -1,7 +1,7 @@
-﻿using Xenko.Core.Mathematics;
-using Xenko.Rendering;
+using Stride.Core.Mathematics;
+using Stride.Rendering;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     /// <summary>
     /// The render object used by the low level layer rendering system.

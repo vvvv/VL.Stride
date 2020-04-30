@@ -1,18 +1,18 @@
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XenkoModel = global::Xenko.Rendering.Model;
-using Xenko.Core;
-using Xenko.Graphics;
-using Xenko.Graphics.Data;
+using StrideModel = global::Stride.Rendering.Model;
+using Stride.Core;
+using Stride.Graphics;
+using Stride.Graphics.Data;
 
-namespace VL.Xenko.Utils
+namespace VL.Stride.Utils
 {
     public static class ModelUtils
     {
@@ -21,7 +21,7 @@ namespace VL.Xenko.Utils
             return entity.GetOrCreate<ModelComponent>();
         }
 
-        public static void SetColor(XenkoModel model, Color4 color, float metalness)
+        public static void SetColor(StrideModel model, Color4 color, float metalness)
         {
             var m = model.Materials.FirstOrDefault()?.Material.Passes.FirstOrDefault();
 

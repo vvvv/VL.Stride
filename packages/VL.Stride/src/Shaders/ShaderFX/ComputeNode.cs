@@ -1,12 +1,12 @@
-﻿using System;
-using Xenko.Rendering.Materials;
-using Xenko.Rendering.Materials.ComputeColors;
-using Xenko.Shaders;
-using Xenko.Core.Mathematics;
+using System;
+using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
+using Stride.Shaders;
+using Stride.Core.Mathematics;
 using System.Collections.Generic;
-using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public class ComputeNode<T> : ComputeNode, IComputeValue<T>
     {

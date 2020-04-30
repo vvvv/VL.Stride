@@ -1,22 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using VL.Xenko.Effects.ComputeFX;
-using VL.Xenko.Effects.ShaderFX;
-using VL.Xenko.Effects.TextureFX;
-using VL.Xenko.Rendering;
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.Images;
-using Xenko.Rendering.Materials;
-using Xenko.Rendering.Materials.ComputeColors;
-using Xenko.Shaders;
-using Buffer = Xenko.Graphics.Buffer;
+using VL.Stride.Effects.ComputeFX;
+using VL.Stride.Effects.ShaderFX;
+using VL.Stride.Effects.TextureFX;
+using VL.Stride.Rendering;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.Images;
+using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
+using Stride.Shaders;
+using Buffer = Stride.Graphics.Buffer;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public static class ShaderGraph
     {

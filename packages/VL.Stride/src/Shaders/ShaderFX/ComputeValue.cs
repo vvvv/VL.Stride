@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
-using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
+using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public interface IComputeValue<T> : IComputeNode
     {

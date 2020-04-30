@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using VL.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
-using Xenko.Rendering;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
+using Stride.Rendering;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     public interface ILowLevelAPIRender
     {

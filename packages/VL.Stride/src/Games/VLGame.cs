@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using VL.Xenko.Rendering;
-using Xenko.Engine;
-using Xenko.Games;
-using Xenko.Rendering;
-using Xenko.Engine.Design;
+using VL.Stride.Rendering;
+using Stride.Engine;
+using Stride.Games;
+using Stride.Rendering;
+using Stride.Engine.Design;
 
-namespace VL.Xenko.Games
+namespace VL.Stride.Games
 {
     public class VLGame : Game
     {

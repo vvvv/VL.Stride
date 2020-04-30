@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using VL.Core;
-using VL.Xenko.RootRenderFeatures;
-using Xenko.Rendering;
+using VL.Stride.RootRenderFeatures;
+using Stride.Rendering;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     /// <summary>
     /// The draw effect render feature allows for custom drawing with any given effect.

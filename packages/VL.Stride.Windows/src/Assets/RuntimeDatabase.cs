@@ -1,23 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xenko.Assets;
-using Xenko.Core;
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.BuildEngine;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.MicroThreading;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Engine;
-using Xenko.Graphics;
+using Stride.Assets;
+using Stride.Core;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.BuildEngine;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.MicroThreading;
+using Stride.Core.Serialization.Contents;
+using Stride.Engine;
+using Stride.Graphics;
 
-namespace VL.Xenko.Assets
+namespace VL.Stride.Assets
 {
     public class RuntimeCompilationContext : AssetCompilationContext
     {

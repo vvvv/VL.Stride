@@ -1,10 +1,10 @@
-﻿using Xenko.Rendering;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
-using Buffer = Xenko.Graphics.Buffer;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
+using Buffer = Stride.Graphics.Buffer;
 
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public class DeclBuffer : ComputeNode<Buffer>, IComputeVoid
     {

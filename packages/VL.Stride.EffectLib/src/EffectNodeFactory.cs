@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,25 +8,25 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using VL.Core;
-using VL.Xenko.Games;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Storage;
-using Xenko.Engine;
-using Xenko.Engine.Processors;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Shaders;
-using Xenko.Shaders.Compiler;
+using VL.Stride.Games;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Storage;
+using Stride.Engine;
+using Stride.Engine.Processors;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Shaders;
+using Stride.Shaders.Compiler;
 using VLServiceRegistry = VL.Core.ServiceRegistry;
 
-[assembly: NodeFactory(typeof(VL.Xenko.EffectLib.EffectNodeFactory))]
+[assembly: NodeFactory(typeof(VL.Stride.EffectLib.EffectNodeFactory))]
 
-namespace VL.Xenko.EffectLib
+namespace VL.Stride.EffectLib
 {
     class NodeComparer : IEqualityComparer<IVLNodeDescription>
     {

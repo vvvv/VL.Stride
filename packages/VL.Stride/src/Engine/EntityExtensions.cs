@@ -1,4 +1,4 @@
-﻿namespace Xenko.Engine
+namespace Stride.Engine
 {
     public static class EntityExtensions
     {

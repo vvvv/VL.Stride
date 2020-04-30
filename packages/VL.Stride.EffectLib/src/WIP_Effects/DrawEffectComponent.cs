@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VL.Xenko.RootRenderFeatures;
-using Xenko.Core;
-using Xenko.Engine;
-using Xenko.Engine.Design;
+using VL.Stride.RootRenderFeatures;
+using Stride.Core;
+using Stride.Engine;
+using Stride.Engine.Design;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     /// <summary>
     /// Darw effect components get picked up by the <see cref="DrawEffectProcessor"/> for low level rendering.

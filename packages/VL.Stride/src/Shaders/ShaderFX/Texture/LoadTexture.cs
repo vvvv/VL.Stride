@@ -1,16 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
-using Buffer = Xenko.Graphics.Buffer;
-using Xenko.Core.Mathematics;
-using static VL.Xenko.Shaders.ShaderFX.ShaderFXUtils;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
+using Buffer = Stride.Graphics.Buffer;
+using Stride.Core.Mathematics;
+using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public class LoadTexture<T> : ComputeValue<T>
     {

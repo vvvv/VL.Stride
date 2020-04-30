@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Linq;
 using VL.Core;
 using VL.Lib.Basics.Resources;
-using Xenko.Engine;
-using Xenko.Games;
+using Stride.Engine;
+using Stride.Games;
 
-namespace VL.Xenko
+namespace VL.Stride
 {
     public static class Resources
     {

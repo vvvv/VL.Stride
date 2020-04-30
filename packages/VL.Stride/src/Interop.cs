@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace VL.Xenko
+namespace VL.Stride
 {
     public static class Interop
     {

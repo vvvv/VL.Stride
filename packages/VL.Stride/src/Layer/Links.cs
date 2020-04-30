@@ -1,7 +1,7 @@
-﻿using System;
-using Xenko.Engine;
+using System;
+using Stride.Engine;
 
-namespace VL.Xenko.Layer
+namespace VL.Stride.Layer
 {
     /// <summary>
     /// Establishes a parent-child relationship between a parent and a child <see cref="Entity"/>.

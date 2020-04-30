@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.ComputeEffect;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.ComputeEffect;
 
-namespace VL.Xenko.EffectLib
+namespace VL.Stride.EffectLib
 {
     public static class ShaderReflectionUtils
     {

@@ -1,11 +1,11 @@
-﻿using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
-using Buffer = Xenko.Graphics.Buffer;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
+using Buffer = Stride.Graphics.Buffer;
 
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public class DeclTexture : ComputeNode<Texture>, IComputeVoid
     {

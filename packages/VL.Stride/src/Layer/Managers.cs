@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using VL.Lib.Collections;
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
+using Stride.Engine;
 
-namespace VL.Xenko.Layer
+namespace VL.Stride.Layer
 {
     /// <summary>
     /// Manages the children of an <see cref="Entity"/>.

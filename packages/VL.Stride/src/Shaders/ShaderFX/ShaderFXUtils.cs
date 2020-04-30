@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Xenko.Shaders;
-using Xenko.Core.Mathematics;
-using Xenko.Rendering.Materials;
+using Stride.Shaders;
+using Stride.Core.Mathematics;
+using Stride.Rendering.Materials;
 using System.Globalization;
-using Xenko.Graphics;
-using Buffer = Xenko.Graphics.Buffer;
+using Stride.Graphics;
+using Buffer = Stride.Graphics.Buffer;
 using System.Linq;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public static class ShaderFXUtils
     {

@@ -1,7 +1,7 @@
-﻿using VL.Xenko.RootRenderFeatures;
-using Xenko.Rendering;
+using VL.Stride.RootRenderFeatures;
+using Stride.Rendering;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     /// <summary>
     /// The render object used by the draw effect render feature.

@@ -1,8 +1,8 @@
-﻿using Xenko.Core.Annotations;
-using Xenko.Engine;
-using Xenko.Rendering;
+using Stride.Core.Annotations;
+using Stride.Engine;
+using Stride.Rendering;
 
-namespace VL.Xenko.Rendering
+namespace VL.Stride.Rendering
 {
     /// <summary>
     /// The draw effect processor installs for each <see cref="DrawEffectComponent"/> a <see cref="RenderDrawEffect"/> object in its visibility group.

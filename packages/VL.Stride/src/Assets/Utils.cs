@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace VL.Xenko.Assets
+namespace VL.Stride.Assets
 {
     public class AssetWrapperCSharp<T>
     {

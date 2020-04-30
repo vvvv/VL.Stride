@@ -1,6 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
-namespace Xenko.Core.Collections
+namespace Stride.Core.Collections
 {
     public static class CollectionExtensions
     {

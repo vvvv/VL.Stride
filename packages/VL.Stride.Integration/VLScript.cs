@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using VL.Xenko.Core;
-using VL.Xenko.Games;
-using Xenko.Engine;
-using Xenko.Graphics;
+using VL.Stride.Core;
+using VL.Stride.Games;
+using Stride.Engine;
+using Stride.Graphics;
 
 namespace VL.Xenko
 {

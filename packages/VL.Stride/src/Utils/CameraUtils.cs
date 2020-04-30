@@ -1,13 +1,13 @@
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Input;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VL.Xenko.Utils
+namespace VL.Stride.Utils
 {
     public static class CameraUtils
     {

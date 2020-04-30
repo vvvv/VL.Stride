@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 using VL.Core;
 using VL.Lang.PublicAPI;
 using VL.Lib.Basics.Resources;
-using VL.Xenko.Games;
-using VL.Xenko.Layer;
-using VL.Xenko.Rendering;
-using Xenko.Core.Mathematics;
-using Xenko.Core.MicroThreading;
-using Xenko.Engine;
-using Xenko.Games;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
+using VL.Stride.Games;
+using VL.Stride.Layer;
+using VL.Stride.Rendering;
+using Stride.Core.Mathematics;
+using Stride.Core.MicroThreading;
+using Stride.Engine;
+using Stride.Games;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
 
-namespace VL.Xenko
+namespace VL.Stride
 {
     public class Renderer : IDisposable
     {

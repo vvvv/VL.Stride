@@ -1,7 +1,7 @@
 using System;
-using Xenko.Engine;
+using Stride.Engine;
 using VL.Xenko;
-using VL.Xenko.Games;
+using VL.Stride.Games;
 
 namespace TestGame.Windows
 {
@@ -13,7 +13,7 @@ namespace TestGame.Windows
             using (var game = new VLGame())
             {
 #if DEBUG
-                game.GraphicsDeviceManager.DeviceCreationFlags |= Xenko.Graphics.DeviceCreationFlags.Debug;
+                game.GraphicsDeviceManager.DeviceCreationFlags |= Stride.Graphics.DeviceCreationFlags.Debug;
 #endif
                 game.AttachVL(VLScript.MainVLDocSrc);
                 game.Run();

@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Linq;
 using VL.Core;
 using VL.Lib.Basics.Resources;
-using VL.Xenko.Rendering;
-using VL.Xenko.Shaders;
-using Xenko.Core.Mathematics;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Rendering;
+using VL.Stride.Rendering;
+using VL.Stride.Shaders;
+using Stride.Core.Mathematics;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Rendering;
 
-namespace VL.Xenko.EffectLib
+namespace VL.Stride.EffectLib
 {
     class EffectNode : EffectNodeBase, IVLNode, IEffect
     {

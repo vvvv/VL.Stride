@@ -1,6 +1,6 @@
-﻿using Xenko.Rendering.Materials;
+using Stride.Rendering.Materials;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public class ShaderInput
     {

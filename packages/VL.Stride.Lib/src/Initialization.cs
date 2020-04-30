@@ -1,14 +1,14 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading;
 using VL.Core;
 using VL.Core.CompilerServices;
 using VL.Lib.Basics.Resources;
-using VL.Xenko;
-using VL.Xenko.Assets;
-using VL.Xenko.Games;
-using Xenko.Engine;
-using Xenko.Games;
-using Xenko.Graphics;
+using VL.Stride;
+using VL.Stride.Assets;
+using VL.Stride.Games;
+using Stride.Engine;
+using Stride.Games;
+using Stride.Graphics;
 
 [assembly: AssemblyInitializer(typeof(VL.Stride.Lib.Initialization))]
 

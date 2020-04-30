@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 using System.Text;
-using Xenko.Rendering.Materials;
-using Xenko.Rendering.Materials.ComputeColors;
+using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
 
-namespace VL.Xenko.Shaders.ShaderFX
+namespace VL.Stride.Shaders.ShaderFX
 {
     public interface IComputeVoid : IComputeNode
     {
