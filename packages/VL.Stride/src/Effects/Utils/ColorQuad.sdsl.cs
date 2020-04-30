@@ -14,10 +14,10 @@ using Stride.Shaders;
 using Stride.Core.Mathematics;
 using Buffer = Stride.Graphics.Buffer;
 
-namespace Stride.Rendering
+namespace VL.Xenko.Effects.Utils
 {
-    public static partial class Common_ConstantColorKeys
+    public static partial class ColorQuadKeys
     {
-        public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>();
+        public static readonly ValueParameterKey<Vector4> ColorInput = ParameterKeys.NewValue<Vector4>();
     }
 }

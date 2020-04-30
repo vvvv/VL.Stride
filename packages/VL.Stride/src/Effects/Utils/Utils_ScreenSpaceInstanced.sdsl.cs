@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Common_ConstantColorKeys
+    public static partial class Utils_ScreenSpaceInstancedKeys
     {
         public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>();
     }

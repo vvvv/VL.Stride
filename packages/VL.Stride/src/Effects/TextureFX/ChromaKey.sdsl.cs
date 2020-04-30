@@ -16,8 +16,10 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Common_ConstantColorKeys
+    public static partial class ChromaKeyKeys
     {
-        public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>();
+        public static readonly ValueParameterKey<Color4> chromaKey = ParameterKeys.NewValue<Color4>(new Color4(0.05f,0.63f,0.14f,1.0f));
+        public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,0.0f));
+        public static readonly ValueParameterKey<Vector2> maskRange = ParameterKeys.NewValue<Vector2>(new Vector2(0.005f,0.26f));
     }
 }

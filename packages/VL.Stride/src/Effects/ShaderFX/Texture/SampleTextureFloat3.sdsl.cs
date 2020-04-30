@@ -16,8 +16,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Common_ConstantColorKeys
+    public static partial class SampleTextureFloat3Keys
     {
-        public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>();
+        public static readonly ObjectParameterKey<SamplerState> LinearRepeatSampler = ParameterKeys.NewObject<SamplerState>();
     }
 }

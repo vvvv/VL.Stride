@@ -16,8 +16,10 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Common_ConstantColorKeys
+    public static partial class Utils_CalcDispatchArgsKeys
     {
-        public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>();
+        public static readonly ObjectParameterKey<Buffer> CounterBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ObjectParameterKey<Buffer> ArgsBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ValueParameterKey<uint> GroupSize = ParameterKeys.NewValue<uint>();
     }
 }

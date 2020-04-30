@@ -16,8 +16,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Common_ConstantColorKeys
+    public static partial class Common_InstanceWorldKeys
     {
-        public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>();
+        public static readonly ObjectParameterKey<Buffer> InstanceWorld = ParameterKeys.NewObject<Buffer>();
     }
 }
