@@ -7,203 +7,222 @@ using Stride.Engine;
 namespace VL.Stride.Layer
 {
     /// <summary>
-    /// Manages the children of an <see cref="Entity"/>.
+    /// Manages the children.
     /// </summary>
-    public sealed class EntityChildrenManager : IDisposable
+    public abstract class ChildrenManagerBase<TParent, TChild, TLink> : IDisposable where TLink : IDisposable
     {
-        readonly Entity entity;
-        readonly FastList<EntityLink> links = new FastList<EntityLink>();
-        Spread<Entity> children;
+        readonly TParent parent;
+        readonly FastList<TLink> links = new FastList<TLink>();
+        Spread<TChild> children;
+        FastList<TChild> invalidChildren = new FastList<TChild>();
 
-        public EntityChildrenManager(Entity entity)
+        public ChildrenManagerBase(TParent parent)
         {
-            this.entity = entity;
+            this.parent = parent;
         }
 
-        public Entity Update(Spread<Entity> children)
+        protected abstract TLink CreateLink(TParent parent);
+
+        protected abstract TParent GetParent(TChild child);
+
+        protected abstract void SetChild(TLink link, TChild child);
+
+        public virtual TParent Update(Spread<TChild> children)
         {
             // Quick change check
             if (children != this.children)
+            {
                 this.children = children;
+                invalidChildren.Clear();
+            }
             else
-                return entity;
+            {
+                if (invalidChildren.Count > 0)
+                    CheckInvalidChildren();
+
+                return parent;
+            }
 
             // Synchronize our entity links
             var @array = children._array;
+            var newChildren = 0;
             for (int i = 0; i < array.Length; i++)
             {
-                var link = links.ElementAtOrDefault(i);
-                if (link == null)
+                var child = array[i];
+                if (child != null)
                 {
-                    link = new EntityLink(entity);
-                    links.Add(link);
+                    if (GetParent(child) == null)
+                    {
+                        var link = links.ElementAtOrDefault(i);
+                        if (link == null)
+                        {
+                            link = CreateLink(parent);
+                            links.Add(link);
+                        }
+                        SetChild(link, child);
+                        newChildren++;
+                    }
+                    else //already has a parent
+                    {
+                        //increae child warning
+                        invalidChildren.Add(child);
+                    }
                 }
-                link.Child = array[i];
             }
-            for (int i = links.Count - 1; i >= array.Length; i--)
+
+            for (int i = links.Count - 1; i >= newChildren; i--)
             {
                 var link = links[i];
                 link.Dispose();
                 links.RemoveAt(i);
             }
-            return entity;
+
+            return parent;
+        }
+
+        private void CheckInvalidChildren()
+        {
+            for (int i = invalidChildren.Count - 1; i >= 0; i--)
+            {
+                var child = invalidChildren[i];
+                if (GetParent(child) == null)
+                {
+                    var link = CreateLink(parent);
+                    links.Add(link);
+                    SetChild(link, child);
+                    invalidChildren.RemoveAt(i);
+                    //decrease child warning
+                }
+            }
         }
 
         public void Dispose()
         {
             foreach (var link in links)
                 link.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Manages the children of an <see cref="Entity"/>.
+    /// </summary>
+    public sealed class EntityChildrenManager : ChildrenManagerBase<Entity, Entity, EntityLink>
+    {
+        public EntityChildrenManager(Entity entity) 
+            : base(entity)
+        {
+        }
+
+        protected override EntityLink CreateLink(Entity parent)
+        {
+            return new EntityLink(parent);
+        }
+
+        protected override Entity GetParent(Entity child)
+        {
+            return child.GetParent();
+        }
+
+        protected override void SetChild(EntityLink link, Entity child)
+        {
+            link.Child = child;
+        }
+
+        public override Entity Update(Spread<Entity> children)
+        {
+            return base.Update(children);
         }
     }
 
     /// <summary>
     /// Manages the components of an <see cref="Entity"/>.
     /// </summary>
-    public sealed class EntityComponentsManager : IDisposable
+    public sealed class EntityComponentsManager : ChildrenManagerBase<Entity, EntityComponent, ComponentLink>
     {
-        readonly Entity entity;
-        readonly FastList<ComponentLink> links = new FastList<ComponentLink>();
-        Spread<EntityComponent> components;
-
         public EntityComponentsManager(Entity entity)
+            : base(entity)
         {
-            this.entity = entity;
         }
 
-        public Entity Update(Spread<EntityComponent> components)
+        protected override ComponentLink CreateLink(Entity parent)
         {
-            // Quick change check
-            if (components != this.components)
-                this.components = components;
-            else
-                return entity;
-
-            // Synchronize our entity links
-            var @array = components._array;
-            for (int i = 0; i < array.Length; i++)
-            {
-                var link = links.ElementAtOrDefault(i);
-                if (link == null)
-                {
-                    link = new ComponentLink(entity);
-                    links.Add(link);
-                }
-                link.Component = array[i];
-            }
-            for (int i = links.Count - 1; i >= array.Length; i--)
-            {
-                var link = links[i];
-                link.Dispose();
-                links.RemoveAt(i);
-            }
-
-            return entity;
+            return new ComponentLink(parent);
         }
 
-        public void Dispose()
+        protected override Entity GetParent(EntityComponent child)
         {
-            foreach (var link in links)
-                link.Dispose();
+            return child.Entity;
+        }
+
+        protected override void SetChild(ComponentLink link, EntityComponent child)
+        {
+            link.Component = child;
+        }
+
+        public override Entity Update(Spread<EntityComponent> components)
+        {
+            return base.Update(components);
         }
     }
 
     /// <summary>
     /// Manages the entities of a <see cref="Scene"/>.
     /// </summary>
-    public sealed class SceneEntitiesManager : IDisposable
+    public sealed class SceneEntitiesManager : ChildrenManagerBase<Scene, Entity, EntitySceneLink>
     {
-        readonly Scene scene;
-        readonly FastList<EntitySceneLink> links = new FastList<EntitySceneLink>();
-        Spread<Entity> entities;
-
         public SceneEntitiesManager(Scene scene)
+            : base(scene)
         {
-            this.scene = scene;
         }
 
-        public Scene Update(Spread<Entity> entities)
+        protected override EntitySceneLink CreateLink(Scene parent)
         {
-            // Quick change check
-            if (entities != this.entities)
-                this.entities = entities;
-            else
-                return scene;
-
-            // Synchronize our entity links
-            var @array = entities._array;
-            for (int i = 0; i < array.Length; i++)
-            {
-                var link = links.ElementAtOrDefault(i);
-                if (link == null)
-                {
-                    link = new EntitySceneLink(scene);
-                    links.Add(link);
-                }
-                link.Child = array[i];
-            }
-            for (int i = links.Count - 1; i >= array.Length; i--)
-            {
-                var link = links[i];
-                link.Dispose();
-                links.RemoveAt(i);
-            }
-            return scene;
+            return new EntitySceneLink(parent);
         }
 
-        public void Dispose()
+        protected override Scene GetParent(Entity child)
         {
-            foreach (var link in links)
-                link.Dispose();
+            return child.Scene;
+        }
+
+        protected override void SetChild(EntitySceneLink link, Entity child)
+        {
+            link.Child = child;
+        }
+
+        public override Scene Update(Spread<Entity> entities)
+        {
+            return base.Update(entities);
         }
     }
 
     /// <summary>
     /// Manages the child scenes of a <see cref="Scene"/>.
     /// </summary>
-    public sealed class SceneChildrenManager : IDisposable
+    public sealed class SceneChildrenManager : ChildrenManagerBase<Scene, Scene, SceneLink>
     {
-        readonly Scene scene;
-        readonly FastList<SceneLink> links = new FastList<SceneLink>();
-        Spread<Scene> children;
-
         public SceneChildrenManager(Scene scene)
+            : base(scene)
         {
-            this.scene = scene;
         }
 
-        public Scene Update(Spread<Scene> children)
+        protected override SceneLink CreateLink(Scene parent)
         {
-            // Quick change check
-            if (children != this.children)
-                this.children = children;
-            else
-                return scene;
-
-            // Synchronize our entity links
-            var @array = children._array;
-            for (int i = 0; i < array.Length; i++)
-            {
-                var link = links.ElementAtOrDefault(i);
-                if (link == null)
-                {
-                    link = new SceneLink(scene);
-                    links.Add(link);
-                }
-                link.Child = array[i];
-            }
-            for (int i = links.Count - 1; i >= array.Length; i--)
-            {
-                var link = links[i];
-                link.Dispose();
-                links.RemoveAt(i);
-            }
-            return scene;
+            return new SceneLink(parent);
         }
 
-        public void Dispose()
+        protected override Scene GetParent(Scene child)
         {
-            foreach (var link in links)
-                link.Dispose();
+            return child.Parent;
+        }
+
+        protected override void SetChild(SceneLink link, Scene child)
+        {
+            link.Child = child;
+        }
+        public override Scene Update(Spread<Scene> children)
+        {
+            return base.Update(children);
         }
     }
 }
