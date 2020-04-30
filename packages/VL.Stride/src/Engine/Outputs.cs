@@ -6,12 +6,12 @@ using Xenko.Engine;
 
 namespace VL.Xenko.Engine
 {
-    public class ComponentOutput : IDisposable
+    public class ComponentOutput
     {
-        EntityComponent entityComponent;
-        List<Entity> wannaBeParents = new List<Entity>();
+        protected EntityComponent entityComponent;
+        protected List<Entity> wannaBeParents = new List<Entity>();
 
-        static Dictionary<EntityComponent, ComponentOutput> LookUp = new Dictionary<EntityComponent, ComponentOutput>();
+        protected static Dictionary<EntityComponent, ComponentOutput> LookUp = new Dictionary<EntityComponent, ComponentOutput>();
 
         public ComponentOutput(EntityComponent entityComponent)
         {
@@ -35,9 +35,9 @@ namespace VL.Xenko.Engine
         {
             if (entityComponent != null && LookUp.TryGetValue(entityComponent, out var output))
                 output.ConnectToFirst();
-        }        
-        
-        void ConnectToFirst()
+        }
+
+        internal void ConnectToFirst()
         {
             var parentEntity = wannaBeParents.FirstOrDefault();
             if (entityComponent.Entity != parentEntity)
@@ -49,10 +49,10 @@ namespace VL.Xenko.Engine
             }
         }
 
-        public void Update(out bool ok)
+        public void Update(out bool manyParents)
         {
-            ok = !wannaBeParents.Distinct().Many();
-            //if (!ok)
+            manyParents = wannaBeParents.Distinct().Many();
+            //if (manyParents)
             //    throw new Exception("Component should only be connected to one Entity.");
         }
 
@@ -64,6 +64,19 @@ namespace VL.Xenko.Engine
         }
     }
 
+    public class ComponentOutput<T> : ComponentOutput, IDisposable
+        where T : EntityComponent
+    {
+        public ComponentOutput(T entityComponent, out T output)
+            : base(entityComponent)
+        {
+            output = entityComponent;
+        }
+
+        public new void Update(out bool manyParents) => base.Update(out manyParents);
+        public new void Dispose() => base.Dispose();
+    }
+
 
     public class EntityOutput : IDisposable
     {
@@ -72,9 +85,10 @@ namespace VL.Xenko.Engine
 
         static Dictionary<Entity, EntityOutput> LookUp = new Dictionary<Entity, EntityOutput>();
 
-        public EntityOutput(Entity entity)
+        public EntityOutput(Entity entity, out Entity output)
         {
             this.entity = entity;
+            output = entity;
             LookUp.Add(this.entity, this);
         }
 
@@ -117,10 +131,10 @@ namespace VL.Xenko.Engine
             }
         }
 
-        public void Update(out bool ok)
+        public void Update(out bool manyParents)
         {
-            ok = !wannaBeParents.Distinct().Many();
-            //if (!ok)
+            manyParents = wannaBeParents.Distinct().Many();
+            //if (manyParents)
             //    throw new Exception("Entity should only be connected to one parent entity or scene.");
         }
 
@@ -143,9 +157,10 @@ namespace VL.Xenko.Engine
 
         static Dictionary<Scene, SceneOutput> LookUp = new Dictionary<Scene, SceneOutput>();
 
-        public SceneOutput(Scene scene)
+        public SceneOutput(Scene scene, out Scene output)
         {
             this.scene = scene;
+            output = scene;
             LookUp.Add(this.scene, this);
         }
 
@@ -180,10 +195,10 @@ namespace VL.Xenko.Engine
             }
         }
 
-        public void Update(out bool ok)
+        public void Update(out bool manyParents)
         {
-            ok = !wannaBeParents.Distinct().Many();
-            //if (!ok)
+            manyParents = wannaBeParents.Distinct().Many();
+            //if (manyParents)
             //    throw new Exception("Scene should only be connected to one parent scene.");
         }
 
