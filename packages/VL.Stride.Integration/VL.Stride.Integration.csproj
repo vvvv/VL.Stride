@@ -5,8 +5,6 @@
     <PackageId>$(AssemblyName)</PackageId>
     <Description>Allows to run VL inside a Stride game.</Description>
     <NugetExePath>$(NuGetPackageRoot)NuGet.CommandLine\4.9.2\tools</NugetExePath>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageIcon>stride_package_logo.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ControlzEx" Version="3.0.2.4" />
@@ -25,8 +23,8 @@
       <!-- This way we save one MB in package size (e_sqlite3.dll) - Xenko delivers this file anyways -->
       <ExcludeAssets>build</ExcludeAssets>
     </PackageReference>
-    <PackageReference Include="VL.Meta.Gamma" Version="2020.2.0-0004-g36c2100357" />
-    <PackageReference Include="VL.UI.Forms" Version="2020.2.0-0004-g36c2100357" IncludeAssets="all" />
+    <PackageReference Include="VL.Meta.Gamma" Version="$(VLVersion)" />
+    <PackageReference Include="VL.UI.Forms" Version="$(VLVersion)" IncludeAssets="all" />
     <!-- DO NOT DELETE ME! -->
     <PackageReference Include="VVVV.NuGetAssemblyLoader" Version="0.1.20" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.4.0" />
@@ -51,11 +49,6 @@
   <ItemGroup>
     <None Update="build\VL.Stride.Integration.targets">
       <Kind>Build</Kind>
-    </None>
-    <None Include="..\stride_package_logo.png">
-      <Pack>True</Pack>
-      <PackagePath>
-      </PackagePath>
     </None>
   </ItemGroup>
   <ItemGroup>

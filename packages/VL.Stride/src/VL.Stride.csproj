@@ -2,23 +2,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PackageId>$(AssemblyName)</PackageId>
     <Description>$(AssemblyName)</Description>
-    <PackageIcon>stride_package_logo.png</PackageIcon>
-    <Copyright>Copyright © 2020 by vvvv group. All rights reserved.</Copyright>
-    <Product>VL.Stride</Product>
     <PackageTags>vl stride</PackageTags>
   </PropertyGroup>
+  
   <ItemGroup>
-    <None Include="..\*.vl" Pack="true" TargetPath="." />
-    <None Include="..\..\stride_package_logo.png">
-      <Pack>True</Pack>
-      <PackagePath>
-      </PackagePath>
-    </None>
+    <None Include="..\*.vl" Pack="true" PackagePath=" " />
     <None Include="..\Demos\*.vl" Pack="true" PackagePath="Demos\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <!-- A pure package dependency so on install all VL packages come in -->
@@ -38,7 +33,7 @@
     <ProjectReference Include="..\..\..\..\VL.Core\src\VL.Core.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(SolutionName)' != 'VL'">
-    <PackageReference Include="VL.Core" Version="2020.2.0-0004-g36c2100357" />
+    <PackageReference Include="VL.Core" Version="$(VLVersion)" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Effects\Common\Common_BufferUtils.xksl.cs">
