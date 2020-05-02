@@ -18,6 +18,7 @@ using Stride.Games;
 using Stride.Rendering;
 using Stride.Rendering.Compositing;
 using VL.Lib.Collections;
+using VL.Lib.Collections.TreePatching;
 
 namespace VL.Stride
 {
@@ -31,7 +32,7 @@ namespace VL.Stride
         private readonly bool FBoundToDocument;
         private readonly bool FShowDialogIfDocumentChanged;
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
-        private readonly SceneChildrenManager FSceneManager;
+        private readonly TreeNodeChildrenManager<Scene, Scene> FSceneManager;
         private readonly SceneCameraSlotId FFallbackSlotId;
         private Int2 FLastPosition;
 
@@ -61,7 +62,7 @@ namespace VL.Stride
 
             // Init scene graph links 
             var rootScene = game.SceneSystem.SceneInstance.RootScene;
-            FSceneManager = new SceneChildrenManager(rootScene);
+            FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene);
 
             // Save initial set camera slot id
             FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
