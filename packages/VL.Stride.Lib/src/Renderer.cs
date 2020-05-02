@@ -10,6 +10,7 @@ using VL.Lang.PublicAPI;
 using VL.Lib.Basics.Resources;
 using VL.Stride.Games;
 using VL.Stride.Engine;
+using VL.Stride.Layer;
 using VL.Stride.Rendering;
 using Stride.Core.Mathematics;
 using Stride.Core.MicroThreading;
@@ -33,10 +34,11 @@ namespace VL.Stride
         private readonly bool FShowDialogIfDocumentChanged;
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
         private readonly TreeNodeChildrenManager<Scene, Scene> FSceneManager;
+        private readonly SceneLink FSceneLink;
         private readonly SceneCameraSlotId FFallbackSlotId;
         private Int2 FLastPosition;
 
-        public Renderer(NodeContext nodeContext, RectangleF bounds, bool saveBounds = true, bool boundToDocument = false, bool dialogIfDocumentChanged = false)
+        public Renderer(NodeContext nodeContext, RectangleF bounds, bool saveBounds = true, bool boundToDocument = false, bool dialogIfDocumentChanged = false, bool tonfilm = true)
         {
             FNodeContext = nodeContext;
             FBounds = bounds;
@@ -62,7 +64,11 @@ namespace VL.Stride
 
             // Init scene graph links 
             var rootScene = game.SceneSystem.SceneInstance.RootScene;
-            FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false);
+
+            if (tonfilm)
+                FSceneLink = new SceneLink(rootScene);
+            else
+                FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false);
 
             // Save initial set camera slot id
             FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
@@ -109,11 +115,12 @@ namespace VL.Stride
 
                 compositor.GetFirstForwardRenderer(out var forwardRenderer);
                 forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
-
+                
                 if (scene != scenes.FirstOrDefault())
                     scenes = scene != null ? Spread.Create(scene) : Spread<Scene>.Empty;
 
-                FSceneManager.Update(scenes);
+                FSceneManager?.Update(scenes);
+                FSceneLink?.Update(scene);
             }
         }
 
@@ -154,6 +161,7 @@ namespace VL.Stride
         public void Dispose()
         {
             FSceneManager.Dispose();
+            FSceneLink.Dispose();
             FWindowHandle.Dispose();
             FGameHandle.Dispose();
         }
