@@ -22,6 +22,7 @@ using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Shaders;
 using Stride.Shaders.Compiler;
+using ServiceRegistry = Stride.Core.ServiceRegistry;
 using VLServiceRegistry = VL.Core.ServiceRegistry;
 
 [assembly: NodeFactory(typeof(VL.Stride.EffectLib.EffectNodeFactory))]
@@ -60,16 +61,44 @@ namespace VL.Stride.EffectLib
 
     public class EffectNodeFactory : IVLNodeDescriptionFactory
     {
-        private static Game CreateDummyGame()
+        // Taken from Xenko/Game
+        static DatabaseFileProvider InitializeAssetDatabase()
         {
-            var game = new VLGame();
-#if DEBUG
-            game.GraphicsDeviceManager.DeviceCreationFlags |= DeviceCreationFlags.Debug;
-#endif
-            var context = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
-            game.Run(context);
-            return game;
+            // Create and mount database file system
+            var objDatabase = ObjectDatabase.CreateDefaultDatabase();
 
+            // Only set a mount path if not mounted already
+            var mountPath = VirtualFileSystem.ResolveProviderUnsafe("/asset", true).Provider == null ? "/asset" : null;
+            return new DatabaseFileProvider(objDatabase, mountPath);
+        }
+
+        // Taken from Xenko/SkyboxGeneratorContext
+        private void Init()
+        {
+            Services = new ServiceRegistry();
+
+            var fileProvider = InitializeAssetDatabase();
+            var fileProviderService = new DatabaseFileProviderService(fileProvider);
+            Services.AddService<IDatabaseFileProviderService>(fileProviderService);
+
+            Content = new ContentManager(Services);
+            Services.AddService<IContentManager>(Content);
+            Services.AddService(Content);
+
+            GraphicsDevice = GraphicsDevice.New();
+            GraphicsDeviceService = new GraphicsDeviceServiceLocal(Services, GraphicsDevice);
+            Services.AddService<IGraphicsDeviceService>(GraphicsDeviceService);
+
+            var graphicsContext = new GraphicsContext(GraphicsDevice);
+            Services.AddService(graphicsContext);
+
+            EffectSystem = new EffectSystem(Services);
+            EffectSystem.Compiler = EffectCompilerFactory.CreateEffectCompiler(Content.FileProvider, EffectSystem);
+
+            Services.AddService(EffectSystem);
+            EffectSystem.Initialize();
+            ((IContentable)EffectSystem).LoadContent();
+            ((EffectCompilerCache)EffectSystem.Compiler).CompileEffectAsynchronously = false;
         }
 
         const string sdslFileFilter = "*.sdsl";
@@ -84,34 +113,28 @@ namespace VL.Stride.EffectLib
 
         public EffectNodeFactory()
         {
-            var game = DummyGame = CreateDummyGame();
-            mainContext = game.Services.GetService<SynchronizationContext>() ?? SynchronizationContext.Current;
+            Init();
 
-            nodeDescriptions = new ObservableCollection<IVLNodeDescription>(GetNodeDescriptions(game));
+            mainContext = Services.GetService<SynchronizationContext>() ?? SynchronizationContext.Current;
+
+            nodeDescriptions = new ObservableCollection<IVLNodeDescription>(GetNodeDescriptions(Content));
             NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(nodeDescriptions);
 
-            var effectSystem = game.EffectSystem;
-            if (effectSystem != null)
-            {
-                // Leads to deadlocks
-                ((EffectCompilerCache)effectSystem.Compiler).CompileEffectAsynchronously = false;
-
-                // Ensure the effect system tracks the same files as we do
-                var fieldInfo = typeof(EffectSystem).GetField("directoryWatcher", BindingFlags.NonPublic | BindingFlags.Instance);
-                directoryWatcher = fieldInfo.GetValue(effectSystem) as DirectoryWatcher;
-            }
-            else
-            {
-                directoryWatcher = new DirectoryWatcher(sdslFileFilter);
-            }
+            var effectSystem = EffectSystem;
+            // Ensure the effect system tracks the same files as we do
+            var fieldInfo = typeof(EffectSystem).GetField("directoryWatcher", BindingFlags.NonPublic | BindingFlags.Instance);
+            directoryWatcher = fieldInfo.GetValue(effectSystem) as DirectoryWatcher;
             directoryWatcher.Modified += DirectoryWatcher_Modified;
         }
 
         public ReadOnlyObservableCollection<IVLNodeDescription> NodeDescriptions { get; }
+        public ContentManager Content { get; private set; }
+        public ServiceRegistry Services { get; private set; }
+        public GraphicsDevice GraphicsDevice { get; private set; }
+        public GraphicsDeviceServiceLocal GraphicsDeviceService { get; private set; }
+        public EffectSystem EffectSystem { get; private set; }
 
         public readonly object SyncRoot = new object();
-
-        public Game DummyGame { get; }
 
         public CompilerResults GetCompilerResults(string effectName)
         {
@@ -124,17 +147,15 @@ namespace VL.Stride.EffectLib
             if (compilerParameters == null) throw new ArgumentNullException("compilerParameters");
 
             // Setup compilation parameters
-            var game = DummyGame;
-            var deviceManager = game.GraphicsDeviceManager;
-            var graphicsDevice = game.GraphicsDevice;
+            var graphicsDevice = this.GraphicsDevice;
             compilerParameters.EffectParameters.Platform = GraphicsDevice.Platform;
-            compilerParameters.EffectParameters.Profile = deviceManager?.ShaderProfile ?? graphicsDevice.Features.RequestedProfile;
+            compilerParameters.EffectParameters.Profile = graphicsDevice.Features.RequestedProfile;
             // Copy optimization/debug levels
             compilerParameters.EffectParameters.OptimizationLevel = effectCompilerParameters.OptimizationLevel;
             compilerParameters.EffectParameters.Debug = effectCompilerParameters.Debug;
 
             var source = GetShaderSource(effectName);
-            var compiler = game.EffectSystem.Compiler;
+            var compiler = EffectSystem.Compiler;
             var compilerResults = compiler.Compile(source, compilerParameters);
 
             // Watch the source code files
@@ -153,7 +174,7 @@ namespace VL.Stride.EffectLib
                 foreach (var type in bytecode.HashSources.Keys)
                 {
                     // TODO: the "/path" is hardcoded, used in ImportStreamCommand and ShaderSourceManager. Find a place to share this correctly.
-                    using (var pathStream = game.Content.FileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(type) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
+                    using (var pathStream = Content.FileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(type) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
                     using (var reader = new StreamReader(pathStream))
                     {
                         var path = reader.ReadToEnd();
@@ -231,7 +252,7 @@ namespace VL.Stride.EffectLib
 
         public string GetPathOfSdslShader(string effectName)
         {
-            var fileProvider = DummyGame.Content.FileProvider;
+            var fileProvider = this.Content.FileProvider;
             using (var pathStream = fileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(effectName) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
             using (var reader = new StreamReader(pathStream))
             {
@@ -245,17 +266,13 @@ namespace VL.Stride.EffectLib
             return null;
         }
 
-        IEnumerable<IVLNodeDescription> GetNodeDescriptions(GameBase game)
+        IEnumerable<IVLNodeDescription> GetNodeDescriptions(ContentManager contentManager)
         {
-            var contentManager = game.Content;
-            if (contentManager != null)
+            var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.AllDirectories);
+            foreach (var file in files)
             {
-                var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.AllDirectories);
-                foreach (var file in files)
-                {
-                    var effectName = Path.GetFileNameWithoutExtension(file);
-                    yield return new EffectNodeDescription(this, effectName);
-                }
+                var effectName = Path.GetFileNameWithoutExtension(file);
+                yield return new EffectNodeDescription(this, effectName);
             }
         }
 

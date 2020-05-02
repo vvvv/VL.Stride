@@ -2,16 +2,37 @@
 <Project>
   <PropertyGroup>
     <LocalNuGetConfigFile>$(MsBuildThisFileDirectory)NuGet.config</LocalNuGetConfigFile>
+    <Year>$([System.DateTime]::Now.ToString('yyyy'))</Year>
+    
+    <!-- The VL version to use -->
+    <VLVersion>2020.2.0-0011-g91fca253fe</VLVersion>
+    
+    <!-- The path to the vvvv binary launched by VL.Stride.Lib -->
+    <VVVV_BinPath>$(MsBuildThisFileDirectory)..\bin\vvvv_gamma_$(VLVersion)\</VVVV_BinPath>
+
+    <!-- The package repositories passed to the test game as well as the vvvv.exe used by VL.Stride.Lib -->
+    <PackageRepositories>$(MsBuildThisFileDirectory)</PackageRepositories>
+
+    <!-- Let's not make the output folder too deep -->
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     
     <!-- Package properties -->
     <EmitNuSpec>true</EmitNuSpec>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>$(MsBuildThisFileDirectory)..\packages-build\</PackageOutputPath>
     <IncludeFrameworkReferencesInPackage>false</IncludeFrameworkReferencesInPackage>
-    <Product>VL.Xenko</Product>
+    <Product>VL.Stride</Product>
     <Authors>vvvv group</Authors>
     <Owners>$(Authors)</Owners>
-    <Copyright>Copyright © 2019 by vvvv group. All rights reserved.</Copyright>
+    <Copyright>Copyright © $(Year) by $(Authors). All rights reserved.</Copyright>
     <PackageProjectUrl>https://github.com/vvvv/VL.Xenko</PackageProjectUrl>
+    
+    <!-- Disabled for now as it causes old nuget API to crash when used as source package -->
+    <!--<PackageIcon>stride_package_logo.png</PackageIcon>-->
   </PropertyGroup>
+
+  <!-- https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#packing-an-icon-image-file -->
+  <ItemGroup>
+    <None Include="$(MsBuildThisFileDirectory)stride_package_logo.png" Pack="true" PackagePath=" " />
+  </ItemGroup>
 </Project>
