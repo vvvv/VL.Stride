@@ -43,11 +43,11 @@
                 <Choice Kind="ProcessAppFlag" Name="TextureFXGraph" />
                 <CategoryReference Kind="Category" Name="ShaderFX" NeedsToBeDirectParent="true" />
               </p:NodeReference>
+              <Pin Id="OulT68lzhCLN6LppeIjSnz" Name="Auto Render" Kind="InputPin" />
+              <Pin Id="UC1bKzd8D8pOGypQBgj9UJ" Name="View" Kind="InputPin" />
               <Pin Id="OIvixu4FBSROe4gPbclJVy" Name="Input" Kind="InputPin" />
               <Pin Id="Pi3l5OJzZIBP9vcov3hUU4" Name="Size" Kind="InputPin" />
               <Pin Id="VDuasl6ky0DLHEJe9WX07q" Name="New Format" Kind="InputPin" />
-              <Pin Id="OulT68lzhCLN6LppeIjSnz" Name="Auto Render" Kind="InputPin" />
-              <Pin Id="UC1bKzd8D8pOGypQBgj9UJ" Name="View" Kind="InputPin" />
               <Pin Id="HFfN1DQeAcQPv1RRtJBBUn" Name="Root" Kind="InputPin" />
               <Pin Id="Hgu3qx7AS7gMPLjbjMWt1E" Name="Layer" Kind="OutputPin" />
               <Pin Id="AyCaR9WfJAjMlRc4YtuJsd" Name="Output" Kind="OutputPin" />
@@ -194,6 +194,7 @@
               <Choice Kind="ProcessAppFlag" Name="Demo" />
             </p:NodeReference>
             <Pin Id="Q5dze9IxxJCLkZi3yQVCdG" Name="Entity" Kind="OutputPin" />
+            <Pin Id="F4e7cEHaCK4LvUYi0S3HOF" Name="Material" Kind="OutputPin" />
           </Node>
           <Node Bounds="249,712,111,19" Id="QK4D6NTJFH4LbM8mNrSZLZ">
             <p:NodeReference LastCategoryFullName="Xenko.Camera" LastSymbolSource="VL.Xenko.Engine.vl">
@@ -241,30 +242,12 @@
             <Pin Id="KNhdiOU1eUnOOAToyKfQNh" Name="Target FrameRate" Kind="InputPin" />
             <Pin Id="MaYbbH9hLD8NrH1a3PDVHO" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="457,456,60,19" Id="NHGtyDZ2whMPrBcSj8vzBc">
-            <p:NodeReference LastCategoryFullName="Xenko.Demos" LastSymbolSource="VL.Xenko.Demos.vl">
-              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="AllDemos" />
-            </p:NodeReference>
-            <Pin Id="IJmTjVnSjmAOOzbHKVWUxI" Name="Index" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Integer32" />
-              </p:TypeAnnotation>
-            </Pin>
-            <Pin Id="ABVlVO7Ent0LUj9Pm5kZXL" Name="Init Physics" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Boolean" />
-              </p:TypeAnnotation>
-            </Pin>
-            <Pin Id="RXEmg5jQfiCMmpRoR4NomD" Name="Output" Kind="OutputPin" />
-            <Pin Id="HgMIEKmcie9MIKzWrmghns" Name="Demo Name" Kind="OutputPin" />
-          </Node>
-          <Pad Id="LT6YlLl4DkYOMs3oVGhsc0" Comment="Index" Bounds="459,395,35,15" ShowValueBox="true" isIOBox="true" Value="0">
+          <Pad Id="LT6YlLl4DkYOMs3oVGhsc0" Comment="Index" Bounds="459,395,35,15" ShowValueBox="true" isIOBox="true" Value="5">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Integer32" />
             </p:TypeAnnotation>
           </Pad>
-          <Node Bounds="908,488,54,19" Id="LdQ9P4obJZzM693m3HSNwc">
+          <Node Bounds="748,479,54,19" Id="LdQ9P4obJZzM693m3HSNwc">
             <p:NodeReference LastCategoryFullName="3D.Matrix" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="OperationCallFlag" Name="Rotation" />
@@ -283,7 +266,37 @@
             <Pin Id="GPA1081J9Z8MXmInA4VifG" Name="Roll" Kind="InputPin" />
             <Pin Id="D1hWoSPWRMeMrkpEuOurBq" Name="Result" Kind="OutputPin" />
           </Node>
-          <Pad Id="EWwyvw03lelLU7VsixRuC9" Comment="Demo Name" Bounds="513,505,111,31" ShowValueBox="true" isIOBox="true" />
+          <Node Bounds="457,453,60,22" Id="HJOYxJzcv6KMMLzLtodhBN">
+            <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+              <Choice Kind="ApplicationStatefulRegion" Name="If" />
+              <FullNameCategoryReference ID="Primitive" />
+            </p:NodeReference>
+            <Pin Id="Te7QavGQBsWLaoB1zcrDtt" Name="Condition" Kind="InputPin" />
+            <Patch Id="HHWMv4DyH40N2ON8Y40GN8" ManuallySortedPins="true">
+              <Patch Id="P75mbcJ6YxQQPK64Ds7OHK" Name="Create" ManuallySortedPins="true" />
+              <Patch Id="DL0XvYCl6yGNkC8w2YSwoj" Name="Then" ManuallySortedPins="true" />
+            </Patch>
+          </Node>
+          <Node Bounds="544,457,60,19" Id="NHGtyDZ2whMPrBcSj8vzBc">
+            <p:NodeReference LastCategoryFullName="Xenko.Demos" LastSymbolSource="VL.Xenko.Demos.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="AllDemos" />
+            </p:NodeReference>
+            <Pin Id="IJmTjVnSjmAOOzbHKVWUxI" Name="Index" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Integer32" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="ABVlVO7Ent0LUj9Pm5kZXL" Name="Init Physics" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="O1lRFELjLqULObpyjJa7T5" Name="Material Instance" Kind="InputPin" />
+            <Pin Id="RXEmg5jQfiCMmpRoR4NomD" Name="Output" Kind="OutputPin" />
+            <Pin Id="HgMIEKmcie9MIKzWrmghns" Name="Demo Name" Kind="OutputPin" />
+          </Node>
         </Canvas>
         <Patch Id="O83s8L1ielBOdVBpuwVvjH" Name="Create" />
         <Patch Id="V6pD3pcgBJ3OcJfTtYxkGp" Name="Update" />
@@ -299,16 +312,16 @@
         <Link Id="IMk57EtYoP3LNwsAtj7Lgn" Ids="LT6YlLl4DkYOMs3oVGhsc0,IJmTjVnSjmAOOzbHKVWUxI" />
         <Link Id="LNYw6gYCMEtOU9J1G5j2Uo" Ids="D1hWoSPWRMeMrkpEuOurBq,LEiHQl4gjWEM3zUKv4pdLv" />
         <Link Id="TisZbvl0MtiO2c56xllfj1" Ids="HcVS8YRpgxcMZ0ANTLvyMP,DjGGaWiTea5MfAP2kvWz9O" />
-        <Link Id="SmeK4MMKSMvNPNjDbE0GJG" Ids="HgMIEKmcie9MIKzWrmghns,EWwyvw03lelLU7VsixRuC9" />
-        <Link Id="OJF8YcpcwJuPjEYhIMKnaK" Ids="RXEmg5jQfiCMmpRoR4NomD,PFjB3pFNJ6WPDz2CtrOvIb" />
         <Link Id="UlXN1hVLTedM6v4TeH27Ra" Ids="BryYNR3EbmwOSgfZ28CJhh,Fsk2TarPhxyLEHxZ0XAOjd" />
+        <Link Id="DsmmlVAM9Q0P8C66zyCKso" Ids="RXEmg5jQfiCMmpRoR4NomD,PFjB3pFNJ6WPDz2CtrOvIb" />
+        <Link Id="LSJcl3DC6gfLERPIZoRjde" Ids="F4e7cEHaCK4LvUYi0S3HOF,O1lRFELjLqULObpyjJa7T5" />
       </Patch>
     </Node>
   </Patch>
   <NugetDependency Id="Ks662q1kET1Mr9dcAdydpc" Location="VL.Skia" Version="2020.1.0" />
   <NugetDependency Id="MpQFvNFnPaINDP3Cvfs6nx" Location="VL.EditingFramework" Version="2020.1.0" />
   <DocumentDependency Id="IOE3PH7wVaVLYk8oDarW7k" Location="./RaymarchTest.vl" />
-  <NugetDependency Id="JKMfn42oivCO1um8Hlb9P8" Location="VL.Xenko" Version="0.7.3-gacd2e805bd" />
-  <NugetDependency Id="NYD9BSVHKW5LYVnOcBjbJf" Location="VL.Xenko.Windows" Version="0.7.3-gacd2e805bd" />
-  <NugetDependency Id="BLzzZMxeGYAMqs1m0WlrSu" Location="VL.Xenko.EffectLib" Version="0.7.3-gacd2e805bd" />
+  <NugetDependency Id="JKMfn42oivCO1um8Hlb9P8" Location="VL.Xenko" Version="0.7.50-gad5ec2fa06" />
+  <NugetDependency Id="NYD9BSVHKW5LYVnOcBjbJf" Location="VL.Xenko.Windows" Version="0.7.50-gad5ec2fa06" />
+  <NugetDependency Id="BLzzZMxeGYAMqs1m0WlrSu" Location="VL.Xenko.EffectLib" Version="0.7.50-gad5ec2fa06" />
 </Document>
