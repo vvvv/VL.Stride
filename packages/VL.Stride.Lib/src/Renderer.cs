@@ -62,7 +62,7 @@ namespace VL.Stride
 
             // Init scene graph links 
             var rootScene = game.SceneSystem.SceneInstance.RootScene;
-            FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene);
+            FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false);
 
             // Save initial set camera slot id
             FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
