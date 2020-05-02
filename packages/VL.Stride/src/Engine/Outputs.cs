@@ -14,11 +14,9 @@ namespace VL.Stride.Engine
     public class ComponentOutput<T> : TreeNodeParentManager<Entity, EntityComponent>
         where T : EntityComponent
     {
-        public ComponentOutput(T entityComponent, out T output)
-            : base(entityComponent, out _)
-        {
-            output = entityComponent;
-        }
+        public ComponentOutput(T entityComponent)
+            : base(entityComponent)
+        { }
 
         // this is just here for being able to configure the process node directly in the type forward
         public new bool ManyWannaBeParents => base.ManyWannaBeParents;
@@ -45,8 +43,8 @@ namespace VL.Stride.Engine
     /// </summary>
     public class EntityOutput : TreeNodeParentManager<object, Entity>
     {
-        public EntityOutput(Entity entity, out Entity output)
-            : base(entity, out output)
+        public EntityOutput(Entity entity)
+            : base(entity)
         { }
 
         // this is just here for being able to configure the process node directly in the type forward
@@ -77,8 +75,8 @@ namespace VL.Stride.Engine
     /// </summary>   
     public class SceneOutput : TreeNodeParentManager<Scene, Scene>
     {
-        public SceneOutput(Scene scene, out Scene output)
-            : base(scene, out output)
+        public SceneOutput(Scene scene)
+            : base(scene)
         { }
 
         // this is just here for being able to configure the process node directly in the type forward
