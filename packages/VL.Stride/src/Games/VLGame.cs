@@ -26,6 +26,7 @@ namespace VL.Stride.Games
         public VLGame()
             : base()
         {
+            GameInstance = this;
         }
 
         protected override void PrepareContext()
