@@ -16,6 +16,11 @@ namespace VL.Stride.Lib
 {
     public sealed class Initialization : AssemblyInitializer<Initialization>
     {
+        public Initialization()
+        {
+
+        }
+
         protected override void RegisterServices(IVLFactory factory)
         {
             factory.RegisterService<NodeContext, IResourceProvider<Game>>(nodeContext =>

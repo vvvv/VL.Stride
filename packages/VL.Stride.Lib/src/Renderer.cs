@@ -111,7 +111,7 @@ namespace VL.Stride
                     compositor.Cameras[0] = ourCameraSlot;
                 }
 
-                game.RunCallback.Invoke(); //calls Game.Tick();
+                game.RunCallback?.Invoke(); //calls Game.Tick();
 
                 compositor.GetFirstForwardRenderer(out var forwardRenderer);
                 forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);

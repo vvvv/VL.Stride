@@ -174,8 +174,8 @@ namespace VL.Stride.EffectLib
                     parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
                 }
 
-                dummyInstance.Initialize(GameFactory.DummyGame.Services);
-                dummyInstance.UpdateEffect(GameFactory.DummyGame.GraphicsDevice);
+                dummyInstance.Initialize(GameFactory.Services);
+                dummyInstance.UpdateEffect(GameFactory.GraphicsDevice);
 
                 var usedNames = new HashSet<string>();
                 usedNames.Add(ParameterSetterInput.Name);

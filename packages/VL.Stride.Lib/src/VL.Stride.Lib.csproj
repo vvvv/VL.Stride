@@ -2,13 +2,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
+    
+    <!-- The runtime identifier causes the build system to copy needed native libraries to the output folder -->
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+
+    <!-- We need to pass the folder containing the native libraries to Stride (NativeLibrary.PreloadLib) - they're normally beside the exe  -->
+    <__OutputPath__>$(MsBuildThisFileDirectory)bin\$(Configuration)\$(TargetFramework)</__OutputPath__>
+    <NativeLibraryPath>$(__OutputPath__)\x64</NativeLibraryPath>
+    <WorkingDirectory>$(__OutputPath__)</WorkingDirectory>
+    
+    <!-- Triggers stride asset compiler -->
+    <StrideIsExecutable>true</StrideIsExecutable>
+    <!-- Stride looks for asset database below the exe -->
+    <StrideCompileAssetOutputPath>$(VVVV_BinPath)lib\data</StrideCompileAssetOutputPath>
+
     <PackageId>$(AssemblyName)</PackageId>
-    <Description>$(AssemblyName)</Description>
     <Description>Allows to use Stride as library in VL.</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageIcon>stride_package_logo.png</PackageIcon>
   </PropertyGroup>
+  
   <ItemGroup>
+    <ProjectReference Include="..\..\VL.Stride.DefaultAssets\VL.Stride.DefaultAssets.csproj" />
     <ProjectReference Include="..\..\VL.Stride.EffectLib\src\VL.Stride.EffectLib.csproj" />
     <ProjectReference Include="..\..\VL.Stride.Windows\src\VL.Stride.Windows.csproj" />
     <ProjectReference Include="..\..\VL.Stride\src\VL.Stride.csproj" />
@@ -18,7 +32,7 @@
     <ProjectReference Include="..\..\..\..\..\vvvv50\VL.Lang\src\VL.Lang.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(SolutionName)' != 'VL'">
-    <PackageReference Include="VL.Lang" Version="2020.2.0-0004-g36c2100357" />
+    <PackageReference Include="VL.Lang" Version="$(VLVersion)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="Nerdbank.GitVersioning" Version="2.3.186">
@@ -27,10 +41,17 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\*.vl" Pack="true" TargetPath="." />
-    <None Include="..\..\stride_package_logo.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <None Include="..\*.vl" Pack="true" PackagePath=" " />
   </ItemGroup>
+
+  <!-- As long as VL doesn't understand package restore put whole build output into the package -->
+  <Target Name="CollectRuntimeOutputs" BeforeTargets="_GetPackageFiles">
+    <!-- Collect these items inside a target that runs after build but before packaging. -->
+    <ItemGroup>
+      <Content Include="$(OutputPath)\*.dll">
+        <Pack>true</Pack>
+        <PackagePath>lib\$(TargetFramework)</PackagePath>
+      </Content>
+    </ItemGroup>
+  </Target>
 </Project>
