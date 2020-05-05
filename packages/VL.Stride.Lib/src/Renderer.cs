@@ -38,7 +38,9 @@ namespace VL.Stride
         private readonly SceneCameraSlotId FFallbackSlotId;
         private Int2 FLastPosition;
 
-        public Renderer(NodeContext nodeContext, RectangleF bounds, bool saveBounds = true, bool boundToDocument = false, bool dialogIfDocumentChanged = false, bool tonfilm = true)
+        public Renderer(NodeContext nodeContext, RectangleF bounds, 
+            Func<Scene, TreeNodeParentManager<Scene, Scene>> parentManagerProvider, bool saveBounds = true,
+            bool boundToDocument = false, bool dialogIfDocumentChanged = false, bool tonfilm = true)
         {
             FNodeContext = nodeContext;
             FBounds = bounds;
@@ -68,7 +70,7 @@ namespace VL.Stride
             if (tonfilm)
                 FSceneLink = new SceneLink(rootScene);
             else
-                FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false);
+                FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false, parentManagerProvider);
 
             // Save initial set camera slot id
             FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
@@ -78,7 +80,8 @@ namespace VL.Stride
 
         Spread<Scene> scenes = Spread<Scene>.Empty;
 
-        public void Update(Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
+        public void Update(Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, 
+            bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
         {
             var game = (VLGame)FGameHandle.Resource;
 
