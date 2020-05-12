@@ -30,7 +30,6 @@ using System.Reactive.Linq;
 using System.Reactive;
 using Stride.Core.IO;
 using Stride.Core.BuildEngine;
-using System.Reactive.Threading.Tasks;
 using Stride.Assets.Rendering;
 
 namespace VL.Stride.Assets
