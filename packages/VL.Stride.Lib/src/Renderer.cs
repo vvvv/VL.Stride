@@ -1,25 +1,20 @@
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Games;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
 using System;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VL.Core;
 using VL.Lang.PublicAPI;
 using VL.Lib.Basics.Resources;
-using VL.Stride.Games;
-using VL.Stride.Engine;
-using VL.Stride.Layer;
-using VL.Stride.Rendering;
-using Stride.Core.Mathematics;
-using Stride.Core.MicroThreading;
-using Stride.Engine;
-using Stride.Games;
-using Stride.Rendering;
-using Stride.Rendering.Compositing;
 using VL.Lib.Collections;
 using VL.Lib.Collections.TreePatching;
+using VL.Stride.Games;
+using VL.Stride.Rendering;
 
 namespace VL.Stride
 {
@@ -34,13 +29,12 @@ namespace VL.Stride
         private readonly bool FShowDialogIfDocumentChanged;
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
         private readonly TreeNodeChildrenManager<Scene, Scene> FSceneManager;
-        private readonly SceneLink FSceneLink;
         private readonly SceneCameraSlotId FFallbackSlotId;
         private Int2 FLastPosition;
 
         public Renderer(NodeContext nodeContext, RectangleF bounds, 
             Func<Scene, TreeNodeParentManager<Scene, Scene>> parentManagerProvider, bool saveBounds = true,
-            bool boundToDocument = false, bool dialogIfDocumentChanged = false, bool tonfilm = true)
+            bool boundToDocument = false, bool dialogIfDocumentChanged = false)
         {
             FNodeContext = nodeContext;
             FBounds = bounds;
@@ -67,10 +61,7 @@ namespace VL.Stride
             // Init scene graph links 
             var rootScene = game.SceneSystem.SceneInstance.RootScene;
 
-            if (tonfilm)
-                FSceneLink = new SceneLink(rootScene);
-            else
-                FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false, parentManagerProvider);
+            FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false, parentManagerProvider);
 
             // Save initial set camera slot id
             FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
@@ -123,7 +114,6 @@ namespace VL.Stride
                     scenes = scene != null ? Spread.Create(scene) : Spread<Scene>.Empty;
 
                 FSceneManager?.Update(scenes);
-                FSceneLink?.Update(scene);
             }
         }
 
@@ -164,7 +154,6 @@ namespace VL.Stride
         public void Dispose()
         {
             FSceneManager?.Dispose();
-            FSceneLink?.Dispose();
             FWindowHandle?.Dispose();
             FGameHandle?.Dispose();
         }
