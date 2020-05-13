@@ -163,10 +163,10 @@ namespace VL.Stride
 
         public void Dispose()
         {
-            FSceneManager.Dispose();
-            FSceneLink.Dispose();
-            FWindowHandle.Dispose();
-            FGameHandle.Dispose();
+            FSceneManager?.Dispose();
+            FSceneLink?.Dispose();
+            FWindowHandle?.Dispose();
+            FGameHandle?.Dispose();
         }
     }
 }
