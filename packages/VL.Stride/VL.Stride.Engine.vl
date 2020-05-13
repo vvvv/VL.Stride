@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2020.2.0.59" Version="0.128">
-  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0053-g6d7f85fda9" />
+<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2020.2.0.60" Version="0.128">
+  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0019-gd58fdca400" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride.Engine" CanvasType="FullCategory">
       <Canvas Id="AM1t0H80MmiNL9vQcGuPCN" Name="Camera" Position="489,360">
@@ -6903,8 +6903,8 @@
               <ControlPoint Id="S9zf9wM1QduQQfaI0TlrPu" Bounds="815,312" />
               <ControlPoint Id="S5CJYXbrAurMVwi4BJ9Ixj" Bounds="889,312" />
               <ControlPoint Id="KDG4Di3i2vtQVQoZQXHQY1" Bounds="691,313" />
-              <ControlPoint Id="VXUFSKZdp6pP8IwV3TEjjD" Bounds="455,162" />
-              <ControlPoint Id="HEg6qupzyHVLX1ybyfVsJ1" Bounds="548,163" />
+              <ControlPoint Id="VXUFSKZdp6pP8IwV3TEjjD" Bounds="468,137" />
+              <ControlPoint Id="HEg6qupzyHVLX1ybyfVsJ1" Bounds="566,226" />
               <Node Bounds="433,489,300,19" Id="FL405BoeqMMQdBsw8WOxtD">
                 <p:NodeReference>
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -6920,16 +6920,25 @@
                 <Pin Id="GgQuEj99H4UNTAXoESouRc" Name="Enabled" Kind="InputPin" />
                 <Pin Id="SmUFq31S0fPLKKOOluB5Fp" Name="Entity" Kind="OutputPin" />
               </Node>
-              <Node Bounds="464,245,47,19" Id="QXGG0rK2MOhOYN5wHuTBBt">
-                <p:NodeReference>
+              <Node Bounds="468,298,68,19" Id="QXGG0rK2MOhOYN5wHuTBBt">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering.Models" LastSymbolSource="VL.Stride.Rendering.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                   <CategoryReference Kind="Category" Name="Models" NeedsToBeDirectParent="true" />
-                  <Choice Kind="ProcessAppFlag" Name="ProceduralModel" />
+                  <Choice Kind="ProcessAppFlag" Name="MeshModel" />
                 </p:NodeReference>
-                <Pin Id="P7Vp6ukAtMtL3VvEGp4ZMm" Name="Model Generator" Kind="InputPin" />
-                <Pin Id="PdMLzyJD3QONEwdGsFvHMI" Name="Material" Kind="InputPin" />
+                <Pin Id="HLwaNoYbjDbNCkvHKoQi5i" Name="Meshes" Kind="InputPin" />
+                <Pin Id="K4cjyfpEx1dNt7X4HLysYR" Name="Materials" Kind="InputPin" />
                 <Pin Id="KLwyGTLXeXlPjyHz1u1IqF" Name="Output" Kind="OutputPin" />
-                <Pin Id="JXGviBsDKryOgr4ndodv6O" Name="Tesselation" Kind="InputPin" />
+              </Node>
+              <Node Bounds="428,183,71,19" Id="LeVDmZusruYN1vxV0bj5Hk">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering.Models" LastSymbolSource="VL.Stride.Rendering.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="SphereMesh" />
+                </p:NodeReference>
+                <Pin Id="BCq0y7jazMNMflXr8XmJOW" Name="Radius" Kind="InputPin" />
+                <Pin Id="D9SGBtPp66PPlqL0fzVyaX" Name="Tesselation" Kind="InputPin" />
+                <Pin Id="AUg4CPLeqVlOXwBKB9kDaT" Name="Offset" Kind="InputPin" />
+                <Pin Id="KFBUSwEIaJtLBUUFZaiCXc" Name="Mesh" Kind="OutputPin" />
               </Node>
             </Canvas>
             <ProcessDefinition Id="JXvkVTuhdAYMWq86q4ZlNs">
@@ -6946,7 +6955,7 @@
             <Patch Id="S73BQDSnLQ5NOVXbA9tHdX" Name="Create" />
             <Patch Id="GonqObVgzY2PQChEKrRFrw" Name="Update" ManuallySortedPins="true">
               <Pin Id="IaOdNkCYLB4Mq3sXpIBHra" Name="Transformation" Kind="InputPin" Bounds="448,228" />
-              <Pin Id="LvfVanjDUwcMsdOqIFMqlJ" Name="Material Instance" Kind="InputPin" Bounds="648,87" />
+              <Pin Id="LvfVanjDUwcMsdOqIFMqlJ" Name="Material" Kind="InputPin" Bounds="648,87" />
               <Pin Id="Q7znCsjenceO9a0GxlKVSR" Name="Tessellation" Kind="InputPin" Bounds="779,-134" DefaultValue="16">
                 <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                   <Choice Kind="TypeFlag" Name="Integer32" />
@@ -6974,8 +6983,9 @@
             <Link Id="BGrs9YzjOf0OVA54NWOYSA" Ids="Ru4FYbpVPc9MbTgoOWi2AA,DXtLrQXvFYsPMLR1bwOGEJ" />
             <Link Id="FQBVqCiG98dLb8uW2xRPrZ" Ids="S9zf9wM1QduQQfaI0TlrPu,LHtVhCtyyXmO4ddjAyIBSF" />
             <Link Id="HuF5kzt7cHHLW0xWPJoluG" Ids="KLwyGTLXeXlPjyHz1u1IqF,LaqFMb0PUAMOZesoQH4lGH" />
-            <Link Id="BaGvvIPYkqaNuT6MPSWIIz" Ids="VXUFSKZdp6pP8IwV3TEjjD,JXGviBsDKryOgr4ndodv6O" />
-            <Link Id="OCIt1FgNbyBPtPeUWrpKRm" Ids="HEg6qupzyHVLX1ybyfVsJ1,PdMLzyJD3QONEwdGsFvHMI" />
+            <Link Id="Ep1JsuhI7kZPygwvf3wEBy" Ids="VXUFSKZdp6pP8IwV3TEjjD,D9SGBtPp66PPlqL0fzVyaX" />
+            <Link Id="IRJDA6SSOJLPt4SSEMHODU" Ids="KFBUSwEIaJtLBUUFZaiCXc,HLwaNoYbjDbNCkvHKoQi5i" />
+            <Link Id="EaJfPth7xbjMiVB7oD7q2s" Ids="HEg6qupzyHVLX1ybyfVsJ1,K4cjyfpEx1dNt7X4HLysYR" />
           </Patch>
         </Node>
       </Canvas>
@@ -7910,9 +7920,9 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="NPPs0gHWhhDLwbJWw9C5Qt" Location="VL.Core" Version="2020.2.0-0053-g6d7f85fda9" />
-  <NugetDependency Id="DpOkG08YmwMOrERTyWIWIl" Location="VL.EditingFramework" Version="2020.2.0-0053-g6d7f85fda9" />
-  <NugetDependency Id="Aw4uETs9g7DN5GGFUjALlK" Location="VL.Skia" Version="2020.2.0-0053-g6d7f85fda9" />
+  <NugetDependency Id="NPPs0gHWhhDLwbJWw9C5Qt" Location="VL.Core" Version="2020.2.0-0019-gd58fdca400" />
+  <NugetDependency Id="DpOkG08YmwMOrERTyWIWIl" Location="VL.EditingFramework" Version="2020.2.0-0019-gd58fdca400" />
+  <NugetDependency Id="Aw4uETs9g7DN5GGFUjALlK" Location="VL.Skia" Version="2020.2.0-0019-gd58fdca400" />
   <PlatformDependency Id="OPlGizMUnBvPvn5XHsJ8EW" Location="./src/bin/Debug/netstandard2.0/VL.Stride.dll" />
   <PlatformDependency Id="PNVK9A76J93L79pFuBD4B3" Location="../TestGame/Bin/Windows/Debug/Stride.Games.dll" />
   <PlatformDependency Id="Lg8KGAfsRcwOnEfRhBsBQG" Location="../TestGame/Bin/Windows/Debug/Stride.Engine.dll" />
@@ -7920,7 +7930,7 @@
   <DocumentDependency Id="I9kZBuopBpePX7pwvio3o3" Location="./VL.Stride.Input.vl" />
   <DocumentDependency Id="L5RZYAkeHFkPPKJ86K1KAe" Location="./VL.Stride.Core.vl" />
   <DocumentDependency Id="IDoNCTKSzHfQQlS52M4MXv" Location="./VL.Stride.Rendering.vl" />
-  <NugetDependency Id="TGa7b7VVemVM0Bf10QC3Ph" Location="VL.Stride.EffectLib" Version="0.7.66-ge74426c160" />
+  <NugetDependency Id="TGa7b7VVemVM0Bf10QC3Ph" Location="VL.Stride.EffectLib" Version="0.7.67-g73bcf2a03a" />
   <PlatformDependency Id="H2f8MXufRYpPuRjIjOK3q3" Location="../TestGame/Bin/Windows/Debug/Stride.Core.Mathematics.dll" />
-  <NugetDependency Id="IHEIDRov8LFO2eD48F4Hs0" Location="VL.Lang" Version="2020.2.0-0053-g6d7f85fda9" />
+  <NugetDependency Id="IHEIDRov8LFO2eD48F4Hs0" Location="VL.Lang" Version="2020.2.0-0019-gd58fdca400" />
 </Document>
