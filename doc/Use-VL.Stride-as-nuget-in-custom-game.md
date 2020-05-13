@@ -7,7 +7,7 @@
 * Install the Xenko 3.2.x build
 * Then start the Xenko Game Studio by pressing the red button
 <p align="center">
-<img src="/vvvv/VL.Xenko/wiki/images/xenkolauncher2.png" width="50%" alt="Visual Studio Installer">
+<img src="images/xenkolauncher2.png" width="50%" alt="Visual Studio Installer">
 </p>
 
 * Also install the Visual Studio extension
@@ -18,7 +18,7 @@ This creates your project folder and gives everything a name. For now, we only s
 * Give it a proper name and set it to windows and DX11.0 / OpenGL ES3.1
 
 <p align="center">
-<img src="/vvvv/VL.Xenko/wiki/images/newgame.png" width="50%" alt="Create a game dialog">
+<img src="images/newgame.png" width="50%" alt="Create a game dialog">
 </p>
 
 * Delete all entites except the "Camera" from the MainScene
@@ -55,7 +55,7 @@ This adds the VL patch editor and custom features to your game.
   * {ProjectName} project: add the VL.Xenko nuget (brings the nodelibrary and shaders)
   * {ProjectName}.Windows project: add the VL.Xenko.Integration nuget (brings the actual vl editor)
 <p align="center">
-<img src="/vvvv/VL.Xenko/wiki/images/managenugets.png" alt="Configuring the game">
+<img src="images/managenugets.png" alt="Configuring the game">
 </p>
 
 ### Replace code in {ProjectName}App.cs of the {ProjectName}.Windows project
@@ -94,4 +94,4 @@ This step makes all nodes and features we developed for Xenko available in the V
 * Save Main.vl
 
 ## Additional Tools
-These tools greatly improve the workflow with Xenko: [[Additional Tools|Additional Tools]]
+These tools greatly improve the workflow with Xenko: [Additional Tools](Additional-Tools.md)
