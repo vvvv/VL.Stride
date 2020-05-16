@@ -45,7 +45,7 @@ namespace VL.Stride.Lib
                         };
                         Game.GameStarted += gameStartedHandler;
 
-                        var gameContext = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
+                        var gameContext = new GameContextSDL(null, 0, 0, isUserManagingRun: true);
                         game.Run(gameContext); // Creates the window
                         game.RunCallback = gameContext.RunCallback;
 
