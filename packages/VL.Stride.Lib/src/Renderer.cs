@@ -138,7 +138,7 @@ namespace VL.Stride
                 var p = Window.Position;
                 FBounds = new RectangleF(p.X, p.Y, b.Width, b.Height);
                 var solution = VL.Model.VLSession.Instance.CurrentSolution as ISolution;
-                solution = solution?.SetPinValue(FNodeContext.Path.Stack.Peek(), "Bounds", FBounds);
+                solution = solution?.SetPinValue(FNodeContext.Path.Stack, "Bounds", FBounds);
                 solution?.Confirm(Model.SolutionUpdateKind.DontCompile); 
             }
         }
