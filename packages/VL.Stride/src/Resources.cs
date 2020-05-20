@@ -9,11 +9,6 @@ namespace VL.Stride
 {
     public static class Resources
     {
-        public static uint GetResourceKey(this NodeContext nodeContext)
-        {
-            return nodeContext.Path.Stack.Last();
-        }
-
         public static IResourceProvider<Game> GetGameProvider(this NodeContext nodeContext)
         {
             return nodeContext.Factory.CreateService<IResourceProvider<Game>>(nodeContext);

@@ -25,9 +25,8 @@ namespace VL.Stride.Lib
         {
             factory.RegisterService<NodeContext, IResourceProvider<Game>>(nodeContext =>
             {
-                var key = nodeContext.GetResourceKey();
-                return ResourceProvider.NewPooled(key,
-                    factory: _ =>
+                return ResourceProvider.NewPooledPerApp(nodeContext,
+                    factory: () =>
                     {
                         var game = new VLGame();
 #if DEBUG
@@ -58,8 +57,7 @@ namespace VL.Stride.Lib
 
             factory.RegisterService<NodeContext, IResourceProvider<GameWindow>>(nodeContext =>
             {
-                var key = nodeContext.GetResourceKey();
-                return ResourceProvider.NewPooled(key, k =>
+                return ResourceProvider.NewPooledPerApp(nodeContext, () =>
                 {
                     var gameProvider = nodeContext.GetGameProvider();
                     return gameProvider
