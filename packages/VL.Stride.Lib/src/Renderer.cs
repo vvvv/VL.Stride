@@ -29,8 +29,6 @@ namespace VL.Stride
         private readonly bool FShowDialogIfDocumentChanged;
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
         private readonly TreeNodeChildrenManager<Scene, Scene> FSceneManager;
-        private readonly SceneCameraSlotId FFallbackSlotId;
-        private readonly GraphicsCompositor FFallbackCompositor;
         private Int2 FLastPosition;
 
         public Renderer(NodeContext nodeContext, RectangleF bounds, 
@@ -60,20 +58,16 @@ namespace VL.Stride
             SetupEvents(Window);
 
             // Init scene graph links 
-            var rootScene = game.SceneSystem.SceneInstance.RootScene;
+            //var rootScene = game.SceneSystem.SceneInstance.RootScene;
 
-            FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false, parentManagerProvider);
-
-            // Save initial set camera slot id
-            FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
-            FFallbackCompositor = game.SceneSystem.GraphicsCompositor;
+            //FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false, parentManagerProvider);
         }
 
         public GameWindow Window => FWindowHandle.Resource;
 
         Spread<Scene> scenes = Spread<Scene>.Empty;
 
-        public void Update(Scene scene, GraphicsCompositor compositor, bool verticalSync = false, bool enabled = true)
+        public void Update(SceneInstance sceneInstance, GraphicsCompositor compositor, bool verticalSync = false, bool enabled = true)
         {
             var game = (VLGame)FGameHandle.Resource;
 
@@ -93,12 +87,14 @@ namespace VL.Stride
 
             if (enabled)
             {
-                game.SceneSystem.GraphicsCompositor = compositor ?? FFallbackCompositor;
+                game.SceneSystem.GraphicsCompositor = compositor;
+                game.SceneSystem.SceneInstance = sceneInstance;
 
-                if (scene != scenes.FirstOrDefault())
-                    scenes = scene != null ? Spread.Create(scene) : Spread<Scene>.Empty;
+                //var scene = sceneInstance.RootScene;
+                //if (scene != scenes.FirstOrDefault())
+                //    scenes = scene != null ? Spread.Create(scene) : Spread<Scene>.Empty;
 
-                FSceneManager?.Update(scenes);
+                //FSceneManager?.Update(scenes);
 
                 game.RunCallback?.Invoke(); //calls Game.Tick();
             }

@@ -3,22 +3,22 @@ using System;
 using System.Linq;
 using VL.Core;
 
-namespace VL.Stride.Materials
+namespace VL.Stride
 {
-    class MaterialNode<TMaterial> : VLObject, IVLNode
-        where TMaterial : new()
+    class StrideNode<TInstance> : VLObject, IVLNode
+        where TInstance : new()
     {
         readonly Pin[] inputs;
-        readonly MaterialNodeDescription<TMaterial> nodeDescription;
+        readonly StrideNodeDesc<TInstance> nodeDescription;
 
-        public MaterialNode(NodeContext nodeContext, MaterialNodeDescription<TMaterial> description)
+        public StrideNode(NodeContext nodeContext, StrideNodeDesc<TInstance> description)
             : base(nodeContext)
         {
             Context = nodeContext;
             nodeDescription = description;
 
             inputs = description.Inputs.OfType<PinDescription>().Select(d => d.CreatePin()).ToArray();
-            Outputs = new IVLPin[] { new StatePin() { Value = new TMaterial() } };
+            Outputs = new IVLPin[] { new StatePin() { Value = new TInstance() } };
         }
 
         public IVLNodeDescription NodeDescription => nodeDescription;
@@ -31,17 +31,17 @@ namespace VL.Stride.Materials
         {
             if (inputs.Any(p => p.IsChanged))
             {
-                TMaterial feature;
+                TInstance feature;
                 if (nodeDescription.CopyOnWrite)
                 {
                     // TODO: Causes crash in pipeline
                     //if (Outputs[0].Value is IDisposable disposable)
                     //    disposable.Dispose();
-                    feature = new TMaterial();
+                    feature = new TInstance();
                 }
                 else
                 {
-                    feature = (TMaterial)Outputs[0].Value;
+                    feature = (TInstance)Outputs[0].Value;
                 }
 
                 foreach (var pin in inputs)

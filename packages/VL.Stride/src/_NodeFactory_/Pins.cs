@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using VL.Core;
 
-namespace VL.Stride.Materials
+namespace VL.Stride
 {
     abstract class PinDescription : IVLPinDescription
     {

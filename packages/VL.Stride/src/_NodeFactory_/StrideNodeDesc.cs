@@ -1,28 +1,22 @@
-﻿using Stride.Core;
-using Stride.Core.Annotations;
-using Stride.Rendering.Materials;
+﻿using Stride.Core.Annotations;
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Policy;
-using System.Text;
 using VL.Core;
 using VL.Core.Diagnostics;
 
-namespace VL.Stride.Materials
+namespace VL.Stride
 {
-    class MaterialNodeDescription<TMaterial> : IVLNodeDescription, IEnumerable
+    class StrideNodeDesc<TMaterial> : IVLNodeDescription, IEnumerable
         where TMaterial : new()
     {
         private List<PinDescription> inputs;
         private List<StateOutput> outputs;
         internal Type stateOutputType;
 
-        public MaterialNodeDescription(IVLNodeDescriptionFactory factory, string name = default, string category = default, Type stateOutputType = default)
+        public StrideNodeDesc(IVLNodeDescriptionFactory factory, string name = default, string category = default, Type stateOutputType = default)
         {
             Factory = factory;
             Name = name ?? typeof(TMaterial).Name;
@@ -38,14 +32,6 @@ namespace VL.Stride.Materials
 
         public string Category { get; }
 
-        public void Add(string name)
-        {
-            if (pins is null)
-                pins = new List<string>();
-            pins.Add(name);
-        }
-        List<string> pins;
-
         public IReadOnlyList<IVLPinDescription> Inputs
         {
             get
@@ -57,7 +43,7 @@ namespace VL.Stride.Materials
                     var categoryOrdering = typeof(TMaterial).GetCustomAttributes<CategoryOrderAttribute>()
                         .ToDictionary(a => a.Name, a => a.Order);
 
-                    var properties = typeof(TMaterial).GetStrideProperties(pins)
+                    var properties = typeof(TMaterial).GetStrideProperties()
                         .GroupBy(p => p.Category)
                         .OrderBy(g => g.Key != null ? categoryOrdering.ValueOrDefault(g.Key, 0) : 0)
                         .SelectMany(g => g.OrderBy(p => p.Order).ThenBy(p => p.Name));
@@ -130,7 +116,7 @@ namespace VL.Stride.Materials
 
         public IVLNode CreateInstance(NodeContext context)
         {
-            return new MaterialNode<TMaterial>(context, this);
+            return new StrideNode<TMaterial>(context, this);
         }
 
         public bool OpenEditor()

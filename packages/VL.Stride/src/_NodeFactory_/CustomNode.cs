@@ -1,23 +1,30 @@
-﻿using OpenTK.Audio.OpenAL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using VL.Core;
 using VL.Core.Diagnostics;
-using VL.Lib.Primitive.Object;
 
-namespace VL.Stride.Materials
+namespace VL.Stride
 {
+    static class FactoryExtensions
+    {
+        public static CustomNodeDesc<TNew> Create<TNew>(this IVLNodeDescriptionFactory factory, string name = default, string category = default, bool copyOnWrite = true)
+            where TNew : new()
+        {
+            return new CustomNodeDesc<TNew>(factory, ctx => (new TNew(), default), name, category, copyOnWrite);
+        }
+    }
+
     class CustomNodeDesc<TInstance> : IVLNodeDescription
-        where TInstance : new()
     {
         readonly List<CustomPinDesc> inputs = new List<CustomPinDesc>();
         readonly List<CustomPinDesc> outputs = new List<CustomPinDesc>();
+        readonly Func<NodeContext, (TInstance, Action)> ctor;
 
-        public CustomNodeDesc(IVLNodeDescriptionFactory factory, string name = default, string category = default, bool copyOnWrite = true)
+        public CustomNodeDesc(IVLNodeDescriptionFactory factory, Func<NodeContext, (TInstance, Action)> ctor, string name = default, string category = default, bool copyOnWrite = true)
         {
             Factory = factory;
+            this.ctor = ctor;
             Name = name ?? typeof(TInstance).Name;
             Category = category ?? string.Empty;
             CopyOnWrite = copyOnWrite;
@@ -41,42 +48,57 @@ namespace VL.Stride.Materials
 
         public IVLNode CreateInstance(NodeContext context)
         {
-            var instance = new TInstance();
+            var (instance, onDispose) = ctor(context);
             var inputs = this.inputs.Select(p => p.CreatePin()).ToArray();
             var outputs = this.outputs.Select(p => p.CreatePin()).ToArray();
             outputs[0].Value = instance;
-            return new Node(context)
+            var node = new Node(context)
             {
                 NodeDescription = this,
                 Inputs = inputs,
-                Outputs = outputs,
-                updateAction = () =>
+                Outputs = outputs
+            };
+            if (CopyOnWrite)
+            {
+                node.updateAction = () =>
                 {
-                    if (inputs.Any(p => p.IsChanged(instance)))
+                    if (inputs.Any(p => p.IsChanged))
                     {
-                        if (CopyOnWrite)
-                        {
-                            // TODO: Causes render pipeline to crash
-                            //if (instance is IDisposable disposable)
-                            //    disposable.Dispose();
+                        // TODO: Causes render pipeline to crash
+                        //if (instance is IDisposable disposable)
+                        //    disposable.Dispose();
 
-                            instance = new TInstance();
-                        }
+                        instance = ctor(context).Item1;
 
                         foreach (var input in inputs)
                             input.Apply(instance);
+
                         outputs[0].Value = instance;
                     }
-                },
-                disposeAction = () =>
+                };
+                node.disposeAction = () =>
                 {
                     // TODO: Causes render pipeline to crash
                     //if (instance is IDisposable disposable)
                     //    disposable.Dispose();
-                    if (!CopyOnWrite && instance is IDisposable disposable)
+                };
+            }
+            else
+            {
+                node.updateAction = () =>
+                {
+                    foreach (var input in inputs)
+                        if (input.IsChanged)
+                            input.Apply(instance);
+                };
+                node.disposeAction = () =>
+                {
+                    if (instance is IDisposable disposable)
                         disposable.Dispose();
-                }
-            };
+                    onDispose?.Invoke();
+                };
+            }
+            return node;
         }
 
         public bool OpenEditor()
@@ -84,7 +106,7 @@ namespace VL.Stride.Materials
             return false;
         }
 
-        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue = default, Func<T, T, bool> equals = default)
+        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue = default)
         {
             inputs.Add(new CustomPinDesc()
             {
@@ -94,8 +116,7 @@ namespace VL.Stride.Materials
                 CreatePin = () => new Pin<T>()
                 {
                     getter = getter,
-                    setter = setter,
-                    equals = equals
+                    setter = setter
                 }
             });
             return this;
@@ -104,7 +125,6 @@ namespace VL.Stride.Materials
         public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, IList<T>> getter)
         {
             return AddInput<IReadOnlyList<T>>(name, 
-                equals: (a, b) => a.SequenceEqual(b.Where(x => x != null)),
                 getter: instance => (IReadOnlyList<T>)getter(instance),
                 setter: (x, v) =>
                 {
@@ -146,9 +166,9 @@ namespace VL.Stride.Materials
 
         abstract class Pin : IVLPin
         {
-            public abstract object Value { get; set; }
+            public bool IsChanged;
 
-            public abstract bool IsChanged(TInstance instance);
+            public abstract object Value { get; set; }
 
             public abstract void Apply(TInstance instance);
         }
@@ -159,27 +179,26 @@ namespace VL.Stride.Materials
 
             public Func<TInstance, T> getter;
             public Action<TInstance, T> setter;
-            public Func<T, T, bool> equals;
             public T value;
 
             public override object Value 
             { 
                 get => this.value; 
-                set => this.value = (T)value; 
-            }
-
-            public override bool IsChanged(TInstance instance)
-            {
-                var other = getter(instance);
-                if (equals != null)
-                    return !equals(other, value);
-                else
-                    return !equalityComparer.Equals(other, value);
+                set
+                {
+                    var valueT = (T)value;
+                    if (!equalityComparer.Equals(this.value, valueT))
+                    {
+                        this.value = valueT;
+                        IsChanged = true;
+                    }
+                }
             }
 
             public override void Apply(TInstance instance)
             {
                 setter(instance, (T)Value);
+                IsChanged = false;
             }
         }
 

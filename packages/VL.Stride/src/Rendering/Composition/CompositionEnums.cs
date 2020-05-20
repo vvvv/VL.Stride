@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace VL.Stride.Rendering
+namespace VL.Stride.Rendering.Composition
 {
     public enum PredefinedSortMode
     {
