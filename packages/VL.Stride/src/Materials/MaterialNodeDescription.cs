@@ -30,6 +30,8 @@ namespace VL.Stride.Materials
             this.stateOutputType = stateOutputType ?? typeof(TMaterial);
         }
 
+        public bool CopyOnWrite { get; set; } = true;
+
         public IVLNodeDescriptionFactory Factory { get; }
 
         public string Name { get; }

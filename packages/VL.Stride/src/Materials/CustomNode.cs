@@ -1,9 +1,11 @@
-﻿using System;
+﻿using OpenTK.Audio.OpenAL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using VL.Core;
 using VL.Core.Diagnostics;
+using VL.Lib.Primitive.Object;
 
 namespace VL.Stride.Materials
 {
@@ -13,11 +15,14 @@ namespace VL.Stride.Materials
         readonly List<CustomPinDesc> inputs = new List<CustomPinDesc>();
         readonly List<CustomPinDesc> outputs = new List<CustomPinDesc>();
 
-        public CustomNodeDesc(IVLNodeDescriptionFactory factory, string name = default, string category = default)
+        public CustomNodeDesc(IVLNodeDescriptionFactory factory, string name = default, string category = default, bool copyOnWrite = true)
         {
             Factory = factory;
             Name = name ?? typeof(TInstance).Name;
             Category = category ?? string.Empty;
+            CopyOnWrite = copyOnWrite;
+
+            AddOutput("Output", x => x);
         }
 
         public IVLNodeDescriptionFactory Factory { get; }
@@ -25,6 +30,8 @@ namespace VL.Stride.Materials
         public string Name { get; }
 
         public string Category { get; }
+
+        public bool CopyOnWrite { get; }
 
         public IReadOnlyList<IVLPinDescription> Inputs => inputs;
 
@@ -35,11 +42,40 @@ namespace VL.Stride.Materials
         public IVLNode CreateInstance(NodeContext context)
         {
             var instance = new TInstance();
+            var inputs = this.inputs.Select(p => p.CreatePin()).ToArray();
+            var outputs = this.outputs.Select(p => p.CreatePin()).ToArray();
+            outputs[0].Value = instance;
             return new Node(context)
             {
                 NodeDescription = this,
-                Inputs = inputs.Select(p => p.CreatePin(instance)).ToArray(),
-                Outputs = outputs.Select(p => p.CreatePin(instance)).ToArray(),
+                Inputs = inputs,
+                Outputs = outputs,
+                updateAction = () =>
+                {
+                    if (inputs.Any(p => p.IsChanged(instance)))
+                    {
+                        if (CopyOnWrite)
+                        {
+                            // TODO: Causes render pipeline to crash
+                            //if (instance is IDisposable disposable)
+                            //    disposable.Dispose();
+
+                            instance = new TInstance();
+                        }
+
+                        foreach (var input in inputs)
+                            input.Apply(instance);
+                        outputs[0].Value = instance;
+                    }
+                },
+                disposeAction = () =>
+                {
+                    // TODO: Causes render pipeline to crash
+                    //if (instance is IDisposable disposable)
+                    //    disposable.Dispose();
+                    if (!CopyOnWrite && instance is IDisposable disposable)
+                        disposable.Dispose();
+                }
             };
         }
 
@@ -48,19 +84,39 @@ namespace VL.Stride.Materials
             return false;
         }
 
-        public CustomNodeDesc<TInstance> AddInput<T>(string name, Action<TInstance, T> setter, T defaultValue = default)
+        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue = default, Func<T, T, bool> equals = default)
         {
             inputs.Add(new CustomPinDesc()
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
                 DefaultValue = defaultValue,
-                CreatePin = (instance) => new Pin()
+                CreatePin = () => new Pin<T>()
                 {
-                    Setter = v => setter(instance, (T)v)
+                    getter = getter,
+                    setter = setter,
+                    equals = equals
                 }
             });
             return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, IList<T>> getter)
+        {
+            return AddInput<IReadOnlyList<T>>(name, 
+                equals: (a, b) => a.SequenceEqual(b.Where(x => x != null)),
+                getter: instance => (IReadOnlyList<T>)getter(instance),
+                setter: (x, v) =>
+                {
+                    var currentItems = getter(x);
+                    var newItems = v.Where(i => i != null);
+                    if (!currentItems.SequenceEqual(newItems))
+                    {
+                        currentItems.Clear();
+                        foreach (var item in newItems)
+                            currentItems.Add(item);
+                    }
+                });
         }
 
         public CustomNodeDesc<TInstance> AddOutput<T>(string name, Func<TInstance, T> getter)
@@ -69,9 +125,9 @@ namespace VL.Stride.Materials
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
-                CreatePin = (instance) => new Pin()
+                CreatePin = () => new Pin<T>()
                 {
-                    Getter = () => getter(instance)
+                    getter = getter
                 }
             });
             return this;
@@ -85,23 +141,53 @@ namespace VL.Stride.Materials
 
             public object DefaultValue { get; set; }
 
-            public Func<TInstance, IVLPin> CreatePin { get; set; }
+            public Func<Pin> CreatePin { get; set; }
         }
 
-        class Pin : IVLPin
+        abstract class Pin : IVLPin
         {
-            public Action<object> Setter;
-            public Func<object> Getter;
+            public abstract object Value { get; set; }
 
-            public object Value
+            public abstract bool IsChanged(TInstance instance);
+
+            public abstract void Apply(TInstance instance);
+        }
+
+        class Pin<T> : Pin, IVLPin
+        {
+            static readonly EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
+
+            public Func<TInstance, T> getter;
+            public Action<TInstance, T> setter;
+            public Func<T, T, bool> equals;
+            public T value;
+
+            public override object Value 
+            { 
+                get => this.value; 
+                set => this.value = (T)value; 
+            }
+
+            public override bool IsChanged(TInstance instance)
             {
-                get => Getter();
-                set => Setter(value);
+                var other = getter(instance);
+                if (equals != null)
+                    return !equals(other, value);
+                else
+                    return !equalityComparer.Equals(other, value);
+            }
+
+            public override void Apply(TInstance instance)
+            {
+                setter(instance, (T)Value);
             }
         }
 
         class Node : VLObject, IVLNode
         {
+            public Action updateAction;
+            public Action disposeAction;
+
             public Node(NodeContext nodeContext) : base(nodeContext)
             {
             }
@@ -112,13 +198,9 @@ namespace VL.Stride.Materials
 
             public IVLPin[] Outputs { get; set; }
 
-            public void Dispose()
-            {
-            }
+            public void Dispose() => disposeAction?.Invoke();
 
-            public void Update()
-            {
-            }
+            public void Update() => updateAction?.Invoke();
         }
     }
 }
