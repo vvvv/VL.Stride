@@ -1,5 +1,8 @@
-﻿using System;
+﻿using FFmpeg.AutoGen;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using VL.Core;
 
@@ -7,9 +10,9 @@ namespace VL.Stride.Materials
 {
     abstract class PinDescription : IVLPinDescription
     {
-        protected readonly PropertyInfo property;
+        protected readonly MemberInfo property;
 
-        public PinDescription(PropertyInfo property, string name)
+        public PinDescription(MemberInfo property, string name)
         {
             this.property = property;
             Name = name;
@@ -28,7 +31,7 @@ namespace VL.Stride.Materials
     {
         protected readonly T defaultValue;
 
-        public PinDescription(PropertyInfo property, string name, T defaultValue) 
+        public PinDescription(MemberInfo property, string name, T defaultValue) 
             : base(property, name)
         {
             this.defaultValue = defaultValue;
@@ -40,12 +43,20 @@ namespace VL.Stride.Materials
     sealed class ClassPinDec<T> : PinDescription<T>
         where T : class
     {
-        public ClassPinDec(PropertyInfo property, string name, T defaultValue) : base(property, name, defaultValue)
+        public ClassPinDec(MemberInfo property, string name, T defaultValue) : base(property, name, defaultValue)
         {
         }
 
         // Called at compile time, value must be serializable
-        public override object DefaultValue => null;
+        public override object DefaultValue
+        {
+            get
+            {
+                if (typeof(T) == typeof(string))
+                    return defaultValue;
+                return null;
+            }
+        }
 
         public override Pin CreatePin() => new ClassPin<T>(property, defaultValue);
     }
@@ -53,7 +64,7 @@ namespace VL.Stride.Materials
     sealed class StructPinDec<T> : PinDescription<T> 
         where T : struct
     {
-        public StructPinDec(PropertyInfo property, string name, T defaultValue) : base(property, name, defaultValue)
+        public StructPinDec(MemberInfo property, string name, T defaultValue) : base(property, name, defaultValue)
         {
         }
 
@@ -63,26 +74,41 @@ namespace VL.Stride.Materials
         public override Pin CreatePin() => new StructPin<T>(property, defaultValue);
     }
 
+    sealed class ListPinDesc<TList, TElment> : PinDescription<TList>
+        where TList : class, IList<TElment>
+    {
+        public ListPinDesc(MemberInfo property, string name, TList defaultValue) : base(property, name, defaultValue)
+        {
+        }
+
+        public override object DefaultValue => null;
+
+        public override Pin CreatePin() => new ListPin<TList, TElment>(property, defaultValue);
+    }
+
     abstract class Pin : IVLPin
     {
         public bool IsChanged;
 
         public abstract object Value { get; set; }
 
-        public abstract void Apply(object feature);
+        public abstract void ApplyValue(object instance);
     }
 
     abstract class Pin<T> : Pin
     {
         private static readonly EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
 
-        protected readonly PropertyInfo property;
+        protected readonly MemberInfo member;
+        protected readonly bool isReadOnly;
         protected T value;
 
-        public Pin(PropertyInfo property, T value)
+        public Pin(MemberInfo member, T value)
         {
-            this.property = property;
+            this.member = member;
             this.value = value;
+            if (member is PropertyInfo property)
+                this.isReadOnly = property.SetMethod is null || !property.SetMethod.IsPublic;
         }
 
         public override object Value
@@ -91,11 +117,42 @@ namespace VL.Stride.Materials
             set
             {
                 var valueT = (T)value;
-                if (!equalityComparer.Equals(valueT, this.value))
+                if (!ValueEquals(valueT, this.value))
                 {
                     this.value = valueT;
                     IsChanged = true;
                 }
+            }
+        }
+
+        public override sealed void ApplyValue(object feature)
+        {
+            ApplyCore(feature, value);
+            IsChanged = false;
+        }
+
+        protected virtual void ApplyCore(object feature, T value)
+        {
+            if (isReadOnly)
+            {
+                var dst = member.GetValue(feature);
+                CopyProperties(value, dst);
+            }
+            else
+            {
+                member.SetValue(feature, value);
+            }
+        }
+
+        protected virtual bool ValueEquals(T a, T b) => equalityComparer.Equals(a, b);
+
+        private static void CopyProperties(object src, object dst)
+        {
+            foreach (var x in typeof(T).GetStrideProperties())
+            {
+                var p = x.Property as PropertyInfo;
+                if (p.SetMethod != null && p.SetMethod.IsPublic && p.GetMethod != null && p.GetMethod.IsPublic)
+                    p.SetValue(dst, p.GetValue(src));
             }
         }
     }
@@ -105,29 +162,63 @@ namespace VL.Stride.Materials
     {
         readonly T defaultValue;
 
-        public ClassPin(PropertyInfo property, T value) : base(property, value)
+        public ClassPin(MemberInfo property, T value) : base(property, value)
         {
             defaultValue = value;
         }
 
-        public override void Apply(object feature)
+        protected override void ApplyCore(object feature, T value)
         {
-            property.SetValue(feature, value ?? defaultValue);
-            IsChanged = false;
+            base.ApplyCore(feature, value ?? defaultValue);
         }
     }
 
     sealed class StructPin<T> : Pin<T>
         where T : struct
     {
-        public StructPin(PropertyInfo property, T value) : base(property, value)
+        public StructPin(MemberInfo property, T value) : base(property, value)
         {
         }
 
-        public override void Apply(object feature)
+        protected override void ApplyCore(object feature, T value)
         {
-            property.SetValue(feature, value);
-            IsChanged = false;
+            base.ApplyCore(feature, value);
+        }
+    }
+
+    sealed class ListPin<T, TItem> : Pin<T>
+        where T : class, IList<TItem>
+    {
+        readonly T defaultValue;
+
+        public ListPin(MemberInfo property, T value) : base(property, value)
+        {
+            defaultValue = value;
+        }
+
+        protected override bool ValueEquals(T a, T b)
+        {
+            if (a is null)
+                return b is null;
+            if (b is null)
+                return false;
+            return a.SequenceEqual(b);
+        }
+
+        protected override void ApplyCore(object feature, T value)
+        {
+            var src = value ?? defaultValue;
+            if (isReadOnly)
+            {
+                var dst = member.GetValue(feature) as IList<TItem>;
+                dst.Clear();
+                foreach (var item in src)
+                    dst.Add(item);
+            }
+            else
+            {
+                base.ApplyCore(feature, src);
+            }
         }
     }
 }

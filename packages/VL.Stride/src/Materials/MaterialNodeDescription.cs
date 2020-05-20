@@ -3,27 +3,30 @@ using Stride.Core.Annotations;
 using Stride.Rendering.Materials;
 using System;
 using System.CodeDom;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Policy;
 using System.Text;
 using VL.Core;
 using VL.Core.Diagnostics;
 
 namespace VL.Stride.Materials
 {
-    class MaterialNodeDescription<TMaterial> : IVLNodeDescription
+    class MaterialNodeDescription<TMaterial> : IVLNodeDescription, IEnumerable
         where TMaterial : new()
     {
         private List<PinDescription> inputs;
         private List<StateOutput> outputs;
         internal Type stateOutputType;
 
-        public MaterialNodeDescription(IVLNodeDescriptionFactory factory, string name, string category, Type stateOutputType = default)
+        public MaterialNodeDescription(IVLNodeDescriptionFactory factory, string name = default, string category = default, Type stateOutputType = default)
         {
             Factory = factory;
-            Name = name;
-            Category = category;
+            Name = name ?? typeof(TMaterial).Name;
+            Category = category ?? string.Empty;
             this.stateOutputType = stateOutputType ?? typeof(TMaterial);
         }
 
@@ -32,6 +35,14 @@ namespace VL.Stride.Materials
         public string Name { get; }
 
         public string Category { get; }
+
+        public void Add(string name)
+        {
+            if (pins is null)
+                pins = new List<string>();
+            pins.Add(name);
+        }
+        List<string> pins;
 
         public IReadOnlyList<IVLPinDescription> Inputs
         {
@@ -44,28 +55,7 @@ namespace VL.Stride.Materials
                     var categoryOrdering = typeof(TMaterial).GetCustomAttributes<CategoryOrderAttribute>()
                         .ToDictionary(a => a.Name, a => a.Order);
 
-                    var properties = typeof(TMaterial)
-                        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Where(p => p.GetMethod != null && p.GetMethod.IsPublic && p.SetMethod != null && p.SetMethod.IsPublic)
-                        .Select(p =>
-                        {
-                            // At least one of the following attributes must be set
-                            var display = p.GetCustomAttribute<DisplayAttribute>();
-                            var dataMember = p.GetCustomAttribute<DataMemberAttribute>();
-                            var customSerializer = p.GetCustomAttribute<DataMemberCustomSerializerAttribute>();
-
-                            if (display is null && dataMember is null && customSerializer is null)
-                                return default;
-
-                            return new
-                            {
-                                Property = p,
-                                Order = dataMember?.Order,
-                                Name = display?.Name?.UpperCaseAfterSpace() ?? p.Name.InsertSpaces(),
-                                Category = display?.Category?.UpperCaseAfterSpace()
-                            };
-                        })
-                        .Where(p => p != null)
+                    var properties = typeof(TMaterial).GetStrideProperties(pins)
                         .GroupBy(p => p.Category)
                         .OrderBy(g => g.Key != null ? categoryOrdering.ValueOrDefault(g.Key, 0) : 0)
                         .SelectMany(g => g.OrderBy(p => p.Order).ThenBy(p => p.Name));
@@ -73,9 +63,8 @@ namespace VL.Stride.Materials
                     foreach (var p in properties)
                     {
                         var property = p.Property;
-                        var type = property.PropertyType;
-                        var genericPinType = type.IsValueType ? typeof(StructPinDec<>) : typeof(ClassPinDec<>);
-                        var pinType = genericPinType.MakeGenericType(type);
+                        var type = property.GetPropertyType();
+                        var pinType = GetPinType(type);
                         var defaultValue = property.GetValue(instance);
                         var name = p.Name;
                         // Prepend the category to the name (if not already done so)
@@ -91,6 +80,34 @@ namespace VL.Stride.Materials
                         yield return (PinDescription)Activator.CreateInstance(pinType, property, name, defaultValue);
                     }
                 }
+            }
+        }
+
+        static Type GetPinType(Type type)
+        {
+            if (type.IsValueType)
+                return typeof(StructPinDec<>).MakeGenericType(type);
+            if (TryGetElementType(type, out var elementType))
+                return typeof(ListPinDesc<,>).MakeGenericType(type, elementType);
+            return typeof(ClassPinDec<>).MakeGenericType(type);
+        }
+
+        static bool TryGetElementType(Type type, out Type elementType)
+        {
+            var typeArgs = type.GenericTypeArguments;
+            if (typeArgs.Length == 1)
+            {
+                elementType = typeArgs[0];
+                return typeof(IList<>).MakeGenericType(elementType).IsAssignableFrom(type);
+            }
+            if (type.BaseType != null)
+            {
+                return TryGetElementType(type.BaseType, out elementType);
+            }
+            else
+            {
+                elementType = default;
+                return false;
             }
         }
 
@@ -117,6 +134,11 @@ namespace VL.Stride.Materials
         public bool OpenEditor()
         {
             return false;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
 
         class StateOutput : IVLPinDescription

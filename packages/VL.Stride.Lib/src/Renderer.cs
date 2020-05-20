@@ -30,6 +30,7 @@ namespace VL.Stride
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
         private readonly TreeNodeChildrenManager<Scene, Scene> FSceneManager;
         private readonly SceneCameraSlotId FFallbackSlotId;
+        private readonly GraphicsCompositor FFallbackCompositor;
         private Int2 FLastPosition;
 
         public Renderer(NodeContext nodeContext, RectangleF bounds, 
@@ -65,14 +66,14 @@ namespace VL.Stride
 
             // Save initial set camera slot id
             FFallbackSlotId = game.SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId();
+            FFallbackCompositor = game.SceneSystem.GraphicsCompositor;
         }
 
         public GameWindow Window => FWindowHandle.Resource;
 
         Spread<Scene> scenes = Spread<Scene>.Empty;
 
-        public void Update(Scene scene, CameraComponent camera, Color4 color, bool clear = true, bool verticalSync = false, 
-            bool enabled = true, float depth = 1, byte stencilValue = 0, ClearRendererFlags clearFlags = ClearRendererFlags.ColorAndDepth)
+        public void Update(Scene scene, GraphicsCompositor compositor, bool verticalSync = false, bool enabled = true)
         {
             var game = (VLGame)FGameHandle.Resource;
 
@@ -92,28 +93,14 @@ namespace VL.Stride
 
             if (enabled)
             {
-                var compositor = game.SceneSystem.GraphicsCompositor;
+                game.SceneSystem.GraphicsCompositor = compositor ?? FFallbackCompositor;
 
-                // Point our camera slot to the upstream camera
-                var ourCameraSlot = compositor.Cameras[0];
-                var cameraSlotId = camera?.Slot ?? default;
-                var cameraId = cameraSlotId.IsEmpty ? FFallbackSlotId : cameraSlotId;
-                if (ourCameraSlot.Id != cameraId.Id)
-                {
-                    ourCameraSlot.Id = cameraId.Id;
-                    // Notify the camera processor about the updated id
-                    compositor.Cameras[0] = ourCameraSlot;
-                }
-
-                game.RunCallback?.Invoke(); //calls Game.Tick();
-
-                compositor.GetFirstForwardRenderer(out var forwardRenderer);
-                forwardRenderer?.SetClearOptions(color, depth, stencilValue, clearFlags, clear);
-                
                 if (scene != scenes.FirstOrDefault())
                     scenes = scene != null ? Spread.Create(scene) : Spread<Scene>.Empty;
 
                 FSceneManager?.Update(scenes);
+
+                game.RunCallback?.Invoke(); //calls Game.Tick();
             }
         }
 

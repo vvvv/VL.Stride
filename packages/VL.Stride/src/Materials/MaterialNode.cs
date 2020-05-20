@@ -32,7 +32,7 @@ namespace VL.Stride.Materials
             {
                 var feature = new TMaterial();
                 foreach (var pin in inputs)
-                    pin.Apply(feature);
+                    pin.ApplyValue(feature);
                 Outputs[0].Value = feature;
             }
         }
