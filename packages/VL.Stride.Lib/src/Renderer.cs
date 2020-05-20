@@ -114,8 +114,6 @@ namespace VL.Stride
                     scenes = scene != null ? Spread.Create(scene) : Spread<Scene>.Empty;
 
                 FSceneManager?.Update(scenes);
-
-                global::Stride.Graphics.SDL.Application.ProcessEvents();
             }
         }
 
