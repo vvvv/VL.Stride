@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="PwY6LKPeo6iO0yovVrdC7t" LanguageVersion="2020.2.0.70" Version="0.128">
-  <NugetDependency Id="RpPAo2Mz2hINnzdyPwCgpq" Location="VL.CoreLib" Version="2020.2.0-0070-gebd37d11b0" />
+<Document xmlns:p="property" Id="PwY6LKPeo6iO0yovVrdC7t" LanguageVersion="2020.2.0.69" Version="0.128">
+  <NugetDependency Id="RpPAo2Mz2hINnzdyPwCgpq" Location="VL.CoreLib" Version="2020.2.0-0013-gef565c58d9" />
   <Patch Id="J2Vq6inJsyVOtMcCMNylcQ">
     <Canvas Id="JSu0taSJ8rOOa9Gx7GIL6b" DefaultCategory="Stride.Rendering" CanvasType="FullCategory">
       <Canvas Id="KouU4NDrV4yMANodMZ0uIi" Name="Utils" Position="178,222">
@@ -4256,6 +4256,7 @@
                               <Pin Id="TxegZwKQliVPok9ZpZKqne" Name="Texture 8Texel Size" Kind="InputPin" />
                               <Pin Id="CMZ6POxMU2uNkZRDxkFuUC" Name="Texture 9Texel Size" Kind="InputPin" />
                               <Pin Id="EYIYHz3XxvPLKU12mz6VBc" Name="Color Input" Kind="InputPin" />
+                              <Pin Id="GkUxJZODfFwLgG1LayRGau" Name="Flip V" Kind="InputPin" />
                               <Pin Id="JzJWymIC82ONiJAxXiyJvD" Name="World" Kind="InputPin" />
                               <Pin Id="DtRGIqmYnNlOa8rPxvjWRk" Name="Parameter Setter" Kind="InputPin" />
                               <Pin Id="VfCLZIx9SImLT4ZrXCnSCV" Name="Output" Kind="OutputPin" />
@@ -4289,6 +4290,7 @@
                         <ControlPoint Id="KSyT0lZ4jMnMX5vT2MuGsb" Bounds="510,295" />
                         <ControlPoint Id="OknnKFDbo9iMnvB4rIjkRC" Bounds="435,656" />
                         <ControlPoint Id="QvwvypkRy1VLVW3erynpnG" Bounds="373,965" />
+                        <ControlPoint Id="U7JTQQhb68jQLQlEfgydCW" Bounds="583,665" />
                       </Canvas>
                       <Patch Id="VjmLi1qJ60VMvzNoYEtYh0" Name="Create" />
                       <Patch Id="GhXfv2wT3GMNi6W6724cw1" Name="Update">
@@ -4298,6 +4300,7 @@
                         <Pin Id="OdF385DGhiiMC2x3juH9d1" Name="Screen Space" Kind="InputPin" Bounds="454,337" />
                         <Pin Id="SJcUJGSeV2rOkj8VVU11uQ" Name="Keep Aspect" Kind="InputPin" />
                         <Pin Id="Bhit5hqTWNeQOQ9L8MoJJu" Name="Output" Kind="OutputPin" Bounds="373,965" />
+                        <Pin Id="KExCTY55PznQRDoVJ5Ib2A" Name="Flip V" Kind="InputPin" Bounds="583,665" />
                       </Patch>
                       <ProcessDefinition Id="GacKAIFlKUaN1OTAKf3kzW">
                         <Fragment Id="BzP7Enhrd3kM4XkomLS2OH" Patch="VjmLi1qJ60VMvzNoYEtYh0" Enabled="true" />
@@ -4340,6 +4343,8 @@
                       <Link Id="ARdaBrbynHBPzekLXaBuwk" Ids="SJcUJGSeV2rOkj8VVU11uQ,NymgJxu9pz2NspTyZkw49H" IsHidden="true" />
                       <Link Id="V6oqgPpEMjON268JiA5d27" Ids="JWx22nmmuwnNZse2eEJzGp,QvwvypkRy1VLVW3erynpnG" />
                       <Link Id="TpyAkFilW4LMJBfSRMEz42" Ids="QvwvypkRy1VLVW3erynpnG,Bhit5hqTWNeQOQ9L8MoJJu" IsHidden="true" />
+                      <Link Id="LPJw0F3pZN0Og1BqMGnuyO" Ids="U7JTQQhb68jQLQlEfgydCW,GkUxJZODfFwLgG1LayRGau" />
+                      <Link Id="LDAuIwlSl5jLomXsQawrkA" Ids="KExCTY55PznQRDoVJ5Ib2A,U7JTQQhb68jQLQlEfgydCW" IsHidden="true" />
                     </Patch>
                   </Node>
                   <!--
@@ -4511,6 +4516,7 @@
                         </p:NodeReference>
                         <Pin Id="OvzFvlDeokUPAERSZFQsOu" Name="Screen Space" Kind="InputPin" />
                         <Pin Id="BraSzfOxVoJO7gB3k3uiii" Name="Color" Kind="InputPin" />
+                        <Pin Id="Q10wsB9uwqWPzsQd6qrx42" Name="Flip V" Kind="InputPin" />
                         <Pin Id="KYemjqvddVvOL4mJMLYEP9" Name="Texture" Kind="InputPin" />
                         <Pin Id="OJtTcLznGVAM2YJ4drrYNw" Name="Transformation" Kind="InputPin" />
                         <Pin Id="Px7asoy2gaOOCHH08zLgrC" Name="Keep Aspect" Kind="InputPin" />
@@ -4564,12 +4570,14 @@
                     <Pin Id="BmEoNt5QCCPMqFoyWDUNfz" Name="Output" Kind="OutputPin" />
                   </Node>
                   <ControlPoint Id="FtjEpRgKkYZMsPry9ZHgiT" Bounds="515,744" />
+                  <ControlPoint Id="P9R1BzIuaezNdE1wcdSLJA" Bounds="601,234" />
                 </Canvas>
                 <Patch Id="GIBw0LH1rdqN7JklUhrXRe" Name="Create" />
                 <Patch Id="QvfPJU3dh98MmQDiMTwImS" Name="Update" ManuallySortedPins="true">
                   <Pin Id="Rb8jbmbMddCLYU5Y4XP7pL" Name="Transformation" Kind="InputPin" Bounds="640,440" />
                   <Pin Id="KpmkEm5ziSxOuACpQueNVB" Name="Texture" Kind="InputPin" />
                   <Pin Id="TwICRwtcxqiL24NF3rXEmq" Name="Color" Kind="InputPin" Bounds="561,29" />
+                  <Pin Id="CAah0rDH23DPaMrJXpF411" Name="Flip V" Kind="InputPin" Bounds="601,233" />
                   <Pin Id="UOSYVLUji8qMma6kyjLpsY" Name="Screen Space" Kind="InputPin" Bounds="454,337" />
                   <Pin Id="No3P2a56duxNdMbN1HQyZM" Name="Keep Aspect" Kind="InputPin" />
                   <Pin Id="M4ghlKgdPm8NPw9c7u6ilh" Name="Layer" Kind="OutputPin" Bounds="433,781" />
@@ -4611,6 +4619,8 @@
                 <Link Id="VAHy1QeyoQ7Pp9ksws7CHn" Ids="BmEoNt5QCCPMqFoyWDUNfz,HnlmwFfkUkULVNZsCbhtQO" />
                 <Link Id="ErM6h2CcTE8QKlWfKbV7U7" Ids="EUoMGNQcKZTODFHpJX7b5x,FtjEpRgKkYZMsPry9ZHgiT" />
                 <Link Id="STF054GnmZ6LCI8ehjqSrN" Ids="FtjEpRgKkYZMsPry9ZHgiT,M4ghlKgdPm8NPw9c7u6ilh" IsHidden="true" />
+                <Link Id="H5zjd3ED7mZLOwMRLKasqE" Ids="P9R1BzIuaezNdE1wcdSLJA,Q10wsB9uwqWPzsQd6qrx42" />
+                <Link Id="JEMakoqOZLIQakrbLs6uif" Ids="CAah0rDH23DPaMrJXpF411,P9R1BzIuaezNdE1wcdSLJA" IsHidden="true" />
               </Patch>
             </Node>
           </Canvas>
@@ -9824,8 +9834,8 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="FxexSo1RPJUMsrS6TNN9jU" Location="VL.Skia" Version="2020.2.0-0070-gebd37d11b0" />
-  <NugetDependency Id="SixD2jJdzqGQXdPnXsbo6Z" Location="VL.Stride.EffectLib" Version="0.7.75-g30de9ba50c" />
+  <NugetDependency Id="FxexSo1RPJUMsrS6TNN9jU" Location="VL.Skia" Version="2020.2.0-0013-gef565c58d9" />
+  <NugetDependency Id="SixD2jJdzqGQXdPnXsbo6Z" Location="VL.Stride.EffectLib" Version="0.7.78-g50125a3d3c" />
   <DocumentDependency Id="NoHxzvKiuGkMQ9cUs2UDK3" Location="./VL.Stride.Core.vl" />
   <DocumentDependency Id="GcXwOATDmATPLiv0t3yLyg" Location="./VL.Stride.Graphics.vl" />
   <PlatformDependency Id="NaNjt6L4O8UNjcyFO93s9u" Location="VL.Stride.dll" />
@@ -9834,6 +9844,6 @@
   <PlatformDependency Id="Tc8NoUSn0SuMMBZAUjprPJ" Location="Stride.Rendering.dll" />
   <PlatformDependency Id="CszHwhDkPr3NhEtP3Djfl7" Location="Stride.Graphics.dll" />
   <PlatformDependency Id="EYIbjECVWHFOzsx0gOdVET" Location="Stride.Engine.dll" />
-  <NugetDependency Id="EkUWkHqtRXcQVEg26rgBpq" Location="VL.Core" Version="2020.2.0-0070-gebd37d11b0" />
+  <NugetDependency Id="EkUWkHqtRXcQVEg26rgBpq" Location="VL.Core" Version="2020.2.0-0048-g5f54625657" />
   <DocumentDependency Id="GgJFG0lRV0ZOQUkVvPG0vL" Location="./VL.Stride.Games.vl" />
 </Document>

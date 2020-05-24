@@ -137,6 +137,9 @@ namespace VL.Stride.Rendering.Composition
             yield return nodeFactory.Create<SpriteRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(SpriteRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
+            yield return nodeFactory.Create<LayerRenderFeature>(category: renderingCategory)
+                .AddListInput(nameof(LayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
+
             // Sub render features for mesh render feature
             var renderFeaturesCategory = $"{renderingCategory}.RenderFeatures";
             yield return new StrideNodeDesc<TransformRenderFeature>(nodeFactory, category: renderFeaturesCategory);

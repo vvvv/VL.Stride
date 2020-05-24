@@ -281,7 +281,7 @@ namespace VL.Stride.EffectLib
             if (e.ChangeType == FileEventChangeType.Changed || e.ChangeType == FileEventChangeType.Renamed)
             {
                 timer?.Dispose();
-                timer = new Timer(_ => mainContext.Post(s => UpdateNodeDescriptions(), null), null, 500, Timeout.Infinite);
+                timer = new Timer(_ => UpdateNodeDescriptions(), null, 500, Timeout.Infinite);
             }
         }
 
