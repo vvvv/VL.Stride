@@ -3,9 +3,15 @@
     shader ColorQuadTextured : Common_VS_PS_Base, ColorBase, Common_ShaderUtils, Texturing
     {
         stage float4 ColorInput;
+        stage bool FlipV;
 
         override stage void VSMain()
         {
+            if (FlipV)
+            {
+                streams.TexCoord = float2(streams.TexCoord.x, 1 - streams.TexCoord.y);
+            }
+
             streams.ShadingPosition = mul(streams.Position, WorldViewProjection);
         }
 

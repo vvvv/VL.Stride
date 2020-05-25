@@ -19,5 +19,6 @@ namespace VL.Xenko.Effects.Utils
     public static partial class ColorQuadTexturedKeys
     {
         public static readonly ValueParameterKey<Vector4> ColorInput = ParameterKeys.NewValue<Vector4>();
+        public static readonly ValueParameterKey<bool> FlipV = ParameterKeys.NewValue<bool>();
     }
 }
