@@ -129,5 +129,9 @@ namespace VL.Xenko.Graphics
             }
         }
 
+        public static Texture AsStrideTexture(GraphicsDevice device, SharpDX.Direct3D11.Texture2D texture, bool takeOwnership)
+        {
+            return SharpDXInterop.CreateTextureFromNative(device, texture, takeOwnership);
+        }
     }
 }
