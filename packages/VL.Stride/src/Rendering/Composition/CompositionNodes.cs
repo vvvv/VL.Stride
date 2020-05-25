@@ -183,7 +183,21 @@ namespace VL.Stride.Rendering.Composition
 
             IVLNodeDescription CreatePostEffectsNode()
             {
-                return nodeFactory.Create<PostProcessingEffects>(category: postFxCategory, copyOnWrite: false)
+                return nodeFactory.Create<PostProcessingEffects>(category: postFxCategory, copyOnWrite: false, 
+                    init: effects =>
+                    {
+                        // Can't use effects.DisableAll() - disables private effects used by AA
+                        effects.AmbientOcclusion.Enabled = false;
+                        effects.LocalReflections.Enabled = false;
+                        effects.DepthOfField.Enabled = false;
+                        effects.BrightFilter.Enabled = false;
+                        effects.Bloom.Enabled = false;
+                        effects.LightStreak.Enabled = false;
+                        effects.LensFlare.Enabled = false;
+                        // ColorTransforms delegates to an empty list, keep it enabled
+                        effects.ColorTransforms.Enabled = true;
+                        effects.Antialiasing.Enabled = false;
+                    })
                     .AddInput(nameof(PostProcessingEffects.AmbientOcclusion), x => x.AmbientOcclusion, (x, v) =>
                     {
                         var s = x.AmbientOcclusion;

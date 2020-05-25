@@ -60,7 +60,7 @@ namespace VL.Stride
                 {
                     // Do not include properties which have explicit ignore flags set
                     if (p.GetCustomAttribute<DataMemberIgnoreAttribute>() != null)
-                    return default;
+                        return default;
 
                     var display = p.GetCustomAttribute<DisplayAttribute>();
                     if (display != null && !display.Browsable)

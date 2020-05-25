@@ -8,10 +8,23 @@ namespace VL.Stride
 {
     static class FactoryExtensions
     {
-        public static CustomNodeDesc<TNew> Create<TNew>(this IVLNodeDescriptionFactory factory, string name = default, string category = default, bool copyOnWrite = true)
+        public static CustomNodeDesc<TNew> Create<TNew>(this IVLNodeDescriptionFactory factory, 
+            string name = default, 
+            string category = default, 
+            bool copyOnWrite = true,
+            Action<TNew> init = default) 
             where TNew : new()
         {
-            return new CustomNodeDesc<TNew>(factory, ctx => (new TNew(), default), name, category, copyOnWrite);
+            return new CustomNodeDesc<TNew>(factory, 
+                ctor: ctx =>
+                {
+                    var instance = new TNew();
+                    init?.Invoke(instance);
+                    return (instance, default);
+                }, 
+                name: name, 
+                category: category,
+                copyOnWrite: copyOnWrite);
         }
     }
 
