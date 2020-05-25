@@ -14,12 +14,6 @@ namespace VL.Xenko.Core
         protected override void RegisterServices(IVLFactory factory)
         {
             Serialization.RegisterSerializers(factory);
-
-            // Register the native graphics device - needed by VL.MediaFoundation and VL.CEF
-            factory.RegisterService<NodeContext, IResourceProvider<Device>>(nodeContext =>
-            {
-                return ResourceProvider.Return((Device)SharpDXInterop.GetNativeDevice(VLGame.GameInstance.GraphicsDevice));
-            });
         }
     }
 }
