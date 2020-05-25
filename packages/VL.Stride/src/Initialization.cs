@@ -16,8 +16,7 @@ namespace VL.Stride.Core
             // VL.MediaFoundation asks for a Direct3D11 device
             factory.RegisterService<NodeContext, IResourceProvider<SharpDX.Direct3D11.Device>>(nodeContext =>
             {
-                var key = nodeContext.GetResourceKey();
-                return ResourceProvider.NewPooled(key, k =>
+                return ResourceProvider.NewPooledPerApp(nodeContext, () =>
                 {
                     var gameProvider = nodeContext.GetGameProvider();
                     return gameProvider
