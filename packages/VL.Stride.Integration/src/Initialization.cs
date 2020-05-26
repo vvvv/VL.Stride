@@ -20,7 +20,9 @@ namespace VL.Stride.Integration
         {
             factory.RegisterService<NodeContext, IResourceProvider<Game>>(nodeContext =>
             {
-                return ResourceProvider.Return(VLGame.GameInstance);
+                var game = VLGame.GameInstance;
+                game.AddLayerRenderFeature();
+                return ResourceProvider.Return(game);
             });
 
             factory.RegisterService<NodeContext, IResourceProvider<GameWindow>>(nodeContext =>

@@ -10,6 +10,8 @@ using Stride.Engine;
 using Stride.Games;
 using Stride.Graphics;
 using System.Windows.Forms;
+using System;
+using VL.Lib.Animation;
 
 [assembly: AssemblyInitializer(typeof(VL.Stride.Lib.Initialization))]
 
@@ -31,40 +33,59 @@ namespace VL.Stride.Lib
                 return ResourceProvider.NewPooledPerApp(nodeContext,
                     factory: () =>
                     {
-                        var game = new VLGame();
+                        var clockSubscription = default(IDisposable);
+                        EventHandler processSdlEventsHandler = (s, e) => global::Stride.Graphics.SDL.Application.ProcessEvents();
+
+                        return ResourceProvider.New(
+                            factory: () =>
+                            {
+                                var game = new VLGame();
 #if DEBUG
-                        game.GraphicsDeviceManager.DeviceCreationFlags |= DeviceCreationFlags.Debug;
+                                game.GraphicsDeviceManager.DeviceCreationFlags |= DeviceCreationFlags.Debug;
 #endif
 
-                        var assetBuildService = new AssetBuildService();
-                        game.Services.AddService(assetBuildService);
+                                var assetBuildService = new AssetBuildService();
+                                game.Services.AddService(assetBuildService);
 
-                        var gameStartedHandler = default(System.EventHandler);
-                        gameStartedHandler = (s, e) =>
-                        {
-                            game.Script.Add(assetBuildService);
-                            Game.GameStarted -= gameStartedHandler;
-                        };
-                        Game.GameStarted += gameStartedHandler;
+                                var gameStartedHandler = default(System.EventHandler);
+                                gameStartedHandler = (s, e) =>
+                                {
+                                    game.Script.Add(assetBuildService);
+                                    Game.GameStarted -= gameStartedHandler;
+                                };
+                                Game.GameStarted += gameStartedHandler;
 
-                        GameContext gameContext;
-                        if (UseSDL)
-                        {
-                            gameContext = new GameContextSDL(null, 0, 0, isUserManagingRun: true);
-                            Application.Idle += (s, e) => global::Stride.Graphics.SDL.Application.ProcessEvents();
+                                GameContext gameContext;
+                                if (UseSDL)
+                                {
+                                    gameContext = new GameContextSDL(null, 0, 0, isUserManagingRun: true);
+                                    Application.Idle += processSdlEventsHandler;
+                                }
+                                else
+                                {
+                                    gameContext = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
+                                }
 
-                        }
-                        else
-                        {
-                            gameContext = new GameContextWinforms(null, 0, 0, isUserManagingRun: true);
-                        }
+                                game.Run(gameContext); // Creates the window
 
-                        game.Run(gameContext); // Creates the window
-                        game.RunCallback = gameContext.RunCallback;
+                                // Clear the default scene system (our renderers setup their own)
+                                game.SceneSystem.SceneInstance = null;
+                                game.SceneSystem.GraphicsCompositor = null;
 
-                        game.AddLayerRenderFeature();
+                                var frameClock = factory.CreateService<IFrameClock>(nodeContext);
+                                clockSubscription = frameClock.GetTicks().Subscribe(ftm => gameContext.RunCallback());
 
-                        return game;
+                                return game;
+                            },
+                            beforeDispose: game =>
+                            {
+                                // Remove the event handlers
+                                if (UseSDL)
+                                {
+                                    Application.Idle -= processSdlEventsHandler;
+                                }
+                                clockSubscription?.Dispose();
+                            });
                     }
                     , delayDisposalInMilliseconds: 0);
             });

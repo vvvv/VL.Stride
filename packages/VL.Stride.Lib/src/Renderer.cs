@@ -1,20 +1,15 @@
 using Stride.Core.Mathematics;
 using Stride.Engine;
 using Stride.Games;
-using Stride.Rendering;
 using Stride.Rendering.Compositing;
 using System;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using VL.Core;
 using VL.Lang.PublicAPI;
 using VL.Lib.Basics.Resources;
-using VL.Lib.Collections;
-using VL.Lib.Collections.TreePatching;
 using VL.Stride.Games;
-using VL.Stride.Rendering;
 
 namespace VL.Stride
 {
@@ -23,17 +18,15 @@ namespace VL.Stride
         private readonly NodeContext FNodeContext;
         private readonly IResourceHandle<Game> FGameHandle;
         private readonly IResourceHandle<GameWindow> FWindowHandle;
+        private readonly SceneSystem FSceneSystem;
         private RectangleF FBounds = RectangleF.Empty;
         private readonly bool FSaveBounds;
         private readonly bool FBoundToDocument;
         private readonly bool FShowDialogIfDocumentChanged;
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
-        private readonly TreeNodeChildrenManager<Scene, Scene> FSceneManager;
         private Int2 FLastPosition;
 
-        public Renderer(NodeContext nodeContext, RectangleF bounds, 
-            Func<Scene, TreeNodeParentManager<Scene, Scene>> parentManagerProvider, bool saveBounds = true,
-            bool boundToDocument = false, bool dialogIfDocumentChanged = false)
+        public Renderer(NodeContext nodeContext, RectangleF bounds, bool saveBounds = true, bool boundToDocument = false, bool dialogIfDocumentChanged = false)
         {
             FNodeContext = nodeContext;
             FBounds = bounds;
@@ -45,6 +38,9 @@ namespace VL.Stride
             FWindowHandle = nodeContext.GetGameWindowProvider().GetHandle();
 
             var game = FGameHandle.Resource;
+            FSceneSystem = new SceneSystem(game.Services);
+            game.GameSystems.Add(FSceneSystem);
+
             if (bounds.Width > 1 && bounds.Height > 1)
             {
                 game.GraphicsDeviceManager.PreferredBackBufferWidth = (int)bounds.Width;
@@ -56,16 +52,9 @@ namespace VL.Stride
             }
 
             SetupEvents(Window);
-
-            // Init scene graph links 
-            //var rootScene = game.SceneSystem.SceneInstance.RootScene;
-
-            //FSceneManager = new TreeNodeChildrenManager<Scene, Scene>(rootScene, childrenOrderingMatters: false, parentManagerProvider);
         }
 
         public GameWindow Window => FWindowHandle.Resource;
-
-        Spread<Scene> scenes = Spread<Scene>.Empty;
 
         public void Update(SceneInstance sceneInstance, GraphicsCompositor compositor, bool verticalSync = false, bool enabled = true)
         {
@@ -87,16 +76,13 @@ namespace VL.Stride
 
             if (enabled)
             {
-                game.SceneSystem.GraphicsCompositor = compositor;
-                game.SceneSystem.SceneInstance = sceneInstance;
-
-                //var scene = sceneInstance.RootScene;
-                //if (scene != scenes.FirstOrDefault())
-                //    scenes = scene != null ? Spread.Create(scene) : Spread<Scene>.Empty;
-
-                //FSceneManager?.Update(scenes);
-
-                game.RunCallback?.Invoke(); //calls Game.Tick();
+                FSceneSystem.GraphicsCompositor = compositor;
+                FSceneSystem.SceneInstance = sceneInstance;
+            }
+            else
+            {
+                FSceneSystem.GraphicsCompositor = default;
+                FSceneSystem.SceneInstance = default;
             }
         }
 
@@ -136,7 +122,14 @@ namespace VL.Stride
 
         public void Dispose()
         {
-            FSceneManager?.Dispose();
+            // Remove our scene system from the game
+            var game = FGameHandle.Resource;
+            game.GameSystems.Remove(FSceneSystem);
+            // Clear entity manager and compositor so they don't get disposed by the scene system
+            FSceneSystem.SceneInstance = null;
+            FSceneSystem.GraphicsCompositor = null;
+            FSceneSystem.Dispose();
+
             FWindowHandle?.Dispose();
             FGameHandle?.Dispose();
         }

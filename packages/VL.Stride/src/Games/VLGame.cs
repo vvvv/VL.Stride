@@ -19,9 +19,7 @@ namespace VL.Stride.Games
         // TODO: Get rid of me once we have scoped variables
 
         [ThreadStatic]
-        public static Game GameInstance;
-
-        public Action RunCallback { get; set; }
+        public static VLGame GameInstance;
 
         public VLGame()
             : base()
