@@ -135,6 +135,32 @@ namespace VL.Stride
             return this;
         }
 
+        public CustomNodeDesc<TInstance> AddInputWithFallback<T>(string name, Func<TInstance, T> getter, Action<TInstance, T, T> setter, T defaultValue = default)
+            where T : class
+        {
+            inputs.Add(new CustomPinDesc()
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                DefaultValue = defaultValue,
+                CreatePin = () =>
+                {
+                    var initial = default(T);
+                    return new Pin<T>()
+                    {
+                        getter = getter,
+                        setter = (x, v) =>
+                        {
+                            if (initial is null)
+                                initial = getter(x);
+                            setter(x, v, initial);
+                        }
+                    };
+                }
+            });
+            return this;
+        }
+
         public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, IList<T>> getter)
         {
             return AddInput<IReadOnlyList<T>>(name, 

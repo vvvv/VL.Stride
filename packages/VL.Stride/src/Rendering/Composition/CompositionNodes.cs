@@ -3,6 +3,7 @@ using Stride.Rendering;
 using Stride.Rendering.Background;
 using Stride.Rendering.Compositing;
 using Stride.Rendering.Images;
+using Stride.Rendering.Images.Dither;
 using Stride.Rendering.Lights;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Shadows;
@@ -10,6 +11,7 @@ using Stride.Rendering.Sprites;
 using Stride.Rendering.SubsurfaceScattering;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using VL.Core;
 
 namespace VL.Stride.Rendering.Composition
@@ -124,6 +126,54 @@ namespace VL.Stride.Rendering.Composition
             // AA
             yield return new StrideNodeDesc<FXAAEffect>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<TemporalAntiAliasEffect>(nodeFactory, category: postFxCategory);
+            // Color transforms
+            var colorTransformsCategory = $"{postFxCategory}.ColorTransforms";
+            yield return new StrideNodeDesc<LuminanceToChannelTransform>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<FilmGrain>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<Vignetting>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<Dither>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
+
+            yield return nodeFactory.Create<ToneMap>(category: colorTransformsCategory, copyOnWrite: false)
+                .AddInputWithFallback(nameof(ToneMap.Operator), x => x.Operator, (x, v, initial) =>
+                {
+                    if (v != null && v != x.Operator && x.Group != null)
+                    {
+                        // For same operator types the shader permutation of the whole color transform group stays the same
+                        // and therefor Stride will not update the parameter copiers of the transforms.
+                        // We therefor invalidate the shader manually here.
+                        var transformGroupEffectField = typeof(ColorTransformGroup).GetField("transformGroupEffect", BindingFlags.Instance | BindingFlags.NonPublic);
+                        var transformGroupEffect = (ImageEffectShader)transformGroupEffectField.GetValue(x.Group);
+                        var descriptorReflectionField = typeof(EffectInstance).GetField("descriptorReflection", BindingFlags.Instance | BindingFlags.NonPublic);
+                        descriptorReflectionField.SetValue(transformGroupEffect.EffectInstance, null);
+                    }
+                    if (v != null)
+                        x.Operator = v;
+                    else
+                        x.Operator = initial;
+                })
+                .AddInput(nameof(ToneMap.AutoKeyValue), x => x.AutoKeyValue, (x, v) => x.AutoKeyValue = v, true)
+                .AddInput(nameof(ToneMap.KeyValue), x => x.KeyValue, (x, v) => x.KeyValue = v, 0.18f)
+                .AddInput(nameof(ToneMap.AutoExposure), x => x.AutoExposure, (x, v) => x.AutoExposure = v, true)
+                .AddInput(nameof(ToneMap.Exposure), x => x.Exposure, (x, v) => x.Exposure = v, 0f)
+                .AddInput(nameof(ToneMap.TemporalAdaptation), x => x.TemporalAdaptation, (x, v) => x.TemporalAdaptation = v, true)
+                .AddInput(nameof(ToneMap.AdaptationRate), x => x.AdaptationRate, (x, v) => x.AdaptationRate = v, 1.0f)
+                .AddInput(nameof(ToneMap.UseLocalLuminance), x => x.UseLocalLuminance, (x, v) => x.UseLocalLuminance = v, false)
+                .AddInput(nameof(ToneMap.LuminanceLocalFactor), x => x.LuminanceLocalFactor, (x, v) => x.LuminanceLocalFactor = v, 0.0f)
+                .AddInput(nameof(ToneMap.Contrast), x => x.Contrast, (x, v) => x.Contrast = v, 0f)
+                .AddInput(nameof(ToneMap.Brightness), x => x.Brightness, (x, v) => x.Brightness = v, 0f)
+                .AddInput(nameof(ToneMap.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true);
+
+            //yield return new StrideNodeDesc<ToneMap>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
+
+            var operatorsCategory = $"{colorTransformsCategory}.ToneMapOperators";
+            yield return new StrideNodeDesc<ToneMapHejl2Operator>(nodeFactory, "Hejl2", category: operatorsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<ToneMapHejlDawsonOperator>(nodeFactory, "HejlDawson", category: operatorsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<ToneMapMikeDayOperator>(nodeFactory, "MikeDay", category: operatorsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<ToneMapU2FilmicOperator>(nodeFactory, "U2Filmic", category: operatorsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<ToneMapDragoOperator>(nodeFactory, "Drago", category: operatorsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<ToneMapExponentialOperator>(nodeFactory, "Exponential", category: operatorsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<ToneMapLogarithmicOperator>(nodeFactory, "Logarithmic", category: operatorsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<ToneMapReinhardOperator>(nodeFactory, "Reinhard", category: operatorsCategory) { CopyOnWrite = false };
 
             // Root render features
             yield return nodeFactory.Create<MeshRenderFeature>(category: renderingCategory)

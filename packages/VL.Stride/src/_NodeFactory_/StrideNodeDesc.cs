@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using VL.Core;
@@ -53,7 +54,12 @@ namespace VL.Stride
                         var property = p.Property;
                         var type = property.GetPropertyType();
                         var pinType = GetPinType(type);
+
                         var defaultValue = property.GetValue(instance);
+                        var defaultValueProperty = property.GetCustomAttribute<DefaultValueAttribute>();
+                        if (defaultValueProperty != null && defaultValueProperty.Value != null && defaultValueProperty.Value.GetType() == type)
+                            defaultValue = defaultValueProperty.Value;
+
                         var name = p.Name;
                         // Prepend the category to the name (if not already done so)
                         var category = p.Category;
