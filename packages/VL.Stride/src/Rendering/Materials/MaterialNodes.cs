@@ -1,4 +1,5 @@
-﻿using Stride.Rendering.Materials;
+﻿using Stride.Graphics;
+using Stride.Rendering.Materials;
 using Stride.Rendering.Materials.ComputeColors;
 using System;
 using System.Collections.Generic;
@@ -71,7 +72,9 @@ namespace VL.Stride.Rendering.Materials
             // Top level
             // TODO: The Overrides property is a getter only - we need to expose the inner properties
             yield return new StrideNodeDesc<MaterialAttributes>(nodeFactory, "MaterialAttributes", materialCategory);
-            yield return new StrideNodeDesc<MaterialDescriptor>(nodeFactory, "MaterialDescriptor", materialCategory);
+            yield return nodeFactory.Create<MaterialDescriptor>(nameof(MaterialDescriptor), materialCategory)
+                .AddInput(nameof(MaterialDescriptor.Attributes), x => x.Attributes, (x, v) => x.Attributes = v)
+                .AddListInput(nameof(MaterialDescriptor.Layers), x => x.Layers);
 
             // Not so sure about these - they work for now
             yield return new StrideNodeDesc<ComputeColor>(nodeFactory, "ComputeColor", materialCategory);
