@@ -4,6 +4,7 @@ using Stride.Rendering.Background;
 using Stride.Rendering.Compositing;
 using Stride.Rendering.Images;
 using Stride.Rendering.Images.Dither;
+using Stride.Rendering.LightProbes;
 using Stride.Rendering.Lights;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Shadows;
@@ -25,6 +26,7 @@ namespace VL.Stride.Rendering.Composition
             string compositionCategory = $"{renderingCategory}.Composition";
             yield return nodeFactory.Create<GraphicsCompositor>(category: compositionCategory)
                 .AddInput(nameof(GraphicsCompositor.Game), x => x.Game, (x, v) => x.Game = v)
+                .AddInput(nameof(GraphicsCompositor.SingleView), x => x.SingleView, (x, v) => x.SingleView = v)
                 .AddListInput(nameof(GraphicsCompositor.RenderStages), x => x.RenderStages)
                 .AddListInput(nameof(GraphicsCompositor.RenderFeatures), x => x.RenderFeatures);
 
@@ -220,6 +222,7 @@ namespace VL.Stride.Rendering.Composition
             yield return new StrideNodeDesc<LightPointGroupRenderer>(nodeFactory, category: lightsCategory);
             yield return new StrideNodeDesc<LightSpotGroupRenderer>(nodeFactory, category: lightsCategory);
             yield return new StrideNodeDesc<LightClusteredPointSpotGroupRenderer>(nodeFactory, category: lightsCategory);
+            yield return new StrideNodeDesc<LightProbeRenderer>(nodeFactory, category: lightsCategory);
 
             // Shadow map renderers
             var shadowsCategory = $"{renderingCategory}.Shadows";

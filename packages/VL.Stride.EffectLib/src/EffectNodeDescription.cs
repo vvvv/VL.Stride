@@ -74,6 +74,8 @@ namespace VL.Stride.EffectLib
 
         public string Category => "Stride.EffectLib";
 
+        public bool Fragmented => false;
+
         public EffectPinDescription[] Inputs => inputs ?? (inputs = GetInputsSafe());
 
         public EffectPinDescription[] Outputs => outputs ?? (outputs = GetOuputs().ToArray());

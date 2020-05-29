@@ -12,6 +12,7 @@ using Stride.Graphics;
 using System.Windows.Forms;
 using System;
 using VL.Lib.Animation;
+using System.Diagnostics;
 
 [assembly: AssemblyInitializer(typeof(VL.Stride.Lib.Initialization))]
 
@@ -73,7 +74,17 @@ namespace VL.Stride.Lib
                                 game.SceneSystem.GraphicsCompositor = null;
 
                                 var frameClock = factory.CreateService<IFrameClock>(nodeContext);
-                                clockSubscription = frameClock.GetTicks().Subscribe(ftm => gameContext.RunCallback());
+                                clockSubscription = frameClock.GetTicks().Subscribe(ftm =>
+                                {
+                                    try
+                                    {
+                                        gameContext.RunCallback();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Trace.TraceError(e.ToString());
+                                    }
+                                });
 
                                 return game;
                             },

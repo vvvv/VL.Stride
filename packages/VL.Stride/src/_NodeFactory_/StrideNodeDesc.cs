@@ -33,6 +33,8 @@ namespace VL.Stride
 
         public string Category { get; }
 
+        public bool Fragmented => false;
+
         public IReadOnlyList<IVLPinDescription> Inputs
         {
             get
