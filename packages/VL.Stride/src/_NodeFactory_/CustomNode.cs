@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Stride.Engine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using VL.Core;
 using VL.Core.Diagnostics;
+using VL.Lib.Collections.TreePatching;
+using VL.Lib.Experimental;
 
 namespace VL.Stride
 {
@@ -32,6 +35,46 @@ namespace VL.Stride
                 hasStateOutput: hasStateOutput,
                 fragmented: fragmented,
                 update: update);
+        }
+
+        public static CustomNodeDesc<TComponent> CreateComponentNode<TComponent>(this IVLNodeDescriptionFactory factory, string category)
+            where TComponent : EntityComponent, new()
+        {
+            return new CustomNodeDesc<TComponent>(factory,
+                ctor: nodeContext =>
+                {
+                    var component = new TComponent();
+                    var manager = new TreeNodeParentManager<Entity, EntityComponent>(component, (e, c) => e.Add(c), (e, c) => e.Remove(c));
+                    var sender = new Sender<object, object>(nodeContext, component, manager);
+                    var cachedMessages = default(List<VL.Lang.Message>);
+                    var subscription = manager.ToggleWarning.Subscribe(v => ToggleMessages(v));
+                    return (component, () =>
+                    {
+                        ToggleMessages(false);
+                        manager.Dispose();
+                        sender.Dispose();
+                        subscription.Dispose();
+                    }
+                    );
+
+                    void ToggleMessages(bool on)
+                    {
+                        var messages = cachedMessages ?? (cachedMessages = nodeContext.Path.Stack
+                            .Select(id => new VL.Lang.Message(id, Lang.MessageSeverity.Warning, "Component should only be connected to one Entity."))
+                            .ToList());
+                        foreach (var m in messages)
+                            VL.Lang.PublicAPI.Session.ToggleMessage(m, on);
+                    }
+                }, 
+                category: category, 
+                copyOnWrite: false,
+                fragmented: true);
+        }
+
+        public static IVLNodeDescription WithEnabledPin<TComponent>(this CustomNodeDesc<TComponent> node)
+            where TComponent : ActivableEntityComponent
+        {
+            return node.AddInput("Enabled", x => x.Enabled, (x, v) => x.Enabled = v, true);
         }
     }
 
