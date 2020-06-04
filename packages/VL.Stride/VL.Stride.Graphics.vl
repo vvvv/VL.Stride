@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="Dky5PMnuvcKN4CxmfNs7Uv" LanguageVersion="2020.2.0.90" Version="0.128">
-  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0081-gbd9c8a11e7" />
+<Document xmlns:p="property" Id="Dky5PMnuvcKN4CxmfNs7Uv" LanguageVersion="2020.2.0.82" Version="0.128">
+  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0070-gebd37d11b0" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride.Graphics" CanvasType="FullCategory">
       <Canvas Id="Va6zGexNFFVMRdhsy5mtTh" Name="Advanced" Position="321,221">
@@ -699,6 +699,59 @@
           <Patch Id="RcvQDc7zA1TO1shhpbdZlD">
             <Canvas Id="DOXzVD8qK68MydZBgyMpkS" BordersChecked="false" CanvasType="Group" />
             <ProcessDefinition Id="MsfZDKRj8aXNTmzjODPuRU" IsHidden="true" />
+          </Patch>
+        </Node>
+        <!--
+
+    ************************ GraphicsDevice ************************
+
+-->
+        <Node Name="GraphicsDevice" Bounds="375,464" Id="C5007xIX1xtOsF2G54WVPE">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="KEbg3OIiAgWLk83gWXotDY">
+            <Canvas Id="AmcuYUirOHXMkg9sPBVNDz" CanvasType="Group">
+              <Node Bounds="356,286" Id="IJHkyj2WTyRPBEbYstfIUg">
+                <p:NodeReference LastCategoryFullName="System.Resources" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="Using (Process)" />
+                </p:NodeReference>
+                <Pin Id="IPo8oH3uEMuOgAlXHNXRrN" Name="Input" Kind="InputPin" />
+                <Pin Id="NJuPCsme2WuPNEhkWxs4Dv" Name="Resource" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="LlRrHvYMK8VNGn09ElZSwv" Bounds="358,381" />
+              <ControlPoint Id="VPBMr7AA3dDLE6ZSpkvxO6" Bounds="358,202" />
+              <Node Bounds="356,230,99,26" Id="BnMbipnstjvO7mrTgGLeQX">
+                <p:NodeReference LastCategoryFullName="VL.Stride.Resources" LastSymbolSource="VL.Stride.dll">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <CategoryReference Kind="AssemblyCategory" Name="Resources" />
+                  <Choice Kind="OperationCallFlag" Name="GetDeviceProvider" />
+                </p:NodeReference>
+                <Pin Id="R84zswNgS0UPrZRPcG2JQu" Name="Input" Kind="StateInputPin" />
+                <Pin Id="Pcb8DWHXap7PmESUJPMiH4" Name="Result" Kind="OutputPin" />
+              </Node>
+            </Canvas>
+            <Patch Id="Rc3DQhstNFmO8Bu5c8BHXv" Name="Create">
+              <Pin Id="GEMeWHlaIdFMk4dlTrIl2x" Name="Node Context" Kind="InputPin" Visibility="Optional" />
+            </Patch>
+            <Patch Id="SecjhZMP6nHOgaRqE7hj2T" Name="Update">
+              <Pin Id="OywhjSuB676QMfm8hGwePb" Name="Device" Kind="OutputPin" Bounds="358,381" />
+            </Patch>
+            <!--
+
+    ************************  ************************
+
+-->
+            <ProcessDefinition Id="OoIfut1fUNVLwwKlPmzsdV">
+              <Fragment Id="OHWFU2q7OvlLuEiV0pE1NP" Patch="Rc3DQhstNFmO8Bu5c8BHXv" Enabled="true" />
+              <Fragment Id="GJ6tCvImQXBLQ0YnROVyhS" Patch="SecjhZMP6nHOgaRqE7hj2T" Enabled="true" />
+            </ProcessDefinition>
+            <Link Id="DeU0cOSh8MTOV5J0WcVHgN" Ids="NJuPCsme2WuPNEhkWxs4Dv,LlRrHvYMK8VNGn09ElZSwv" />
+            <Link Id="VTmaVvxu9R0PqhHUmMrVul" Ids="LlRrHvYMK8VNGn09ElZSwv,OywhjSuB676QMfm8hGwePb" IsHidden="true" />
+            <Link Id="NMxRjQo1iG4PUptPOgPEVv" Ids="GEMeWHlaIdFMk4dlTrIl2x,VPBMr7AA3dDLE6ZSpkvxO6" IsHidden="true" />
+            <Link Id="QhzbPt3nSRCNPWtW3LEbYX" Ids="VPBMr7AA3dDLE6ZSpkvxO6,R84zswNgS0UPrZRPcG2JQu" />
+            <Link Id="Dog5IxCejZeMtCeb3tJCon" Ids="Pcb8DWHXap7PmESUJPMiH4,IPo8oH3uEMuOgAlXHNXRrN" />
           </Patch>
         </Node>
       </Canvas>

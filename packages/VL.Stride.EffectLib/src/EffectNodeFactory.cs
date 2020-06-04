@@ -266,13 +266,19 @@ namespace VL.Stride.EffectLib
             return null;
         }
 
+        const string suffix = "_VLNode";
+
         IEnumerable<IVLNodeDescription> GetNodeDescriptions(ContentManager contentManager)
         {
             var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.AllDirectories);
             foreach (var file in files)
             {
                 var effectName = Path.GetFileNameWithoutExtension(file);
-                yield return new EffectNodeDescription(this, effectName);
+                if (effectName.EndsWith(suffix))
+                {
+                    var name = effectName.Substring(0, effectName.Length - suffix.Length);
+                    yield return new EffectNodeDescription(this, name, effectName);
+                }
             }
         }
 
@@ -294,7 +300,7 @@ namespace VL.Stride.EffectLib
                 if (description == null || !description.IsInUse)
                     continue;
 
-                var updatedDescription = new EffectNodeDescription(this, description.Name);
+                var updatedDescription = new EffectNodeDescription(this, description.Name, description.EffectName);
                 if (updatedDescription.HasCompilerErrors != description.HasCompilerErrors ||
                     !updatedDescription.Inputs.SequenceEqual(description.Inputs, PinComparer.Instance) ||
                     !updatedDescription.Outputs.SequenceEqual(description.Outputs, PinComparer.Instance))

@@ -1,9 +1,11 @@
-﻿using Stride.Particles.Rendering;
+﻿using Stride.Core.Mathematics;
+using Stride.Particles.Rendering;
 using Stride.Rendering;
 using Stride.Rendering.Background;
 using Stride.Rendering.Compositing;
 using Stride.Rendering.Images;
 using Stride.Rendering.Images.Dither;
+using Stride.Rendering.LightProbes;
 using Stride.Rendering.Lights;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Shadows;
@@ -20,44 +22,45 @@ namespace VL.Stride.Rendering.Composition
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(StrideNodeFactory nodeFactory)
         {
-            string renderingCategory = "Stride.Rendering";
+            string renderingCategory = "Stride.Rendering.Advanced";
 
             string compositionCategory = $"{renderingCategory}.Composition";
-            yield return nodeFactory.Create<GraphicsCompositor>(category: compositionCategory)
+            yield return nodeFactory.NewNode<GraphicsCompositor>(category: compositionCategory)
                 .AddInput(nameof(GraphicsCompositor.Game), x => x.Game, (x, v) => x.Game = v)
+                .AddInput(nameof(GraphicsCompositor.SingleView), x => x.SingleView, (x, v) => x.SingleView = v)
                 .AddListInput(nameof(GraphicsCompositor.RenderStages), x => x.RenderStages)
                 .AddListInput(nameof(GraphicsCompositor.RenderFeatures), x => x.RenderFeatures);
 
-            yield return nodeFactory.Create<RenderStage>(category: compositionCategory)
+            yield return nodeFactory.NewNode<RenderStage>(category: compositionCategory)
                 .AddInput(nameof(RenderStage.Name), x => x.Name, (x, v) => x.Name = v, defaultValue: "RenderStage")
                 .AddInput(nameof(RenderStage.EffectSlotName), x => x.EffectSlotName, (x, v) => x.EffectSlotName = v, defaultValue: "Main")
                 .AddInput(nameof(RenderStage.SortMode), x => x.SortMode.ToPredefinedSortMode(), (x, v) => x.SortMode = v.ToSortMode());
 
             // Render stage selectors
             string renderStageSelectorCategory = $"{compositionCategory}.RenderStageSelector";
-            yield return nodeFactory.Create<MeshTransparentRenderStageSelector>(category: renderStageSelectorCategory)
+            yield return nodeFactory.NewNode<MeshTransparentRenderStageSelector>(category: renderStageSelectorCategory)
                 .AddInput(nameof(MeshTransparentRenderStageSelector.EffectName), x => x.EffectName, (x, v) => x.EffectName = v, defaultValue: "StrideForwardShadingEffect")
                 .AddInput(nameof(MeshTransparentRenderStageSelector.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v, RenderGroupMask.All)
                 .AddInput(nameof(MeshTransparentRenderStageSelector.OpaqueRenderStage), x => x.OpaqueRenderStage, (x, v) => x.OpaqueRenderStage = v)
                 .AddInput(nameof(MeshTransparentRenderStageSelector.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v);
 
-            yield return nodeFactory.Create<ShadowMapRenderStageSelector>(category: renderStageSelectorCategory)
+            yield return nodeFactory.NewNode<ShadowMapRenderStageSelector>(category: renderStageSelectorCategory)
                 .AddInput(nameof(ShadowMapRenderStageSelector.EffectName), x => x.EffectName, (x, v) => x.EffectName = v, defaultValue: "StrideForwardShadingEffect.ShadowMapCaster")
                 .AddInput(nameof(ShadowMapRenderStageSelector.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v, RenderGroupMask.All)
                 .AddInput(nameof(ShadowMapRenderStageSelector.ShadowMapRenderStage), x => x.ShadowMapRenderStage, (x, v) => x.ShadowMapRenderStage = v);
 
-            yield return nodeFactory.Create<SimpleGroupToRenderStageSelector>(category: renderStageSelectorCategory)
+            yield return nodeFactory.NewNode<SimpleGroupToRenderStageSelector>(category: renderStageSelectorCategory)
                 .AddInput(nameof(SimpleGroupToRenderStageSelector.EffectName), x => x.EffectName, (x, v) => x.EffectName = v, defaultValue: "Test")
                 .AddInput(nameof(SimpleGroupToRenderStageSelector.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v, RenderGroupMask.All)
                 .AddInput(nameof(SimpleGroupToRenderStageSelector.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
 
-            yield return nodeFactory.Create<ParticleEmitterTransparentRenderStageSelector>(category: renderStageSelectorCategory)
+            yield return nodeFactory.NewNode<ParticleEmitterTransparentRenderStageSelector>(category: renderStageSelectorCategory)
                 .AddInput(nameof(ParticleEmitterTransparentRenderStageSelector.EffectName), x => x.EffectName, (x, v) => x.EffectName = v, defaultValue: "Particles")
                 .AddInput(nameof(ParticleEmitterTransparentRenderStageSelector.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v, RenderGroupMask.All)
                 .AddInput(nameof(ParticleEmitterTransparentRenderStageSelector.OpaqueRenderStage), x => x.OpaqueRenderStage, (x, v) => x.OpaqueRenderStage = v)
                 .AddInput(nameof(ParticleEmitterTransparentRenderStageSelector.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v);
 
-            yield return nodeFactory.Create<SpriteTransparentRenderStageSelector>(category: renderStageSelectorCategory)
+            yield return nodeFactory.NewNode<SpriteTransparentRenderStageSelector>(category: renderStageSelectorCategory)
                 .AddInput(nameof(SpriteTransparentRenderStageSelector.EffectName), x => x.EffectName, (x, v) => x.EffectName = v, defaultValue: "Test")
                 .AddInput(nameof(SpriteTransparentRenderStageSelector.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v, RenderGroupMask.All)
                 .AddInput(nameof(SpriteTransparentRenderStageSelector.OpaqueRenderStage), x => x.OpaqueRenderStage, (x, v) => x.OpaqueRenderStage = v)
@@ -66,27 +69,27 @@ namespace VL.Stride.Rendering.Composition
             // Renderers
             yield return new StrideNodeDesc<ClearRenderer>(nodeFactory, category: compositionCategory) { CopyOnWrite = false };
 
-            yield return nodeFactory.Create<DebugRenderer>(category: compositionCategory, copyOnWrite: false)
+            yield return nodeFactory.NewNode<DebugRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddListInput(nameof(DebugRenderer.DebugRenderStages), x => x.DebugRenderStages);
 
-            yield return nodeFactory.Create<ForceAspectRatioSceneRenderer>(category: compositionCategory, copyOnWrite: false)
+            yield return nodeFactory.NewNode<ForceAspectRatioSceneRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.FixedAspectRatio), x => x.FixedAspectRatio, (x, v) => x.FixedAspectRatio = v)
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.ForceAspectRatio), x => x.ForceAspectRatio, (x, v) => x.ForceAspectRatio = v)
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.Child), x => x.Child, (x, v) => x.Child = v);
 
-            yield return nodeFactory.Create<SceneExternalCameraRenderer>(name: "CameraRenderer", category: compositionCategory, copyOnWrite: false)
+            yield return nodeFactory.NewNode<SceneExternalCameraRenderer>(name: "CameraRenderer", category: compositionCategory, copyOnWrite: false)
                 .AddInput("Camera", x => x.ExternalCamera, (x, v) => x.ExternalCamera = v)
                 .AddInput(nameof(SceneExternalCameraRenderer.Child), x => x.Child, (x, v) => x.Child = v);
 
-            yield return nodeFactory.Create<RenderTextureSceneRenderer>(category: compositionCategory, copyOnWrite: false)
+            yield return nodeFactory.NewNode<RenderTextureSceneRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddInput(nameof(RenderTextureSceneRenderer.RenderTexture), x => x.RenderTexture, (x, v) => x.RenderTexture = v)
                 .AddInput(nameof(RenderTextureSceneRenderer.Child), x => x.Child, (x, v) => x.Child = v);
 
-            yield return nodeFactory.Create<SceneRendererCollection>(category: compositionCategory, copyOnWrite: false)
+            yield return nodeFactory.NewNode<SceneRendererCollection>(category: compositionCategory, copyOnWrite: false)
                 .AddListInput(nameof(SceneRendererCollection.Children), x => x.Children);
 
             var defaultResolver = new MSAAResolver();
-            yield return nodeFactory.Create<ForwardRenderer>(category: compositionCategory, copyOnWrite: false)
+            yield return nodeFactory.NewNode<ForwardRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddInput(nameof(ForwardRenderer.Clear), x => x.Clear, (x, v) => x.Clear = v)
                 .AddInput(nameof(ForwardRenderer.OpaqueRenderStage), x => x.OpaqueRenderStage, (x, v) => x.OpaqueRenderStage = v)
                 .AddInput(nameof(ForwardRenderer.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v)
@@ -130,10 +133,14 @@ namespace VL.Stride.Rendering.Composition
             var colorTransformsCategory = $"{postFxCategory}.ColorTransforms";
             yield return new StrideNodeDesc<LuminanceToChannelTransform>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
             yield return new StrideNodeDesc<FilmGrain>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
-            yield return new StrideNodeDesc<Vignetting>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
+            yield return nodeFactory.NewNode<Vignetting>(category: colorTransformsCategory, copyOnWrite: false)
+                .AddInput(nameof(Vignetting.Amount), x => x.Amount, (x, v) => x.Amount = v, 0.8f)
+                .AddInput(nameof(Vignetting.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.7f)
+                .AddInput(nameof(Vignetting.Color), x => x.Color.ToColor4(), (x, v) => x.Color = v.ToColor3(), Color4.Black)
+                .AddInput(nameof(Vignetting.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true);
             yield return new StrideNodeDesc<Dither>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
 
-            yield return nodeFactory.Create<ToneMap>(category: colorTransformsCategory, copyOnWrite: false)
+            yield return nodeFactory.NewNode<ToneMap>(category: colorTransformsCategory, copyOnWrite: false)
                 .AddInputWithFallback(nameof(ToneMap.Operator), x => x.Operator, (x, v, initial) =>
                 {
                     if (v != null && v != x.Operator && x.Group != null)
@@ -176,18 +183,18 @@ namespace VL.Stride.Rendering.Composition
             yield return new StrideNodeDesc<ToneMapReinhardOperator>(nodeFactory, "Reinhard", category: operatorsCategory) { CopyOnWrite = false };
 
             // Root render features
-            yield return nodeFactory.Create<MeshRenderFeature>(category: renderingCategory)
+            yield return nodeFactory.NewNode<MeshRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(MeshRenderFeature.RenderFeatures), x => x.RenderFeatures)
                 .AddListInput(nameof(MeshRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors)
                 .AddListInput(nameof(MeshRenderFeature.PipelineProcessors), x => x.PipelineProcessors);
 
-            yield return nodeFactory.Create<BackgroundRenderFeature>(category: renderingCategory)
+            yield return nodeFactory.NewNode<BackgroundRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(BackgroundRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
-            yield return nodeFactory.Create<SpriteRenderFeature>(category: renderingCategory)
+            yield return nodeFactory.NewNode<SpriteRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(SpriteRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
-            yield return nodeFactory.Create<LayerRenderFeature>(category: renderingCategory)
+            yield return nodeFactory.NewNode<LayerRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(LayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
             // Sub render features for mesh render feature
@@ -197,19 +204,19 @@ namespace VL.Stride.Rendering.Composition
             yield return new StrideNodeDesc<MaterialRenderFeature>(nodeFactory, category: renderFeaturesCategory);
             yield return new StrideNodeDesc<ShadowCasterRenderFeature>(nodeFactory, category: renderFeaturesCategory);
 
-            yield return nodeFactory.Create<ForwardLightingRenderFeature>(category: renderFeaturesCategory)
+            yield return nodeFactory.NewNode<ForwardLightingRenderFeature>(category: renderFeaturesCategory)
                 .AddListInput(nameof(ForwardLightingRenderFeature.LightRenderers), x => x.LightRenderers)
                 .AddInput(nameof(ForwardLightingRenderFeature.ShadowMapRenderer), x => x.ShadowMapRenderer, (x, v) => x.ShadowMapRenderer = v);
 
             var pipelineProcessorsCategory = $"{renderingCategory}.PipelineProcessors";
-            yield return nodeFactory.Create<MeshPipelineProcessor>(category: pipelineProcessorsCategory)
+            yield return nodeFactory.NewNode<MeshPipelineProcessor>(category: pipelineProcessorsCategory)
                 .AddInput(nameof(MeshPipelineProcessor.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v);
 
-            yield return nodeFactory.Create<ShadowMeshPipelineProcessor>(category: pipelineProcessorsCategory)
+            yield return nodeFactory.NewNode<ShadowMeshPipelineProcessor>(category: pipelineProcessorsCategory)
                 .AddInput(nameof(ShadowMeshPipelineProcessor.ShadowMapRenderStage), x => x.ShadowMapRenderStage, (x, v) => x.ShadowMapRenderStage = v)
                 .AddInput(nameof(ShadowMeshPipelineProcessor.DepthClipping), x => x.DepthClipping, (x, v) => x.DepthClipping = v);
 
-            yield return nodeFactory.Create<WireframePipelineProcessor>(category: pipelineProcessorsCategory)
+            yield return nodeFactory.NewNode<WireframePipelineProcessor>(category: pipelineProcessorsCategory)
                 .AddInput(nameof(WireframePipelineProcessor.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
 
             // Light renderers - make enum
@@ -220,10 +227,11 @@ namespace VL.Stride.Rendering.Composition
             yield return new StrideNodeDesc<LightPointGroupRenderer>(nodeFactory, category: lightsCategory);
             yield return new StrideNodeDesc<LightSpotGroupRenderer>(nodeFactory, category: lightsCategory);
             yield return new StrideNodeDesc<LightClusteredPointSpotGroupRenderer>(nodeFactory, category: lightsCategory);
+            yield return new StrideNodeDesc<LightProbeRenderer>(nodeFactory, category: lightsCategory);
 
             // Shadow map renderers
             var shadowsCategory = $"{renderingCategory}.Shadows";
-            yield return nodeFactory.Create<ShadowMapRenderer>(category: shadowsCategory)
+            yield return nodeFactory.NewNode<ShadowMapRenderer>(category: shadowsCategory)
                 .AddListInput(nameof(ShadowMapRenderer.Renderers), x => x.Renderers);
 
             yield return new StrideNodeDesc<LightDirectionalShadowMapRenderer>(nodeFactory, category: shadowsCategory);
@@ -233,7 +241,7 @@ namespace VL.Stride.Rendering.Composition
 
             IVLNodeDescription CreatePostEffectsNode()
             {
-                return nodeFactory.Create<PostProcessingEffects>(category: postFxCategory, copyOnWrite: false, 
+                return nodeFactory.NewNode<PostProcessingEffects>(category: postFxCategory, copyOnWrite: false, 
                     init: effects =>
                     {
                         // Can't use effects.DisableAll() - disables private effects used by AA

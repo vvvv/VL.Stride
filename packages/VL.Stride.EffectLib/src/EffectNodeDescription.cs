@@ -48,10 +48,11 @@ namespace VL.Stride.EffectLib
         bool? isCompute;
         CompilerResults compilerResults;
 
-        public EffectNodeDescription(EffectNodeFactory factory, string effectName)
+        public EffectNodeDescription(EffectNodeFactory factory, string name, string effectName)
         {
             GameFactory = factory;
-            Name = effectName;
+            Name = name;
+            EffectName = effectName;
         }
 
         // Used when effect has errors - we keep the signature from the previous one but show the compiler errors
@@ -61,6 +62,7 @@ namespace VL.Stride.EffectLib
         {
             GameFactory = previous.GameFactory;
             Name = previous.Name;
+            EffectName = previous.EffectName;
             inputs = previous.Inputs;
             outputs = previous.Outputs;
             isCompute = previous.IsCompute;
@@ -72,7 +74,11 @@ namespace VL.Stride.EffectLib
 
         public string Name { get; }
 
+        public string EffectName { get; }
+
         public string Category => "Stride.EffectLib";
+
+        public bool Fragmented => false;
 
         public EffectPinDescription[] Inputs => inputs ?? (inputs = GetInputsSafe());
 
@@ -87,7 +93,7 @@ namespace VL.Stride.EffectLib
 
         public bool HasCompilerErrors => CompilerResults.HasErrors || CompilerResults.Bytecode.WaitForResult().CompilationLog.HasErrors;
 
-        public CompilerResults CompilerResults => compilerResults ?? (compilerResults = GameFactory.GetCompilerResults(Name));
+        public CompilerResults CompilerResults => compilerResults ?? (compilerResults = GameFactory.GetCompilerResults(EffectName));
 
         public EffectBytecode Bytecode => CompilerResults.Bytecode.WaitForResult().Bytecode;
 
@@ -164,13 +170,13 @@ namespace VL.Stride.EffectLib
 
         IEnumerable<EffectPinDescription> GetInputs()
         {
-            var effectName = IsCompute ? "ComputeEffectShader" : Name;
+            var effectName = IsCompute ? "ComputeEffectShader" : EffectName;
             using (var dummyInstance = new DynamicEffectInstance(effectName))
             {
                 var parameters = dummyInstance.Parameters;
                 if (IsCompute)
                 {
-                    parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, Name);
+                    parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, EffectName);
                     parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
                 }
 
@@ -269,7 +275,7 @@ namespace VL.Stride.EffectLib
 
         public bool OpenEditor()
         {
-            var path = GameFactory.GetPathOfSdslShader(Name);
+            var path = GameFactory.GetPathOfSdslShader(EffectName);
             Process.Start(path);
 
             var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();

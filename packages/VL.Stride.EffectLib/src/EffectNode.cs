@@ -26,7 +26,7 @@ namespace VL.Stride.EffectLib
         public EffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext, description)
         {
             graphicsDevice = Game.GraphicsDevice;
-            instance = new DynamicEffectInstance(description.Name);
+            instance = new DynamicEffectInstance(description.EffectName);
             try
             {
                 instance.Initialize(Game.Services);
@@ -54,7 +54,7 @@ namespace VL.Stride.EffectLib
 
             graphicsDevice = game.GraphicsDevice;
 
-            instance = new DynamicEffectInstance(description.Name);
+            instance = new DynamicEffectInstance(description.EffectName);
             try
             {
                 instance.Initialize(game.Services);

@@ -39,7 +39,7 @@ namespace VL.Stride.EffectLib
             graphicsDevice = Game.GraphicsDevice;
             instance = new DynamicEffectInstance("ComputeEffectShader");
             // TODO: Same code as in description
-            instance.Parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, description.Name);
+            instance.Parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, description.EffectName);
             instance.Parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
             try
             {
@@ -54,7 +54,7 @@ namespace VL.Stride.EffectLib
             Inputs = description.CreateNodeInputs(this, parameters);
             Outputs = description.CreateNodeOutputs(this, parameters);
 
-            profilingKey = new ProfilingKey(description.Name);
+            profilingKey = new ProfilingKey(description.EffectName);
         }
 
         void Initialize()
@@ -68,7 +68,7 @@ namespace VL.Stride.EffectLib
 
             instance = new DynamicEffectInstance("ComputeEffectShader");
             // TODO: Same code as in description
-            instance.Parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, description.Name);
+            instance.Parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, description.EffectName);
             instance.Parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
             try
             {
@@ -114,7 +114,7 @@ namespace VL.Stride.EffectLib
             var profilerName = profilerNameInput.Value;
 
             if (string.IsNullOrWhiteSpace(profilerName))
-                profilerName = description.Name;
+                profilerName = description.EffectName;
 
             if (profilingKey.Name != profilerName)
                 profilingKey = new ProfilingKey(profilerName);
