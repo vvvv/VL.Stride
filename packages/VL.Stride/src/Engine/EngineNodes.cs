@@ -28,6 +28,17 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(LightComponent.Type), x => x.Type, (x, v) => x.Type = v)
                 .AddInput(nameof(LightComponent.Intensity), x => x.Intensity, (x, v) => x.Intensity = v, 1f)
                 .WithEnabledPin();
+
+            yield return factory.CreateComponentNode<LightShaftComponent>(engineComponentsCategory)
+                .AddInput(nameof(LightShaftComponent.DensityFactor), x => x.DensityFactor, (x, v) => x.DensityFactor = v, 0.002f)
+                .AddInput(nameof(LightShaftComponent.SampleCount), x => x.SampleCount, (x, v) => x.SampleCount = v, 16)
+                .AddInput(nameof(LightShaftComponent.SeparateBoundingVolumes), x => x.SeparateBoundingVolumes, (x, v) => x.SeparateBoundingVolumes = v, true)
+                .WithEnabledPin();
+
+            yield return factory.CreateComponentNode<LightShaftBoundingVolumeComponent>(engineComponentsCategory)
+                .AddInput(nameof(LightShaftBoundingVolumeComponent.Model), x => x.Model, (x, v) => x.Model = v) // Ensure to check for change! Property throws event!
+                .AddInput(nameof(LightShaftBoundingVolumeComponent.LightShaft), x => x.LightShaft, (x, v) => x.LightShaft = v) // Ensure to check for change! Property throws event!
+                .WithEnabledPin();
         }
     }
 }
