@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Graphics;
 using Stride.Rendering;
+using Stride.Rendering.Materials;
 
 namespace VL.Stride.Rendering
 {
@@ -47,6 +51,42 @@ namespace VL.Stride.Rendering
                     Parameters = new ParameterCollection(pass.Parameters)
                 });
             }
+        }
+
+        /// <summary>
+        /// Same as Material.New loading referenced content in parameter collection (like EnvironmentLightingDFG_LUT)
+        /// </summary>
+        public static Material New(GraphicsDevice device, MaterialDescriptor descriptor, ContentManager content)
+        {
+            var m = Material.New(device, descriptor);
+            foreach (var pass in m.Passes)
+            {
+                //var t = pass.Parameters.Get(MaterialSpecularMicrofacetEnvironmentGGXLUTKeys.EnvironmentLightingDFG_LUT);
+                //if (t != null)
+                //{
+                //    var reference = AttachedReferenceManager.GetAttachedReference(t);
+                //    var realT = content.Load<Texture>(reference.Url, ContentManagerLoaderSettings.StreamingDisabled);
+                //    pass.Parameters.Set(MaterialSpecularMicrofacetEnvironmentGGXLUTKeys.EnvironmentLightingDFG_LUT, realT);
+                //}
+
+                foreach (var p in pass.Parameters.ParameterKeyInfos)
+                {
+                    var key = p.Key;
+                    if (key.Type != ParameterKeyType.Object)
+                        continue;
+                    var value = pass.Parameters.GetObject(key);
+                    if (value is null)
+                        continue;
+                    var reference = AttachedReferenceManager.GetAttachedReference(value);
+                    if (reference is null)
+                        continue;
+                    var c = content.Load(key.PropertyType, reference.Url, ContentManagerLoaderSettings.StreamingDisabled);
+                    if (c is null)
+                        continue;
+                    pass.Parameters.SetObject(key, c);
+                }
+            }
+            return m;
         }
     }
 }

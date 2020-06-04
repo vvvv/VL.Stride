@@ -1,4 +1,5 @@
 ﻿using Stride.Core;
+using Stride.Core.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,8 +69,9 @@ namespace VL.Stride
 
                     // At least one of the following attributes must be set
                     var dataMember = p.GetCustomAttribute<DataMemberAttribute>();
+                    var dataMemberRange = p.GetCustomAttribute<DataMemberRangeAttribute>();
                     var customSerializer = p.GetCustomAttribute<DataMemberCustomSerializerAttribute>();
-                    if (display is null && dataMember is null && customSerializer is null)
+                    if (display is null && dataMember is null && dataMemberRange is null && customSerializer is null)
                         return default;
 
                     var name = display?.Name?.UpperCaseAfterSpace() ?? p.Name.InsertSpaces();
