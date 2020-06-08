@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using VL.Xenko.Core;
 using VL.Xenko.Games;
+using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Graphics;
 
@@ -20,12 +21,14 @@ namespace VL.Xenko
         private readonly Action VLUpdate;
         readonly VLContext FContext;
         readonly bool FGoFullscreen;
+        readonly Int2 FFullscreenSize;
 
         // Declared public member fields and properties will show in the game studio
-        public VLScript(VLContext context, Game game, bool goFullscreen)
+        public VLScript(VLContext context, Game game, bool goFullscreen, Int2 fullscreenSize)
         {
             FContext = context;
             FGoFullscreen = goFullscreen;
+            FFullscreenSize = fullscreenSize;
             Game = game;
             VLGame.GameInstance = game;
 
@@ -47,9 +50,10 @@ namespace VL.Xenko
                 var gfxOutput = GraphicsAdapterFactory.Adapters[0].Outputs;
                 var displayMode = gfxOutput[0].CurrentDisplayMode;
 
-                var screenWidth = Math.Min(displayMode.Width, 1920);
+                var screenWidth = FFullscreenSize.X > 0 ? FFullscreenSize.X : 1920;
+
                 var maxHeight = displayMode.AspectRatio < 1.7f ? 1200 : 1080;
-                var screenHeight = Math.Min(displayMode.Height, maxHeight);
+                var screenHeight = FFullscreenSize.Y > 0 ? FFullscreenSize.Y : maxHeight;
 
                 Game.GraphicsDeviceManager.PreferredBackBufferWidth = screenWidth;
                 Game.GraphicsDeviceManager.PreferredBackBufferHeight = screenHeight;

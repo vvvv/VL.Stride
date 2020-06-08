@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using VL.Core;
 using VL.Xenko.Assets;
 using VL.Xenko.EffectLib;
+using Xenko.Core.Mathematics;
 using Xenko.Engine;
 
 namespace VL.Xenko
@@ -20,7 +21,7 @@ namespace VL.Xenko
         /// <param name="openEditor">Whether or not to open the VL editor.</param>
         /// <param name="openEditorInOtherThread">Whether or not to start VL editor in separate thread.</param>
         /// <param name="goFullscreen">Whether or not the game window should go fullscreen.</param>
-        public static void AttachVL(this Game game, string document = null, bool openEditor = true, bool openEditorInOtherThread = true, bool goFullscreen = false)
+        public static void AttachVL(this Game game, string document = null, bool openEditor = true, bool openEditorInOtherThread = true, bool goFullscreen = false, int fullscreenWidth = -1, int fullscreenHeight = -1)
         {
             if (!CheckBuild(game))
                 return;
@@ -53,7 +54,7 @@ namespace VL.Xenko
                 game.Services.AddService(context.Session);
                 game.Services.AddService(context.Runtime);
 
-                var script = new VLScript(context, game, goFullscreen);
+                var script = new VLScript(context, game, goFullscreen, new Int2(fullscreenWidth, fullscreenHeight));
                 var assetBuildService = new AssetBuildService();
                 game.Services.AddService(assetBuildService);
                 game.Script.Add(script);
