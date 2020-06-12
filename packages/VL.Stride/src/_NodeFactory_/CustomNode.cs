@@ -268,8 +268,8 @@ namespace VL.Stride
                 setter: (x, v) =>
                 {
                     var currentItems = getter(x);
-                    var newItems = v.Where(i => i != null);
-                    if (!currentItems.SequenceEqual(newItems))
+                    var newItems = v?.Where(i => i != null);
+                    if (newItems != null && !currentItems.SequenceEqual(newItems))
                     {
                         currentItems.Clear();
                         foreach (var item in newItems)
@@ -285,8 +285,8 @@ namespace VL.Stride
                 setter: (x, v) =>
                 {
                     var currentItems = getter(x);
-                    var newItems = v.Where(i => i != null);
-                    if (currentItems != null && !currentItems.SequenceEqual(newItems))
+                    var newItems = v?.Where(i => i != null);
+                    if (newItems != null && currentItems != null && !currentItems.SequenceEqual(newItems))
                         setter(x, v.ToArray());
                 });
         }
