@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class ColorQuad_ScreenSpaceKeys
+    public static partial class ColorQuad_ScreenSpace_VLNodeKeys
     {
         public static readonly ValueParameterKey<Vector4> ColorInput = ParameterKeys.NewValue<Vector4>();
     }

@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace VL.Xenko.Effects.Utils
 {
-    public static partial class ColorQuadTexturedKeys
+    public static partial class ColorQuadTextured_VLNodeKeys
     {
         public static readonly ValueParameterKey<Vector4> ColorInput = ParameterKeys.NewValue<Vector4>();
         public static readonly ValueParameterKey<bool> FlipV = ParameterKeys.NewValue<bool>();
