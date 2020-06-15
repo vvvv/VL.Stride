@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2020.2.0.102" Version="0.128">
-  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0102-gb51581a2fd" />
+<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2020.2.0.105" Version="0.128">
+  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0105-g3f1f625767" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride.Engine" CanvasType="FullCategory">
       <Canvas Id="AM1t0H80MmiNL9vQcGuPCN" Name="Camera" Position="488,360">
@@ -4639,13 +4639,17 @@
                 <Pin Id="TyCl5P9tnqyLknN7PLwYtr" Name="Shadow" Kind="InputPin" />
                 <Pin Id="L6D3B7m3Ht7Pn8VF585tYx" Name="Output" Kind="OutputPin" />
               </Node>
-              <Node Bounds="373,83,185,19" Id="BIkd3ue8lqNOVGFSde5T89">
+              <Node Bounds="373,83,401,19" Id="BIkd3ue8lqNOVGFSde5T89">
                 <p:NodeReference LastCategoryFullName="Stride.Rendering.Lights" LastSymbolSource="VL.Stride.dll">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                   <CategoryReference Kind="Category" Name="Lights" />
                   <Choice Kind="ProcessNode" Name="LightDirectionalShadowMap" />
                 </p:NodeReference>
-                <Pin Id="JMhvX1SR8VDN6ve3l2Lo0B" Name="Cascade Count" Kind="InputPin" />
+                <Pin Id="JMhvX1SR8VDN6ve3l2Lo0B" Name="Cascade Count" Kind="InputPin" DefaultValue="FourCascades">
+                  <p:TypeAnnotation LastCategoryFullName="Stride.Rendering.Lights" LastSymbolSource="Stride.Rendering.dll">
+                    <Choice Kind="TypeFlag" Name="LightShadowMapCascadeCount" />
+                  </p:TypeAnnotation>
+                </Pin>
                 <Pin Id="JqKbVuZOIIcNER8QEbwlYD" Name="Depth Range" Kind="InputPin" />
                 <Pin Id="JBP1CGmS3FnOI4g1oS3RBQ" Name="Partition Mode" Kind="InputPin" />
                 <Pin Id="IsYx25ColUYO4dPRY9IEyo" Name="Stabilization Mode" Kind="InputPin" />
@@ -4656,14 +4660,57 @@
                   </p:TypeAnnotation>
                 </Pin>
                 <Pin Id="GnH79chYmIxPvN5dEFye1Z" Name="Depth Bias" Kind="InputPin" />
-                <Pin Id="KvVjxaQ5FvTM766mnKqdM5" Name="Normal Offset Scale" Kind="InputPin" />
-                <Pin Id="UOX1AABQvOUP9TahIpM8gI" Name="Debug" Kind="InputPin" />
-                <Pin Id="Mpu7aEq9cbVP2TQqTZXoTN" Name="Enabled" Kind="InputPin" />
+                <Pin Id="KvVjxaQ5FvTM766mnKqdM5" Name="Normal Offset Scale" Kind="InputPin" DefaultValue="10">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Float32" />
+                  </p:TypeAnnotation>
+                </Pin>
+                <Pin Id="UOX1AABQvOUP9TahIpM8gI" Name="Debug" Kind="InputPin">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Boolean" />
+                  </p:TypeAnnotation>
+                </Pin>
+                <Pin Id="Mpu7aEq9cbVP2TQqTZXoTN" Name="Enabled" Kind="InputPin" DefaultValue="True">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Boolean" />
+                  </p:TypeAnnotation>
+                </Pin>
                 <Pin Id="UCquvqxSXQSQGqGUzMmzRu" Name="Output" Kind="OutputPin" />
               </Node>
               <ControlPoint Id="D2R5SxxNE0SOn1MhHncWEa" Bounds="345,355" />
+              <Node Bounds="384,-61,122,19" Id="H9Bh4uIyUNeLC5oJGHov2K">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering.Lights" LastSymbolSource="VL.Stride.dll">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessNode" Name="DepthRangeParameters" />
+                </p:NodeReference>
+                <Pin Id="V6wNCCPUofdLIqbAwE3tvk" Name="Is Automatic" Kind="InputPin" />
+                <Pin Id="C64w0UOTngdMNGlRYlX6Dy" Name="Manual Min Distance" Kind="InputPin" />
+                <Pin Id="QksiuE3eWF7NLCTbACDqP8" Name="Manual Max Distance" Kind="InputPin" />
+                <Pin Id="LozSybTYJ8SP1S8Vx4b6Gg" Name="Is Blending Cascades" Kind="InputPin" />
+                <Pin Id="Lki5bEUOP72Or23f9ohOEN" Name="Output" Kind="OutputPin" />
+              </Node>
+              <Node Bounds="562,3,151,19" Id="Kjgp6plnMEpOYhpds5Uq6Y">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering.Lights" LastSymbolSource="VL.Stride.dll">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessNode" Name="LightShadowMapFilterTypePcf" />
+                </p:NodeReference>
+                <Pin Id="GFQr41XJHZcQR2yX7mHhNU" Name="Filter Size" Kind="InputPin" DefaultValue="Filter7x7">
+                  <p:TypeAnnotation LastCategoryFullName="Stride.Rendering.Lights" LastSymbolSource="Stride.Rendering.dll">
+                    <Choice Kind="TypeFlag" Name="LightShadowMapFilterTypePcfSize" />
+                  </p:TypeAnnotation>
+                </Pin>
+                <Pin Id="AR4rc5EkZJuOA433n9dcOv" Name="Output" Kind="OutputPin" />
+              </Node>
+              <Node Bounds="425,1" Id="Bsn4LhpQPR8Ml656p7oBVz">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering.Lights" LastSymbolSource="VL.Stride.dll">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessNode" Name="PartitionLogarithmic" />
+                </p:NodeReference>
+                <Pin Id="NbevzWsUF4FNNBJtVRGaBo" Name="PSSMFactor" Kind="InputPin" />
+                <Pin Id="T0fZDEurZbTNV5BTipExgd" Name="Output" Kind="OutputPin" />
+              </Node>
             </Canvas>
-            <Patch Id="QpoctsAAJq5M2pNxjrtJiR" Name="Create" ParticipatingElements="C4nienVm58XMkZxR2pzRDI,Gkz3JilGYNcNSdRThvUA64,BIkd3ue8lqNOVGFSde5T89" />
+            <Patch Id="QpoctsAAJq5M2pNxjrtJiR" Name="Create" ParticipatingElements="C4nienVm58XMkZxR2pzRDI" />
             <Patch Id="CJEZfiKoP0UPahFSnvSwrt" Name="Update" ManuallySortedPins="true">
               <Pin Id="CC7BkOikLieNL4wCKM0rqE" Name="Color" Kind="InputPin" />
               <Pin Id="IRKuvpUufJxP5ruTmJ4W5j" Name="Intensity" Kind="InputPin" />
@@ -4698,7 +4745,10 @@
             <Link Id="NfwP3Q2hGCcMuJuV2LmzlH" Ids="TRwkH35Ur00Np698nqymYQ,E1H8xMQbqf7NQ6wZYD7zoq" />
             <Link Id="UbQFGMtzMmoOAB06TY3dXn" Ids="D2R5SxxNE0SOn1MhHncWEa,RKyQOB8pAvJNnhI6YrDm7D" />
             <Link Id="IinuTgApmh2NzcGzhztnrW" Ids="GQaIbVNRB9WL4gyVIScqpX,D2R5SxxNE0SOn1MhHncWEa" IsHidden="true" />
-            <Link Id="IsDKcqa5eybL7wwgBGbxqt" Ids="UCquvqxSXQSQGqGUzMmzRu,TyCl5P9tnqyLknN7PLwYtr" />
+            <Link Id="MXwz2lt0WJxLymjzPUl9ht" Ids="Lki5bEUOP72Or23f9ohOEN,JqKbVuZOIIcNER8QEbwlYD" />
+            <Link Id="HHpgxeTYeL4Lic1Bz0cJss" Ids="AR4rc5EkZJuOA433n9dcOv,UK5pSA2KBhvO6B9Vr0NufK" />
+            <Link Id="TEeN1RWfVo5QWYbiU4TDx0" Ids="T0fZDEurZbTNV5BTipExgd,JBP1CGmS3FnOI4g1oS3RBQ" />
+            <Link Id="SOmEKAiRtrZOG5XwdMTZmR" Ids="UCquvqxSXQSQGqGUzMmzRu,TyCl5P9tnqyLknN7PLwYtr" />
           </Patch>
         </Node>
         <!--
@@ -11622,8 +11672,8 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="NPPs0gHWhhDLwbJWw9C5Qt" Location="VL.Core" Version="2020.2.0-0102-gb51581a2fd" />
-  <NugetDependency Id="DpOkG08YmwMOrERTyWIWIl" Location="VL.EditingFramework" Version="2020.2.0-0102-gb51581a2fd" />
+  <NugetDependency Id="NPPs0gHWhhDLwbJWw9C5Qt" Location="VL.Core" Version="2020.2.0-0105-g3f1f625767" />
+  <NugetDependency Id="DpOkG08YmwMOrERTyWIWIl" Location="VL.EditingFramework" Version="2020.2.0-0105-g3f1f625767" />
   <PlatformDependency Id="OPlGizMUnBvPvn5XHsJ8EW" Location="./src/bin/Debug/netstandard2.0/VL.Stride.dll" />
   <PlatformDependency Id="PNVK9A76J93L79pFuBD4B3" Location="../TestGame/Bin/Windows/Debug/Stride.Games.dll" />
   <PlatformDependency Id="Lg8KGAfsRcwOnEfRhBsBQG" Location="../TestGame/Bin/Windows/Debug/Stride.Engine.dll" />
@@ -11631,9 +11681,9 @@
   <DocumentDependency Id="I9kZBuopBpePX7pwvio3o3" Location="./VL.Stride.Input.vl" />
   <DocumentDependency Id="L5RZYAkeHFkPPKJ86K1KAe" Location="./VL.Stride.Core.vl" />
   <DocumentDependency Id="IDoNCTKSzHfQQlS52M4MXv" Location="./VL.Stride.Rendering.vl" />
-  <NugetDependency Id="TGa7b7VVemVM0Bf10QC3Ph" Location="VL.Stride.EffectLib" Version="0.7.109-ga0bd3883eb" />
+  <NugetDependency Id="TGa7b7VVemVM0Bf10QC3Ph" Location="VL.Stride.EffectLib" Version="0.7.112-g710a33d1e1" />
   <PlatformDependency Id="H2f8MXufRYpPuRjIjOK3q3" Location="../TestGame/Bin/Windows/Debug/Stride.Core.Mathematics.dll" />
-  <NugetDependency Id="IHEIDRov8LFO2eD48F4Hs0" Location="VL.Lang" Version="2020.2.0-0102-gb51581a2fd" />
+  <NugetDependency Id="IHEIDRov8LFO2eD48F4Hs0" Location="VL.Lang" Version="2020.2.0-0105-g3f1f625767" />
   <DocumentDependency Id="GILZwUe2iGgPKA8BP1W5y0" Location="./VL.Stride.Games.vl" />
   <DocumentDependency Id="GWdYb2ByA41MUfWOOserWC" Location="./VL.Stride.Rendering.Instancer.vl" />
 </Document>
