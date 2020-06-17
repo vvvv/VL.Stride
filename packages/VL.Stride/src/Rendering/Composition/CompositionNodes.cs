@@ -1,4 +1,5 @@
 ﻿using Stride.Core.Mathematics;
+using Stride.Engine;
 using Stride.Particles.Rendering;
 using Stride.Rendering;
 using Stride.Rendering.Background;
@@ -77,8 +78,9 @@ namespace VL.Stride.Rendering.Composition
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.ForceAspectRatio), x => x.ForceAspectRatio, (x, v) => x.ForceAspectRatio = v)
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.Child), x => x.Child, (x, v) => x.Child = v);
 
+            var cameraComponent = new CameraComponent() { ViewMatrix = Matrix.Translation(0, 0, -2), UseCustomViewMatrix = true };
             yield return nodeFactory.NewNode<SceneExternalCameraRenderer>(name: "CameraRenderer", category: compositionCategory, copyOnWrite: false)
-                .AddInput("Camera", x => x.ExternalCamera, (x, v) => x.ExternalCamera = v)
+                .AddInputWithFallback("Camera", x => x.ExternalCamera ?? cameraComponent, (x, v, initial) => x.ExternalCamera = v ?? initial)
                 .AddInput(nameof(SceneExternalCameraRenderer.Child), x => x.Child, (x, v) => x.Child = v);
 
             yield return nodeFactory.NewNode<RenderTextureSceneRenderer>(category: compositionCategory, copyOnWrite: false)
