@@ -3,7 +3,6 @@ using Stride.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Lib.Collections.TreePatching;
@@ -18,7 +17,6 @@ namespace VL.Stride
             string category = default, 
             bool copyOnWrite = true,
             Action<T> init = default,
-            Action<NodeContext, T> update = default,
             bool hasStateOutput = true,
             bool fragmented = false) 
             where T : new()
@@ -34,8 +32,7 @@ namespace VL.Stride
                 category: category,
                 copyOnWrite: copyOnWrite,
                 hasStateOutput: hasStateOutput,
-                fragmented: fragmented,
-                update: update);
+                fragmented: fragmented);
         }
 
         public static CustomNodeDesc<TComponent> NewComponentNode<TComponent>(this IVLNodeDescriptionFactory factory, string category)
@@ -84,19 +81,16 @@ namespace VL.Stride
         readonly List<CustomPinDesc> inputs = new List<CustomPinDesc>();
         readonly List<CustomPinDesc> outputs = new List<CustomPinDesc>();
         readonly Func<NodeContext, (TInstance, Action)> ctor;
-        readonly Action<NodeContext, TInstance> update;
 
         public CustomNodeDesc(IVLNodeDescriptionFactory factory, Func<NodeContext, (TInstance, Action)> ctor, 
             string name = default, 
             string category = default, 
             bool copyOnWrite = true, 
             bool hasStateOutput = true,
-            bool fragmented = false,
-            Action<NodeContext, TInstance> update = default)
+            bool fragmented = false)
         {
             Factory = factory;
             this.ctor = ctor;
-            this.update = update;
 
             Name = name ?? typeof(TInstance).Name;
             Category = category ?? string.Empty;
@@ -126,39 +120,37 @@ namespace VL.Stride
         public IVLNode CreateInstance(NodeContext context)
         {
             var (instance, onDispose) = ctor(context);
-            var inputs = this.inputs.Select(p => p.CreatePin()).ToArray();
-            var outputs = this.outputs.Select(p => p.CreatePin()).ToArray();
 
             var node = new Node(context)
             {
-                NodeDescription = this,
-                Inputs = inputs,
-                Outputs = outputs
+                NodeDescription = this
             };
 
-            // Assign outputs
-            foreach (var output in outputs)
-                output.Value = output.ReadValueFrom(instance);
+            var inputs = this.inputs.Select(p => p.CreatePin(node, instance)).ToArray();
+            var outputs = this.outputs.Select(p => p.CreatePin(node, instance)).ToArray();
+
+            node.Inputs = inputs;
+            node.Outputs = outputs;
 
             if (CopyOnWrite)
             {
                 node.updateAction = () =>
                 {
-                    if (inputs.Any(p => p.IsChanged))
+                    if (node.needsUpdate)
                     {
+                        node.needsUpdate = false;
                         // TODO: Causes render pipeline to crash
                         //if (instance is IDisposable disposable)
                         //    disposable.Dispose();
 
                         instance = ctor(context).Item1;
 
+                        // Copy the values
                         foreach (var input in inputs)
-                            input.WriteValueTo(instance);
-
-                        update?.Invoke(context, instance);
+                            input.Update(instance);
 
                         foreach (var output in outputs)
-                            output.Value = output.ReadValueFrom(instance);
+                            output.Instance = instance;
                     }
                 };
                 node.disposeAction = () =>
@@ -172,21 +164,10 @@ namespace VL.Stride
             {
                 node.updateAction = () =>
                 {
-                    var anyChanged = false;
-                    foreach (var input in inputs)
+                    if (node.needsUpdate)
                     {
-                        if (input.IsChanged)
-                        {
-                            input.WriteValueTo(instance);
-                            anyChanged = true;
-                        }
+                        node.needsUpdate = false;
                     }
-
-                    if (anyChanged)
-                        update?.Invoke(context, instance);
-
-                    foreach (var output in outputs)
-                        output.Value = output.ReadValueFrom(instance);
                 };
                 node.disposeAction = () =>
                 {
@@ -203,75 +184,58 @@ namespace VL.Stride
             return false;
         }
 
-        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue = default)
+        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default)
+        {
+            inputs.Add(new CustomPinDesc()
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                CreatePin = (node, instance) => new InputPin<T>(node, instance, getter, setter, getter(instance), equals)
+            });
+            return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue)
         {
             inputs.Add(new CustomPinDesc()
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
                 DefaultValue = defaultValue,
-                CreatePin = () => new InputPin<T>()
-                {
-                    getter = getter,
-                    setter = setter
-                }
+                CreatePin = (node, instance) => new InputPin<T>(node, instance, getter, setter, defaultValue)
             });
             return this;
         }
 
+        // Hack to workaround equality bug (https://github.com/stride3d/stride/issues/735)
         public CustomNodeDesc<TInstance> AddInputWithRefEquality<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter)
             where T : class
         {
-            inputs.Add(new CustomPinDesc()
-            {
-                Name = name.InsertSpaces(),
-                Type = typeof(T),
-                CreatePin = () => new InputPinUsingReferenceEquality<T>()
-                {
-                    getter = getter,
-                    setter = setter
-                }
-            });
-            return this;
+            return AddInput(name, getter, setter, equals: ReferenceEqualityComparer<T>.Default.Equals);
         }
 
-        public CustomNodeDesc<TInstance> AddInputWithFallback<T>(string name, Func<TInstance, T> getter, Action<TInstance, T, T> setter, T defaultValue = default)
-            where T : class
+        static bool SequenceEqual<T>(IEnumerable<T> a, IEnumerable<T> b)
         {
-            inputs.Add(new CustomPinDesc()
-            {
-                Name = name.InsertSpaces(),
-                Type = typeof(T),
-                DefaultValue = defaultValue,
-                CreatePin = () =>
-                {
-                    var initial = default(T);
-                    return new InputPin<T>()
-                    {
-                        getter = getter,
-                        setter = (x, v) =>
-                        {
-                            if (initial is null)
-                                initial = getter(x);
-                            setter(x, v, initial);
-                        }
-                    };
-                }
-            });
-            return this;
+            if (a is null)
+                return b is null;
+            if (b is null)
+                return false;
+            return a.SequenceEqual(b);
         }
 
         public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, IList<T>> getter)
         {
             return AddInput<IReadOnlyList<T>>(name, 
                 getter: instance => (IReadOnlyList<T>)getter(instance),
+                equals: SequenceEqual,
                 setter: (x, v) =>
                 {
                     var currentItems = getter(x);
+                    currentItems.Clear();
+
                     var newItems = v?.Where(i => i != null);
-                    if (newItems != null && !currentItems.SequenceEqual(newItems))
+                    if (newItems != null)
                     {
-                        currentItems.Clear();
                         foreach (var item in newItems)
                             currentItems.Add(item);
                     }
@@ -281,13 +245,12 @@ namespace VL.Stride
         public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, T[]> getter, Action<TInstance, T[]> setter)
         {
             return AddInput<IReadOnlyList<T>>(name,
-                getter: instance => (IReadOnlyList<T>)getter(instance),
+                getter: getter,
+                equals: SequenceEqual,
                 setter: (x, v) =>
                 {
-                    var currentItems = getter(x);
                     var newItems = v?.Where(i => i != null);
-                    if (newItems != null && currentItems != null && !currentItems.SequenceEqual(newItems))
-                        setter(x, v.ToArray());
+                    setter(x, newItems?.ToArray());
                 });
         }
 
@@ -297,10 +260,29 @@ namespace VL.Stride
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
-                CreatePin = () => new Pin<T>()
-                {
-                    getter = getter
-                }
+                CreatePin = (node, instance) => new OutputPin<T>(node, instance, getter)
+            });
+            return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<TInstance, T> getter)
+        {
+            outputs.Add(new CustomPinDesc()
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                CreatePin = (node, instance) => new CachedOutputPin<T>(node, instance, getter)
+            });
+            return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, TInstance, T> getter)
+        {
+            outputs.Add(new CustomPinDesc()
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                CreatePin = (node, instance) => new CachedOutputPin<T>(node, instance, x => getter(node.Context, instance))
             });
             return this;
         }
@@ -313,98 +295,146 @@ namespace VL.Stride
 
             public object DefaultValue { get; set; }
 
-            public Func<Pin> CreatePin { get; set; }
+            public Func<Node, TInstance, Pin> CreatePin { get; set; }
         }
 
         abstract class Pin : IVLPin
         {
-            public bool IsChanged;
+            public readonly Node Node;
+            public TInstance Instance;
 
-            public abstract object Value { get; set; }
+            public Pin(Node node, TInstance instance)
+            {
+                Node = node;
+                Instance = instance;
+            }
 
-            public abstract void WriteValueTo(TInstance instance);
-            public abstract object ReadValueFrom(TInstance instance);
+            public abstract object BoxedValue { get; set; }
+
+            // Update the pin by copying the underlying value to the new instance
+            public virtual void Update(TInstance instance)
+            {
+                Instance = instance;
+            }
+
+            object IVLPin.Value
+            {
+                get => BoxedValue;
+                set => BoxedValue = value;
+            }
         }
 
-        class Pin<T> : Pin, IVLPin
+        abstract class Pin<T> : Pin, IVLPin
         {
             public Func<TInstance, T> getter;
             public Action<TInstance, T> setter;
-            public T value;
 
-            public override object Value 
+            public Pin(Node node, TInstance instance) : base(node, instance)
+            {
+            }
+
+            public override sealed object BoxedValue 
             { 
-                get => this.value;
-                set => this.value = (T)value;
+                get => Value; 
+                set => Value = (T)value; 
             }
 
-            public override void WriteValueTo(TInstance instance)
-            {
-                setter(instance, value);
-            }
-
-            public override object ReadValueFrom(TInstance instance)
-            {
-                return getter(instance);
-            }
+            public abstract T Value { get; set; }
         }
 
         class InputPin<T> : Pin<T>, IVLPin
         {
-            static readonly EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
+            public readonly Func<T, T, bool> equals;
 
-            public override object Value
+            public InputPin(Node node, TInstance instance, Func<TInstance, T> getter, Action<TInstance, T> setter, T initialValue, Func<T, T, bool> equals = default) 
+                : base(node, instance)
             {
-                get => base.Value;
+                this.equals = equals ?? EqualityComparer<T>.Default.Equals;
+                this.getter = getter;
+                this.setter = setter;
+                this.InitialValue = initialValue;
+                setter(instance, initialValue);
+            }
+
+            public T InitialValue { get; }
+
+            public override T Value
+            {
+                get => getter(Instance);
                 set
                 {
-                    var valueT = (T)value;
-                    if (!equalityComparer.Equals(this.value, valueT))
+                    if (!equals(value, lastValue))
                     {
-                        this.value = valueT;
-                        IsChanged = true;
+                        lastValue = value;
+
+                        // Normalize the value first
+                        if (value is null)
+                            value = InitialValue;
+
+                        setter(Instance, value);
+                        Node.needsUpdate = true;
                     }
                 }
             }
+            T lastValue;
 
-            public override void WriteValueTo(TInstance instance)
+            public override void Update(TInstance instance)
             {
-                base.WriteValueTo(instance);
-                IsChanged = false;
+                var currentValue = getter(Instance);
+                base.Update(instance);
+                setter(instance, currentValue);
             }
         }
 
-        // Hack to workaround equality bug (https://github.com/stride3d/stride/issues/735)
-        class InputPinUsingReferenceEquality<T> : Pin<T>, IVLPin
-            where T : class
+        class OutputPin<T> : Pin<T>
         {
-            static readonly IEqualityComparer<T> equalityComparer = ReferenceEqualityComparer<T>.Default;
-
-            public override object Value
+            public OutputPin(Node node, TInstance instance, Func<TInstance, T> getter) 
+                : base(node, instance)
             {
-                get => base.Value;
-                set
+                this.getter = getter;
+            }
+
+            public override T Value 
+            {
+                get
                 {
-                    var valueT = (T)value;
-                    if (!equalityComparer.Equals(this.value, valueT))
-                    {
-                        this.value = valueT;
-                        IsChanged = true;
-                    }
+                    if (Node.needsUpdate)
+                        Node.Update();
+                    return getter(Instance);
                 }
+                set => throw new InvalidOperationException(); 
+            }
+        }
+
+        class CachedOutputPin<T> : OutputPin<T>
+        {
+            public CachedOutputPin(Node node, TInstance instance, Func<TInstance, T> getter)
+                : base(node, instance, getter)
+            {
+                cachedValue = getter(instance);
             }
 
-            public override void WriteValueTo(TInstance instance)
+            public override T Value
             {
-                base.WriteValueTo(instance);
-                IsChanged = false;
+                get
+                {
+                    if (Node.needsUpdate)
+                    {
+                        Node.Update();
+                        cachedValue = getter(Instance);
+                    }
+                    return cachedValue;
+                }
+                set => throw new InvalidOperationException();
             }
+            T cachedValue;
         }
 
         class Node : VLObject, IVLNode
         {
             public Action updateAction;
             public Action disposeAction;
+            public bool needsUpdate;
 
             public Node(NodeContext nodeContext) : base(nodeContext)
             {

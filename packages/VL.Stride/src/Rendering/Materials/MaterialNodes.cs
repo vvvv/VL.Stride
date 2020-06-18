@@ -97,7 +97,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(nameof(GroupedMaterialAttributes.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
                 .AddInput(nameof(GroupedMaterialAttributes.Shading), x => x.Shading, (x, v) => x.Shading = v)
                 .AddInput(nameof(GroupedMaterialAttributes.Misc), x => x.Misc, (x, v) => x.Misc = v)
-                .AddOutput("Output", x => x.ToMaterialAttributes());
+                .AddCachedOutput("Output", x => x.ToMaterialAttributes());
 
             yield return nodeFactory.NewNode<MaterialDescriptor>(nameof(MaterialDescriptor), materialCategory, fragmented: true)
                 .AddInput(nameof(MaterialDescriptor.Attributes), x => x.Attributes, (x, v) => x.Attributes = v)
@@ -109,9 +109,16 @@ namespace VL.Stride.Rendering.Materials
                 category: materialCategory, 
                 copyOnWrite: false,
                 hasStateOutput: false,
-                fragmented: true,
-                update: (nc, x) => x.Parameters?.Set(x.Accessor, x.Value))
-                .AddInput(nameof(ComputeColor.Value), x => x.Value, (x, v) => x.Value = v, Color4.White)
+                fragmented: true)
+                .AddInput(
+                    name: nameof(ComputeColor.Value),
+                    getter: x => x.Value,
+                    setter: (x, v) =>
+                    {
+                        x.Value = v;
+                        x.Parameters?.Set(x.Accessor, v);
+                    },
+                    defaultValue: Color4.White)
                 .AddOutput<ComputeColor>("Output", x => x);
 
             yield return nodeFactory.NewNode<LiveComputeFloat>(
@@ -119,9 +126,16 @@ namespace VL.Stride.Rendering.Materials
                 category: materialCategory, 
                 copyOnWrite: false,
                 hasStateOutput: false,
-                fragmented: true,
-                update: (nc, x) => x.Parameters?.Set(x.Accessor, x.Value))
-                .AddInput(nameof(ComputeFloat.Value), x => x.Value, (x, v) => x.Value = v, 1f)
+                fragmented: true)
+                .AddInput(
+                    name: nameof(ComputeFloat.Value),
+                    getter: x => x.Value,
+                    setter: (x, v) =>
+                    {
+                        x.Value = v;
+                        x.Parameters?.Set(x.Accessor, x.Value);
+                    },
+                    defaultValue: 1f)
                 .AddOutput<ComputeFloat>("Output", x => x);
 
             yield return NewMaterialNode<ComputeTextureColor>(nodeFactory, nameof(ComputeTextureColor), materialCategory);

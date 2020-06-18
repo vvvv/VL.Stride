@@ -54,8 +54,6 @@ namespace VL.Stride.Rendering.Lights
             /// <value>The specular cubemap size.</value>
             /// <userdoc>The cubemap size used for specular lighting. Larger cubemap have more detail.</userdoc>
             public int SpecularCubeMapSize { get; set; }
-
-            internal Skybox GeneratedSkybox;
         }
 
         class SkyboxGeneratorContext : ShaderGeneratorContext

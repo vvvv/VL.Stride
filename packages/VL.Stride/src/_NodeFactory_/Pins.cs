@@ -24,7 +24,7 @@ namespace VL.Stride
 
         public abstract object DefaultValue { get; }
 
-        public abstract Pin CreatePin();
+        public abstract Pin CreatePin(StrideNode node);
     }
 
     abstract class PinDescription<T> : PinDescription
@@ -58,7 +58,7 @@ namespace VL.Stride
             }
         }
 
-        public override Pin CreatePin() => new ClassPin<T>(property, defaultValue);
+        public override Pin CreatePin(StrideNode node) => new ClassPin<T>(node, property, defaultValue);
     }
 
     sealed class StructPinDec<T> : PinDescription<T> 
@@ -71,7 +71,7 @@ namespace VL.Stride
         // Called at compile time, value must be serializable
         public override object DefaultValue => defaultValue;
 
-        public override Pin CreatePin() => new StructPin<T>(property, defaultValue);
+        public override Pin CreatePin(StrideNode node) => new StructPin<T>(node, property, defaultValue);
     }
 
     sealed class ListPinDesc<TList, TElment> : PinDescription<TList>
@@ -83,12 +83,17 @@ namespace VL.Stride
 
         public override object DefaultValue => null;
 
-        public override Pin CreatePin() => new ListPin<TList, TElment>(property, defaultValue);
+        public override Pin CreatePin(StrideNode node) => new ListPin<TList, TElment>(node, property, defaultValue);
     }
 
     abstract class Pin : IVLPin
     {
-        public bool IsChanged;
+        protected readonly StrideNode node;
+
+        public Pin(StrideNode node)
+        {
+            this.node = node;
+        }
 
         public abstract object Value { get; set; }
 
@@ -103,7 +108,7 @@ namespace VL.Stride
         protected readonly bool isReadOnly;
         protected T value;
 
-        public Pin(MemberInfo member, T value)
+        public Pin(StrideNode node, MemberInfo member, T value) : base(node)
         {
             this.member = member;
             this.value = value;
@@ -120,7 +125,7 @@ namespace VL.Stride
                 if (!ValueEquals(valueT, this.value))
                 {
                     this.value = valueT;
-                    IsChanged = true;
+                    node.needsUpdate = true;
                 }
             }
         }
@@ -128,7 +133,6 @@ namespace VL.Stride
         public override sealed void ApplyValue(object feature)
         {
             ApplyCore(feature, value);
-            IsChanged = false;
         }
 
         protected virtual void ApplyCore(object feature, T value)
@@ -162,7 +166,7 @@ namespace VL.Stride
     {
         readonly T defaultValue;
 
-        public ClassPin(MemberInfo property, T value) : base(property, value)
+        public ClassPin(StrideNode node, MemberInfo property, T value) : base(node, property, value)
         {
             defaultValue = value;
         }
@@ -176,7 +180,7 @@ namespace VL.Stride
     sealed class StructPin<T> : Pin<T>
         where T : struct
     {
-        public StructPin(MemberInfo property, T value) : base(property, value)
+        public StructPin(StrideNode node, MemberInfo property, T value) : base(node, property, value)
         {
         }
 
@@ -191,7 +195,7 @@ namespace VL.Stride
     {
         readonly T defaultValue;
 
-        public ListPin(MemberInfo property, T value) : base(property, value)
+        public ListPin(StrideNode node, MemberInfo property, T value) : base(node, property, value)
         {
             defaultValue = value;
         }

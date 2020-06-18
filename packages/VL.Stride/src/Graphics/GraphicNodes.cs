@@ -18,7 +18,6 @@ namespace VL.Stride.Graphics
                     var deviceHandle = nodeContext.GetDeviceHandle();
                     return (new MutablePipelineState(deviceHandle.Resource), () => deviceHandle.Dispose());
                 },
-                update: (nc, x) => x.Update(),
                 name: "PipelineState",
                 category: graphicsCategory,
                 copyOnWrite: false,
@@ -32,7 +31,11 @@ namespace VL.Stride.Graphics
                 .AddListInput(nameof(PipelineStateDescription.InputElements), x => x.State.InputElements, (x, v) => x.State.InputElements = v)
                 .AddInput(nameof(PipelineStateDescription.PrimitiveType), x => x.State.PrimitiveType, (x, v) => x.State.PrimitiveType = v)
                 .AddInput(nameof(PipelineStateDescription.Output), x => x.State.Output, (x, v) => x.State.Output = v)
-                .AddOutput("Output", x => x.CurrentState);
+                .AddCachedOutput("Output", x =>
+                {
+                    x.Update();
+                    return x.CurrentState;
+                });
 
             yield return factory.NewNode<InputElementDescription>(category: graphicsCategory, copyOnWrite: false)
                 .AddInput(nameof(InputElementDescription.SemanticName), x => x.SemanticName, (x, v) => x.SemanticName = v)

@@ -39,14 +39,13 @@ namespace VL.Stride.Rendering.Lights
 
             yield return NewShadowNode<LightDirectionalShadowMap>(factory, lightsCategory)
                 .AddInput(nameof(LightDirectionalShadowMap.CascadeCount), x => x.CascadeCount, (x, v) => x.CascadeCount = v, LightShadowMapCascadeCount.FourCascades)
-                .AddInputWithFallback(nameof(LightDirectionalShadowMap.DepthRange), x => x.DepthRange, (x, v, f) =>
+                .AddInput(nameof(LightDirectionalShadowMap.DepthRange), x => x.DepthRange, (x, v) =>
                 {
                     var s = x.DepthRange;
-                    var value = v ?? f;
-                    s.IsAutomatic = value.IsAutomatic;
-                    s.ManualMinDistance = value.ManualMinDistance;
-                    s.ManualMaxDistance = value.ManualMaxDistance;
-                    s.IsBlendingCascades = value.IsBlendingCascades;
+                    s.IsAutomatic = v.IsAutomatic;
+                    s.ManualMinDistance = v.ManualMinDistance;
+                    s.ManualMaxDistance = v.ManualMaxDistance;
+                    s.IsBlendingCascades = v.IsBlendingCascades;
                 })
                 .AddInput(nameof(LightDirectionalShadowMap.PartitionMode), x => x.PartitionMode, (x, v) => x.PartitionMode = v)
                 .AddInput(nameof(LightDirectionalShadowMap.StabilizationMode), x => x.StabilizationMode, (x, v) => x.StabilizationMode = v, LightShadowMapStabilizationMode.ProjectionSnapping)
@@ -63,7 +62,7 @@ namespace VL.Stride.Rendering.Lights
                 .AddEnabledPin();
 
             yield return factory.NewNode<LightShadowMapFilterTypePcf>(category: lightsCategory, copyOnWrite: false)
-                .AddInput(nameof(LightShadowMapFilterTypePcf.FilterSize), x => x.FilterSize, (x, v) => x.FilterSize = v);
+                .AddInput(nameof(LightShadowMapFilterTypePcf.FilterSize), x => x.FilterSize, (x, v) => x.FilterSize = v, LightShadowMapFilterTypePcfSize.Filter5x5);
 
             yield return factory.NewNode<LightDirectionalShadowMap.DepthRangeParameters>(category: lightsCategory)
                 .AddInput(nameof(LightDirectionalShadowMap.DepthRangeParameters.IsAutomatic), x => x.IsAutomatic, (x, v) => x.IsAutomatic = v, true)
@@ -98,31 +97,33 @@ namespace VL.Stride.Rendering.Lights
             where TLight : IColorLight, IDirectLight, new()
         {
             return NewColorLightNode<TLight>(factory, category)
-                .AddInput(nameof(IDirectLight.Shadow), x => x.Shadow, setter: (x, v) =>
-                {
-                    var s = x.Shadow;
-                    if (v != null)
+                .AddInput(
+                    name: nameof(IDirectLight.Shadow),
+                    getter: x => x.Shadow, 
+                    setter: (x, v) =>
                     {
-                        s.Enabled = v.Enabled;
-                        s.Filter = v.Filter;
-                        s.Size = v.Size;
-                        s.BiasParameters.DepthBias = v.BiasParameters.DepthBias;
-                        s.BiasParameters.NormalOffsetScale = v.BiasParameters.NormalOffsetScale;
-                        s.Debug = v.Debug;
-                        s.Filter = v.Filter;
-                        s.Filter = v.Filter;
-                    }
-                    else
-                    {
-                        s.Enabled = false;
-                    }
-                });
+                        var s = x.Shadow;
+                        if (v != null)
+                        {
+                            s.Enabled = v.Enabled;
+                            s.Filter = v.Filter;
+                            s.Size = v.Size;
+                            s.BiasParameters.DepthBias = v.BiasParameters.DepthBias;
+                            s.BiasParameters.NormalOffsetScale = v.BiasParameters.NormalOffsetScale;
+                            s.Debug = v.Debug;
+                        }
+                        else
+                        {
+                            s.Enabled = false;
+                        }
+                    },
+                    defaultValue: null /* null disables the shadow */);
         }
 
         static CustomNodeDesc<TShadow> NewShadowNode<TShadow>(IVLNodeDescriptionFactory factory, string category)
             where TShadow : LightShadowMap, new()
         {
-            return factory.NewNode<TShadow>(category: category, copyOnWrite: false, fragmented: true);
+            return factory.NewNode<TShadow>(category: category, copyOnWrite: true /* In order to detect changes */, fragmented: true);
         }
 
         static CustomNodeDesc<TShadow> AddDefaultPins<TShadow>(this CustomNodeDesc<TShadow> node)
@@ -150,19 +151,18 @@ namespace VL.Stride.Rendering.Lights
                 category: category,
                 copyOnWrite: false,
                 hasStateOutput: false,
-                fragmented: true,
-                update: (nodeContext, description) =>
-                {
-                    using (var context = new SkyboxGeneratorContext(nodeContext))
-                    {
-                        description.GeneratedSkybox = GenerateSkybox(description, context);
-                    }
-                })
+                fragmented: true)
                 .AddInput(nameof(SkyboxDescription.CubeMap), x => x.CubeMap, (x, v) => x.CubeMap = v)
                 .AddInput(nameof(SkyboxDescription.IsSpecularOnly), x => x.IsSpecularOnly, (x, v) => x.IsSpecularOnly = v)
                 .AddInput(nameof(SkyboxDescription.DiffuseSHOrder), x => x.DiffuseSHOrder, (x, v) => x.DiffuseSHOrder = v, SkyboxPreFilteringDiffuseOrder.Order3)
                 .AddInput(nameof(SkyboxDescription.SpecularCubeMapSize), x => x.SpecularCubeMapSize, (x, v) => x.SpecularCubeMapSize = v, 256)
-                .AddOutput("Output", x => x.GeneratedSkybox);
+                .AddCachedOutput("Output", (nodeContext, x) =>
+                {
+                    using (var context = new SkyboxGeneratorContext(nodeContext))
+                    {
+                        return GenerateSkybox(x, context);
+                    }
+                });
         }
     }
 }

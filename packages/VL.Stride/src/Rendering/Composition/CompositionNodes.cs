@@ -80,7 +80,7 @@ namespace VL.Stride.Rendering.Composition
 
             var cameraComponent = new CameraComponent() { ViewMatrix = Matrix.Translation(0, 0, -2), UseCustomViewMatrix = true };
             yield return nodeFactory.NewNode<SceneExternalCameraRenderer>(name: "CameraRenderer", category: compositionCategory, copyOnWrite: false)
-                .AddInputWithFallback("Camera", x => x.ExternalCamera ?? cameraComponent, (x, v, initial) => x.ExternalCamera = v ?? initial)
+                .AddInput("Camera", x => x.ExternalCamera ?? cameraComponent, (x, v) => x.ExternalCamera = v)
                 .AddInput(nameof(SceneExternalCameraRenderer.Child), x => x.Child, (x, v) => x.Child = v);
 
             yield return nodeFactory.NewNode<RenderTextureSceneRenderer>(category: compositionCategory, copyOnWrite: false)
@@ -143,7 +143,7 @@ namespace VL.Stride.Rendering.Composition
             yield return new StrideNodeDesc<Dither>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
 
             yield return nodeFactory.NewNode<ToneMap>(category: colorTransformsCategory, copyOnWrite: false)
-                .AddInputWithFallback(nameof(ToneMap.Operator), x => x.Operator, (x, v, initial) =>
+                .AddInput(nameof(ToneMap.Operator), x => x.Operator, (x, v) =>
                 {
                     if (v != null && v != x.Operator && x.Group != null)
                     {
@@ -155,10 +155,7 @@ namespace VL.Stride.Rendering.Composition
                         var descriptorReflectionField = typeof(EffectInstance).GetField("descriptorReflection", BindingFlags.Instance | BindingFlags.NonPublic);
                         descriptorReflectionField.SetValue(transformGroupEffect.EffectInstance, null);
                     }
-                    if (v != null)
-                        x.Operator = v;
-                    else
-                        x.Operator = initial;
+                    x.Operator = v;
                 })
                 .AddInput(nameof(ToneMap.AutoKeyValue), x => x.AutoKeyValue, (x, v) => x.AutoKeyValue = v, true)
                 .AddInput(nameof(ToneMap.KeyValue), x => x.KeyValue, (x, v) => x.KeyValue = v, 0.18f)
@@ -279,7 +276,7 @@ namespace VL.Stride.Rendering.Composition
                         {
                             s.Enabled = false;
                         }
-                    })
+                    }, defaultValue: null /* null is used to disable */)
                     .AddInput(nameof(PostProcessingEffects.LocalReflections), x => x.LocalReflections, (x, v) =>
                     {
                         var s = x.LocalReflections;
@@ -305,7 +302,7 @@ namespace VL.Stride.Rendering.Composition
                         {
                             s.Enabled = false;
                         }
-                    })
+                    }, defaultValue: null /* null is used to disable */)
                     .AddInput(nameof(PostProcessingEffects.DepthOfField), x => x.DepthOfField, (x, v) =>
                     {
                         var s = x.DepthOfField;
@@ -322,7 +319,7 @@ namespace VL.Stride.Rendering.Composition
                         {
                             s.Enabled = false;
                         }
-                    })
+                    }, defaultValue: null /* null is used to disable */)
                     .AddInput(nameof(PostProcessingEffects.BrightFilter), x => x.BrightFilter, (x, v) =>
                     {
                         var s = x.BrightFilter;
@@ -337,7 +334,7 @@ namespace VL.Stride.Rendering.Composition
                         {
                             s.Enabled = false;
                         }
-                    })
+                    }, defaultValue: null /* null is used to disable */)
                     .AddInput(nameof(PostProcessingEffects.Bloom), x => x.Bloom, (x, v) =>
                     {
                         var s = x.Bloom;
@@ -357,7 +354,7 @@ namespace VL.Stride.Rendering.Composition
                         {
                             s.Enabled = false;
                         }
-                    })
+                    }, defaultValue: null /* null is used to disable */)
                     .AddInput(nameof(PostProcessingEffects.LightStreak), x => x.LightStreak, (x, v) =>
                     {
                         var s = x.LightStreak;
@@ -375,7 +372,7 @@ namespace VL.Stride.Rendering.Composition
                         {
                             s.Enabled = false;
                         }
-                    })
+                    }, defaultValue: null /* null is used to disable */)
                     .AddInput(nameof(PostProcessingEffects.LensFlare), x => x.LensFlare, (x, v) =>
                     {
                         var s = x.LensFlare;
@@ -390,7 +387,7 @@ namespace VL.Stride.Rendering.Composition
                         {
                             s.Enabled = false;
                         }
-                    })
+                    }, defaultValue: null /* null is used to disable */)
                     .AddListInput(nameof(PostProcessingEffects.ColorTransforms), x => x.ColorTransforms.Transforms)
                     .AddInput(nameof(PostProcessingEffects.Antialiasing), x => x.Antialiasing, (x, v) => x.Antialiasing = v);
             }

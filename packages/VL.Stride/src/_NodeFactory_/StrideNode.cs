@@ -1,15 +1,26 @@
-﻿using Stride.Rendering.Materials;
-using System;
+﻿using System;
 using System.Linq;
 using VL.Core;
 
 namespace VL.Stride
 {
-    class StrideNode<TInstance> : VLObject, IVLNode
+    class StrideNode : VLObject
+    {
+        public bool needsUpdate;
+
+        public StrideNode(NodeContext nodeContext)
+            : base(nodeContext)
+        {
+
+        }
+    }
+
+    class StrideNode<TInstance> : StrideNode, IVLNode
         where TInstance : new()
     {
         readonly Pin[] inputs;
         readonly StrideNodeDesc<TInstance> nodeDescription;
+        readonly StatePin output;
 
         public StrideNode(NodeContext nodeContext, StrideNodeDesc<TInstance> description)
             : base(nodeContext)
@@ -17,8 +28,8 @@ namespace VL.Stride
             Context = nodeContext;
             nodeDescription = description;
 
-            inputs = description.Inputs.OfType<PinDescription>().Select(d => d.CreatePin()).ToArray();
-            Outputs = new IVLPin[] { new StatePin() { Value = new TInstance() } };
+            inputs = description.Inputs.OfType<PinDescription>().Select(d => d.CreatePin(this)).ToArray();
+            Outputs = new IVLPin[] { output = new StatePin(this, new TInstance()) };
         }
 
         public IVLNodeDescription NodeDescription => nodeDescription;
@@ -29,25 +40,27 @@ namespace VL.Stride
 
         public void Update()
         {
-            if (inputs.Any(p => p.IsChanged))
+            if (needsUpdate)
             {
-                TInstance feature;
+                needsUpdate = false;
+
+                TInstance instance;
                 if (nodeDescription.CopyOnWrite)
                 {
                     // TODO: Causes crash in pipeline
                     //if (Outputs[0].Value is IDisposable disposable)
                     //    disposable.Dispose();
-                    feature = new TInstance();
+                    instance = new TInstance();
                 }
                 else
                 {
-                    feature = (TInstance)Outputs[0].Value;
+                    instance = output.value;
                 }
 
                 foreach (var pin in inputs)
-                    pin.ApplyValue(feature);
+                    pin.ApplyValue(instance);
 
-                Outputs[0].Value = feature;
+                output.value = instance;
             }
         }
 
@@ -59,7 +72,27 @@ namespace VL.Stride
 
         class StatePin : IVLPin
         {
-            public object Value { get; set; }
+            readonly StrideNode<TInstance> node;
+            readonly bool isFragmented;
+
+            public StatePin(StrideNode<TInstance> node, TInstance instance)
+            {
+                this.node = node;
+                this.isFragmented = node.nodeDescription.Fragmented;
+                this.value = instance;
+            }
+
+            public object Value 
+            { 
+                get
+                {
+                    if (isFragmented && node.needsUpdate)
+                        node.Update();
+                    return value;
+                }
+                set => this.value = (TInstance)value;
+            }
+            public TInstance value;
         }
     }
 }
