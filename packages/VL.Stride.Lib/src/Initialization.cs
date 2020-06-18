@@ -48,7 +48,7 @@ namespace VL.Stride.Lib
                                 var assetBuildService = new AssetBuildService();
                                 game.Services.AddService(assetBuildService);
 
-                                var gameStartedHandler = default(System.EventHandler);
+                                var gameStartedHandler = default(EventHandler);
                                 gameStartedHandler = (s, e) =>
                                 {
                                     game.Script.Add(assetBuildService);
@@ -74,7 +74,7 @@ namespace VL.Stride.Lib
                                 game.SceneSystem.GraphicsCompositor = null;
 
                                 var frameClock = factory.CreateService<IFrameClock>(nodeContext);
-                                clockSubscription = frameClock.GetTicks().Subscribe(ftm =>
+                                clockSubscription = frameClock.GetFrameFinished().Subscribe(ffm =>
                                 {
                                     try
                                     {
