@@ -45,12 +45,12 @@ namespace VL.Stride
         }
 
         // Graphics context
-        public static IResourceProvider<Resource<GraphicsContext>> GetGraphicsContextProvider(this NodeContext nodeContext)
+        public static IResourceProvider<GraphicsContext> GetGraphicsContextProvider(this NodeContext nodeContext)
         {
-            return nodeContext.Factory.CreateService<IResourceProvider<Resource<GraphicsContext>>>(nodeContext);
+            return nodeContext.Factory.CreateService<IResourceProvider<GraphicsContext>>(nodeContext);
         }
 
-        public static IResourceHandle<Resource<GraphicsContext>> GetGraphicsContextHandle(this NodeContext nodeContext)
+        public static IResourceHandle<GraphicsContext> GetGraphicsContextHandle(this NodeContext nodeContext)
         {
             return nodeContext.GetGraphicsContextProvider().GetHandle();
         }

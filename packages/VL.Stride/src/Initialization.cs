@@ -21,10 +21,10 @@ namespace VL.Stride.Core
             });
 
             // Graphics context
-            factory.RegisterService<NodeContext, IResourceProvider<Resource<GraphicsContext>>>(nodeContext =>
+            factory.RegisterService<NodeContext, IResourceProvider<GraphicsContext>>(nodeContext =>
             {
                 var gameProvider = nodeContext.GetGameProvider();
-                return gameProvider.Bind(game => ResourceProvider.Return(game.GraphicsContext.ToResource()));
+                return gameProvider.Bind(game => ResourceProvider.Return(game.GraphicsContext));
             });
         }
     }
