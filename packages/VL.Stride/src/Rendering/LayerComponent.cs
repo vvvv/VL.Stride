@@ -4,6 +4,13 @@ using Stride.Engine.Design;
 
 namespace VL.Stride.Rendering
 {
+    public enum LayerRenderStage
+    {
+        BeforeScene,
+        InScene,
+        AfterScene
+    }
+
     /// <summary>
     /// Layer components get picked up by the <see cref="LayerProcessor"/> for low level rendering.
     /// </summary>
@@ -16,6 +23,11 @@ namespace VL.Stride.Rendering
         /// i.e. not for each eye in a VR rendering setup.
         /// </summary>
         public bool SingleCallPerFrame { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating on which render stage this layer should be rendered.
+        /// </summary>
+        public LayerRenderStage RenderStage { get; set; } = LayerRenderStage.InScene;
 
         public LayerComponent()
         {

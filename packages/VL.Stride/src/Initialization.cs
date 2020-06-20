@@ -13,10 +13,18 @@ namespace VL.Stride.Core
         {
             Serialization.RegisterSerializers(factory);
 
+            // Graphics device
             factory.RegisterService<NodeContext, IResourceProvider<GraphicsDevice>>(nodeContext =>
             {
                 var gameProvider = nodeContext.GetGameProvider();
                 return gameProvider.Bind(game => ResourceProvider.Return(game.GraphicsDevice));
+            });
+
+            // Graphics context
+            factory.RegisterService<NodeContext, IResourceProvider<Resource<GraphicsContext>>>(nodeContext =>
+            {
+                var gameProvider = nodeContext.GetGameProvider();
+                return gameProvider.Bind(game => ResourceProvider.Return(game.GraphicsContext.ToResource()));
             });
         }
     }

@@ -5,57 +5,96 @@ using Stride.Rendering;
 namespace VL.Stride.Rendering
 {
     /// <summary>
-    /// The layer processor installs for each <see cref="LayerComponent"/> a <see cref="RenderLayer"/> object in its visibility group.
+    /// The layer processor installs for each <see cref="LayerComponent"/> a <see cref="RenderInScene"/> object in its visibility group.
     /// </summary>
-    public class LayerProcessor : EntityProcessor<LayerComponent, RenderLayer>, IEntityComponentRenderProcessor
+    public class LayerProcessor : EntityProcessor<LayerComponent, LayerProcessor.LayerData>, IEntityComponentRenderProcessor
     {
-        public LayerProcessor()
+        public class LayerData
         {
-
+            public LayerRenderStage RenderStage;
+            public RenderLayerBase RenderLayer;
         }
 
         public VisibilityGroup VisibilityGroup { get; set; }
 
-        protected override RenderLayer GenerateComponentData([NotNull] Entity entity, [NotNull] LayerComponent component)
+        protected override LayerData GenerateComponentData([NotNull] Entity entity, [NotNull] LayerComponent component)
         {
-            return new RenderLayer();
+            var data = new LayerData() { RenderStage = component.RenderStage };
+            return data;
+        }
+
+        private static RenderLayerBase CreateRenderObject(LayerRenderStage renderStage)
+        {
+            switch (renderStage)
+            {
+                case LayerRenderStage.BeforeScene:
+                    return new RenderBeforeScene();
+                case LayerRenderStage.InScene:
+                    return new RenderInScene();
+                case LayerRenderStage.AfterScene:
+                    return new RenderAfterScene();
+                default:
+                    return new RenderInScene();
+            }
+        }
+
+        protected override bool IsAssociatedDataValid([NotNull] Entity entity, [NotNull] LayerComponent component, [NotNull] LayerData associatedData)
+        {
+            return associatedData.RenderStage == component.RenderStage;
         }
 
         public override void Draw(RenderContext context)
         {
-            // Drawing for a processor usually means to add/remove components from the visibility group.
-            // But since we're talking about layers here we have no idea whether or not their rendering will be visible or not so we just add/remove them
-            // when they're created. See below.
-
-
-            // Go thru components of this entity
+            // Go thru components
             foreach (var entityKeyPair in ComponentDatas)
             {
-                var myEntityComponent = entityKeyPair.Key;
-                var myRenderObject = entityKeyPair.Value;
-                myRenderObject.Enabled = myEntityComponent.Enabled;
-                if (myEntityComponent.Enabled)
+                var component = entityKeyPair.Key;
+                var layerData = entityKeyPair.Value;
+
+                // Component was just added
+                if (layerData.RenderLayer == null)
                 {
-                    //update world matrix befor rendering
-                    myEntityComponent.Layer?.SetEntityWorldMatrix(myEntityComponent.Entity.Transform.WorldMatrix);
-                    myRenderObject.SingleCallPerFrame = myEntityComponent.SingleCallPerFrame;
-                    myRenderObject.Layer = myEntityComponent.Layer;
+                    CreateAndAddRenderObject(layerData);
+                }
+
+                // Stage has changed
+                if (layerData.RenderStage != component.RenderStage)
+                {
+                    VisibilityGroup.RenderObjects.Remove(layerData.RenderLayer);
+                    layerData.RenderStage = component.RenderStage;
+                    CreateAndAddRenderObject(layerData);
+                }
+
+                var layer = layerData.RenderLayer;
+                layer.Enabled = component.Enabled;
+                if (component.Enabled)
+                {
+                    // Update world matrix befor rendering
+                    component.Layer?.SetEntityWorldMatrix(component.Entity.Transform.WorldMatrix);
+                    layer.SingleCallPerFrame = component.SingleCallPerFrame;
+                    layer.Layer = component.Layer;
                 }
             }
 
             base.Draw(context);
-
         }
 
-        protected override void OnEntityComponentAdding(Entity entity, [NotNull] LayerComponent component, [NotNull] RenderLayer data)
+        private void CreateAndAddRenderObject(LayerData layerData)
         {
-            VisibilityGroup.RenderObjects.Add(data);
+            layerData.RenderLayer = CreateRenderObject(layerData.RenderStage);
+            VisibilityGroup.RenderObjects.Add(layerData.RenderLayer);
+        }
+
+        protected override void OnEntityComponentAdding(Entity entity, [NotNull] LayerComponent component, [NotNull] LayerData data)
+        {
             base.OnEntityComponentAdding(entity, component, data);
         }
 
-        protected override void OnEntityComponentRemoved(Entity entity, [NotNull] LayerComponent component, [NotNull] RenderLayer data)
+        protected override void OnEntityComponentRemoved(Entity entity, [NotNull] LayerComponent component, [NotNull] LayerData data)
         {
-            VisibilityGroup.RenderObjects.Remove(data);
+            if (data.RenderLayer != null)
+                VisibilityGroup.RenderObjects.Remove(data.RenderLayer);
+
             base.OnEntityComponentRemoved(entity, component, data);
         }
     }

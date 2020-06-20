@@ -73,6 +73,9 @@ namespace VL.Stride.Rendering.Composition
             yield return nodeFactory.NewNode<DebugRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddListInput(nameof(DebugRenderer.DebugRenderStages), x => x.DebugRenderStages);
 
+            yield return nodeFactory.NewNode<SingleStageRenderer>(category: compositionCategory, copyOnWrite: false)
+                .AddInput(nameof(SingleStageRenderer.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
+
             yield return nodeFactory.NewNode<ForceAspectRatioSceneRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.FixedAspectRatio), x => x.FixedAspectRatio, (x, v) => x.FixedAspectRatio = v)
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.ForceAspectRatio), x => x.ForceAspectRatio, (x, v) => x.ForceAspectRatio = v)
@@ -193,8 +196,14 @@ namespace VL.Stride.Rendering.Composition
             yield return nodeFactory.NewNode<SpriteRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(SpriteRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
-            yield return nodeFactory.NewNode<LayerRenderFeature>(category: renderingCategory)
-                .AddListInput(nameof(LayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
+            yield return nodeFactory.NewNode<BeforeSceneLayerRenderFeature>(category: renderingCategory)
+                .AddListInput(nameof(BeforeSceneLayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
+
+            yield return nodeFactory.NewNode<InSceneLayerRenderFeature>(category: renderingCategory)
+                .AddListInput(nameof(InSceneLayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
+
+            yield return nodeFactory.NewNode<AfterSceneLayerRenderFeature>(category: renderingCategory)
+                .AddListInput(nameof(AfterSceneLayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
             // Sub render features for mesh render feature
             var renderFeaturesCategory = $"{renderingCategory}.RenderFeatures";

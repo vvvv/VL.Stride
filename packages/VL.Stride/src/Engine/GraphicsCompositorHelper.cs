@@ -156,7 +156,7 @@ namespace OffscreenRenderer
                 }
             };
 
-            var vlLayerRenderfeature = new LayerRenderFeature()
+            var vlLayerRenderfeature = new InSceneLayerRenderFeature()
             {
                 RenderStageSelectors =
                 {
