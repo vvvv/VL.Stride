@@ -17,7 +17,6 @@ namespace VL.Stride.Rendering
         private readonly List<ILowLevelAPIRender> layers = new List<ILowLevelAPIRender>();
         private int lastFrameNr;
         private IVLRuntime runtime;
-        public ILowLevelAPIRender TextureFXAutoDrawer;
 
         public BeforeSceneLayerRenderFeature()
         {
@@ -42,7 +41,7 @@ namespace VL.Stride.Rendering
             {
                 // Do not call into VL if not running
                 var renderContext = context.RenderContext;
-                var runtime = this.runtime ??= renderContext.Services.GetService<IVLRuntime>();
+                runtime ??= renderContext.Services.GetService<IVLRuntime>();
                 if (runtime != null && !runtime.IsRunning)
                     return;
 
@@ -69,20 +68,6 @@ namespace VL.Stride.Rendering
                 if (lastFrameNr != currentFrameNr)
                 {
                     lastFrameNr = currentFrameNr;
-
-                    // Render texture fx auto drawer
-                    if (TextureFXAutoDrawer != null)
-                    {
-                        try
-                        {
-                            using (context.PushRenderTargetsAndRestore())
-                                TextureFXAutoDrawer.Draw(Context, context, renderView, renderViewStage, context.CommandList);
-                        }
-                        catch (Exception e)
-                        {
-                            RuntimeGraph.ReportException(e);
-                        }
-                    }
 
                     foreach (var layer in singleCallLayers)
                     {

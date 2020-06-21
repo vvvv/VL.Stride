@@ -43,7 +43,7 @@ namespace VL.Stride.Rendering
             {
                 // Do not call into VL if not running
                 var renderContext = context.RenderContext;
-                var runtime = this.runtime ??= renderContext.Services.GetService<IVLRuntime>();
+                runtime ??= renderContext.Services.GetService<IVLRuntime>();
                 if (runtime != null && !runtime.IsRunning)
                     return;
 

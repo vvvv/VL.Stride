@@ -18,7 +18,6 @@ namespace VL.Stride.Rendering
         private readonly List<ILowLevelAPIRender> layers = new List<ILowLevelAPIRender>();
         private int lastFrameNr;
         private IVLRuntime runtime;
-        public ILowLevelAPIRender Tooltip;
 
         public AfterSceneLayerRenderFeature()
         {
@@ -43,7 +42,7 @@ namespace VL.Stride.Rendering
             {
                 // Do not call into VL if not running
                 var renderContext = context.RenderContext;
-                var runtime = this.runtime ??= renderContext.Services.GetService<IVLRuntime>();
+                runtime ??= renderContext.Services.GetService<IVLRuntime>();
                 if (runtime != null && !runtime.IsRunning)
                     return;
 
@@ -75,20 +74,6 @@ namespace VL.Stride.Rendering
                         try
                         {
                             layer?.Draw(Context, context, renderView, renderViewStage, context.CommandList);
-                        }
-                        catch (Exception e)
-                        {
-                            RuntimeGraph.ReportException(e);
-                        }
-                    }
-
-                    // Render tooltip
-                    if (Tooltip != null)
-                    {
-                        try
-                        {
-                            using (context.PushRenderTargetsAndRestore())
-                                Tooltip.Draw(Context, context, renderView, renderViewStage, context.CommandList);
                         }
                         catch (Exception e)
                         {
