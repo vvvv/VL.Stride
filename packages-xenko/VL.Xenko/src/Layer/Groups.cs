@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using VL.Lib.Collections;
 using VL.Xenko.Rendering;
 using Xenko.Core.Mathematics;
@@ -64,9 +63,23 @@ namespace VL.Xenko.Layer
     /// </summary>
     public sealed class SpectralEntityGroup : IDisposable
     {
-        readonly EntityChildrenManager manager = new EntityChildrenManager(new Entity());
+        readonly Entity self;
+        readonly EntityChildrenManager manager;
 
-        public Entity Update(Spread<Entity> input, ref Matrix transform, string name = "Spectral Group") => manager.Update(input, ref transform, name);
+        public SpectralEntityGroup()
+        {
+            self = new Entity();
+            self.Transform.UseTRS = false;
+            manager = new EntityChildrenManager(self);
+        }
+
+        public Entity Update(Spread<Entity> input, ref Matrix transform, string name = "Spectral Group")
+        {
+            self.Name = name;
+            self.Transform.LocalMatrix = transform;
+            return manager.Update(input);
+        }
+
         public void Dispose() => manager.Dispose();
     }
 }
