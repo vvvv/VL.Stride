@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using VL.Core;
+using VL.Stride.Rendering.RenderFeatures;
 
 namespace VL.Stride.Rendering.Composition
 {
@@ -66,6 +67,13 @@ namespace VL.Stride.Rendering.Composition
                 .AddInput(nameof(SpriteTransparentRenderStageSelector.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v, RenderGroupMask.All)
                 .AddInput(nameof(SpriteTransparentRenderStageSelector.OpaqueRenderStage), x => x.OpaqueRenderStage, (x, v) => x.OpaqueRenderStage = v)
                 .AddInput(nameof(SpriteTransparentRenderStageSelector.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v);
+
+            yield return nodeFactory.NewNode<EntityDrawerStageSelector>(category: renderStageSelectorCategory)
+                .AddInput(nameof(EntityDrawerStageSelector.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v, RenderGroupMask.All)
+                .AddInput(nameof(EntityDrawerStageSelector.BeforeScene), x => x.BeforeScene, (x, v) => x.BeforeScene = v)
+                .AddInput(nameof(EntityDrawerStageSelector.InSceneOpaque), x => x.InSceneOpaque, (x, v) => x.InSceneOpaque = v)
+                .AddInput(nameof(EntityDrawerStageSelector.InSceneTransparent), x => x.InSceneTransparent, (x, v) => x.InSceneTransparent = v)
+                .AddInput(nameof(EntityDrawerStageSelector.AfterScene), x => x.AfterScene, (x, v) => x.AfterScene = v);
 
             // Renderers
             yield return new StrideNodeDesc<ClearRenderer>(nodeFactory, category: compositionCategory) { CopyOnWrite = false };
@@ -210,6 +218,9 @@ namespace VL.Stride.Rendering.Composition
 
             yield return nodeFactory.NewNode<AfterSceneLayerRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(AfterSceneLayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
+
+            yield return nodeFactory.NewNode<EntityDrawerRenderFeature>(category: renderingCategory)
+                .AddListInput(nameof(EntityDrawerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
             // Sub render features for mesh render feature
             var renderFeaturesCategory = $"{renderingCategory}.RenderFeatures";
