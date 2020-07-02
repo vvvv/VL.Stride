@@ -1,9 +1,9 @@
 ﻿using Stride.Rendering;
 using System.ComponentModel;
 
-namespace VL.Stride.Rendering.RenderFeatures
+namespace VL.Stride.Rendering
 {
-    public class EntityDrawerStageSelector : RenderStageSelector
+    public class EntityRendererStageSelector : RenderStageSelector
     {
         [DefaultValue(RenderGroupMask.All)]
         public RenderGroupMask RenderGroup { get; set; } = RenderGroupMask.All;
@@ -17,7 +17,7 @@ namespace VL.Stride.Rendering.RenderFeatures
         {
             if (((RenderGroupMask)(1U << (int)renderObject.RenderGroup) & RenderGroup) != 0)
             {
-                var renderDrawer = (RenderDrawer)renderObject;
+                var renderDrawer = (RenderRenderer)renderObject;
 
                 var renderStage = SelectRenderStage(renderDrawer);
 
@@ -26,7 +26,7 @@ namespace VL.Stride.Rendering.RenderFeatures
             }
         }
 
-        private RenderStage SelectRenderStage(RenderDrawer renderDrawer)
+        private RenderStage SelectRenderStage(RenderRenderer renderDrawer)
         {
             switch (renderDrawer.RenderStage)
             {
