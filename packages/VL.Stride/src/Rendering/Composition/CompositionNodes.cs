@@ -67,6 +67,13 @@ namespace VL.Stride.Rendering.Composition
                 .AddInput(nameof(SpriteTransparentRenderStageSelector.OpaqueRenderStage), x => x.OpaqueRenderStage, (x, v) => x.OpaqueRenderStage = v)
                 .AddInput(nameof(SpriteTransparentRenderStageSelector.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v);
 
+            yield return nodeFactory.NewNode<EntityRendererStageSelector>(category: renderStageSelectorCategory)
+                .AddInput(nameof(EntityRendererStageSelector.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v, RenderGroupMask.All)
+                .AddInput(nameof(EntityRendererStageSelector.BeforeScene), x => x.BeforeScene, (x, v) => x.BeforeScene = v)
+                .AddInput(nameof(EntityRendererStageSelector.InSceneOpaque), x => x.InSceneOpaque, (x, v) => x.InSceneOpaque = v)
+                .AddInput(nameof(EntityRendererStageSelector.InSceneTransparent), x => x.InSceneTransparent, (x, v) => x.InSceneTransparent = v)
+                .AddInput(nameof(EntityRendererStageSelector.AfterScene), x => x.AfterScene, (x, v) => x.AfterScene = v);
+
             // Renderers
             yield return new StrideNodeDesc<ClearRenderer>(nodeFactory, category: compositionCategory) { CopyOnWrite = false };
 
@@ -210,6 +217,9 @@ namespace VL.Stride.Rendering.Composition
 
             yield return nodeFactory.NewNode<AfterSceneLayerRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(AfterSceneLayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
+
+            yield return nodeFactory.NewNode<EntityRendererRenderFeature>(category: renderingCategory)
+                .AddListInput(nameof(EntityRendererRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
             // Sub render features for mesh render feature
             var renderFeaturesCategory = $"{renderingCategory}.RenderFeatures";
