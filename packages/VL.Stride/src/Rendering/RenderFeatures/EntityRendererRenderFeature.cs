@@ -75,7 +75,7 @@ namespace VL.Stride.Rendering
                     {
                         try
                         {
-                            using (context.PushTagAndRestore(CurrentParentTransformation, renderer.ParentTransformation))
+                            using (context.RenderContext.PushTagAndRestore(CurrentParentTransformation, renderer.ParentTransformation))
                             {
                                 renderer.Renderer?.Draw(context);
                             }
@@ -92,7 +92,7 @@ namespace VL.Stride.Rendering
                 {
                     try
                     {
-                        using (context.PushTagAndRestore(CurrentParentTransformation, renderer.ParentTransformation))
+                        using (context.RenderContext.PushTagAndRestore(CurrentParentTransformation, renderer.ParentTransformation))
                         {
                             renderer.Renderer?.Draw(context);
                         }

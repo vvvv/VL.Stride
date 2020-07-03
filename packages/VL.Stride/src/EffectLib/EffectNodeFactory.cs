@@ -271,7 +271,7 @@ namespace VL.Stride.EffectLib
         IEnumerable<IVLNodeDescription> GetNodeDescriptions(ContentManager contentManager)
         {
             var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.AllDirectories);
-            foreach (var file in files)
+            foreach (var file in files.Concat(GetAdditionalFiles()))
             {
                 var effectName = Path.GetFileNameWithoutExtension(file);
                 if (effectName.EndsWith(suffix))
@@ -280,6 +280,11 @@ namespace VL.Stride.EffectLib
                     yield return new EffectNodeDescription(this, name, effectName);
                 }
             }
+        }
+
+        private IEnumerable<string> GetAdditionalFiles()
+        {
+            return Directory.GetFiles(@"C:\Dev\vvvv\vvvv\public-vl\VL.Stride\packages\VL.Stride\shaders");
         }
 
         void DirectoryWatcher_Modified(object sender, FileEvent e)

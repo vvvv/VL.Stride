@@ -14,7 +14,7 @@ using Stride.Rendering.ComputeEffect;
 
 namespace VL.Stride.EffectLib
 {
-    class ComputeEffectNode : EffectNodeBase, IVLNode, ILowLevelAPIRender
+    class ComputeEffectNode : EffectNodeBase, IVLNode, IGraphicsRendererBase
     {
         DynamicEffectInstance instance;
         GraphicsDevice graphicsDevice;
@@ -125,50 +125,49 @@ namespace VL.Stride.EffectLib
             instance.Dispose();
         }
 
-        void ILowLevelAPIRender.Initialize()
-        {
-        }
-
-        void ILowLevelAPIRender.Collect(RenderContext context)
-        {
-        }
-
-        void ILowLevelAPIRender.Extract()
-        {
-        }
-
-        void ILowLevelAPIRender.Prepare(RenderDrawContext context)
-        {
-        }
-
-        void ILowLevelAPIRender.Draw(RenderContext renderContext, RenderDrawContext drawContext, RenderView renderView, RenderViewStage renderViewStage, CommandList commandList)
+        void IGraphicsRendererBase.Draw(RenderDrawContext context)
         {
             if (!initialized)
                 return;
 
-            using (drawContext.QueryManager.BeginProfile(Color.LightGreen, profilingKey))
+            using (context.QueryManager.BeginProfile(Color.LightGreen, profilingKey))
             {
                 if (!enabledPin.Value || description.HasCompilerErrors)
                     return;
 
                 try
                 {
+                    var renderContext = context.RenderContext;
+                    var renderView = renderContext.RenderView;
+                    var commandList = context.CommandList;
                     var pipelineState = this.pipelineState ?? (this.pipelineState = new MutablePipelineState(renderContext.GraphicsDevice));
                     var permutationCounter = parameters.PermutationCounter;
 
                     // TODO1: PerFrame could be done in Update if we'd have access to frame time
                     // TODO2: This code can be optimized by using parameter accessors and not parameter keys
 
-                    parameters.SetPerFrameParameters(perFrameParams, drawContext.RenderContext);
-                    var world = ComputeWorldMatrix();
-                    parameters.SetPerDrawParameters(perDrawParams, renderView, ref world);
+                    parameters.SetPerFrameParameters(perFrameParams, context.RenderContext);
+
+                    var parentTransformation = renderContext.Tags.Get(EntityRendererRenderFeature.CurrentParentTransformation);
+                    if (worldPin != null)
+                    {
+                        var world = worldPin.Value;
+                        Matrix.Multiply(ref world, ref parentTransformation, out var result);
+                        worldPin.Value = result;
+                        parameters.SetPerDrawParameters(perDrawParams, renderView, ref result);
+                    }
+                    else
+                    {
+                        parameters.SetPerDrawParameters(perDrawParams, renderView, ref parentTransformation);
+                    }
+
                     parameters.SetPerViewParameters(perViewParams, renderView);
 
                     // Set permutation parameters before updating the effect (needed by compiler)
                     parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, threadNumbersPin.Value);
 
                     // Give user chance to override
-                    parameterSetterPin?.Value.Invoke(parameters, renderView, drawContext);
+                    parameterSetterPin?.Value.Invoke(parameters, renderView, context);
 
                     var upstreamVersion = description.Version;
                     try
@@ -211,13 +210,13 @@ namespace VL.Stride.EffectLib
                     for (int i = 0; i < iterationCount; i++)
                     {
                         // Give user chance to override
-                        iterationParameterSetterPin.Value?.Invoke(parameters, renderView, drawContext, i);
+                        iterationParameterSetterPin.Value?.Invoke(parameters, renderView, context, i);
 
                         // The thread group count can be set for each dispatch
                         threadGroupCount = parameters.Get(threadGroupCountAccessor);
 
                         // Upload the parameters
-                        instance.Apply(drawContext.GraphicsContext);
+                        instance.Apply(context.GraphicsContext);
 
                         // Draw a full screen quad
                         commandList.Dispatch(threadGroupCount.X, threadGroupCount.Y, threadGroupCount.Z);

@@ -9,7 +9,7 @@ namespace VL.Stride.Rendering.Composition
 {
     public class TooltipRenderer : SingleStageRenderer
     {
-        public ILowLevelAPIRender Tooltip;
+        public IGraphicsRendererBase Tooltip;
         private RenderViewStage renderViewStage;
         private IVLRuntime runtime;
 
@@ -36,7 +36,7 @@ namespace VL.Stride.Rendering.Composition
                 try
                 {
                     using (drawContext.PushRenderTargetsAndRestore())
-                        Tooltip.Draw(context, drawContext, context.RenderView, renderViewStage, drawContext.CommandList);
+                        Tooltip.Draw(drawContext);
                 }
                 catch (Exception e)
                 {

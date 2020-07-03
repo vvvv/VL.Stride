@@ -123,8 +123,20 @@ namespace VL.Stride.EffectLib
                 // TODO1: PerFrame could be done in Update if we'd have access to frame time
                 // TODO2: This code can be optimized by using parameter accessors and not parameter keys
                 parameters.SetPerFrameParameters(perFrameParams, renderDrawContext.RenderContext);
-                var world = ComputeWorldMatrix();
-                parameters.SetPerDrawParameters(perDrawParams, renderView, ref world);
+
+                var parentTransformation = renderDrawContext.RenderContext.Tags.Get(EntityRendererRenderFeature.CurrentParentTransformation);
+                if (worldPin != null)
+                {
+                    var world = worldPin.Value;
+                    Matrix.Multiply(ref world, ref parentTransformation, out var result);
+                    worldPin.Value = result;
+                    parameters.SetPerDrawParameters(perDrawParams, renderView, ref result);
+                }
+                else
+                {
+                    parameters.SetPerDrawParameters(perDrawParams, renderView, ref parentTransformation);
+                }
+
                 parameters.SetPerViewParameters(perViewParams, renderView);
 
                 customParameterSetterPin?.Value?.Invoke(parameters, renderView, renderDrawContext);

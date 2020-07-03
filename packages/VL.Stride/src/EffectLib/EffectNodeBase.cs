@@ -32,25 +32,6 @@ namespace VL.Stride.EffectLib
 
         protected ValueParameterPin<Matrix> worldPin;
 
-        protected Matrix entityWorldMatrix = Matrix.Identity;
-        public void SetEntityWorldMatrix(Matrix entityWorld)
-            => entityWorldMatrix = entityWorld;
-
-        protected Matrix ComputeWorldMatrix()
-        {
-            Matrix result;
-            if (worldPin != null)
-            {
-                var world = worldPin.Value;
-                Matrix.MultiplyTo(ref world, ref entityWorldMatrix, out result);
-                worldPin.Value = result;
-            }
-            else
-                result = entityWorldMatrix;
-            return result;
-        }
-
-
         public void Dispose()
         {
             if (Interlocked.Decrement(ref counter) == 0)

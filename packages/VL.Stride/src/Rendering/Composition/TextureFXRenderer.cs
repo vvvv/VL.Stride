@@ -9,7 +9,7 @@ namespace VL.Stride.Rendering.Composition
 {
     public class TextureFXRenderer : SingleStageRenderer
     {
-        public ILowLevelAPIRender TextureFXAutoDrawer;
+        public IGraphicsRendererBase TextureFXAutoDrawer;
         private RenderViewStage renderViewStage;
         private IVLRuntime runtime;
 
@@ -36,7 +36,7 @@ namespace VL.Stride.Rendering.Composition
                 try
                 {
                     using (drawContext.PushRenderTargetsAndRestore())
-                        TextureFXAutoDrawer.Draw(context, drawContext, context.RenderView, renderViewStage, drawContext.CommandList);
+                        TextureFXAutoDrawer.Draw(drawContext);
                 }
                 catch (Exception e)
                 {

@@ -1,7 +1,7 @@
 using System;
 using Stride.Engine;
 
-namespace VL.Stride.Layer
+namespace VL.Stride.Engine
 {
     /// <summary>
     /// Establishes a parent-child relationship between a parent and a child <see cref="Entity"/>.

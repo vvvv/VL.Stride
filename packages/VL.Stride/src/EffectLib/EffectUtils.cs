@@ -93,7 +93,7 @@ namespace VL.Stride.EffectLib
         {
             var worldInverse = world;
             worldInverse.Invert();
-            Matrix.Multiply(ref world, ref renderView.View, out Matrix worldView);
+            Matrix.Multiply(ref world, ref renderView.View, out var worldView);
             foreach (var perDraw in perDrawParams)
             {
                 switch (perDraw)
@@ -118,7 +118,7 @@ namespace VL.Stride.EffectLib
                         parameters.Set(TransformationKeys.WorldViewInverse, ref worldViewInverse);
                         break;
                     case PerDrawParameters.WorldViewProjection:
-                        var worldViewProjection = worldView * renderView.Projection;
+                        Matrix.Multiply(ref worldView, ref renderView.Projection, out var worldViewProjection);
                         parameters.Set(TransformationKeys.WorldViewProjection, ref worldViewProjection);
                         break;
                     case PerDrawParameters.WorldScale:

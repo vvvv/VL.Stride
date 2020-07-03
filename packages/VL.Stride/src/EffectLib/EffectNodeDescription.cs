@@ -26,7 +26,7 @@ namespace VL.Stride.EffectLib
     {
         public static readonly PinDescription<IEffect> EffectMainOutput = new PinDescription<IEffect>("Output");
 
-        public static readonly PinDescription<ILowLevelAPIRender> ComputeMainOutput = new PinDescription<ILowLevelAPIRender>("Output");
+        public static readonly PinDescription<IGraphicsRendererBase> ComputeMainOutput = new PinDescription<IGraphicsRendererBase>("Output");
 
         public static readonly PinDescription<Int3> ComputeDispatchCountInput = new PinDescription<Int3>("Dispatch Count", new Int3(1));
 

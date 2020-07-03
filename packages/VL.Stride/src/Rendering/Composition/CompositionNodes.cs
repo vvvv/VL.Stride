@@ -209,15 +209,6 @@ namespace VL.Stride.Rendering.Composition
             yield return nodeFactory.NewNode<SpriteRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(SpriteRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
-            yield return nodeFactory.NewNode<BeforeSceneLayerRenderFeature>(category: renderingCategory)
-                .AddListInput(nameof(BeforeSceneLayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
-
-            yield return nodeFactory.NewNode<InSceneLayerRenderFeature>(category: renderingCategory)
-                .AddListInput(nameof(InSceneLayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
-
-            yield return nodeFactory.NewNode<AfterSceneLayerRenderFeature>(category: renderingCategory)
-                .AddListInput(nameof(AfterSceneLayerRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
-
             yield return nodeFactory.NewNode<EntityRendererRenderFeature>(category: renderingCategory)
                 .AddListInput(nameof(EntityRendererRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 

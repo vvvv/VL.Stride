@@ -44,24 +44,5 @@ namespace VL.Stride.Games
             Settings.RecordUsedEffects = false;
             base.Initialize();
         }
-
-        public void AddLayerRenderFeature()
-        {
-            var renderStages = SceneSystem.GraphicsCompositor.RenderStages;
-            var opaqueStage = renderStages.FirstOrDefault(s => s.Name == "Opaque") ?? renderStages.FirstOrDefault();
-
-            if (opaqueStage != null && SceneSystem.GraphicsCompositor.RenderFeatures.None(rf => rf is InSceneLayerRenderFeature))
-            {
-                var stageSelector = new SimpleGroupToRenderStageSelector()
-                {
-                    RenderStage = opaqueStage
-                };
-
-                var layerRenderer = new InSceneLayerRenderFeature();
-
-                layerRenderer.RenderStageSelectors.Add(stageSelector);
-                SceneSystem.GraphicsCompositor.RenderFeatures.Add(layerRenderer); 
-            }
-        }
     }
 }
