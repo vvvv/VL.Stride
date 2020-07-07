@@ -6,10 +6,12 @@ using System;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Text;
 using VL.Core;
 using VL.Lang.PublicAPI;
 using VL.Lib.Basics.Resources;
 using VL.Stride.Games;
+using Vortice.Vulkan;
 
 namespace VL.Stride
 {
@@ -25,6 +27,82 @@ namespace VL.Stride
         private readonly bool FShowDialogIfDocumentChanged;
         private readonly SerialDisposable sizeChangedSubscription = new SerialDisposable();
         private Int2 FLastPosition;
+
+        string FName;
+        public string Name
+        {
+            get => FName;
+            set
+            {
+                if (value != FName)
+                {
+                    FName = value;
+                    ComputeTitle();
+                }
+            }
+        }
+
+        bool FEnabled;
+        public bool Enabled 
+        {
+            get => FEnabled;
+            set
+            {
+                if (value != FEnabled)
+                {
+                    FEnabled = value;
+                    ComputeTitle();
+                }
+            }
+        }
+
+        public SceneInstance FSceneInstance;
+        public SceneInstance SceneInstance
+        {
+            get => FSceneInstance;
+            set
+            {
+                if (value != FSceneInstance)
+                {
+                    FSceneInstance = value;
+                    ComputeTitle();
+                }
+            }
+        }
+
+        public GraphicsCompositor FGraphicsCompositor;
+        public GraphicsCompositor GraphicsCompositor
+        {
+            get => FGraphicsCompositor;
+            set
+            {
+                if (value != FGraphicsCompositor)
+                {
+                    FGraphicsCompositor = value;
+                    ComputeTitle();
+                }
+            }
+        }
+
+
+        void ComputeTitle()
+        {
+            var s = new StringBuilder(Name);
+            if (!Enabled)
+                s.Append(" [Disabled]");
+            else 
+            {
+                if (SceneInstance == null)
+                    s.Append(" [No Scene Instance]");
+                if (GraphicsCompositor?.Name != null && GraphicsCompositor?.Name != "GraphicsCompositor")
+                    s.Append($" [{GraphicsCompositor.Name}]");
+                if (GraphicsCompositor == null)
+                    s.Append($" [No Graphics Compositor]");
+            }
+
+            Window.Title = s.ToString();
+        }
+
 
         public Renderer(NodeContext nodeContext, RectangleF bounds, bool saveBounds = true, bool boundToDocument = false, bool dialogIfDocumentChanged = false)
         {
@@ -52,11 +130,14 @@ namespace VL.Stride
             }
 
             SetupEvents(Window);
+
+            FName = "Stride";
+            Enabled = true;
         }
 
         public GameWindow Window => FWindowHandle.Resource;
 
-        public void Update(SceneInstance sceneInstance, GraphicsCompositor compositor, bool verticalSync = false, bool enabled = true)
+        public void Update(bool verticalSync = false)
         {
             var game = (VLGame)FGameHandle.Resource;
 
@@ -74,10 +155,10 @@ namespace VL.Stride
                 FLastPosition = Window.Position;
             }
 
-            if (enabled)
+            if (Enabled)
             {
-                FSceneSystem.GraphicsCompositor = compositor;
-                FSceneSystem.SceneInstance = sceneInstance;
+                FSceneSystem.GraphicsCompositor = GraphicsCompositor;
+                FSceneSystem.SceneInstance = SceneInstance;
             }
             else
             {
