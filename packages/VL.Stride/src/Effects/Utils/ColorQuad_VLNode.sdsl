@@ -1,19 +1,16 @@
-﻿namespace VL.Xenko.Effects.Utils
+﻿shader ColorQuad_VLNode : VS_PS_Base, ColorBase, ShaderUtils
 {
-    shader ColorQuad_VLNode : Common_VS_PS_Base, ColorBase, Common_ShaderUtils
+
+    stage float4 ColorInput;
+
+    override stage void VSMain()
     {
+        streams.ShadingPosition = mul(streams.Position, WorldViewProjection);
+    }
 
-        stage float4 ColorInput;
+    override stage void PSMain() 
+    {
+        streams.ColorTarget = ColorInput * ColorInput.a;
+    }
 
-        override stage void VSMain()
-        {
-            streams.ShadingPosition = mul(streams.Position, WorldViewProjection);
-        }
-
-        override stage void PSMain() 
-        {
-            streams.ColorTarget = ColorInput * ColorInput.a;
-        }
-
-    };
-}
+};

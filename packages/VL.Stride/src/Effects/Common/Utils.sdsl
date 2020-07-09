@@ -1,5 +1,4 @@
-﻿
-shader Common_ShaderUtils : Transformation
+﻿shader Utils : Transformation
 {
     // CONSTANTS ==============================================================
  
@@ -7,7 +6,6 @@ shader Common_ShaderUtils : Transformation
     #define invTwoPi		0.15915494309189533576888376337251
     #define Pi 				3.1415926535897932384626433832795
     #define invPi 			0.31830988618379067153776752674503
-
 
     // SPRITES UTILS ==============================================================
  
@@ -19,15 +17,16 @@ shader Common_ShaderUtils : Transformation
         }
     }
 
-
-    static const float3 QuadPositions[4] = {
+    static const float3 QuadPositions[4] = 
+    {
         float3(-1, 1,0),
         float3( 1, 1,0),
         float3(-1, -1,0),
         float3( 1, -1,0),
     };
 
-    static const float2 QuadUV[4] = {
+    static const float2 QuadUV[4] = 
+    {
         float2(0,1), 
         float2(1,1),
         float2(0,0),
@@ -56,7 +55,7 @@ shader Common_ShaderUtils : Transformation
 
     float4 BitsToColor(float f)
     {
-        uint u = asuint(f);
+        uint u = asuint( f );
         float4 c;
         c = float4(
         (u>>0)%256,
@@ -138,5 +137,36 @@ shader Common_ShaderUtils : Transformation
     float ScaleOffsetScale(float x, float3 sos)
     {
         return ((x * sos.x) + sos.y) * sos.z;
+    }
+
+    float Quantize(float p, float x)
+    {
+        x += 1;
+        return floor(p * x) / x;
+    }
+
+    float2 Quantize(float2 p, float x)
+    {
+        x += 1;
+        return floor(p * x) / x;
+    }
+
+    float3 Quantize(float3 p, float x)
+    {
+        x += 1;
+        return floor(p * x) / x;
+    }
+
+    float4 Quantize(float4 p, float x)
+    {
+        x += 1;
+        return floor(p * x) / x;
+    }
+
+    float4 QuantizeXYZ(float4 p, float x)
+    {
+        x += 1;
+        p.xyz = floor(p.xyz * x) / x;
+        return p;
     }
 };

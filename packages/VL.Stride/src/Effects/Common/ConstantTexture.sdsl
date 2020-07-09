@@ -1,9 +1,5 @@
-﻿
-shader Common_ConstantColor : Common_VS_PS_Base
+﻿shader ConstantTexture : VS_PS_Base, Texturing
 {
-    [Color]
-    stage float4 Color;
-
     override stage void VSMain()
     {
         streams.ShadingPosition = mul(streams.Position, WorldViewProjection);
@@ -11,6 +7,6 @@ shader Common_ConstantColor : Common_VS_PS_Base
 
     override stage void PSMain() 
     {
-        streams.ColorTarget = Color;
+        streams.ColorTarget = Texture0.Sample(LinearSampler, streams.TexCoord) * Color;
     }
 };
