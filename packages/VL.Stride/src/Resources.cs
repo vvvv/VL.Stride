@@ -6,6 +6,7 @@ using Stride.Engine;
 using Stride.Games;
 using Stride.Graphics;
 using Stride.Core.Annotations;
+using Stride.Input;
 
 namespace VL.Stride
 {
@@ -53,6 +54,17 @@ namespace VL.Stride
         public static IResourceHandle<GraphicsContext> GetGraphicsContextHandle(this NodeContext nodeContext)
         {
             return nodeContext.GetGraphicsContextProvider().GetHandle();
+        }
+
+        // Input manager
+        public static IResourceProvider<InputManager> GetInputManagerProvider(this NodeContext nodeContext)
+        {
+            return nodeContext.Factory.CreateService<IResourceProvider<InputManager>>(nodeContext);
+        }
+
+        public static IResourceHandle<InputManager> GetInputManagerHandle(this NodeContext nodeContext)
+        {
+            return nodeContext.GetInputManagerProvider().GetHandle();
         }
     }
 

@@ -1,4 +1,5 @@
 using Stride.Graphics;
+using Stride.Input;
 using VL.Core;
 using VL.Core.CompilerServices;
 using VL.Lib.Basics.Resources;
@@ -25,6 +26,13 @@ namespace VL.Stride.Core
             {
                 var gameProvider = nodeContext.GetGameProvider();
                 return gameProvider.Bind(game => ResourceProvider.Return(game.GraphicsContext));
+            });
+
+            // Input manager
+            factory.RegisterService<NodeContext, IResourceProvider<InputManager>>(nodeContext =>
+            {
+                var gameProvider = nodeContext.GetGameProvider();
+                return gameProvider.Bind(game => ResourceProvider.Return(game.Input));
             });
         }
     }

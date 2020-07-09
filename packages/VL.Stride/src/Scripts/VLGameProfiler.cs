@@ -81,22 +81,22 @@ namespace VL.Stride
                 if (Enabled)
                 {
                     // toggle the filtering mode
-                    if (Input.IsKeyPressed(Keys.F1))
+                    if (Input.IsKeyPressed(Keys.F5))
                     {
                         FilteringMode = (GameProfilingResults)(((int)FilteringMode + 1) % Enum.GetValues(typeof(GameProfilingResults)).Length);
                     }
                     // toggle the sorting mode
-                    if (Input.IsKeyPressed(Keys.F2))
+                    if (Input.IsKeyPressed(Keys.F6))
                     {
                         SortingMode = (GameProfilingSorting)(((int)SortingMode + 1) % Enum.GetValues(typeof(GameProfilingSorting)).Length);
                     }
 
                     // update the result page
-                    if (Input.IsKeyPressed(Keys.F3))
+                    if (Input.IsKeyPressed(Keys.F7))
                     {
                         ResultPage = Math.Max(1, --ResultPage);
                     }
-                    else if (Input.IsKeyPressed(Keys.F4))
+                    else if (Input.IsKeyPressed(Keys.F8))
                     {
                         ++ResultPage;
                     }

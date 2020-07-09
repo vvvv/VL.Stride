@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2020.2.0.148" Version="0.128">
+<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2020.2.0.154" Version="0.128">
   <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0141-ge95a6bcfad" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride.Engine" CanvasType="FullCategory">
@@ -943,7 +943,7 @@
     ************************ Camera ************************
 
 -->
-        <Node Name="Camera" Bounds="378,355" Id="QRfqT4IsxfkM7U2j8L63NZ">
+        <Node Name="Camera" Bounds="350,355" Id="QRfqT4IsxfkM7U2j8L63NZ">
           <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
             <Choice Kind="ContainerDefinition" Name="Process" />
           </p:NodeReference>
@@ -10237,7 +10237,66 @@
           <Link Id="OjpFV8eFu8QPdOc6sy2aUA" Ids="DS4RWINPRn8MNqZRSBcN38,C8VhzgoXtvuMCSLotC1DMK" />
         </Patch>
       </Node>
-      <Canvas Id="JgXDHTki5quLzPc2ULtoU5" Name="Rendering" Position="489,653" />
+      <Canvas Id="JgXDHTki5quLzPc2ULtoU5" Name="Input" Position="489,653">
+        <!--
+
+    ************************ MouseRay ************************
+
+-->
+        <Node Name="MouseRay" Bounds="375,272" Id="I5vZYrrCM3IPg01fKRDoo5">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="IqBZSlNr0wDNUHr7Bs7MoZ">
+            <Canvas Id="NZLHvJzUD34OTvv5A36I8I" CanvasType="Group">
+              <Node Bounds="332,425,100,19" Id="CYZq7wOSxamM7M3WDNKbeH">
+                <p:NodeReference LastCategoryFullName="VL.Stride.Utils.CameraUtils" LastSymbolSource="VL.Stride.dll">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <CategoryReference Kind="AssemblyCategory" Name="CameraUtils" />
+                  <Choice Kind="OperationCallFlag" Name="ScreenToWorldRay" />
+                </p:NodeReference>
+                <Pin Id="PemEAcyLsFTOONyPZ1X6Ni" Name="Camera Component" Kind="InputPin" />
+                <Pin Id="JaEjuzHDOprMEwvjQL6NIr" Name="Position" Kind="InputPin" />
+                <Pin Id="PjpFdPGs5fCPL9wQQYvmlp" Name="Result" Kind="OutputPin" />
+              </Node>
+              <Node Bounds="430,365,82,26" Id="A1kI0x0IF7QMXmGdVPtVrH">
+                <p:NodeReference LastCategoryFullName="Xenko.Input.InputManager" LastSymbolSource="VL.Xenko.Input.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <CategoryReference Kind="ClassType" Name="InputManager" />
+                  <Choice Kind="OperationCallFlag" Name="MousePosition" />
+                </p:NodeReference>
+                <Pin Id="V0fV2ZmBpJ6O2gMyPCUw8E" Name="Input" Kind="StateInputPin" />
+                <Pin Id="UIffxLsXcOIPygUmBbA4HL" Name="Output" Kind="StateOutputPin" />
+                <Pin Id="HpVYKWNml7DM00ChwAgeHT" Name="Mouse Position" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="QSzR1vTrbdjOodzEoA08zN" Bounds="334,511" />
+              <Node Bounds="430,325,79,19" Id="OlCSp86yZIqOJnWgb16X6Z">
+                <p:NodeReference LastCategoryFullName="Stride.Input" LastSymbolSource="VL.Stride.Input.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="InputManager" />
+                </p:NodeReference>
+                <Pin Id="OU8R2nphgyEMamljKHUIhr" Name="Output" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="AcceNGLzQOIQJ26HpfClEq" Bounds="310,335" />
+            </Canvas>
+            <Patch Id="QRH4oyJEIctLIS1Dz1M2gD" Name="Create" />
+            <Patch Id="R9nkHUiVm9qLc6WEgndke5" Name="Update">
+              <Pin Id="NpD7AmK5Q7iOaF2N4mOvh3" Name="Output" Kind="OutputPin" Bounds="334,511" />
+              <Pin Id="FjJD1rFVbopOnhsYxleKus" Name="Camera Component" Kind="InputPin" Bounds="303,300" />
+            </Patch>
+            <ProcessDefinition Id="Cr5ylHyY8bKNQ8fNlnp788">
+              <Fragment Id="BrWo2SQMKymOxfzXk8HS2R" Patch="QRH4oyJEIctLIS1Dz1M2gD" Enabled="true" />
+              <Fragment Id="Fbg1bJLek9NMr5UOoM1DkA" Patch="R9nkHUiVm9qLc6WEgndke5" Enabled="true" />
+            </ProcessDefinition>
+            <Link Id="TI44xAxoe0hOzKOZqcRlTQ" Ids="HpVYKWNml7DM00ChwAgeHT,JaEjuzHDOprMEwvjQL6NIr" />
+            <Link Id="Tho27JzhdIhLvI2yMSD4XR" Ids="QSzR1vTrbdjOodzEoA08zN,NpD7AmK5Q7iOaF2N4mOvh3" IsHidden="true" />
+            <Link Id="CsPLyH40DuSNCxcpVlzO2N" Ids="PjpFdPGs5fCPL9wQQYvmlp,QSzR1vTrbdjOodzEoA08zN" />
+            <Link Id="SyKx4oLa8k9MDF49fxPf27" Ids="OU8R2nphgyEMamljKHUIhr,V0fV2ZmBpJ6O2gMyPCUw8E" />
+            <Link Id="QPJUYmAeseFMZwj07WF1ak" Ids="AcceNGLzQOIQJ26HpfClEq,PemEAcyLsFTOONyPZ1X6Ni" />
+            <Link Id="K5pCbzGGWR7LSCRJwfcDyT" Ids="FjJD1rFVbopOnhsYxleKus,AcceNGLzQOIQJ26HpfClEq" IsHidden="true" />
+          </Patch>
+        </Node>
+      </Canvas>
       <Canvas Id="BxVoqUFBnedNsYvsyQSXbM" Name="Advanced" Position="749,297">
         <!--
 
