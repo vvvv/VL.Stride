@@ -3,7 +3,7 @@ using System.Threading;
 using VL.Core;
 using VL.Core.CompilerServices;
 using VL.Lib.Basics.Resources;
-using VL.Xenko;
+using VL.Stride;
 using VL.Stride.Assets;
 using VL.Stride.Games;
 using Stride.Engine;

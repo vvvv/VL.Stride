@@ -1,6 +1,6 @@
 using System;
 using Stride.Engine;
-using VL.Xenko;
+using VL.Stride;
 using VL.Stride.Games;
 
 namespace TestGame.Windows

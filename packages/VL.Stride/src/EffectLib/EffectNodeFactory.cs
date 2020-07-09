@@ -61,7 +61,7 @@ namespace VL.Stride.EffectLib
 
     public class EffectNodeFactory : IVLNodeDescriptionFactory
     {
-        // Taken from Xenko/Game
+        // Taken from Stride/Game
         static DatabaseFileProvider InitializeAssetDatabase()
         {
             // Create and mount database file system
@@ -72,7 +72,7 @@ namespace VL.Stride.EffectLib
             return new DatabaseFileProvider(objDatabase, mountPath);
         }
 
-        // Taken from Xenko/SkyboxGeneratorContext
+        // Taken from Stride/SkyboxGeneratorContext
         private void Init()
         {
             Services = new ServiceRegistry();

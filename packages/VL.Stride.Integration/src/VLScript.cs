@@ -7,9 +7,9 @@ using VL.Stride.Games;
 using Stride.Engine;
 using Stride.Graphics;
 
-namespace VL.Xenko
+namespace VL.Stride
 {
-    // TODO: VL script should talk to one IVLNode so we can also feed it data properly from Xenko as well as exposing its pins to Xenko editor
+    // TODO: VL script should talk to one IVLNode so we can also feed it data properly from Stride as well as exposing its pins to Stride editor
     public class VLScript : AsyncScript
     {
         /// <summary>
@@ -22,7 +22,7 @@ namespace VL.Xenko
         readonly bool FGoFullscreen;
 
         // Declared public member fields and properties will show in the game studio
-        public VLScript(VLContext context, Game game, bool goFullscreen)
+        public VLScript(VLContext context, VLGame game, bool goFullscreen)
         {
             FContext = context;
             FGoFullscreen = goFullscreen;
@@ -33,7 +33,7 @@ namespace VL.Xenko
                 VLUpdate = FContext.Update;
         }
 
-        public new Game Game { get; }
+        public new VLGame Game { get; }
 
         public override async Task Execute()
         {

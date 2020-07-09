@@ -224,7 +224,7 @@ namespace VL.Stride.EffectLib
             Parameters = parameters;
         }
 
-        // TODO: Add overloads to Xenko wich take accessor instead of less optimal key
+        // TODO: Add overloads to Stride wich take accessor instead of less optimal key
         public T[] Value
         {
             get => Parameters.GetValues(Key);

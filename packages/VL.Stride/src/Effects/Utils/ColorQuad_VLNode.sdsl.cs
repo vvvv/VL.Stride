@@ -14,7 +14,7 @@ using Stride.Shaders;
 using Stride.Core.Mathematics;
 using Buffer = Stride.Graphics.Buffer;
 
-namespace VL.Xenko.Effects.Utils
+namespace VL.Stride.Effects.Utils
 {
     public static partial class ColorQuad_VLNodeKeys
     {

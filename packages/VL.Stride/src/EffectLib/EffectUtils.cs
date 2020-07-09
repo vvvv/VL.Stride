@@ -129,7 +129,7 @@ namespace VL.Stride.EffectLib
                         parameters.Set(TransformationKeys.WorldScale, ref worldScale);
                         break;
                     case PerDrawParameters.EyeMS:
-                        // TODO: This is how Xenko does it - differs from patched version
+                        // TODO: This is how Stride does it - differs from patched version
                         //var eyeMS = new Vector4(worldInverse.M41, worldInverse.M42, worldInverse.M43, 1.0f);
                         var viewInverse = renderView.View;
                         viewInverse.Invert();
@@ -174,7 +174,7 @@ namespace VL.Stride.EffectLib
                     case PerViewParameters.Eye:
                         var viewInverse = renderView.View;
                         viewInverse.Invert();
-                        // TODO: Differs from Xenko
+                        // TODO: Differs from Stride
                         //var eye = new Vector4(viewInverse.M41, viewInverse.M42, viewInverse.M43, 1.0f);
                         var eye = viewInverse.Row4;
                         parameters.Set(TransformationKeys.Eye, ref eye);

@@ -6,8 +6,9 @@ using System.Windows.Forms;
 using VL.Core;
 using VL.Stride.Assets;
 using Stride.Engine;
+using VL.Stride.Games;
 
-namespace VL.Xenko
+namespace VL.Stride
 {
     public static class GameExtensions
     {
@@ -24,7 +25,7 @@ namespace VL.Xenko
             if (!CheckBuild(game))
                 return;
 
-            // Use lazy initialization so VL will start after the Xenko game is up an running
+            // Use lazy initialization so VL will start after the Stride game is up an running
             var context = VLContext.Create("xenko",
                 document: document ?? Path.Combine(Application.StartupPath, "vl", "Main.vl"),
                 openEditor: openEditor,
@@ -33,7 +34,7 @@ namespace VL.Xenko
                 lazy: true);
 
 
-            // Register the Xenko game in our registry so node factories can fetch it later
+            // Register the Stride game in our registry so node factories can fetch it later
             ServiceRegistry.Default.RegisterService(game);
 
             //// Game is driving the message loop so tell windows forms about it
@@ -41,7 +42,7 @@ namespace VL.Xenko
 
             Game.GameStarted += (s, e) =>
             {
-                if (s != game)
+                if (s != game || !(game is VLGame vlGame))
                     return;
 
                 // Raise Idle - needed by VL context to initiailize
@@ -50,12 +51,12 @@ namespace VL.Xenko
                 // Register the main synchronization context
                 ServiceRegistry.Default.RegisterService(SynchronizationContext.Current);
 
-                // Register the context and the session in Xenko so we can fetch it later
+                // Register the context and the session in Stride so we can fetch it later
                 game.Services.AddService(context);
                 game.Services.AddService(context.Session);
                 game.Services.AddService(context.Runtime);
 
-                var script = new VLScript(context, game, goFullscreen);
+                var script = new VLScript(context, vlGame, goFullscreen);
                 var assetBuildService = new AssetBuildService();
                 game.Services.AddService(assetBuildService);
                 game.Script.Add(script);

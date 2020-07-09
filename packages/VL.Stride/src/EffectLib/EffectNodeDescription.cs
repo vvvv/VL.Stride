@@ -331,7 +331,7 @@ namespace VL.Stride.EffectLib
             Name = key.GetPinName(usedNames);
             var elementType = TypeConversions.ShaderToPinTypeMap.ValueOrDefault(key.PropertyType, key.PropertyType);
             defaultValue = defaultValue ?? key.DefaultValueMetadata?.GetDefaultValue();
-            // TODO: This should be fixed in Xenko
+            // TODO: This should be fixed in Stride
             if (key.PropertyType == typeof(Matrix))
                 defaultValue = Matrix.Identity;
             if (elementType != key.PropertyType)
