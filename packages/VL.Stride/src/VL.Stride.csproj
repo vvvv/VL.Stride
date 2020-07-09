@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <LangVersion>8.0</LangVersion>
     
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -16,7 +16,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <!-- A pure package dependency so on install all VL packages come in -->
     <PackageReference Include="Stride.Core" Version="$(StrideVersion)" />
     <PackageReference Include="Stride.Core.Assets.CompilerApp" Version="$(StrideVersion)" IncludeAssets="build;buildTransitive" />
@@ -32,14 +31,13 @@
   </Target>
   <ItemGroup Condition="'$(SolutionName)' == 'VL'">
     <ProjectReference Include="..\..\..\..\VL.Core\src\VL.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\vvvv50\VL.Lang\src\VL.Lang.csproj" />
     <ProjectReference Include="..\..\..\..\VL.CoreLib\src\VL.CoreLib.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(SolutionName)' != 'VL'">
     <PackageReference Include="VL.Core" Version="$(VLVersion)" />
+    <PackageReference Include="VL.Lang" Version="$(VLVersion)" />
     <PackageReference Include="VL.CoreLib" Version="$(VLVersion)" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\vvvv50\VL.Lang\src\VL.Lang.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Effects\Common\BufferUtils.sdsl.cs">
