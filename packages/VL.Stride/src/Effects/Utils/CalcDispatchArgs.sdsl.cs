@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Utils_CalcDispatchArgsKeys
+    public static partial class CalcDispatchArgsKeys
     {
         public static readonly ObjectParameterKey<Buffer> CounterBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> ArgsBuffer = ParameterKeys.NewObject<Buffer>();

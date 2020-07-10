@@ -18,6 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class ColorQuad_ScreenSpace_VLNodeKeys
     {
-        public static readonly ValueParameterKey<Vector4> ColorInput = ParameterKeys.NewValue<Vector4>();
+        public static readonly ValueParameterKey<Color4> ColorInput = ParameterKeys.NewValue<Color4>();
     }
 }
