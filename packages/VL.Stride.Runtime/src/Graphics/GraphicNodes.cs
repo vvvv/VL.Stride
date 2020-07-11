@@ -10,7 +10,7 @@ namespace VL.Stride.Graphics
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {
-            var graphicsCategory = "Stride.Graphics.Advanced";
+            var graphicsCategory = "Stride.API.Graphics";
 
             yield return new CustomNodeDesc<MutablePipelineState>(factory,
                 ctor: nodeContext =>

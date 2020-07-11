@@ -76,7 +76,7 @@ namespace VL.Stride.EffectLib
 
         public string EffectName { get; }
 
-        public string Category => "Stride.EffectLib";
+        public string Category => "Stride.Rendering.EffectLib";
 
         public bool Fragmented => false;
 

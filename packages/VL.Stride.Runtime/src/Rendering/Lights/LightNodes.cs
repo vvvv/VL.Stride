@@ -10,7 +10,7 @@ namespace VL.Stride.Rendering.Lights
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {
-            var lightsCategory = "Stride.Rendering.Lights.Advanced";
+            var lightsCategory = "Stride.Lights";
 
             yield return NewColorLightNode<LightAmbient>(factory, lightsCategory);
 

@@ -23,7 +23,7 @@ namespace VL.Stride.Rendering.Composition
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(StrideNodeFactory nodeFactory)
         {
-            string renderingCategory = "Stride.Rendering.Advanced";
+            string renderingCategory = "Stride.Rendering";
 
             string compositionCategory = $"{renderingCategory}.Composition";
             yield return nodeFactory.NewNode<GraphicsCompositor>(category: compositionCategory)

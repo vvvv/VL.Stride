@@ -13,8 +13,7 @@ namespace VL.Stride.Rendering.Materials
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(StrideNodeFactory nodeFactory)
         {
-            string renderingCategory = "Stride.Rendering.Advanced";
-            string materialCategory = $"{renderingCategory}.Materials";
+            string materialCategory = "Stride.Materials";
             string geometryCategory = $"{materialCategory}.{nameof(GeometryAttributes)}";
             string shadingCategory = $"{materialCategory}.{nameof(ShadingAttributes)}";
             string miscCategory = $"{materialCategory}.{nameof(MiscAttributes)}";

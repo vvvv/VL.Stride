@@ -30,10 +30,10 @@ namespace MyTests
         public static IEnumerable<string> NormalPatches()
         {
             var vlStride = Directory.GetFiles(Path.Combine(MainLibPath, "VL.Stride"), "*.vl", SearchOption.AllDirectories);
-            var vlStrideLib = Directory.GetFiles(Path.Combine(MainLibPath, "VL.Stride.Lib"), "*.vl", SearchOption.AllDirectories);
+            var vlStrideRuntime = Directory.GetFiles(Path.Combine(MainLibPath, "VL.Stride.Runtime"), "*.vl", SearchOption.AllDirectories);
             var vlStrideWindows = Directory.GetFiles(Path.Combine(MainLibPath, "VL.Stride.Windows"), "*.vl", SearchOption.AllDirectories);
             // Yield all your VL docs
-            foreach (var file in vlStride.Concat(vlStrideLib).Concat(vlStrideWindows))
+            foreach (var file in vlStrideRuntime.Concat(vlStride).Concat(vlStrideWindows))
                 yield return file;
         }
 
