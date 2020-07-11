@@ -10,21 +10,23 @@ namespace VL.Stride.Rendering.Lights
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {
-            var lightsCategory = "Stride.Lights";
+            var baseCategory = "Stride.Lights";
+            var lightTypesCategory = $"{baseCategory}.LightTypes";
+            var shadowMapsCategory = $"{baseCategory}.ShadowMaps";
 
-            yield return NewColorLightNode<LightAmbient>(factory, lightsCategory);
+            yield return NewColorLightNode<LightAmbient>(factory, lightTypesCategory);
 
-            yield return NewEnvironmentLightNode<LightSkybox>(factory, lightsCategory)
+            yield return NewEnvironmentLightNode<LightSkybox>(factory, lightTypesCategory)
                 .AddInput(nameof(LightSkybox.Skybox), x => x.Skybox, (x, v) => x.Skybox = v);
 
-            yield return NewSkyboxNode(factory, lightsCategory);
+            yield return NewSkyboxNode(factory, lightTypesCategory);
 
-            yield return NewDirectLightNode<LightDirectional>(factory, lightsCategory);
+            yield return NewDirectLightNode<LightDirectional>(factory, lightTypesCategory);
 
-            yield return NewDirectLightNode<LightPoint>(factory, lightsCategory)
+            yield return NewDirectLightNode<LightPoint>(factory, lightTypesCategory)
                 .AddInput(nameof(LightPoint.Radius), x => x.Radius, (x, v) => x.Radius = v, 1f);
 
-            yield return NewDirectLightNode<LightSpot>(factory, lightsCategory)
+            yield return NewDirectLightNode<LightSpot>(factory, lightTypesCategory)
                 .AddInput(nameof(LightSpot.Range), x => x.Range, (x, v) => x.Range = v, 3f)
                 .AddInput(nameof(LightSpot.AngleInner), x => x.AngleInner, (x, v) => x.AngleInner = v, 30f)
                 .AddInput(nameof(LightSpot.AngleOuter), x => x.AngleOuter, (x, v) => x.AngleOuter = v, 35f)
@@ -37,7 +39,7 @@ namespace VL.Stride.Rendering.Lights
                 .AddInput(nameof(LightSpot.ProjectionPlaneDistance), x => x.ProjectionPlaneDistance, (x, v) => x.ProjectionPlaneDistance = v, 1f)
                 .AddInput(nameof(LightSpot.FlipMode), x => x.FlipMode, (x, v) => x.FlipMode = v);
 
-            yield return NewShadowNode<LightDirectionalShadowMap>(factory, lightsCategory)
+            yield return NewShadowNode<LightDirectionalShadowMap>(factory, shadowMapsCategory)
                 .AddInput(nameof(LightDirectionalShadowMap.CascadeCount), x => x.CascadeCount, (x, v) => x.CascadeCount = v, LightShadowMapCascadeCount.FourCascades)
                 .AddInput(nameof(LightDirectionalShadowMap.DepthRange), x => x.DepthRange, (x, v) =>
                 {
@@ -52,31 +54,31 @@ namespace VL.Stride.Rendering.Lights
                 .AddDefaultPins()
                 .AddEnabledPin();
 
-            yield return NewShadowNode<LightPointShadowMap>(factory, lightsCategory)
+            yield return NewShadowNode<LightPointShadowMap>(factory, shadowMapsCategory)
                 .AddInput(nameof(LightPointShadowMap.Type), x => x.Type, (x, v) => x.Type = v, LightPointShadowMapType.CubeMap)
                 .AddDefaultPins()
                 .AddEnabledPin();
 
-            yield return NewShadowNode<LightStandardShadowMap>(factory, lightsCategory)
+            yield return NewShadowNode<LightStandardShadowMap>(factory, shadowMapsCategory)
                 .AddDefaultPins()
                 .AddEnabledPin();
 
-            yield return factory.NewNode<LightShadowMapFilterTypePcf>(category: lightsCategory, copyOnWrite: false)
+            yield return factory.NewNode<LightShadowMapFilterTypePcf>(category: shadowMapsCategory, copyOnWrite: false)
                 .AddInput(nameof(LightShadowMapFilterTypePcf.FilterSize), x => x.FilterSize, (x, v) => x.FilterSize = v, LightShadowMapFilterTypePcfSize.Filter5x5);
 
-            yield return factory.NewNode<LightDirectionalShadowMap.DepthRangeParameters>(category: lightsCategory)
+            yield return factory.NewNode<LightDirectionalShadowMap.DepthRangeParameters>(category: shadowMapsCategory)
                 .AddInput(nameof(LightDirectionalShadowMap.DepthRangeParameters.IsAutomatic), x => x.IsAutomatic, (x, v) => x.IsAutomatic = v, true)
                 .AddInput(nameof(LightDirectionalShadowMap.DepthRangeParameters.ManualMinDistance), x => x.ManualMinDistance, (x, v) => x.ManualMinDistance = v, LightDirectionalShadowMap.DepthRangeParameters.DefaultMinDistance)
                 .AddInput(nameof(LightDirectionalShadowMap.DepthRangeParameters.ManualMaxDistance), x => x.ManualMaxDistance, (x, v) => x.ManualMaxDistance = v, LightDirectionalShadowMap.DepthRangeParameters.DefaultMaxDistance)
                 .AddInput(nameof(LightDirectionalShadowMap.DepthRangeParameters.IsBlendingCascades), x => x.IsBlendingCascades, (x, v) => x.IsBlendingCascades = v, true);
 
-            yield return factory.NewNode<LightDirectionalShadowMap.PartitionManual>(category: lightsCategory)
+            yield return factory.NewNode<LightDirectionalShadowMap.PartitionManual>(category: shadowMapsCategory)
                 .AddInput(nameof(LightDirectionalShadowMap.PartitionManual.SplitDistance0), x => x.SplitDistance0, (x, v) => x.SplitDistance0 = v, 0.05f)
                 .AddInput(nameof(LightDirectionalShadowMap.PartitionManual.SplitDistance1), x => x.SplitDistance1, (x, v) => x.SplitDistance1 = v, 0.15f)
                 .AddInput(nameof(LightDirectionalShadowMap.PartitionManual.SplitDistance2), x => x.SplitDistance2, (x, v) => x.SplitDistance2 = v, 0.50f)
                 .AddInput(nameof(LightDirectionalShadowMap.PartitionManual.SplitDistance3), x => x.SplitDistance3, (x, v) => x.SplitDistance3 = v, 1.00f);
 
-            yield return factory.NewNode<LightDirectionalShadowMap.PartitionLogarithmic>(category: lightsCategory)
+            yield return factory.NewNode<LightDirectionalShadowMap.PartitionLogarithmic>(category: shadowMapsCategory)
                 .AddInput(nameof(LightDirectionalShadowMap.PartitionLogarithmic.PSSMFactor), x => x.PSSMFactor, (x, v) => x.PSSMFactor = v, 0.5f);
         }
 

@@ -236,7 +236,7 @@ namespace VL.Stride.Rendering.Composition
                 .AddInput(nameof(WireframePipelineProcessor.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
 
             // Light renderers - make enum
-            var lightsCategory = $"{renderingCategory}.Lights";
+            var lightsCategory = $"{renderingCategory}.Light";
             yield return new StrideNodeDesc<LightAmbientRenderer>(nodeFactory, category: lightsCategory);
             yield return new StrideNodeDesc<LightSkyboxRenderer>(nodeFactory, category: lightsCategory);
             yield return new StrideNodeDesc<LightDirectionalGroupRenderer>(nodeFactory, category: lightsCategory);
@@ -246,7 +246,7 @@ namespace VL.Stride.Rendering.Composition
             yield return new StrideNodeDesc<LightProbeRenderer>(nodeFactory, category: lightsCategory);
 
             // Shadow map renderers
-            var shadowsCategory = $"{renderingCategory}.Shadows";
+            var shadowsCategory = $"{renderingCategory}.Shadow";
             yield return nodeFactory.NewNode<ShadowMapRenderer>(category: shadowsCategory)
                 .AddListInput(nameof(ShadowMapRenderer.Renderers), x => x.Renderers);
 
