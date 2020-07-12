@@ -6677,8 +6677,9 @@
 
 -->
         <Node Name="InstancingArray" Bounds="1442,297" Id="Pw1tw61HX8GOmj3lGy3xzy">
-          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
-            <Choice Kind="ContainerDefinition" Name="Process" />
+          <p:NodeReference>
+            <Choice Kind="ClassDefinition" Name="Class" />
+            <FullNameCategoryReference ID="Primitive" />
           </p:NodeReference>
           <Patch Id="SK2s5i36x9cMfKN1x6M30k">
             <Canvas Id="GtKgXXUSOWzLZQungaB4ZQ" CanvasType="Group">
@@ -6717,6 +6718,44 @@
                 <Pin Id="AfgI4BwMoZZM18yVnuCfDh" Name="Value" Kind="InputPin" />
               </Node>
               <ControlPoint Id="GQumzMIabxVM2SsN9D7HS4" Bounds="951,315" />
+              <Node Bounds="516,420,54,19" Id="Vkxmq435NkuMwJR2HmdA3k">
+                <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="OnOpen" />
+                </p:NodeReference>
+                <Pin Id="N0FFzPyDCcUMHL2la7EV5S" Name="Simulate" Kind="InputPin" />
+                <Pin Id="FqweUL1sZFaQdJVUSzZ1X5" Name="Output" Kind="OutputPin" />
+              </Node>
+              <Node Bounds="516,467,156,104" Id="V04r4Sobk5EL6KQdHQlWhG">
+                <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="VL.CoreLib.dll">
+                  <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                  <Choice Kind="ApplicationStatefulRegion" Name="If" />
+                  <CategoryReference Kind="Category" Name="Primitive" />
+                </p:NodeReference>
+                <Pin Id="BOBNgMOtxpjQaqdEk5hPUR" Name="Condition" Kind="InputPin" />
+                <Patch Id="ThPrIGBVYsRNKKOpKZK3vX" ManuallySortedPins="true">
+                  <Patch Id="FBuXJ5MMJdWLzoz1cKwpUw" Name="Create" ManuallySortedPins="true" />
+                  <Patch Id="KEppZFMNTnXPfYe55Aiq4V" Name="Then" ManuallySortedPins="true" />
+                  <Node Bounds="528,490,36,19" Id="VrYasZpJ1Z6N9OuKrkMFUx">
+                    <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="ProcessAppFlag" Name="This" />
+                      <CategoryReference Kind="Category" Name="Primitive" />
+                    </p:NodeReference>
+                    <Pin Id="DXYHCLIJ1bVMSxKJKCmaWF" Name="Instance" Kind="OutputPin" />
+                  </Node>
+                  <Node Bounds="528,525,132,26" Id="OcBSwhMLC5vNrrMipvEoi0">
+                    <p:NodeReference LastCategoryFullName="Stride.Models.InstancingArray" LastSymbolSource="VL.Stride.Engine.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="OperationCallFlag" Name="SetModelTransformUsage" />
+                      <CategoryReference Kind="ClassType" Name="InstancingArray" NeedsToBeDirectParent="true" />
+                    </p:NodeReference>
+                    <Pin Id="Nn8p65K6v5PLqSRr5OfghK" Name="Input" Kind="StateInputPin" />
+                    <Pin Id="PMMiDpaZRjMMvDYk5Per8w" Name="Value" Kind="InputPin" />
+                    <Pin Id="PSWshkx0rF5MNNHASRViES" Name="Output" Kind="StateOutputPin" />
+                  </Node>
+                </Patch>
+              </Node>
             </Canvas>
             <Patch Id="Kmnh8PyDXmVQXdLhdV4roE" Name="Create" ParticipatingElements="G2YYSUFwGaNLom4ljbVmj8" />
             <Patch Id="CxBPIS5IwQdNGhemSaWoKU" Name="GetInstancing">
@@ -6729,7 +6768,7 @@
             <Link Id="IXPKvKht5mJNOuChTTtzw5" Ids="EiQVdOTXYWbLDcb3TNmsDJ,PfdOujfLGvPNMrATrvoAzn" IsHidden="true" />
             <Link Id="MEAYFLHQehBMm4OX3xzgzl" Ids="JFIvYBsjQxbPb38G7by9Jk,GfNuJALOiFLNI18XLjWyaa" />
             <Link Id="O8tMlTADL7PM0i2HoSrGxP" Ids="To9r4zKQXCsO2ZbADQYbpo,JFIvYBsjQxbPb38G7by9Jk" IsHidden="true" />
-            <Patch Id="OsxZxF0py7fMewY3E2JeJ8" Name="UpdateWorldMatrices">
+            <Patch Id="OsxZxF0py7fMewY3E2JeJ8" Name="UpdateWorldMatrices" ParticipatingElements="Vz2xlFURjQGOBuKe0U8aQx">
               <Pin Id="EiQVdOTXYWbLDcb3TNmsDJ" Name="Matrices" Kind="InputPin" />
               <Pin Id="To9r4zKQXCsO2ZbADQYbpo" Name="Instance Count" Kind="InputPin" />
             </Patch>
@@ -6751,6 +6790,8 @@
               <Fragment Id="Az7dxwR086iOG60V9eLqzK" Patch="Da7VyqpVeRIPX2hoFLyquu" Enabled="true" />
               <Fragment Id="Ba5nYTGPQ5uPL0Mpgv3wro" Patch="CxBPIS5IwQdNGhemSaWoKU" Enabled="true" />
             </ProcessDefinition>
+            <Link Id="EO3y3ArXbEzODdymysVAHt" Ids="DXYHCLIJ1bVMSxKJKCmaWF,Nn8p65K6v5PLqSRr5OfghK" />
+            <Link Id="Vz2xlFURjQGOBuKe0U8aQx" Ids="FqweUL1sZFaQdJVUSzZ1X5,BOBNgMOtxpjQaqdEk5hPUR" />
           </Patch>
         </Node>
         <!--

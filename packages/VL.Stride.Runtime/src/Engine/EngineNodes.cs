@@ -1,4 +1,5 @@
 ﻿using Stride.Engine;
+using Stride.Physics;
 using System.Collections.Generic;
 using VL.Core;
 
@@ -38,6 +39,30 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(LightShaftBoundingVolumeComponent.Model), x => x.Model, (x, v) => x.Model = v) // Ensure to check for change! Property throws event!
                 .AddInput(nameof(LightShaftBoundingVolumeComponent.LightShaft), x => x.LightShaft, (x, v) => x.LightShaft = v) // Ensure to check for change! Property throws event!
                 .WithEnabledPin();
+
+            var physicsCategory = "Stride.Physics";
+
+            yield return factory.NewComponentNode<StaticColliderComponent>(physicsCategory)
+                .AddInput(nameof(StaticColliderComponent.ColliderShape), x => x.ColliderShape, (x, v) => x.ColliderShape = v)
+                .AddInput(nameof(StaticColliderComponent.Friction), x => x.Friction, (x, v) => x.Friction = 0.5f)
+                .AddInput(nameof(StaticColliderComponent.RollingFriction), x => x.RollingFriction, (x, v) => x.RollingFriction = v, 0f)
+                .AddInput(nameof(StaticColliderComponent.Restitution), x => x.Restitution, (x, v) => x.Restitution = v, 0f)
+                .WithEnabledPin();
+
+            yield return factory.NewComponentNode<RigidbodyComponent>(physicsCategory)
+                .AddInput(nameof(RigidbodyComponent.ColliderShape), x => x.ColliderShape, (x, v) => x.ColliderShape = v)
+                .AddInput(nameof(RigidbodyComponent.Friction), x => x.Friction, (x, v) => x.Friction = 0.5f)
+                .AddInput(nameof(RigidbodyComponent.RollingFriction), x => x.RollingFriction, (x, v) => x.RollingFriction = v, 0f)
+                .AddInput(nameof(RigidbodyComponent.Restitution), x => x.Restitution, (x, v) => x.Restitution = v, 0f)
+                .WithEnabledPin();
+
+            yield return factory.NewNode<SphereColliderShape>(
+                () => new SphereColliderShape(is2D: false, radiusParam: 1f),
+                name: nameof(SphereColliderShape),
+                physicsCategory);
+                //.AddInput(nameof(SphereColliderShape.Radius), x => x.Radius, (x, v) => x.Radius = v, 1f);
+
+
         }
     }
 }

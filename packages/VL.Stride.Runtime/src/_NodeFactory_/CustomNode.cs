@@ -12,6 +12,27 @@ namespace VL.Stride
 {
     static class FactoryExtensions
     {
+        public static CustomNodeDesc<T> NewNode<T>(this IVLNodeDescriptionFactory factory,
+           Func<T> ctor,
+           string name = default,
+           string category = default,
+           bool copyOnWrite = true,
+           bool hasStateOutput = true,
+           bool fragmented = false)
+        {
+            return new CustomNodeDesc<T>(factory,
+                ctor: ctx =>
+                {
+                    var instance = ctor();
+                    return (instance, default);
+                },
+                name: name,
+                category: category,
+                copyOnWrite: copyOnWrite,
+                hasStateOutput: hasStateOutput,
+                fragmented: fragmented);
+        }
+
         public static CustomNodeDesc<T> NewNode<T>(this IVLNodeDescriptionFactory factory, 
             string name = default, 
             string category = default, 
