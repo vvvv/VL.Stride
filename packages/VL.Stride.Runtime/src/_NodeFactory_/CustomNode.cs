@@ -1,4 +1,5 @@
 ﻿using Stride.Core;
+using Stride.Core.Collections;
 using Stride.Engine;
 using System;
 using System.Collections.Generic;
@@ -244,7 +245,7 @@ namespace VL.Stride
             return a.SequenceEqual(b);
         }
 
-        public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, IList<T>> getter)
+        public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, IList<T>> getter, Action<TInstance> updateInstanceAfterSetter = null)
         {
             return AddInput<IReadOnlyList<T>>(name, 
                 getter: instance => (IReadOnlyList<T>)getter(instance),
@@ -254,12 +255,18 @@ namespace VL.Stride
                     var currentItems = getter(x);
                     currentItems.Clear();
 
-                    var newItems = v?.Where(i => i != null);
-                    if (newItems != null)
+                    if (v != null)
                     {
-                        foreach (var item in newItems)
-                            currentItems.Add(item);
+                        foreach (var item in v)
+                        {
+                            if (item != null)
+                            {
+                                currentItems.Add(item);
+                            }
+                        }
                     }
+
+                    updateInstanceAfterSetter?.Invoke(x);
                 });
         }
 

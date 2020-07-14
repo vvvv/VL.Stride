@@ -34,6 +34,9 @@ namespace VL.Stride
             foreach (var n in EngineNodes.GetNodeDescriptions(this))
                 yield return n;
 
+            foreach (var n in PhysicsNodes.GetNodeDescriptions(this))
+                yield return n;
+
             foreach (var n in GraphicNodes.GetNodeDescriptions(this))
                 yield return n;
         }
