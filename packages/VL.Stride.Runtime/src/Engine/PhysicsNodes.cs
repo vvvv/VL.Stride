@@ -43,18 +43,36 @@ namespace VL.Stride.Engine
         static CustomNodeDesc<TColliderShape> NewColliderShapeNode<TColliderShape>(IVLNodeDescriptionFactory factory, string category, string name = null)
             where TColliderShape : IInlineColliderShapeDesc, new()
         {
-            return factory.NewNode<TColliderShape>(name: name, category: category, copyOnWrite: true, fragmented: true);
+            return factory.NewNode<TColliderShape>(name: name, category: category, copyOnWrite: true, fragmented: false);
         }
 
         static CustomNodeDesc<TPhysicsComponent> NewPhysicsComponentNode<TPhysicsComponent>(IVLNodeDescriptionFactory factory, string category)
             where TPhysicsComponent : PhysicsComponent, new()
         {
-            return factory.NewNode<TPhysicsComponent>(category: category, copyOnWrite: false, fragmented: true)
-                .AddListInput(nameof(PhysicsComponent.ColliderShapes), x => x.ColliderShapes, x => x.ComposeShape())
+            return factory.NewComponentNode<TPhysicsComponent>(category: category)
+                .AddListInput(nameof(PhysicsComponent.ColliderShapes), x => x.ColliderShapes, ColliderShapeChanged)
                 .AddInput(nameof(PhysicsComponent.Friction), x => x.Friction, (x, v) => x.Friction = 0.5f)
                 .AddInput(nameof(PhysicsComponent.RollingFriction), x => x.RollingFriction, (x, v) => x.RollingFriction = v, 0f)
                 .AddInput(nameof(PhysicsComponent.Restitution), x => x.Restitution, (x, v) => x.Restitution = v, 0.5f)
                 ;
+        }
+
+        private static void ColliderShapeChanged<TPhysicsComponent>(TPhysicsComponent x) where TPhysicsComponent : PhysicsComponent, new()
+        {
+            if (x.ColliderShapes.Count > 0) // stride crashes when collider shape set to null
+            {
+                if (x.ColliderShape != null)
+                {
+                    // preserve scaling
+                    var scaling = x.ColliderShape.Scaling;
+                    x.ComposeShape();
+                    x.ColliderShape.Scaling = scaling; 
+                }
+                else
+                {
+                    x.ComposeShape();
+                }
+            }
         }
     }
 }
