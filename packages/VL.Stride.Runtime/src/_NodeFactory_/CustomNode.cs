@@ -57,7 +57,7 @@ namespace VL.Stride
                 fragmented: fragmented);
         }
 
-        public static CustomNodeDesc<TComponent> NewComponentNode<TComponent>(this IVLNodeDescriptionFactory factory, string category)
+        public static CustomNodeDesc<TComponent> NewComponentNode<TComponent>(this IVLNodeDescriptionFactory factory, string category, Action<TComponent> init = null)
             where TComponent : EntityComponent, new()
         {
             return new CustomNodeDesc<TComponent>(factory,
@@ -68,13 +68,14 @@ namespace VL.Stride
                     var sender = new Sender<object, object>(nodeContext, component, manager);
                     var cachedMessages = default(List<VL.Lang.Message>);
                     var subscription = manager.ToggleWarning.Subscribe(v => ToggleMessages(v));
+                    init?.Invoke(component);
                     return (component, () =>
-                    {
-                        ToggleMessages(false);
-                        manager.Dispose();
-                        sender.Dispose();
-                        subscription.Dispose();
-                    }
+                        {
+                            ToggleMessages(false);
+                            manager.Dispose();
+                            sender.Dispose();
+                            subscription.Dispose();
+                        }
                     );
 
                     void ToggleMessages(bool on)

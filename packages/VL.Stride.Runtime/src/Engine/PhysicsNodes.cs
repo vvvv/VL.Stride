@@ -16,9 +16,15 @@ namespace VL.Stride.Engine
             var physicsColliderShapesCategory = $"{physicsCategory}.ColliderShapes";
 
             yield return NewPhysicsComponentNode<StaticColliderComponent>(factory, physicsCategory)
+                .AddColliderParams()
+                .AddSimulationParams()
+                //.AddInput(nameof(StaticColliderComponent.AlwaysUpdateNaviMeshCache), x => x.AlwaysUpdateNaviMeshCache, (x, v) => x.AlwaysUpdateNaviMeshCache = v)
                 .WithEnabledPin();
 
             yield return NewPhysicsComponentNode<RigidbodyComponent>(factory, physicsCategory)
+                .AddRigidBodyParams()
+                .AddColliderParams()
+                .AddSimulationParams()
                 .WithEnabledPin();
 
             yield return NewColliderShapeNode<SphereColliderShapeDesc>(factory, physicsColliderShapesCategory)
@@ -27,7 +33,7 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(SphereColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
                 ;
 
-            yield return NewColliderShapeNode<BoxColliderShapeDesc>(factory, physicsColliderShapesCategory)
+            yield return NewColliderShapeNode<BoxColliderShapeDesc>(factory, physicsColliderShapesCategory, "CubeColliderShapeDesc")
                 .AddInput(nameof(BoxColliderShapeDesc.Size), x => x.Size, (x, v) => x.Size = v, Vector3.One)
                 .AddInput(nameof(BoxColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
                 .AddInput(nameof(BoxColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
@@ -43,21 +49,70 @@ namespace VL.Stride.Engine
         static CustomNodeDesc<TColliderShape> NewColliderShapeNode<TColliderShape>(IVLNodeDescriptionFactory factory, string category, string name = null)
             where TColliderShape : IInlineColliderShapeDesc, new()
         {
-            return factory.NewNode<TColliderShape>(name: name, category: category, copyOnWrite: true, fragmented: false);
+            return factory.NewNode<TColliderShape>(name: name, category: category, copyOnWrite: true, fragmented: true);
+        }
+
+        // Physics component defaults that differ from strides
+        static class Defaults
+        {
+            public const float Friction = 0.1f;
+            public const float RollingFriction = 0.1f;
+            public const float Restitution = 0.5f;
         }
 
         static CustomNodeDesc<TPhysicsComponent> NewPhysicsComponentNode<TPhysicsComponent>(IVLNodeDescriptionFactory factory, string category)
             where TPhysicsComponent : PhysicsComponent, new()
         {
-            return factory.NewComponentNode<TPhysicsComponent>(category: category)
+            return factory.NewComponentNode<TPhysicsComponent>(category, InitPhysicsComponent)
                 .AddListInput(nameof(PhysicsComponent.ColliderShapes), x => x.ColliderShapes, ColliderShapeChanged)
-                .AddInput(nameof(PhysicsComponent.Friction), x => x.Friction, (x, v) => x.Friction = 0.5f)
-                .AddInput(nameof(PhysicsComponent.RollingFriction), x => x.RollingFriction, (x, v) => x.RollingFriction = v, 0f)
-                .AddInput(nameof(PhysicsComponent.Restitution), x => x.Restitution, (x, v) => x.Restitution = v, 0.5f)
+                
                 ;
         }
 
-        private static void ColliderShapeChanged<TPhysicsComponent>(TPhysicsComponent x) where TPhysicsComponent : PhysicsComponent, new()
+        static CustomNodeDesc<TPhysicsComponent> AddColliderParams<TPhysicsComponent>(this CustomNodeDesc<TPhysicsComponent> nodeDesc)
+            where TPhysicsComponent : PhysicsComponent, new()
+        {
+            return nodeDesc
+                .AddInput(nameof(PhysicsComponent.Restitution), x => x.Restitution, (x, v) => x.Restitution = v, Defaults.Restitution)
+                .AddInput(nameof(PhysicsComponent.Friction), x => x.Friction, (x, v) => x.Friction = v, Defaults.Friction)
+                .AddInput(nameof(PhysicsComponent.RollingFriction), x => x.RollingFriction, (x, v) => x.RollingFriction = v, Defaults.RollingFriction)
+                .AddInput(nameof(PhysicsComponent.CcdMotionThreshold), x => x.CcdMotionThreshold, (x, v) => x.CcdMotionThreshold = v)
+                .AddInput(nameof(PhysicsComponent.CcdSweptSphereRadius), x => x.CcdSweptSphereRadius, (x, v) => x.CcdSweptSphereRadius = v)
+                ;
+        }
+
+        static CustomNodeDesc<RigidbodyComponent> AddRigidBodyParams(this CustomNodeDesc<RigidbodyComponent> nodeDesc)
+        {
+            return nodeDesc
+                .AddInput(nameof(RigidbodyComponent.Mass), x => x.Mass, (x, v) => x.Mass = v, 1f)
+                .AddInput(nameof(RigidbodyComponent.LinearDamping), x => x.LinearDamping, (x, v) => x.LinearDamping = v)
+                .AddInput(nameof(RigidbodyComponent.AngularDamping), x => x.AngularDamping, (x, v) => x.AngularDamping = v)
+                .AddInput(nameof(RigidbodyComponent.OverrideGravity), x => x.OverrideGravity, (x, v) => x.OverrideGravity = v)
+                .AddInput(nameof(RigidbodyComponent.Gravity), x => x.Gravity, (x, v) => x.Gravity = v, Vector3.Zero)
+                .AddInput(nameof(RigidbodyComponent.IsKinematic), x => x.IsKinematic, (x, v) => x.IsKinematic = v)
+                .AddInput(nameof(RigidbodyComponent.IsTrigger), x => x.IsTrigger, (x, v) => x.IsTrigger = v)
+                //.AddInput(nameof(RigidbodyComponent.NodeName), x => x.NodeName, (x, v) => x.NodeName = v)
+                ;
+        }
+
+        static CustomNodeDesc<TPhysicsComponent> AddSimulationParams<TPhysicsComponent>(this CustomNodeDesc<TPhysicsComponent> nodeDesc)
+            where TPhysicsComponent : PhysicsComponent, new()
+        {
+            return nodeDesc
+                .AddInput(nameof(PhysicsComponent.CanSleep), x => x.CanSleep, (x, v) => x.CanSleep = v, true)
+                .AddInput(nameof(PhysicsComponent.CollisionGroup), x => x.CollisionGroup, (x, v) => x.CollisionGroup = v, CollisionFilterGroups.DefaultFilter)
+                .AddInput(nameof(PhysicsComponent.CanCollideWith), x => x.CanCollideWith, (x, v) => x.CanCollideWith = v, CollisionFilterGroupFlags.AllFilter)
+                ;
+        }
+
+        static void InitPhysicsComponent<TPhysicsComponent>(TPhysicsComponent x) where TPhysicsComponent : PhysicsComponent, new()
+        {
+            x.Friction = Defaults.Friction;
+            x.RollingFriction = Defaults.RollingFriction;
+            x.Restitution = Defaults.Restitution;
+        }
+
+        static void ColliderShapeChanged<TPhysicsComponent>(TPhysicsComponent x) where TPhysicsComponent : PhysicsComponent, new()
         {
             if (x.ColliderShapes.Count > 0) // stride crashes when collider shape set to null
             {
