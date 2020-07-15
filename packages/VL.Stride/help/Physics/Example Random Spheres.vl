@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="ASSuu2qaVBiOOBs5YCdf9t" LanguageVersion="2020.2.0.175" Version="0.128">
+<Document xmlns:p="property" Id="MkEek32c6HUMGE7dRJrixC" LanguageVersion="2020.2.0.175" Version="0.128">
   <NugetDependency Id="TwGk0oqYRM9LNChgwzEPFV" Location="VL.CoreLib" Version="2020.2.0-0163-gd72514e599" />
   <Patch Id="EZnIqZ0z0epNn1cF1kNIqy">
     <Canvas Id="OjqUphNS7lHNHXGqmkgtXs" DefaultCategory="Main" CanvasType="FullCategory" />
@@ -263,7 +263,7 @@
                   <Choice Kind="ProcessAppFlag" Name="ResetPhysics" />
                 </p:NodeReference>
                 <Pin Id="G4dY3vayLE5LobFYnZG8oO" Name="Input" Kind="InputPin" />
-                <Pin Id="OwrJ9o6IuSYPFlFvDv8lKd" Name="Apply" Kind="InputPin" />
+                <Pin Id="R8lSysFkvicNxAEJ4oAVsv" Name="Reset" Kind="InputPin" />
                 <Pin Id="TY2RFAG0Ve0LtRpOYmnlFA" Name="Output" Kind="OutputPin" />
               </Node>
               <Node Bounds="493,429,76,19" Id="FFimGCwvP21QSKTS05moS4">
@@ -302,6 +302,7 @@
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="EkjYBYq5PMSNq4Nc5WzutD" Name="Output" Kind="OutputPin" />
+            <Pin Id="UFqBTaJZWyFN1aTF9nicrn" Name="Scene Instance" Kind="OutputPin" />
           </Node>
           <Node Bounds="655,673,145,19" Id="Ndy8GmedBviLgndrQ4egBn">
             <p:NodeReference LastCategoryFullName="Stride.Lights" LastSymbolSource="VL.Stride.Engine.vl">
@@ -566,9 +567,17 @@
               <Choice Kind="TypeFlag" Name="Float32" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="NEV6vM1Dj60O7rozCc9NAZ" Comment="Can Sleep" Bounds="1017,330,35,35" ShowValueBox="true" isIOBox="true" Value="False">
-            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="TypeFlag" Name="Boolean" />
+          <Node Bounds="608,985,62,19" Id="H7wZyWsltC8NseME364AbD">
+            <p:NodeReference LastCategoryFullName="Stride.Physics" LastSymbolSource="VL.Stride.Engine.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="SetGravity" />
+            </p:NodeReference>
+            <Pin Id="OkIvBZZ4CDSM7U5fYbHidS" Name="Scene Instance" Kind="InputPin" />
+            <Pin Id="G7vWLdGZjQfNlTJ9Aht9sD" Name="Gravity" Kind="InputPin" />
+          </Node>
+          <Pad Id="P01eqrsC7WxQZWNSMXDA8A" Comment="Gravity" Bounds="731,919,35,43" ShowValueBox="true" isIOBox="true" Value="0, -9.81, 0">
+            <p:TypeAnnotation LastCategoryFullName="3D" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="Vector3" />
             </p:TypeAnnotation>
           </Pad>
         </Canvas>
@@ -603,7 +612,6 @@
         <Link Id="Porrss8wNcSM4LdaGCEtCF" Ids="Qa2RQGps9itPm00zxEQyPS,UlN51lA54lZPIw9cHHliZf" />
         <Link Id="LjuiFdbMMJBPt0heYMcQXs" Ids="Kzikbuog4xOO0u9VDxYd0l,Q8UVv2l4Xw1L5O4OxLbutt" />
         <Link Id="FUqgkm8TkiPNUm45MILULt" Ids="TY2RFAG0Ve0LtRpOYmnlFA,EOXxMrRonj6NUKQ3syE8rW" />
-        <Link Id="IYhVmmUDhmkOuT9M7dkF0R" Ids="Na4yFghK7NwQLmIE51iAb9,OwrJ9o6IuSYPFlFvDv8lKd" />
         <Link Id="Jd7XiBExkVGO9usXuYj9uE" Ids="GOoKCBXpBf7M2IxS2JvwMo,TBohTDgEt1BLRkbLFzfqeJ" />
         <Link Id="RGEegRQXQkjOMDBMfBxnSP" Ids="TsV69BWjbrFPu2ULLmwB5L,D8ZD8hsus5YOdXOQD1HC9G" />
         <Link Id="CLcg4A7LFggLUCw6stosMg" Ids="MWO7OdsgCAhQKQYcUIEF6m,ScRc0QRg6eNLH1hWGTWjSm" />
@@ -612,9 +620,11 @@
         <Link Id="CkmjTcHIvjbMHRrOEtFOho" Ids="NJAm4uCfRjdN9KwALZ7SxP,DF02pI5E4PdOi1gZwFkWMX" />
         <Link Id="CHVTBzsocIHMz8lSbd2Hhf" Ids="UgEHOkFrQvtLyoSv0AW21X,AfMDfE0e4JpPTxO12APR1u" />
         <Link Id="IMHbPKm0h5uO5Bv9CBKqJo" Ids="ICFASPqXvYyLB7jmlGp3x7,Hkm71Oj28PvOYs5Byzw9Uv" />
-        <Link Id="Kg5HY7rYkO8QCs2rTwQPWH" Ids="NEV6vM1Dj60O7rozCc9NAZ,IMG9GenD05YO4ldhrSeR4h" />
+        <Link Id="IGJaovqLxEkPn4I4poGNL7" Ids="P01eqrsC7WxQZWNSMXDA8A,G7vWLdGZjQfNlTJ9Aht9sD" />
+        <Link Id="SAo7jTpYD39NhmPNOo8s2m" Ids="UFqBTaJZWyFN1aTF9nicrn,OkIvBZZ4CDSM7U5fYbHidS" />
+        <Link Id="NV5bv9aUuUYLuwXAMgWEDu" Ids="Na4yFghK7NwQLmIE51iAb9,R8lSysFkvicNxAEJ4oAVsv" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Q6thn2Y7IMaPIwMZVU2Sfj" Location="VL.Stride" Version="0.7.187-g5f048fc7fa" />
+  <NugetDependency Id="Q6thn2Y7IMaPIwMZVU2Sfj" Location="VL.Stride" Version="0.7.188-geee77324ff" />
 </Document>
