@@ -163,8 +163,8 @@ namespace VL.Stride
                     {
                         node.needsUpdate = false;
                         // TODO: Causes render pipeline to crash
-                        //if (instance is IDisposable disposable)
-                        //    disposable.Dispose();
+                        if (instance is IDisposable disposable)
+                            disposable.Dispose();
 
                         instance = ctor(context).Item1;
 
@@ -179,8 +179,8 @@ namespace VL.Stride
                 node.disposeAction = () =>
                 {
                     // TODO: Causes render pipeline to crash
-                    //if (instance is IDisposable disposable)
-                    //    disposable.Dispose();
+                    if (instance is IDisposable disposable)
+                        disposable.Dispose();
                 };
             }
             else
