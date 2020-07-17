@@ -83,9 +83,6 @@ namespace VL.Stride.Rendering.Composition
             yield return nodeFactory.NewNode<SingleStageRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddInput(nameof(SingleStageRenderer.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
 
-            yield return nodeFactory.NewNode<TextureFXRenderer>(category: compositionCategory, copyOnWrite: false)
-                .AddInput(nameof(SingleStageRenderer.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
-
             yield return nodeFactory.NewNode<TooltipRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddInput(nameof(SingleStageRenderer.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
 

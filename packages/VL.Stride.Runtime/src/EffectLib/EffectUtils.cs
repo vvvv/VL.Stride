@@ -50,25 +50,6 @@ namespace VL.Stride.EffectLib
                 return name.Substring(dotIndex + 1);
             return name;
         }
-
-        public static MessageType ToMessageType(this LogMessageType type)
-        {
-            switch (type)
-            {
-                case LogMessageType.Debug:
-                    return MessageType.Debug;
-                case LogMessageType.Verbose:
-                case LogMessageType.Info:
-                    return MessageType.Info;
-                case LogMessageType.Warning:
-                    return MessageType.Warning;
-                case LogMessageType.Error:
-                case LogMessageType.Fatal:
-                    return MessageType.Error;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
     }
 
     static class WellKnownParameters
@@ -209,47 +190,6 @@ namespace VL.Stride.EffectLib
             foreach (var entry in Enum.GetValues(typeof(T)))
                 map.Add($"{effectName}.{entry.ToString()}", (T)entry);
             return map;
-        }
-    }
-
-    delegate ref TOut ValueConverter<TIn, TOut>(ref TIn value);
-
-    static class TypeConversions
-    {
-        public static Dictionary<Type, Type> ShaderToPinTypeMap = new Dictionary<Type, Type>()
-        {
-            //{ typeof(Matrix), typeof(SharpDX.Matrix) },
-            //{ typeof(Vector2), typeof(SharpDX.Vector2) },
-            //{ typeof(Vector3), typeof(SharpDX.Vector3) },
-            //{ typeof(Vector4), typeof(SharpDX.Vector4) },
-        };
-
-        static readonly MethodInfo ConvertMethod = typeof(TypeConversions).GetMethod(nameof(Convert), BindingFlags.Static | BindingFlags.Public);
-
-        public static object ConvertShaderToPin(object shaderValue, Type pinType)
-        {
-            var convertMethod = ConvertMethod.MakeGenericMethod(shaderValue.GetType(), pinType);
-            return convertMethod.Invoke(null, new object[] { shaderValue });
-        }
-
-        public static TOut Convert<TIn, TOut>(TIn value)
-        {
-            var converter = GetConverter<TIn, TOut>();
-            return converter(ref value);
-        }
-
-        public static ValueConverter<TIn, TOut> GetConverter<TIn, TOut>()
-        {
-            if (typeof(TIn) == typeof(Matrix) || typeof(TOut) == typeof(Matrix))
-                return ConvertMatrix<TIn, TOut>;
-            return Unsafe.As<TIn, TOut>;
-        }
-
-        public static ref TOut ConvertMatrix<TIn, TOut>(ref TIn value)
-        {
-            ref var m = ref Unsafe.As<TIn, Matrix>(ref value);
-            m.Transpose();
-            return ref Unsafe.As<Matrix, TOut>(ref m);
         }
     }
 

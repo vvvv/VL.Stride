@@ -1,11 +1,9 @@
 using System;
 using System.Linq;
 using VL.Core;
-using VL.Lib.Basics.Resources;
 using VL.Stride.Rendering;
 using VL.Stride.Shaders;
 using Stride.Core.Mathematics;
-using Stride.Games;
 using Stride.Graphics;
 using Stride.Rendering;
 
@@ -13,15 +11,14 @@ namespace VL.Stride.EffectLib
 {
     class EffectNode : EffectNodeBase, IVLNode, IEffect
     {
-        DynamicEffectInstance instance;
-        GraphicsDevice graphicsDevice;
-        PerFrameParameters[] perFrameParams;
-        PerViewParameters[] perViewParams;
-        PerDrawParameters[] perDrawParams;
-        ParameterCollection parameters;
+        readonly DynamicEffectInstance instance;
+        readonly GraphicsDevice graphicsDevice;
+        readonly PerFrameParameters[] perFrameParams;
+        readonly PerViewParameters[] perViewParams;
+        readonly PerDrawParameters[] perDrawParams;
+        readonly ParameterCollection parameters;
         bool pipelineStateDirty = true;
         Pin<Action<ParameterCollection, RenderView, RenderDrawContext>> customParameterSetterPin;
-        private bool initialized;
 
         public EffectNode(NodeContext nodeContext, EffectNodeDescription description) : base(nodeContext, description)
         {
@@ -38,35 +35,9 @@ namespace VL.Stride.EffectLib
             }
             parameters = instance.Parameters;
 
-            //just create the pins, actual setup will be in initalize
             Inputs = description.CreateNodeInputs(this, parameters);
             Outputs = description.CreateNodeOutputs(this, parameters);
-        }
 
-        public void Initialize()
-        {
-            var game = Game;
-            instance?.Dispose();
-            instance = null;
-
-            if (game == null)
-                return;
-
-            graphicsDevice = game.GraphicsDevice;
-
-            instance = new DynamicEffectInstance(description.EffectName);
-            try
-            {
-                instance.Initialize(game.Services);
-                instance.UpdateEffect(graphicsDevice);
-            }
-            catch (Exception e)
-            {
-                ReportException(e);
-            }
-            parameters = instance.Parameters;
-            Inputs.OfType<ParameterPin>().Do(p => p.Update(parameters));
-            Outputs.OfType<ParameterPin>().Do(p => p.Update(parameters));
             perFrameParams = parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
             perViewParams = parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
             perDrawParams = parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
@@ -74,8 +45,6 @@ namespace VL.Stride.EffectLib
                 worldPin = Inputs.OfType<ValueParameterPin<Matrix>>().FirstOrDefault(p => p.Key == TransformationKeys.World);
             if (Inputs.Length > 0)
                 customParameterSetterPin = Inputs[Inputs.Length - 1] as Pin<Action<ParameterCollection, RenderView, RenderDrawContext>>;
-
-            initialized = true;
         }
 
         public IVLPin[] Inputs { get; }
@@ -84,21 +53,11 @@ namespace VL.Stride.EffectLib
 
         public void Update()
         {
-            if (!initialized)
-            {
-                Initialize();
-            }
-
-            if (instance == null)
-                return;
-
             var upstreamVersion = description.Version;
             try
             {
                 if (pipelineStateDirty || (upstreamVersion > version && instance.UpdateEffect(graphicsDevice)))
                 {
-                    foreach (var p in Inputs.OfType<ParameterPin>())
-                        p.Update(parameters);
                     pipelineStateDirty = false;
                 }
             }
@@ -110,14 +69,11 @@ namespace VL.Stride.EffectLib
 
         protected override void Destroy()
         {
-            instance?.Dispose();
+            instance.Dispose();
         }
 
         EffectInstance IEffect.SetParameters(RenderView renderView, RenderDrawContext renderDrawContext)
         {
-            if (instance == null)
-                return instance;
-
             try
             {
                 // TODO1: PerFrame could be done in Update if we'd have access to frame time

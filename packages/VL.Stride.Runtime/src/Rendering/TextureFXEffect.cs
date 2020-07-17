@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Stride.Rendering;
 using Stride.Rendering.Images;
 
@@ -13,22 +11,44 @@ namespace VL.Stride.Rendering
 
         public TextureFXEffect(string effectName = null, bool delaySetRenderTargets = false)
             : base(effectName, delaySetRenderTargets)
-        { }
+        { 
+        }
+
+        public bool IsInputAssigned => InputCount > 0 && GetInput(0) != null;
+
+        public bool IsOutputAssigned => OutputCount > 0 && GetOutput(0) != null;
+
+        protected override void PreDrawCore(RenderDrawContext context)
+        {
+            if (IsInputAssigned && IsOutputAssigned)
+                base.PreDrawCore(context);
+        }
 
         protected override void DrawCore(RenderDrawContext context)
         {
-            if ((context.RenderContext.Time.Total - lastExceptionTime) < retryTime)
+            var time = context.RenderContext.Time;
+            if (time != null && (time.Total - lastExceptionTime) < retryTime)
                 return;
 
-            try
+            if (IsInputAssigned && IsOutputAssigned)
             {
-                base.DrawCore(context);
+                try
+                {
+                    base.DrawCore(context);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    if (time != null)
+                        lastExceptionTime = time.Total;
+                }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                lastExceptionTime = context.RenderContext.Time.Total;
-            }
+        }
+
+        protected override void PostDrawCore(RenderDrawContext context)
+        {
+            if (IsInputAssigned && IsOutputAssigned)
+                base.PostDrawCore(context);
         }
     }
 }

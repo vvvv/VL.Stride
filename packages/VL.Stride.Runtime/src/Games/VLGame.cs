@@ -7,6 +7,7 @@ using Stride.Engine;
 using Stride.Games;
 using Stride.Rendering;
 using Stride.Engine.Design;
+using VL.Stride.Engine;
 
 namespace VL.Stride.Games
 {
@@ -21,10 +22,16 @@ namespace VL.Stride.Games
         [ThreadStatic]
         public static VLGame GameInstance;
 
+        internal readonly SchedulerSystem SchedulerSystem;
+
         public VLGame()
             : base()
         {
             GameInstance = this;
+
+            SchedulerSystem = new SchedulerSystem(Services);
+            Services.AddService<IGameSystemScheduler>(SchedulerSystem);
+            Services.AddService<IRendererScheduler>(SchedulerSystem);
         }
 
         protected override void PrepareContext()
@@ -42,7 +49,10 @@ namespace VL.Stride.Games
         {
             Settings.EffectCompilation = EffectCompilationMode.Local;
             Settings.RecordUsedEffects = false;
+
             base.Initialize();
+
+            GameSystems.Add(SchedulerSystem);
         }
 
         public void AddLayerRenderFeature()
