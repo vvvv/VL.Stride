@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
+using System.ComponentModel;
 using VL.Core;
 using VL.Stride.Engine;
 using VL.Stride.Graphics;
@@ -15,10 +16,12 @@ namespace VL.Stride
     {
         public StrideNodeFactory()
         {
-            NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(new ObservableCollection<IVLNodeDescription>(GetNodeDescriptions()));
+            NodeDescriptions = GetNodeDescriptions().ToImmutableArray();
         }
 
-        public ReadOnlyObservableCollection<IVLNodeDescription> NodeDescriptions { get; }
+        public ImmutableArray<IVLNodeDescription> NodeDescriptions { get; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         IEnumerable<IVLNodeDescription> GetNodeDescriptions()
         {

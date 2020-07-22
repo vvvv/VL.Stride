@@ -3,9 +3,75 @@ using System.Collections.Generic;
 using System.Reflection;
 using VL.Core;
 using Stride.Rendering;
+using Stride.Core.Mathematics;
 
 namespace VL.Stride.EffectLib
 {
+    public abstract class EffectPinDescription : IVLPinDescription
+    {
+        public abstract string Name { get; }
+        public abstract Type Type { get; }
+        public abstract object DefaultValueBoxed { get; }
+
+        object IVLPinDescription.DefaultValue => DefaultValueBoxed;
+
+        public abstract IVLPin CreatePin(ParameterCollection parameters);
+    }
+
+    public class PinDescription<T> : EffectPinDescription
+    {
+        public PinDescription(string name, T defaultValue = default(T))
+        {
+            Name = name;
+            DefaultValue = defaultValue;
+        }
+
+        public override string Name { get; }
+        public override Type Type => typeof(T);
+        public override object DefaultValueBoxed => DefaultValue;
+        public T DefaultValue { get; }
+
+        public override IVLPin CreatePin(ParameterCollection parameters) => new Pin<T>(Name, DefaultValue);
+    }
+
+    public class ParameterPinDescription : EffectPinDescription
+    {
+        public readonly ParameterKey Key;
+        public readonly int Count;
+        public readonly bool IsPermutationKey;
+
+        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, int count = 1, object defaultValue = null, bool isPermutationKey = false)
+        {
+            Key = key;
+            IsPermutationKey = isPermutationKey;
+            Count = count;
+            Name = key.GetPinName(usedNames);
+            var elementType = key.PropertyType;
+            defaultValue = defaultValue ?? key.DefaultValueMetadata?.GetDefaultValue();
+            // TODO: This should be fixed in Stride
+            if (key.PropertyType == typeof(Matrix))
+                defaultValue = Matrix.Identity;
+            if (count > 1)
+            {
+                Type = elementType.MakeArrayType();
+                var arr = Array.CreateInstance(elementType, count);
+                for (int i = 0; i < arr.Length; i++)
+                    arr.SetValue(defaultValue, i);
+                DefaultValueBoxed = arr;
+            }
+            else
+            {
+                Type = elementType;
+                DefaultValueBoxed = defaultValue;
+            }
+        }
+
+        public override string Name { get; }
+        public override Type Type { get; }
+        public override object DefaultValueBoxed { get; }
+        public override IVLPin CreatePin(ParameterCollection parameters) => EffectPins.CreatePin(parameters, Key, Count, IsPermutationKey);
+    }
+
     static class EffectPins
     {
         public static IVLPin CreatePin(ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey)
@@ -30,43 +96,18 @@ namespace VL.Stride.EffectLib
 
         public static IVLPin CreatePermutationPin<T>(ParameterCollection parameters, PermutationParameterKey<T> key)
         {
-            var shaderType = typeof(T);
-            var pinType = TypeConversions.ShaderToPinTypeMap.ValueOrDefault(shaderType);
-            if (pinType != null)
-            {
-                var convertedValueParameterPinType = typeof(ConvertedPermutationParameterPin<,>).MakeGenericType(shaderType, pinType);
-                return Activator.CreateInstance(convertedValueParameterPinType, parameters, key) as IVLPin;
-            }
             return new PermutationParameterPin<T>(parameters, key);
         }
 
         public static IVLPin CreateValuePin<T>(ParameterCollection parameters, ValueParameterKey<T> key, int count) where T : struct
         {
-            var shaderType = typeof(T);
-            var pinType = TypeConversions.ShaderToPinTypeMap.ValueOrDefault(shaderType);
-            if (pinType != null)
+            if (count > 1)
             {
-                if (count > 1)
-                {
-                    var parameterPinType = typeof(ConvertedArrayValueParameterPin<,>).MakeGenericType(shaderType, pinType);
-                    return Activator.CreateInstance(parameterPinType, parameters, key) as IVLPin;
-                }
-                else
-                {
-                    var parameterPinType = typeof(ConvertedValueParameterPin<,>).MakeGenericType(shaderType, pinType);
-                    return Activator.CreateInstance(parameterPinType, parameters, key) as IVLPin;
-                }
+                return new ArrayValueParameterPin<T>(parameters, key);
             }
             else
             {
-                if (count > 1)
-                {
-                    return new ArrayValueParameterPin<T>(parameters, key);
-                }
-                else
-                {
-                    return new ValueParameterPin<T>(parameters, key);
-                }
+                return new ValueParameterPin<T>(parameters, key);
             }
         }
 
@@ -78,7 +119,7 @@ namespace VL.Stride.EffectLib
 
     abstract class ParameterPin
     {
-        public ParameterCollection Parameters;
+        public readonly ParameterCollection Parameters;
         public readonly ParameterKey ParameterKey;
 
         public ParameterPin(ParameterCollection parameters, ParameterKey key)
@@ -86,8 +127,6 @@ namespace VL.Stride.EffectLib
             Parameters = parameters;
             ParameterKey = key;
         }
-
-        public abstract void Update(ParameterCollection parameters);
     }
 
     abstract class PermutationParameterPin : ParameterPin
@@ -104,29 +143,20 @@ namespace VL.Stride.EffectLib
     {
         public readonly PermutationParameterKey<T> Key;
         readonly EqualityComparer<T> comparer = EqualityComparer<T>.Default;
-        PermutationParameter<T> accessor;
 
         public PermutationParameterPin(ParameterCollection parameters, PermutationParameterKey<T> key) 
             : base(parameters, key)
         {
-            this.Parameters = parameters;
             this.Key = key;
-            this.accessor = parameters.GetAccessor(key);
-        }
-
-        public override void Update(ParameterCollection parameters)
-        {
-            Parameters = parameters;
-            accessor = parameters.GetAccessor(Key);
         }
 
         public T Value
         {
-            get => Parameters.Get(accessor);
+            get => Parameters.Get(Key);
             set
             {
                 HasChanged = !comparer.Equals(value, Value);
-                Parameters.Set(accessor, value);
+                Parameters.Set(Key, value);
             }
         }
 
@@ -137,69 +167,20 @@ namespace VL.Stride.EffectLib
         }
     }
 
-    class ConvertedPermutationParameterPin<TShader, TPin> : ParameterPin, IVLPin
-    {
-        public readonly PermutationParameterKey<TShader> Key;
-        readonly ValueConverter<TPin, TShader> pinToShader;
-        readonly ValueConverter<TShader, TPin> shaderToPin;
-        PermutationParameter<TShader> accessor;
-
-        public ConvertedPermutationParameterPin(ParameterCollection parameters, PermutationParameterKey<TShader> key) 
-            : base(parameters, key)
-        {
-            Key = key;
-            this.accessor = parameters.GetAccessor(key);
-            this.pinToShader = TypeConversions.GetConverter<TPin, TShader>();
-            this.shaderToPin = TypeConversions.GetConverter<TShader, TPin>();
-        }
-
-        public override void Update(ParameterCollection parameters)
-        {
-            Parameters = parameters;
-            accessor = parameters.GetAccessor(Key);
-        }
-
-        public TShader ShaderValue => Parameters.Get(accessor);
-
-        public TPin Value
-        {
-            get
-            {
-                var value = Parameters.Get(accessor);
-                return shaderToPin(ref value);
-            }
-            set => Parameters.Set(accessor, pinToShader(ref value));
-        }
-
-        object IVLPin.Value
-        {
-            get => Value;
-            set => Value = (TPin)value;
-        }
-    }
-
     class ValueParameterPin<T> : ParameterPin, IVLPin where T : struct
     {
         public readonly ValueParameterKey<T> Key;
-        ValueParameter<T> accessor;
 
         public ValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key) 
             : base(parameters, key)
         {
             this.Key = key;
-            this.accessor = parameters.GetAccessor(key);
-        }
-
-        public override void Update(ParameterCollection parameters)
-        {
-            Parameters = parameters;
-            accessor = parameters.GetAccessor(Key);
         }
 
         public T Value
         {
-            get => Parameters.Get(accessor);
-            set => Parameters.Set(accessor, value);
+            get => Parameters.Get(Key);
+            set => Parameters.Set(Key, value);
         }
 
         object IVLPin.Value
@@ -217,11 +198,6 @@ namespace VL.Stride.EffectLib
             : base(parameters, key)
         {
             this.Key = key;
-        }
-
-        public override void Update(ParameterCollection parameters)
-        {
-            Parameters = parameters;
         }
 
         // TODO: Add overloads to Stride wich take accessor instead of less optimal key
@@ -242,134 +218,20 @@ namespace VL.Stride.EffectLib
         }
     }
 
-    class ConvertedValueParameterPin<TShader, TPin> : ParameterPin, IVLPin
-        where TShader : struct
-        where TPin : struct
-    {
-        public readonly ValueParameterKey<TShader> Key;
-        readonly ValueConverter<TPin, TShader> pinToShader;
-        readonly ValueConverter<TShader, TPin> shaderToPin;
-        ValueParameter<TShader> accessor;
-
-        public ConvertedValueParameterPin(ParameterCollection parameters, ValueParameterKey<TShader> key) 
-            : base(parameters, key)
-        {
-            Key = key;
-            this.accessor = parameters.GetAccessor(key);
-            this.pinToShader = TypeConversions.GetConverter<TPin, TShader>();
-            this.shaderToPin = TypeConversions.GetConverter<TShader, TPin>();
-        }
-
-        public override void Update(ParameterCollection parameters)
-        {
-            Parameters = parameters;
-            accessor = parameters.GetAccessor(Key);
-        }
-
-        public TShader ShaderValue
-        {
-            get => Parameters.Get(accessor);
-            set => Parameters.Set(accessor, value);
-        }
-
-        public TPin Value
-        {
-            get
-            {
-                var value = Parameters.Get(accessor);
-                return shaderToPin(ref value);
-            }
-            set => Parameters.Set(accessor, pinToShader(ref value));
-        }
-
-        object IVLPin.Value
-        {
-            get => Value;
-            set => Value = (TPin)value;
-        }
-    }
-
-    class ConvertedArrayValueParameterPin<TShader, TPin> : ParameterPin, IVLPin
-        where TShader : struct
-        where TPin : struct
-    {
-        public readonly ValueParameterKey<TShader> Key;
-        readonly ValueConverter<TPin, TShader> pinToShader;
-        readonly ValueConverter<TShader, TPin> shaderToPin;
-
-        public ConvertedArrayValueParameterPin(ParameterCollection parameters, ValueParameterKey<TShader> key) 
-            : base(parameters, key)
-        {
-            Key = key;
-            this.pinToShader = TypeConversions.GetConverter<TPin, TShader>();
-            this.shaderToPin = TypeConversions.GetConverter<TShader, TPin>();
-        }
-
-        public override void Update(ParameterCollection parameters)
-        {
-            Parameters = parameters;
-        }
-
-        public TShader[] ShaderValue => Parameters.GetValues(Key);
-
-        public TPin[] Value
-        {
-            get
-            {
-                var shaderValue = ShaderValue;
-                var value = new TPin[shaderValue.Length];
-                for (int i = 0; i < value.Length; i++)
-                {
-                    // Make a local copy because matrix gets transposed in place
-                    var c = shaderValue[i];
-                    value[i] = shaderToPin(ref c);
-                }
-                return value;
-            }
-            set
-            {
-                var shaderValue = new TShader[value.Length];
-                for (int i = 0; i < value.Length; i++)
-                {
-                    // Make a local copy because matrix gets transposed in place
-                    var c = value[i];
-                    shaderValue[i] = pinToShader(ref c);
-                }
-                if (shaderValue.Length > 0)
-                    Parameters.Set(Key, shaderValue);
-            }
-        }
-
-        object IVLPin.Value
-        {
-            get => Value;
-            set => Value = (TPin[])value;
-        }
-    }
-
     class ResourceParameterPin<T> : ParameterPin, IVLPin where T : class
     {
         public readonly ObjectParameterKey<T> Key;
-        ObjectParameterAccessor<T> accessor;
 
         public ResourceParameterPin(ParameterCollection parameters, ObjectParameterKey<T> key) 
             : base(parameters, key)
         {
-            this.Parameters = parameters;
             this.Key = key;
-            this.accessor = parameters.GetAccessor(key);
-        }
-
-        public override void Update(ParameterCollection parameters)
-        {
-            Parameters = parameters;
-            accessor = parameters.GetAccessor(Key);
         }
 
         public T Value
         {
-            get => Parameters.Get(accessor);
-            set => Parameters.Set(accessor, value ?? Key.DefaultValueMetadataT?.DefaultValue);
+            get => Parameters.Get(Key);
+            set => Parameters.Set(Key, value ?? Key.DefaultValueMetadataT?.DefaultValue);
         }
 
         object IVLPin.Value

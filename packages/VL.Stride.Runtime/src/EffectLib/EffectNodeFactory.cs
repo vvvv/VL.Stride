@@ -24,101 +24,37 @@ using Stride.Shaders;
 using Stride.Shaders.Compiler;
 using ServiceRegistry = Stride.Core.ServiceRegistry;
 using VLServiceRegistry = VL.Core.ServiceRegistry;
+using VL.Stride.Core;
+using System.Collections.Immutable;
+using System.ComponentModel;
 
 [assembly: NodeFactory(typeof(VL.Stride.EffectLib.EffectNodeFactory))]
 
 namespace VL.Stride.EffectLib
 {
-    class NodeComparer : IEqualityComparer<IVLNodeDescription>
-    {
-        public static readonly IEqualityComparer<IVLNodeDescription> Instance = new NodeComparer();
-
-        public bool Equals(IVLNodeDescription x, IVLNodeDescription y)
-        {
-            if (x == y)
-                return true;
-
-            if (x.Name != y.Name)
-                return false;
-
-            if (x.Category != y.Category)
-                return false;
-
-            //if (!x.Outputs.SequenceEqual(y.Outputs, PinComparer.Instance))
-            //    return false;
-
-            //if (!x.Inputs.SequenceEqual(y.Inputs, PinComparer.Instance))
-            //    return false;
-
-            return true;
-        }
-
-        public int GetHashCode(IVLNodeDescription obj)
-        {
-            return obj.Name.GetHashCode();
-        }
-    }
-
     public class EffectNodeFactory : IVLNodeDescriptionFactory
     {
-        // Taken from Stride/Game
-        static DatabaseFileProvider InitializeAssetDatabase()
-        {
-            // Create and mount database file system
-            var objDatabase = ObjectDatabase.CreateDefaultDatabase();
-
-            // Only set a mount path if not mounted already
-            var mountPath = VirtualFileSystem.ResolveProviderUnsafe("/asset", true).Provider == null ? "/asset" : null;
-            return new DatabaseFileProvider(objDatabase, mountPath);
-        }
-
-        // Taken from Stride/SkyboxGeneratorContext
-        private void Init()
-        {
-            Services = new ServiceRegistry();
-
-            var fileProvider = InitializeAssetDatabase();
-            var fileProviderService = new DatabaseFileProviderService(fileProvider);
-            Services.AddService<IDatabaseFileProviderService>(fileProviderService);
-
-            Content = new ContentManager(Services);
-            Services.AddService<IContentManager>(Content);
-            Services.AddService(Content);
-
-            GraphicsDevice = GraphicsDevice.New();
-            GraphicsDeviceService = new GraphicsDeviceServiceLocal(Services, GraphicsDevice);
-            Services.AddService<IGraphicsDeviceService>(GraphicsDeviceService);
-
-            var graphicsContext = new GraphicsContext(GraphicsDevice);
-            Services.AddService(graphicsContext);
-
-            EffectSystem = new EffectSystem(Services);
-            EffectSystem.Compiler = EffectCompilerFactory.CreateEffectCompiler(Content.FileProvider, EffectSystem);
-
-            Services.AddService(EffectSystem);
-            EffectSystem.Initialize();
-            ((IContentable)EffectSystem).LoadContent();
-            ((EffectCompilerCache)EffectSystem.Compiler).CompileEffectAsynchronously = false;
-        }
-
         const string sdslFileFilter = "*.sdsl";
         const string CompiledShadersKey = "__shaders_bytecode__"; // Taken from EffectCompilerCache.cs
 
         private EffectCompilerParameters effectCompilerParameters = EffectCompilerParameters.Default;
 
-        readonly ObservableCollection<IVLNodeDescription> nodeDescriptions;
         readonly DirectoryWatcher directoryWatcher;
         readonly SynchronizationContext mainContext;
+        ImmutableArray<IVLNodeDescription> nodeDescriptions;
         Timer timer;
 
         public EffectNodeFactory()
         {
-            Init();
+            Services = SharedServices.GetRegistry();
+            Content = Services.GetService<ContentManager>();
+            EffectSystem = Services.GetService<EffectSystem>();
+            GraphicsDeviceService = Services.GetService<IGraphicsDeviceService>();
+            GraphicsDevice = GraphicsDeviceService.GraphicsDevice;
 
             mainContext = Services.GetService<SynchronizationContext>() ?? SynchronizationContext.Current;
 
-            nodeDescriptions = new ObservableCollection<IVLNodeDescription>(GetNodeDescriptions(Content));
-            NodeDescriptions = new ReadOnlyObservableCollection<IVLNodeDescription>(nodeDescriptions);
+            nodeDescriptions = GetNodeDescriptions(Content).ToImmutableArray();
 
             var effectSystem = EffectSystem;
             // Ensure the effect system tracks the same files as we do
@@ -127,11 +63,25 @@ namespace VL.Stride.EffectLib
             directoryWatcher.Modified += DirectoryWatcher_Modified;
         }
 
-        public ReadOnlyObservableCollection<IVLNodeDescription> NodeDescriptions { get; }
+        public ImmutableArray<IVLNodeDescription> NodeDescriptions
+        {
+            get => nodeDescriptions;
+            private set
+            {
+                if (!value.SequenceEqual(nodeDescriptions))
+                {
+                    nodeDescriptions = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NodeDescriptions)));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public ContentManager Content { get; private set; }
         public ServiceRegistry Services { get; private set; }
         public GraphicsDevice GraphicsDevice { get; private set; }
-        public GraphicsDeviceServiceLocal GraphicsDeviceService { get; private set; }
+        public IGraphicsDeviceService GraphicsDeviceService { get; private set; }
         public EffectSystem EffectSystem { get; private set; }
 
         public readonly object SyncRoot = new object();
@@ -164,7 +114,7 @@ namespace VL.Stride.EffectLib
             {
                 foreach (var m in effectBytecodeCompilerResult.CompilationLog.Messages)
                 {
-                    if (TryGetFilePath(m, out string path))
+                    if (m.TryGetFilePath(out string path))
                         directoryWatcher.Track(path);
                 }
             }
@@ -186,68 +136,12 @@ namespace VL.Stride.EffectLib
             return compilerResults;
         }
 
-        public static bool TryGetFilePath(ILogMessage m, out string path)
-        {
-            var module = m.Module;
-            if (module != null && TryGetFilePath(module, out path))
-                return true;
-            return TryGetFilePath(m.Text, out path);
-        }
-
-        private static bool TryGetFilePath(string s, out string path)
-        {
-            var index = s.IndexOf('(');
-            if (index >= 0)
-            {
-                path = s.Substring(0, index);
-                return true;
-            }
-            else
-            {
-                path = null;
-                return false;
-            }
-        }
-
         private static ShaderSource GetShaderSource(string effectName)
         {
             var isXdfx = ShaderMixinManager.Contains(effectName);
             if (isXdfx)
                 return new ShaderMixinGeneratorSource(effectName);
             return new ShaderClassSource(effectName);
-        }
-
-        private ShaderMixinSource GetShaderMixinSource(ShaderSource shaderSource, CompilerParameters compilerParameters)
-        {
-            ShaderMixinSource mixinToCompile;
-            var shaderMixinGeneratorSource = shaderSource as ShaderMixinGeneratorSource;
-
-            if (shaderMixinGeneratorSource != null)
-            {
-                mixinToCompile = ShaderMixinManager.Generate(shaderMixinGeneratorSource.Name, compilerParameters);
-            }
-            else
-            {
-                mixinToCompile = shaderSource as ShaderMixinSource;
-                var shaderClassSource = shaderSource as ShaderClassSource;
-
-                if (shaderClassSource != null)
-                {
-                    mixinToCompile = new ShaderMixinSource { Name = shaderClassSource.ClassName };
-                    mixinToCompile.Mixins.Add(shaderClassSource);
-                }
-
-                if (mixinToCompile == null)
-                {
-                    throw new ArgumentException("Unsupported ShaderSource type [{0}]. Supporting only ShaderMixinSource/sdfx, ShaderClassSource", "shaderSource");
-                }
-                if (string.IsNullOrEmpty(mixinToCompile.Name))
-                {
-                    throw new ArgumentException("ShaderMixinSource must have a name", "shaderSource");
-                }
-            }
-
-            return mixinToCompile;
         }
 
         public string GetPathOfSdslShader(string effectName)
@@ -287,55 +181,47 @@ namespace VL.Stride.EffectLib
             if (e.ChangeType == FileEventChangeType.Changed || e.ChangeType == FileEventChangeType.Renamed)
             {
                 timer?.Dispose();
-                timer = new Timer(_ => UpdateNodeDescriptions(), null, 500, Timeout.Infinite);
+                timer = new Timer(_ => ReloadNodeDescriptions(), null, 50, Timeout.Infinite);
             }
         }
 
-        void UpdateNodeDescriptions()
+        void ReloadNodeDescriptions()
         {
-            var descriptions = nodeDescriptions.ToArray();
-            for (int i = 0; i < descriptions.Length; i++)
-            {
-                var description = descriptions[i] as EffectNodeDescription;
-                if (description == null || !description.IsInUse)
-                    continue;
+            // The effect system invalidates its shader cache on update. So make sure to call it.
+            EffectSystem.Update(null);
 
+            var newDescriptions = ImmutableArray.CreateBuilder<IVLNodeDescription>();
+            foreach (EffectNodeDescription description in nodeDescriptions)
+            {
                 var updatedDescription = new EffectNodeDescription(this, description.Name, description.EffectName);
                 if (updatedDescription.HasCompilerErrors != description.HasCompilerErrors ||
-                    !updatedDescription.Inputs.SequenceEqual(description.Inputs, PinComparer.Instance) ||
-                    !updatedDescription.Outputs.SequenceEqual(description.Outputs, PinComparer.Instance))
+                    !updatedDescription.Inputs.SequenceEqual(description.Inputs, PinDescriptionComparer.Default) ||
+                    !updatedDescription.Outputs.SequenceEqual(description.Outputs, PinDescriptionComparer.Default))
                 {
                     if (updatedDescription.HasCompilerErrors)
                     {
                         // Keep the signature of previous description but show errors and since we have errors kill all living instances so they don't have to deal with it
-                        nodeDescriptions[i] = new EffectNodeDescription(description, updatedDescription.CompilerResults);
+                        newDescriptions.Add(new EffectNodeDescription(description, updatedDescription.CompilerResults));
                     }
                     else
                     {
                         // Signature change, force a new compilation
-                        nodeDescriptions[i] = updatedDescription;
+                        newDescriptions.Add(updatedDescription);
                     }
                 }
                 else if (updatedDescription.Bytecode != description.Bytecode)
                 {
                     // Just increase the change count so instances can update
                     description.Version++;
+                    newDescriptions.Add(description);
+                }
+                else
+                {
+                    // Just the same
+                    newDescriptions.Add(description);
                 }
             }
-        }
-    }
-    class PinComparer : IEqualityComparer<IVLPinDescription>
-    {
-        public static readonly PinComparer Instance = new PinComparer();
-
-        public bool Equals(IVLPinDescription x, IVLPinDescription y)
-        {
-            return x.Name == y.Name && x.Type == y.Type;
-        }
-
-        public int GetHashCode(IVLPinDescription obj)
-        {
-            return obj.Name.GetHashCode();
+            NodeDescriptions = newDescriptions.ToImmutable();
         }
     }
 }

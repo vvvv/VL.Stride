@@ -80,8 +80,6 @@ namespace VL.Stride.EffectLib
                 ReportException(e);
             }
             parameters = instance.Parameters;
-            Inputs.OfType<ParameterPin>().Do(p => p.Update(parameters));
-            Outputs.OfType<ParameterPin>().Do(p => p.Update(parameters));
             perFrameParams = parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
             perViewParams = parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
             perDrawParams = parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
@@ -175,8 +173,6 @@ namespace VL.Stride.EffectLib
                         if (upstreamVersion > version && instance.UpdateEffect(renderContext.GraphicsDevice))
                         {
                             threadGroupCountAccessor = parameters.GetAccessor(ComputeShaderBaseKeys.ThreadGroupCountGlobal);
-                            foreach (var p in Inputs.OfType<ParameterPin>())
-                                p.Update(parameters);
                             pipelineStateDirty = true;
                         }
                     }
@@ -189,8 +185,6 @@ namespace VL.Stride.EffectLib
                     {
                         instance.UpdateEffect(renderContext.GraphicsDevice);
                         threadGroupCountAccessor = parameters.GetAccessor(ComputeShaderBaseKeys.ThreadGroupCountGlobal);
-                        foreach (var p in Inputs.OfType<ParameterPin>())
-                            p.Update(parameters);
                         pipelineState.State.SetDefaults();
                         pipelineState.State.RootSignature = instance.RootSignature;
                         pipelineState.State.EffectBytecode = instance.Effect.Bytecode;

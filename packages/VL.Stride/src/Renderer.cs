@@ -21,6 +21,7 @@ namespace VL.Stride
         private readonly IResourceHandle<Game> FGameHandle;
         private readonly IResourceHandle<GameWindow> FWindowHandle;
         private readonly SceneSystem FSceneSystem;
+        private readonly IGameSystemScheduler FGameSystemScheduler;
         private RectangleF FBounds = RectangleF.Empty;
         private readonly bool FSaveBounds;
         private readonly bool FBoundToDocument;
@@ -117,7 +118,7 @@ namespace VL.Stride
 
             var game = FGameHandle.Resource;
             FSceneSystem = new SceneSystem(game.Services);
-            game.GameSystems.Add(FSceneSystem);
+            FGameSystemScheduler = game.Services.GetService<IGameSystemScheduler>();
 
             if (bounds.Width > 1 && bounds.Height > 1)
             {
@@ -159,6 +160,7 @@ namespace VL.Stride
             {
                 FSceneSystem.GraphicsCompositor = GraphicsCompositor;
                 FSceneSystem.SceneInstance = SceneInstance;
+                FGameSystemScheduler.Schedule(FSceneSystem);
             }
             else
             {

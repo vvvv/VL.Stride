@@ -3,22 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-using System.Threading;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Stride.Rendering;
-using VL.Stride.Shaders;
-using Stride.Core.Diagnostics;
 using Stride.Core.Mathematics;
-using Stride.Engine;
-using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.ComputeEffect;
 using Stride.Shaders;
 using Stride.Shaders.Compiler;
 using Buffer = Stride.Graphics.Buffer;
+using VL.Stride.Core;
 
 namespace VL.Stride.EffectLib
 {
@@ -119,14 +113,14 @@ namespace VL.Stride.EffectLib
                 return new EffectNode(context, this);
         }
 
-        public IVLPin[] CreateNodeInputs(IVLNode node, ParameterCollection parameters) => Inputs.Select(p => p.CreatePin(node, parameters)).ToArray();
+        public IVLPin[] CreateNodeInputs(IVLNode node, ParameterCollection parameters) => Inputs.Select(p => p.CreatePin(parameters)).ToArray();
 
         public IVLPin[] CreateNodeOutputs(IVLNode node, ParameterCollection parameters)
         {
             var result = new IVLPin[Outputs.Length];
             for (int i = 0; i < Outputs.Length; i++)
             {
-                result[i] = Outputs[i].CreatePin(node, parameters);
+                result[i] = Outputs[i].CreatePin(parameters);
                 if (i == 0)
                     result[i].Value = node; // Instance output
             }
@@ -281,79 +275,12 @@ namespace VL.Stride.EffectLib
             var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();
             foreach (var m in bytecodeCompilerResults.CompilationLog.Messages)
             {
-                if (EffectNodeFactory.TryGetFilePath(m, out string p) && p != path && File.Exists(p))
+                if (m.TryGetFilePath(out string p) && p != path && File.Exists(p))
                     Process.Start(p);
                 break;
             }
 
             return true;
         }
-    }
-
-    public abstract class EffectPinDescription : IVLPinDescription
-    {
-        public abstract string Name { get; }
-        public abstract Type Type { get; }
-        public abstract object DefaultValueBoxed { get; }
-
-        object IVLPinDescription.DefaultValue => DefaultValueBoxed;
-
-        public abstract IVLPin CreatePin(IVLNode node, ParameterCollection parameters);
-    }
-
-    public class PinDescription<T> : EffectPinDescription
-    {
-        public PinDescription(string name, T defaultValue = default(T))
-        {
-            Name = name;
-            DefaultValue = defaultValue;
-        }
-
-        public override string Name { get; }
-        public override Type Type => typeof(T);
-        public override object DefaultValueBoxed => DefaultValue;
-        public T DefaultValue { get; }
-
-        public override IVLPin CreatePin(IVLNode node, ParameterCollection parameters) => new Pin<T>(Name, DefaultValue);
-    }
-
-    public class ParameterPinDescription : EffectPinDescription
-    {
-        public readonly ParameterKey Key;
-        public readonly int Count;
-        public readonly bool IsPermutationKey;
-
-        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, int count = 1, object defaultValue = null, bool isPermutationKey = false)
-        {
-            Key = key;
-            IsPermutationKey = isPermutationKey;
-            Count = count;
-            Name = key.GetPinName(usedNames);
-            var elementType = TypeConversions.ShaderToPinTypeMap.ValueOrDefault(key.PropertyType, key.PropertyType);
-            defaultValue = defaultValue ?? key.DefaultValueMetadata?.GetDefaultValue();
-            // TODO: This should be fixed in Stride
-            if (key.PropertyType == typeof(Matrix))
-                defaultValue = Matrix.Identity;
-            if (elementType != key.PropertyType)
-                defaultValue = TypeConversions.ConvertShaderToPin(defaultValue, elementType);
-            if (count > 1)
-            {
-                Type = elementType.MakeArrayType();
-                var arr = Array.CreateInstance(elementType, count);
-                for (int i = 0; i < arr.Length; i++)
-                    arr.SetValue(defaultValue, i);
-                DefaultValueBoxed = arr;
-            }
-            else
-            {
-                Type = elementType;
-                DefaultValueBoxed = defaultValue;
-            }
-        }
-
-        public override string Name { get; }
-        public override Type Type { get; }
-        public override object DefaultValueBoxed { get; }
-        public override IVLPin CreatePin(IVLNode node, ParameterCollection parameters) => EffectPins.CreatePin(parameters, Key, Count, IsPermutationKey);
     }
 }

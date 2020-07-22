@@ -69,7 +69,7 @@ namespace VL.Stride.Lib
 
                                 game.Run(gameContext); // Creates the window
 
-                                // Clear the default scene system (our renderers setup their own)
+                                // Clear the default scene system. We use a frame based system where scene systems as well as graphics renderer get enqueued.
                                 game.SceneSystem.SceneInstance = null;
                                 game.SceneSystem.GraphicsCompositor = null;
 
