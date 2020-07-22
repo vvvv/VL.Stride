@@ -4,6 +4,7 @@ using Stride.Physics;
 using System;
 using System.Collections.Generic;
 using VL.Core;
+using VL.Lib.Collections;
 
 namespace VL.Stride.Engine
 {
@@ -21,7 +22,19 @@ namespace VL.Stride.Engine
                 //.AddInput(nameof(StaticColliderComponent.AlwaysUpdateNaviMeshCache), x => x.AlwaysUpdateNaviMeshCache, (x, v) => x.AlwaysUpdateNaviMeshCache = v)
                 .WithEnabledPin();
 
-            yield return NewPhysicsComponentNode<RigidbodyComponent>(factory, physicsCategory)
+            yield return NewRigidbodyComponentNode(factory, physicsCategory, name: "DynamicColliderComponent")
+                .AddRigidBodyParams()
+                .AddColliderParams()
+                .AddSimulationParams()
+                .WithEnabledPin();
+
+            yield return NewRigidbodyComponentNode(factory, physicsCategory, name: "KinematicColliderComponent", isKinematic: true)
+                .AddRigidBodyParams()
+                .AddColliderParams()
+                .AddSimulationParams()
+                .WithEnabledPin();
+
+            yield return NewRigidbodyComponentNode(factory, physicsCategory, name: "TriggerColliderComponent", isTrigger: true)
                 .AddRigidBodyParams()
                 .AddColliderParams()
                 .AddSimulationParams()
@@ -49,7 +62,9 @@ namespace VL.Stride.Engine
         static CustomNodeDesc<TColliderShape> NewColliderShapeNode<TColliderShape>(IVLNodeDescriptionFactory factory, string category, string name = null)
             where TColliderShape : IInlineColliderShapeDesc, new()
         {
-            return factory.NewNode<TColliderShape>(name: name, category: category, copyOnWrite: true, fragmented: true);
+            return factory.NewNode<TColliderShape>(name: name, category: category, copyOnWrite: true, hasStateOutput: true, fragmented: true)
+                //.AddCachedOutput("Output", x => Spread.Create<IInlineColliderShapeDesc>(x))
+                ;
         }
 
         // Physics component defaults that differ from strides
@@ -60,12 +75,25 @@ namespace VL.Stride.Engine
             public const float Restitution = 0.5f;
         }
 
-        static CustomNodeDesc<TPhysicsComponent> NewPhysicsComponentNode<TPhysicsComponent>(IVLNodeDescriptionFactory factory, string category)
+        static CustomNodeDesc<TPhysicsComponent> NewPhysicsComponentNode<TPhysicsComponent>(IVLNodeDescriptionFactory factory, string category, string name = null, Action<TPhysicsComponent> init = null)
             where TPhysicsComponent : PhysicsComponent, new()
         {
-            return factory.NewComponentNode<TPhysicsComponent>(category, InitPhysicsComponent)
+            init ??= InitPhysicsComponent;
+            return factory.NewComponentNode<TPhysicsComponent>(name: name, category: category, init: init)
                 .AddListInput(nameof(PhysicsComponent.ColliderShapes), x => x.ColliderShapes, ColliderShapeChanged)
-                
+                ;
+        }
+
+        static CustomNodeDesc<RigidbodyComponent> NewRigidbodyComponentNode(IVLNodeDescriptionFactory factory, string category, string name = null, bool isKinematic = false, bool isTrigger = false)
+
+        {
+            Action<RigidbodyComponent> init = x =>
+            {
+                InitPhysicsComponent(x);
+                x.IsKinematic = isKinematic;
+                x.IsTrigger = isTrigger;
+            };
+            return NewPhysicsComponentNode(factory, name: name, category: category, init: init)
                 ;
         }
 
@@ -87,10 +115,10 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(RigidbodyComponent.Mass), x => x.Mass, (x, v) => x.Mass = v, 1f)
                 .AddInput(nameof(RigidbodyComponent.LinearDamping), x => x.LinearDamping, (x, v) => x.LinearDamping = v)
                 .AddInput(nameof(RigidbodyComponent.AngularDamping), x => x.AngularDamping, (x, v) => x.AngularDamping = v)
-                .AddInput(nameof(RigidbodyComponent.OverrideGravity), x => x.OverrideGravity, (x, v) => x.OverrideGravity = v)
-                .AddInput(nameof(RigidbodyComponent.Gravity), x => x.Gravity, (x, v) => x.Gravity = v, Vector3.Zero)
-                .AddInput(nameof(RigidbodyComponent.IsKinematic), x => x.IsKinematic, (x, v) => x.IsKinematic = v)
-                .AddInput(nameof(RigidbodyComponent.IsTrigger), x => x.IsTrigger, (x, v) => x.IsTrigger = v)
+                //.AddInput(nameof(RigidbodyComponent.OverrideGravity), x => x.OverrideGravity, (x, v) => x.OverrideGravity = v)
+                //.AddInput(nameof(RigidbodyComponent.Gravity), x => x.Gravity, (x, v) => x.Gravity = v, Vector3.Zero)
+                //.AddInput(nameof(RigidbodyComponent.IsKinematic), x => x.IsKinematic, (x, v) => x.IsKinematic = v)
+                //.AddInput(nameof(RigidbodyComponent.IsTrigger), x => x.IsTrigger, (x, v) => x.IsTrigger = v)
                 //.AddInput(nameof(RigidbodyComponent.NodeName), x => x.NodeName, (x, v) => x.NodeName = v)
                 ;
         }
