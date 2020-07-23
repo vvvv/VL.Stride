@@ -160,10 +160,10 @@
           </Node>
           <!--
 
-    ************************ RendererScheduler ************************
+    ************************ LayerScheduler ************************
 
 -->
-          <Node Name="RendererScheduler" Bounds="422,218" Id="Duz9YfbL5q9QNrUuTKEVFm">
+          <Node Name="LayerScheduler" Bounds="422,218" Id="Duz9YfbL5q9QNrUuTKEVFm">
             <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
               <Choice Kind="ContainerDefinition" Name="Process" />
             </p:NodeReference>
@@ -198,7 +198,7 @@
                   <Pin Id="JKU2XuVkiGjOlGIGVSZP0h" Name="Output" Kind="StateOutputPin" />
                   <Pin Id="AHPs0yphJ9dMgbo9LLX59R" Name="Services" Kind="OutputPin" />
                 </Node>
-                <Node Bounds="847,488,85,26" Id="BVOP5qkLfijNO3zNp31Q3q">
+                <Node Bounds="847,476,85,26" Id="BVOP5qkLfijNO3zNp31Q3q">
                   <p:NodeReference LastCategoryFullName="VL.Stride.Rendering.IRendererScheduler" LastSymbolSource="VL.Stride.Runtime.dll">
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                     <CategoryReference Kind="AssemblyCategory" Name="IRendererScheduler" />
@@ -209,6 +209,17 @@
                   <Pin Id="Ndz9mH9PjJTMjbXgVqQPBX" Name="Output" Kind="StateOutputPin" />
                 </Node>
                 <ControlPoint Id="OXHY5ttmpSEQLl2XCLJ17t" Bounds="928,430" />
+                <Pad Id="RHqmkNAMbw8PQPfsqvugzA" SlotId="Owm8mHGbWgOMwhOJSANedn" Bounds="1002,483" />
+                <Node Bounds="909,558,85,26" Id="RaWiz4yE4GtOmQbfj1mLjK">
+                  <p:NodeReference LastCategoryFullName="VL.Stride.Rendering.IRendererScheduler" LastSymbolSource="VL.Stride.Runtime.dll">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <CategoryReference Kind="AssemblyCategory" Name="IRendererScheduler" />
+                    <Choice Kind="OperationCallFlag" Name="Remove" />
+                  </p:NodeReference>
+                  <Pin Id="QSovB5GqBS7LwbJIVq423z" Name="Input" Kind="StateInputPin" />
+                  <Pin Id="UKUGZS8In2bPOx6jRPOkdv" Name="Graphics Renderer" Kind="InputPin" />
+                  <Pin Id="Esk37lmoCWlM3KPBGaE0yh" Name="Output" Kind="StateOutputPin" />
+                </Node>
               </Canvas>
               <Patch Id="ORXtYl8Woj8QWyECbtejoT" Name="Create" ParticipatingElements="Qvyis09Npj6MVTtmhEYH1H" />
               <Patch Id="M5vwuOgWeThPCpicGyCVJT" Name="GetScheduler">
@@ -225,16 +236,21 @@
               <Link Id="VDNrvAkrOkwMoSmWLExy9W" Ids="JicL10igtRYMsDw35iwJ1S,MaBuOZ7PcNSPjJ9btPe9aO" />
               <Link Id="DhrF1UXw3JHP5eCAcbhNTC" Ids="AHPs0yphJ9dMgbo9LLX59R,USOEad4zSmEOmuxlEnd3jX" />
               <Link Id="VHx6TZ8qByQNeaTbDZn1sf" Ids="HJsA6l52KmzNdrXs1SR3Ey,GwDKbjzdl55N1P0IAfuI7S" />
-              <Link Id="HjowJo0tL1wN3EHQv53t1E" Ids="OXHY5ttmpSEQLl2XCLJ17t,SlpCj9wkZDjNK8db82x5FQ" />
+              <Link Id="HjowJo0tL1wN3EHQv53t1E" Ids="OXHY5ttmpSEQLl2XCLJ17t,RHqmkNAMbw8PQPfsqvugzA" />
               <Link Id="Rznb8v3LC30LJMzy6lSvKw" Ids="RNASKQWQiBjPKijluEMiaR,OXHY5ttmpSEQLl2XCLJ17t" IsHidden="true" />
-              <Patch Id="UG7z1nq2epLPvf8J8Sju5s" Name="Schedule">
-                <Pin Id="RNASKQWQiBjPKijluEMiaR" Name="Graphics Renderer" Kind="InputPin" />
+              <Patch Id="UG7z1nq2epLPvf8J8Sju5s" Name="Schedule" ParticipatingElements="BVOP5qkLfijNO3zNp31Q3q">
+                <Pin Id="RNASKQWQiBjPKijluEMiaR" Name="Layer" Kind="InputPin" />
               </Patch>
               <ProcessDefinition Id="SoJYUBjbpzZOYTxFdJyqzu">
                 <Fragment Id="JNlh7hU99suLL3OUDMwjsw" Patch="ORXtYl8Woj8QWyECbtejoT" Enabled="true" />
                 <Fragment Id="NCzojA9GrmEMVPKE1XbQIs" Patch="UG7z1nq2epLPvf8J8Sju5s" Enabled="true" />
                 <Fragment Id="UPSWzipKelSQa8uRxoqCLi" Patch="M5vwuOgWeThPCpicGyCVJT" Enabled="true" />
               </ProcessDefinition>
+              <Link Id="GpdS6xOCoWqOTJuvbEKgQU" Ids="RHqmkNAMbw8PQPfsqvugzA,UKUGZS8In2bPOx6jRPOkdv" />
+              <Link Id="FZtZDNTpy1lOw60ZtwrOKE" Ids="HJsA6l52KmzNdrXs1SR3Ey,QSovB5GqBS7LwbJIVq423z" />
+              <Patch Id="HwlEIg1mTcbPJt9EGTmLrk" Name="Dispose" ParticipatingElements="RaWiz4yE4GtOmQbfj1mLjK" />
+              <Link Id="QAZBW3tSevINvzliChW56y" Ids="OXHY5ttmpSEQLl2XCLJ17t,SlpCj9wkZDjNK8db82x5FQ" />
+              <Slot Id="Owm8mHGbWgOMwhOJSANedn" Name="Layer" />
             </Patch>
           </Node>
         </Canvas>
@@ -507,7 +523,7 @@
                   <Node Bounds="364,786,265,19" Id="TIwZOHAG3OfLHOqMFOppKU">
                     <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+                      <Choice Kind="ProcessAppFlag" Name="DrawMesh" />
                     </p:NodeReference>
                     <Pin Id="IwEpTZDUjY3M45Y8gHe07B" Name="Effect Instance" Kind="InputPin" />
                     <Pin Id="NmhQyKUEcF6MjQRmZ79pbo" Name="Cull Mode" Kind="InputPin" />
@@ -662,7 +678,7 @@
                   <Node Bounds="271,567,265,19" Id="Ek4yIAaaiQSOzCGTBPmLsu">
                     <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+                      <Choice Kind="ProcessAppFlag" Name="DrawMesh" />
                     </p:NodeReference>
                     <Pin Id="QFOnU0J0FJYLuyTKO53wJs" Name="Effect Instance" Kind="InputPin" />
                     <Pin Id="JtbC9AsO19bMGbsyt3LumO" Name="Cull Mode" Kind="InputPin">
@@ -800,7 +816,7 @@
                   <Node Bounds="460,880,245,13" Id="DRN54fm7b0eMVsV5coBa3h">
                     <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+                      <Choice Kind="ProcessAppFlag" Name="DrawMesh" />
                     </p:NodeReference>
                     <Pin Id="DqSwZPP9bm6PheG31WtoKN" Name="Effect Instance" Kind="InputPin" />
                     <Pin Id="EtiZ1NRf12vL9xLX1iX0uX" Name="Cull Mode" Kind="InputPin" />
@@ -939,7 +955,7 @@
                   <Node Bounds="170,641,265,19" Id="OKA115ZXjFGMNvizXeqQ6j">
                     <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+                      <Choice Kind="ProcessAppFlag" Name="DrawMesh" />
                     </p:NodeReference>
                     <Pin Id="SB9PVOFqhwkL2DdpEY9o88" Name="Effect Instance" Kind="InputPin" />
                     <Pin Id="GkOI4wdHY24MFJN82jLNzv" Name="Cull Mode" Kind="InputPin" />
@@ -1080,7 +1096,7 @@
                   <Node Bounds="460,880,245,13" Id="H72nRfcfrD2MDFroN2xxH6">
                     <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+                      <Choice Kind="ProcessAppFlag" Name="DrawMesh" />
                     </p:NodeReference>
                     <Pin Id="HPhOJ1ZCHtlMN7CocfaVf0" Name="Effect Instance" Kind="InputPin" />
                     <Pin Id="Mrkl2puivYKQC0N8iPXzCO" Name="Cull Mode" Kind="InputPin" />
@@ -1319,7 +1335,7 @@
                   <Node Bounds="364,786,265,19" Id="GonPZPe6pC8OtDr4JMsACS">
                     <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+                      <Choice Kind="ProcessAppFlag" Name="DrawMesh" />
                     </p:NodeReference>
                     <Pin Id="AUT3hQu1uXJOlKoHMzXBH2" Name="Effect Instance" Kind="InputPin" />
                     <Pin Id="DbFWeAercLpPlZ4WS2H3XG" Name="Cull Mode" Kind="InputPin" />
@@ -1490,7 +1506,7 @@
                   <Node Bounds="364,786,265,19" Id="SPBtDMksDrtLuVKrHGKi0p">
                     <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+                      <Choice Kind="ProcessAppFlag" Name="DrawMesh" />
                     </p:NodeReference>
                     <Pin Id="MQAPV2pCkuRPHL1zyFdSrA" Name="Effect Instance" Kind="InputPin" />
                     <Pin Id="HT8doWNyvKjOSW6lk9u5mo" Name="Cull Mode" Kind="InputPin" />
@@ -1934,7 +1950,7 @@
                   <Node Bounds="471,680,265,19" Id="MY4bW2qbq8PPxDHolXSCs8">
                     <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+                      <Choice Kind="ProcessAppFlag" Name="DrawMesh" />
                     </p:NodeReference>
                     <Pin Id="RyJSio3ZlfCMWtbnLZhm8v" Name="Effect Instance" Kind="InputPin" />
                     <Pin Id="JBsVME9aS5yOuZZkdbOr5l" Name="Cull Mode" Kind="InputPin" />
@@ -6441,7 +6457,7 @@
                   <Node Bounds="170,641,265,19" Id="PrYGQ8GgX13LCB8JiwELIa">
                     <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+                      <Choice Kind="ProcessAppFlag" Name="DrawMesh" />
                     </p:NodeReference>
                     <Pin Id="Avv174jSOuINMAcWkJ9m57" Name="Effect Instance" Kind="InputPin" />
                     <Pin Id="CYdkmpnLXnDOaDrxTDqs2J" Name="Cull Mode" Kind="InputPin" />
@@ -8624,17 +8640,17 @@
       <Canvas Id="M0Kog2l548SOdTZoprAxlz" Name="Rendering" Position="178,414">
         <!--
 
-    ************************ MeshRenderer ************************
+    ************************ DrawMesh ************************
 
 -->
-        <Node Name="MeshRenderer" Bounds="540,222" Id="CDWJTjFg82XNlOfajsB9mZ">
+        <Node Name="DrawMesh" Bounds="540,222" Id="CDWJTjFg82XNlOfajsB9mZ">
           <p:NodeReference>
             <Choice Kind="ClassDefinition" Name="Class" />
             <FullNameCategoryReference ID="Primitive" />
           </p:NodeReference>
           <p:Interfaces>
-            <TypeReference LastCategoryFullName="Stride.Rendering.Adavnced" LastSymbolSource="VL.Stride.Rendering.vl">
-              <Choice Kind="MutableInterfaceType" Name="IGraphicsRendererBase" />
+            <TypeReference>
+              <Choice Kind="MutableInterfaceType" Name="Layer" />
             </TypeReference>
           </p:Interfaces>
           <Patch Id="QY8VvgSIZTrPqsjNQXeyRB">
@@ -9907,8 +9923,8 @@
             <FullNameCategoryReference ID="Primitive" />
           </p:NodeReference>
           <p:Interfaces>
-            <TypeReference LastCategoryFullName="Stride.API.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
-              <Choice Kind="MutableInterfaceType" Name="IGraphicsRendererBase" />
+            <TypeReference>
+              <Choice Kind="MutableInterfaceType" Name="Layer" />
             </TypeReference>
           </p:Interfaces>
           <Patch Id="ULR9uVkdMmzMuF9U3qSGtW">
@@ -9974,10 +9990,10 @@
                       <Patch Id="JVCqgg3AcFsN5TR4mOxIKI" Name="Create" ManuallySortedPins="true" />
                       <Patch Id="MdBelQ4AE7tOVW6qcSvGFg" Name="Then" ManuallySortedPins="true" />
                       <Node Bounds="307,897,195,26" Id="N97bSlfsfDkLUjOFGMcYXG">
-                        <p:NodeReference LastCategoryFullName="Stride.API.Rendering.IGraphicsRendererBase" LastSymbolSource="VL.Stride.Rendering.vl">
+                        <p:NodeReference LastCategoryFullName="Stride.API.Rendering.Layer" LastSymbolSource="VL.Stride.Rendering.vl">
                           <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                           <Choice Kind="OperationCallFlag" Name="Draw" />
-                          <CategoryReference Kind="MutableInterfaceType" Name="IGraphicsRendererBase" NeedsToBeDirectParent="true" />
+                          <CategoryReference Kind="MutableInterfaceType" Name="Layer" NeedsToBeDirectParent="true" />
                         </p:NodeReference>
                         <Pin Id="JbkhGjbNC7MMEdfr5WCmVY" Name="Input" Kind="StateInputPin" />
                         <Pin Id="GneUki0eyemQTUpnJwScuO" Name="Context" Kind="InputPin" />
@@ -10335,10 +10351,10 @@
         </Node>
         <!--
 
-    ************************ RenderToTexture ************************
+    ************************ LayerTexture ************************
 
 -->
-        <Node Name="RenderToTexture" Bounds="779,223" Id="OyRnlm2uCiTLKaJTq3UaMk">
+        <Node Name="LayerTexture" Bounds="779,223" Id="OyRnlm2uCiTLKaJTq3UaMk">
           <p:NodeReference>
             <Choice Kind="ClassDefinition" Name="Class" />
             <FullNameCategoryReference ID="Primitive" />
@@ -10423,12 +10439,12 @@
                 <Pin Id="EXGveavv5p9NchAwPcu4fl" Name="Previous Render View" Kind="OutputPin" />
               </Node>
               <ControlPoint Id="JCye5sNGfJ8QDICsBgCa13" Bounds="338,391" />
-              <Node Bounds="428,660,101,19" Id="Rg9X9DaWM4xLSr9s9OWtw6">
+              <Node Bounds="428,660,60,19" Id="Rg9X9DaWM4xLSr9s9OWtw6">
                 <p:NodeReference LastCategoryFullName="Stride.Utils" LastSymbolSource="VL.Stride.Rendering.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                  <Choice Kind="ProcessAppFlag" Name="RendererScheduler" />
+                  <Choice Kind="ProcessAppFlag" Name="LayerScheduler" />
                 </p:NodeReference>
-                <Pin Id="SsW1V6JZ5yCLkqGTtzUQl3" Name="Graphics Renderer" Kind="InputPin" />
+                <Pin Id="SsW1V6JZ5yCLkqGTtzUQl3" Name="Layer" Kind="InputPin" />
                 <Pin Id="VpCLMwfykkaMJ436FA95vG" Name="Output" Kind="OutputPin" />
                 <Pin Id="M8a6SRkdykQMgJZKVgMSR9" Name="Schedule" Kind="InputPin" />
               </Node>
@@ -10629,8 +10645,8 @@
             <FullNameCategoryReference ID="Primitive" />
           </p:NodeReference>
           <p:Interfaces>
-            <TypeReference LastCategoryFullName="Stride.API.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
-              <Choice Kind="MutableInterfaceType" Name="IGraphicsRendererBase" />
+            <TypeReference>
+              <Choice Kind="MutableInterfaceType" Name="Layer" />
             </TypeReference>
           </p:Interfaces>
           <Patch Id="UxQMUmkLjniLDfFo78k11L">
@@ -10694,10 +10710,10 @@
                       <Patch Id="Vru9nbFLi1QPo1FOpFF97f" Name="Create" ManuallySortedPins="true" />
                       <Patch Id="D9k5rRhicLMLyRQzz0QxXF" Name="Then" ManuallySortedPins="true" />
                       <Node Bounds="275,754,195,26" Id="CzvoTJSS4ZuMTGg0GeCFQN">
-                        <p:NodeReference LastCategoryFullName="Stride.API.Rendering.IGraphicsRendererBase" LastSymbolSource="VL.Stride.Rendering.vl">
+                        <p:NodeReference LastCategoryFullName="Stride.API.Rendering.Layer" LastSymbolSource="VL.Stride.Rendering.vl">
                           <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                           <Choice Kind="OperationCallFlag" Name="Draw" />
-                          <CategoryReference Kind="MutableInterfaceType" Name="IGraphicsRendererBase" NeedsToBeDirectParent="true" />
+                          <CategoryReference Kind="MutableInterfaceType" Name="Layer" NeedsToBeDirectParent="true" />
                         </p:NodeReference>
                         <Pin Id="KKXamk6UVQRLTJvoXza60o" Name="Input" Kind="StateInputPin" />
                         <Pin Id="CVHxSY8G49UPkJVXkvVkqV" Name="Context" Kind="InputPin" />
@@ -10969,10 +10985,10 @@
             </Node>
             <!--
 
-    ************************ IGraphicsRendererBase ************************
+    ************************ Layer ************************
 
 -->
-            <Node Name="IGraphicsRendererBase" Bounds="517,225" Id="UD25SQxycFnMpaav0S5KG0">
+            <Node Name="Layer" Bounds="517,225" Id="UD25SQxycFnMpaav0S5KG0">
               <p:NodeReference>
                 <Choice Kind="ForwardDefinition" Name="Forward" />
                 <FullNameCategoryReference ID="Primitive" />
@@ -10981,7 +10997,7 @@
                 <Choice Kind="TypeFlag" Name="IGraphicsRendererBase" />
               </p:TypeAnnotation>
               <Patch Id="Sz7WkZxKVJtOML4M1JIdTA">
-                <Canvas Id="LDY8cbJBCllL4JbI7ko41O" BordersChecked="false" CanvasType="Group" />
+                <Canvas Id="LDY8cbJBCllL4JbI7ko41O" CanvasType="Group" />
                 <ProcessDefinition Id="U9dM41jbRqiPnWX3w8ajXo" IsHidden="true" />
               </Patch>
             </Node>
@@ -11461,9 +11477,9 @@
               <Node Bounds="438,546,101,19" Id="FcpnVrP6baKPe0CIoifyzI">
                 <p:NodeReference LastCategoryFullName="Stride.Utils" LastSymbolSource="VL.Stride.Rendering.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                  <Choice Kind="ProcessAppFlag" Name="RendererScheduler" />
+                  <Choice Kind="ProcessAppFlag" Name="LayerScheduler" />
                 </p:NodeReference>
-                <Pin Id="E7jMr4PZVxnPU3LNZyFlSD" Name="Graphics Renderer" Kind="InputPin" />
+                <Pin Id="E7jMr4PZVxnPU3LNZyFlSD" Name="Layer" Kind="InputPin" />
                 <Pin Id="Lb6sCHRgg2JM5WKK4Mj2ZG" Name="Output" Kind="OutputPin" />
               </Node>
             </Canvas>
