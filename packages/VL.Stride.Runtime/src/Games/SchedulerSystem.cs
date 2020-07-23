@@ -33,6 +33,11 @@ namespace VL.Stride.Games
             current.Renderers.Add(renderer);
         }
 
+        public void Remove(IGraphicsRendererBase graphicsRenderer)
+        {
+            queue.OfType<MiniSystem>().Do(ms => ms.Renderers.Remove(graphicsRenderer));
+        }
+
         public void Schedule(GameSystemBase gameSystem)
         {
             queue.Add(gameSystem);
@@ -76,6 +81,7 @@ namespace VL.Stride.Games
         {
             public readonly List<IGraphicsRendererBase> Renderers = new List<IGraphicsRendererBase>();
 
+            private RenderView renderView;
             private RenderContext renderContext;
             private RenderDrawContext renderDrawContext;
 
@@ -87,9 +93,15 @@ namespace VL.Stride.Games
 
             protected override void LoadContent()
             {
-                var graphicsContext = Services.GetSafeServiceAs<GraphicsContext>();
+                // Default render view
+                renderView = new RenderView()
+                {
+                    NearClipPlane = 0.05f,
+                    FarClipPlane = 1000,
+                };
 
                 // Create the drawing context
+                var graphicsContext = Services.GetSafeServiceAs<GraphicsContext>();
                 renderContext = RenderContext.GetShared(Services);
                 renderDrawContext = new RenderDrawContext(Services, renderContext, graphicsContext);
             }
@@ -98,6 +110,7 @@ namespace VL.Stride.Games
             {
                 try
                 {
+                    using (renderContext.PushRenderViewAndRestore(renderView))
                     using (renderDrawContext.PushRenderTargetsAndRestore())
                     {
                         foreach (var renderer in Renderers)
