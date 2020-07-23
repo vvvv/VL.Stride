@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="QuMTdtMDfhJOdxTx9ZFzce" LanguageVersion="2020.2.0.169" Version="0.128">
-  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0162-geea788f4bb" />
+<Document xmlns:p="property" Id="QuMTdtMDfhJOdxTx9ZFzce" LanguageVersion="2020.2.0.180" Version="0.128">
+  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0181-g5c1a7ce5da" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="VQsVHpxE669LMeGDEi7jKJ" Name="API" Position="299,187">
@@ -300,11 +300,6 @@
             <Patch Id="ABwXL58oHrmPEgj877wngt" Name="Update">
               <Pin Id="DmeJMIYH6nsMyTyqOz97HF" Name="Output" Kind="OutputPin" Bounds="456,435" />
             </Patch>
-            <!--
-
-    ************************  ************************
-
--->
             <ProcessDefinition Id="UFTQwaP63GXObI8eY5t3pI">
               <Fragment Id="UzQza58JyIyQbQz0ZbN848" Patch="G5qrHLXN0fVNQnRzcGS4ic" Enabled="true" />
               <Fragment Id="BhwEejTz0kAQXJj8HqS3Ud" Patch="ABwXL58oHrmPEgj877wngt" Enabled="true" />
@@ -364,6 +359,85 @@
             <Link Id="GgeJxVtkXpqQJ73cOCELAb" Ids="K4O7aQnW0HFOdayTYmKpuS,BDodVa85du1L17Gb8pEn6L" IsHidden="true" />
           </Patch>
         </Node>
+        <!--
+
+    ************************ GameSystemScheduler (Advanced) ************************
+
+-->
+        <Node Name="GameSystemScheduler (Advanced)" Bounds="455,424" Id="OEQ5zbU2yU7NAEN04ZVLzQ">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="PlywWCDS3bHMJzC6intrIZ">
+            <Canvas Id="TWG0yUnARvwNJqVu62OWom" CanvasType="Group">
+              <Node Bounds="620,284,79,19" Id="K5kA9C0IoTJMIkr0wAybYb">
+                <p:NodeReference LastCategoryFullName="Stride.Utils" LastSymbolSource="VL.Stride.Games.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="Game" />
+                </p:NodeReference>
+                <Pin Id="AtGC07ypbipOjKzuql7e6t" Name="Output" Kind="OutputPin" />
+              </Node>
+              <Node Bounds="668,367,72,26" Id="TOI6uUXzskBNSqKX11m1tU">
+                <p:NodeReference LastCategoryFullName="Stride.API.Core.IServiceRegistry" LastSymbolSource="VL.Stride.Core.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="OperationCallFlag" Name="GetService" />
+                  <CategoryReference Kind="MutableInterfaceType" Name="IServiceRegistry" NeedsToBeDirectParent="true" />
+                </p:NodeReference>
+                <Pin Id="Nl5TUFnfeWeLbRVerhexCV" Name="Input" Kind="StateInputPin" />
+                <Pin Id="Li1zehnW0DWMRsHGveAXkk" Name="Output" Kind="StateOutputPin" />
+                <Pin Id="VmUy78DRQNAL4rUUAAotlg" Name="Result" Kind="OutputPin" />
+              </Node>
+              <Pad Id="PxldM1iXxFGOZ0auoo1vyE" SlotId="BUrhv7bjouPOrq61VCvrYB" Bounds="736,436" />
+              <ControlPoint Id="SYakcpysIjGLqpJzPwWdDK" Bounds="736,518" />
+              <Node Bounds="620,322,53,26" Id="J6uIiuAbv0EMkgaIcCnguN">
+                <p:NodeReference LastCategoryFullName="Stride.Games.IGame" LastSymbolSource="Stride.Games.dll">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="OperationCallFlag" Name="Services" />
+                  <CategoryReference Kind="AssemblyCategory" Name="IGame" NeedsToBeDirectParent="true" />
+                </p:NodeReference>
+                <Pin Id="MXReVza3LFjLYpD7HobMQ3" Name="Input" Kind="StateInputPin" />
+                <Pin Id="CKAzDbDciKhO6DPlx1EPNg" Name="Output" Kind="StateOutputPin" />
+                <Pin Id="QTP4E7XExXIQYi3F0cCSR6" Name="Services" Kind="OutputPin" />
+              </Node>
+              <Node Bounds="776,466,99,26" Id="IStqUzOW3nxL5M9Um9rQ6A">
+                <p:NodeReference LastCategoryFullName="VL.Stride.Games.IGameSystemScheduler" LastSymbolSource="VL.Stride.Runtime.dll">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <CategoryReference Kind="AssemblyCategory" Name="IGameSystemScheduler" />
+                  <Choice Kind="OperationCallFlag" Name="Schedule" />
+                </p:NodeReference>
+                <Pin Id="ERJRBHYaTOPOC7pW63UJBx" Name="Input" Kind="StateInputPin" />
+                <Pin Id="IadkZfeyY6lOqVqibV5tRr" Name="Game System" Kind="InputPin" />
+                <Pin Id="QJHvbBbmwUUPHLNKtj4u1p" Name="Output" Kind="StateOutputPin" />
+              </Node>
+              <ControlPoint Id="C7Q7gWWFooEMb4VZV0GxXD" Bounds="872,433" />
+            </Canvas>
+            <Patch Id="IKyjKvtU6hLOIEVdKpdiQa" Name="Create" ParticipatingElements="TOI6uUXzskBNSqKX11m1tU" />
+            <Patch Id="D0gbF31zkZPQatWZOTMIgd" Name="GetScheduler">
+              <Pin Id="PrFkI8vFEYeM1QjrrB1qwZ" Name="Output" Kind="OutputPin" Bounds="745,531" />
+            </Patch>
+            <Slot Id="BUrhv7bjouPOrq61VCvrYB" Name="Scheduler">
+              <p:TypeAnnotation>
+                <Choice Kind="TypeFlag" Name="IGameSystemScheduler" />
+              </p:TypeAnnotation>
+            </Slot>
+            <Link Id="G525vPIRZnhOzQZA1AJdA5" Ids="VmUy78DRQNAL4rUUAAotlg,PxldM1iXxFGOZ0auoo1vyE" />
+            <Link Id="Q2nDlbEpqZ3LcBDT05yJpV" Ids="SYakcpysIjGLqpJzPwWdDK,PrFkI8vFEYeM1QjrrB1qwZ" IsHidden="true" />
+            <Link Id="FmNXwYnn4PKMLlpekhd2cc" Ids="AtGC07ypbipOjKzuql7e6t,MXReVza3LFjLYpD7HobMQ3" />
+            <Link Id="I2A5iMrFy7wN9O6E9sD9fp" Ids="QTP4E7XExXIQYi3F0cCSR6,Nl5TUFnfeWeLbRVerhexCV" />
+            <Link Id="Bw9g1IlFHPmPP53gB3x3wa" Ids="C7Q7gWWFooEMb4VZV0GxXD,IadkZfeyY6lOqVqibV5tRr" />
+            <Link Id="JxsXplYhdRWQK1IClJWCmF" Ids="IACGIoEPqovOVbF7rJTqbd,C7Q7gWWFooEMb4VZV0GxXD" IsHidden="true" />
+            <Link Id="FJh2GN9WxGJNtvnDFo6UZ7" Ids="PxldM1iXxFGOZ0auoo1vyE,ERJRBHYaTOPOC7pW63UJBx" />
+            <Link Id="RkxUJnirJACNeHBbr0hN1n" Ids="PxldM1iXxFGOZ0auoo1vyE,SYakcpysIjGLqpJzPwWdDK" />
+            <Patch Id="K0198C3zDhsPMM4A1PGHXW" Name="Schedule">
+              <Pin Id="IACGIoEPqovOVbF7rJTqbd" Name="Game System" Kind="InputPin" />
+            </Patch>
+            <ProcessDefinition Id="SR27LScKcvFQEwFPGd6WPN">
+              <Fragment Id="PT6cZJJKYjTO4MozhqgtbY" Patch="IKyjKvtU6hLOIEVdKpdiQa" Enabled="true" />
+              <Fragment Id="TtIEXsNxjRSPKOlBCFpwqq" Patch="K0198C3zDhsPMM4A1PGHXW" Enabled="true" />
+              <Fragment Id="Q38rc6U9ihtQN4MIeuph79" Patch="D0gbF31zkZPQatWZOTMIgd" Enabled="true" />
+            </ProcessDefinition>
+          </Patch>
+        </Node>
       </Canvas>
     </Canvas>
     <!--
@@ -387,7 +461,7 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Aw4uETs9g7DN5GGFUjALlK" Location="VL.Skia" Version="2020.2.0-0162-geea788f4bb" />
+  <NugetDependency Id="Aw4uETs9g7DN5GGFUjALlK" Location="VL.Skia" Version="2020.2.0-0181-g5c1a7ce5da" />
   <PlatformDependency Id="G1kLCajSnqgOwWgj0Us7Oc" Location="../StrideLiveEditor/StrideLiveEditor/bin/Debug/net472/Stride.dll" />
   <PlatformDependency Id="KhBUTM8Pv97OjmyqYiyrM3" Location="../../../../vvvv50/VVVV.Gamma/src/bin/Debug/net472/Stride.Core.dll" />
   <PlatformDependency Id="FVOgDBxZsXaOfJ0afuKO6M" Location="../../TestGame/Bin/Windows/Debug/Stride.Core.Serialization.dll" />
