@@ -57,10 +57,11 @@ namespace VL.Stride
                 fragmented: fragmented);
         }
 
-        public static CustomNodeDesc<TComponent> NewComponentNode<TComponent>(this IVLNodeDescriptionFactory factory, string category, Action<TComponent> init = null)
+        public static CustomNodeDesc<TComponent> NewComponentNode<TComponent>(this IVLNodeDescriptionFactory factory, string category, Action<TComponent> init = null, string name = null)
             where TComponent : EntityComponent, new()
         {
             return new CustomNodeDesc<TComponent>(factory,
+                name: name,
                 ctor: nodeContext =>
                 {
                     var component = new TComponent();
