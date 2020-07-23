@@ -25,17 +25,18 @@ namespace VL.Stride.Games
 
         public void Schedule(IGraphicsRendererBase renderer)
         {
-            var current = queue.ElementAtOrDefault(queue.Count) as MiniSystem;
+            var current = queue.ElementAtOrDefault(queue.Count - 1) as MiniSystem;
             if (current is null)
             {
-                Schedule(current = pool.Count > 0 ? pool.Pop() : new MiniSystem(Services));
+                current = pool.Count > 0 ? pool.Pop() : new MiniSystem(Services);
+                Schedule(current);
             }
-            current.Renderers.Add(renderer);
+            current.Schedule(renderer);
         }
 
         public void Remove(IGraphicsRendererBase graphicsRenderer)
         {
-            queue.OfType<MiniSystem>().Do(ms => ms.Renderers.Remove(graphicsRenderer));
+            queue.OfType<MiniSystem>().ForEach(ms => ms.Remove(graphicsRenderer));
         }
 
         public void Schedule(GameSystemBase gameSystem)
@@ -77,9 +78,9 @@ namespace VL.Stride.Games
             }
         }
 
-        class MiniSystem : GameSystemBase
+        class MiniSystem : GameSystemBase, IRendererScheduler
         {
-            public readonly List<IGraphicsRendererBase> Renderers = new List<IGraphicsRendererBase>();
+            private readonly List<IGraphicsRendererBase> Renderers = new List<IGraphicsRendererBase>();
 
             private RenderView renderView;
             private RenderContext renderContext;
@@ -121,6 +122,16 @@ namespace VL.Stride.Games
                 {
                     Renderers.Clear();
                 }
+            }
+
+            public void Schedule(IGraphicsRendererBase graphicsRenderer)
+            {
+                Renderers.Add(graphicsRenderer);
+            }
+
+            public void Remove(IGraphicsRendererBase graphicsRenderer)
+            {
+                Renderers.Remove(graphicsRenderer);
             }
         }
     }

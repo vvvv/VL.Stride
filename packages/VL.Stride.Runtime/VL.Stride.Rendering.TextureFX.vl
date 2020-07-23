@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="BzGvoB2aLhzP7WO4jVw5sI" LanguageVersion="2020.2.0.163" Version="0.128">
-  <NugetDependency Id="QNDaxjZxapFM8KPBDLuO6H" Location="VL.CoreLib" Version="2020.2.0-0163-gd72514e599" />
+<Document xmlns:p="property" Id="BzGvoB2aLhzP7WO4jVw5sI" LanguageVersion="2020.2.0.188" Version="0.128">
+  <NugetDependency Id="QNDaxjZxapFM8KPBDLuO6H" Location="VL.CoreLib" Version="2020.2.0-0178-gc1f9930a37" />
   <Patch Id="G28kmfwtWsRPWb67PHzP5Y">
     <Canvas Id="TtPf6YeHIWxLlrjYVAmnpJ" DefaultCategory="Stride.Textures.TextureFX" CanvasType="FullCategory">
       <Canvas Id="LXRHCOjcYieONfWfrIFpQy" Name="Advanced" Position="305,210">
@@ -40,17 +40,18 @@
                 <Pin Id="POBJRdZDRiyPc6vMXIv4MS" Name="Loaded" Kind="OutputPin" />
               </Node>
               <ControlPoint Id="BLhweUS4whrNf9X4QGV1Kk" Bounds="601,510" />
-              <Node Bounds="290,627,61,19" AutoConnect="true" Id="Of1sxHX7snpLilSKwHpDP5">
-                <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
+              <Node Bounds="290,627,61,19" Id="Of1sxHX7snpLilSKwHpDP5">
+                <p:NodeReference LastCategoryFullName="Stride.Utils" LastSymbolSource="VL.Stride.Rendering.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                  <Choice Kind="ProcessAppFlag" Name="AutoDraw" />
+                  <Choice Kind="ProcessAppFlag" Name="LayerScheduler" />
                 </p:NodeReference>
                 <Pin Id="D9r3G5EZpVvO7ZQsLCPem0" Name="Layer" Kind="InputPin" />
-                <Pin Id="Q4U31bLB3WJQMFHs2oYYyV" Name="Auto Render" Kind="InputPin" />
-                <Pin Id="C6a0cKWpLRrMzDOjDJLV1u" Name="View" Kind="InputPin" />
-                <Pin Id="TNH0hsO3RQ1OgPi7fjorNB" Name="Layer" Kind="OutputPin" />
+                <Pin Id="Aa1F9exmk5FQQ6ijuNk7dB" Name="Schedule" Kind="InputPin" />
+                <Pin Id="EZT2yGHsHzHMo6aiRuLzbS" Name="Output" Kind="OutputPin" />
               </Node>
               <ControlPoint Id="UIgiW73b2XnLrqobr8Je4H" Bounds="292,458" />
+              <ControlPoint Id="JVLsQl2hGnDLZFPKahd9yB" Bounds="316,609" />
+              <ControlPoint Id="UTrcJ1oCuasOrVju6RE7NC" Bounds="385,601" />
             </Canvas>
             <ProcessDefinition Id="CCBrCryXfTqQDMvt3n6FDL">
               <Fragment Id="FqjWxNCARiILLfy6FF8foU" Patch="IDzb18w4w51MeKVKRZzHz2" Enabled="true" />
@@ -70,11 +71,14 @@
               <Pin Id="HUFo83vVCDaOwrn3WPplzM" Name="Input" Kind="InputPin" />
               <Pin Id="MUsnooiiMa3MzYW3g1JrT4" Name="Size" Kind="InputPin" />
               <Pin Id="THop1OUtv8kNQVtcdHCPFz" Name="New Format" Kind="InputPin" />
-              <Pin Id="QQFhMB3AdxjNDOEDKS7x6m" Name="Auto Render" Kind="InputPin" />
-              <Pin Id="RXurytQ0MN1N1oCvR2tKwg" Name="View" Kind="InputPin" />
-              <Pin Id="Bj9eAUkjbRdLNVkg2XemvA" Name="Layer" Kind="OutputPin" />
               <Pin Id="RnBcCa7CufoPCeqw630kkz" Name="Output" Kind="OutputPin" Bounds="601,510" />
+              <Pin Id="ELKx48i5KkOOv78niXfjdL" Name="Layer" Kind="OutputPin" Bounds="406,648" />
+              <Pin Id="UxbX1IU25MnMooTec69Ga2" Name="Auto Draw" Kind="InputPin" Bounds="385,601" />
             </Patch>
+            <Link Id="BVuEqTEIYDSQB6Dw10japm" Ids="NiVeFZFO77RMWvu8Heek1D,JVLsQl2hGnDLZFPKahd9yB" />
+            <Link Id="NpdYjdXQCRSPaw4OAzA89t" Ids="JVLsQl2hGnDLZFPKahd9yB,ELKx48i5KkOOv78niXfjdL" IsHidden="true" />
+            <Link Id="BhQhJ2syp7sPjik0kgHnc2" Ids="UTrcJ1oCuasOrVju6RE7NC,Aa1F9exmk5FQQ6ijuNk7dB" />
+            <Link Id="Ji30yhhswORMCMkwddxUX9" Ids="UxbX1IU25MnMooTec69Ga2,UTrcJ1oCuasOrVju6RE7NC" IsHidden="true" />
           </Patch>
         </Node>
         <!--
@@ -257,10 +261,12 @@
                     <Pin Id="LtschMshsZZOvsNJXhwMch" Name="Not Assigned" Kind="OutputPin" />
                   </Node>
                   <Node Bounds="441,511,98,26" Id="PPkUuS0ZL7gL1Fad3HMZf9">
-                    <p:NodeReference LastCategoryFullName="Stride.Rendering.Adavnced.IGraphicsRendererBase" LastSymbolSource="VL.Stride.Rendering.vl">
+                    <p:NodeReference LastCategoryFullName="Stride.API.Rendering.Layer" LastSymbolSource="VL.Stride.Rendering.vl">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                       <Choice Kind="OperationCallFlag" Name="Draw" />
-                      <CategoryReference Kind="MutableInterfaceType" Name="IGraphicsRendererBase" NeedsToBeDirectParent="true" />
+                      <CategoryReference Kind="MutableInterfaceType" Name="Layer" NeedsToBeDirectParent="true">
+                        <p:OuterCategoryReference Kind="Category" Name="Rendering" NeedsToBeDirectParent="true" />
+                      </CategoryReference>
                     </p:NodeReference>
                     <Pin Id="QWb7hS7BlzuNE50Zp0ZO5E" Name="Input" Kind="StateInputPin" />
                     <Pin Id="Lk8mNYrJBrqPR5m50i9HJt" Name="Context" Kind="InputPin" />
@@ -715,7 +721,7 @@
               <Pin Id="HNkLb4jSBzDMf9ujkovzQs" Name="Output" Kind="StateOutputPin" />
             </Node>
             <Pad Id="KDynOyY9wuPNwWUvMfHDVr" SlotId="TSejBzdm6BcMyoEppidF50" Bounds="317,325" />
-            <ControlPoint Id="Tors3SMnrbLLrA86l7mnfY" Bounds="315,620" />
+            <ControlPoint Id="Tors3SMnrbLLrA86l7mnfY" Bounds="865,608" />
             <ControlPoint Id="Qa4XVxS5sbcOa7M9FarESK" Bounds="425,342" />
             <ControlPoint Id="DH91eSyLIjnOjCrqruM3oy" Bounds="740,379" />
             <Node Bounds="314,407,59,26" Id="IqBEqjf3k7WMP9gglhI4KW">
@@ -770,10 +776,9 @@
               <Pin Id="RkYYwBomoKQMSwEOhl1DrM" Name="Input" Kind="InputPin" />
               <Pin Id="GMcuqSQ9ZOkOmoJW24P4V4" Name="Size" Kind="InputPin" />
               <Pin Id="UR04YjtYkxrPcCWDEDZY1O" Name="New Format" Kind="InputPin" />
-              <Pin Id="MPP0TLzJkKEPGLwAbJxusO" Name="Auto Render" Kind="InputPin" />
-              <Pin Id="Jqiy0GNghsHMb09hFknWSm" Name="View" Kind="InputPin" />
-              <Pin Id="FMjjyT1HcAmNFDrpg9Gb3E" Name="Layer" Kind="OutputPin" />
+              <Pin Id="SPgxRDBWdlWPbvoxXyxyTv" Name="Auto Draw" Kind="InputPin" />
               <Pin Id="DOHvVLxMxzUMjx6xu3YzKk" Name="Output" Kind="OutputPin" />
+              <Pin Id="IRSin7k8mtHLcgrMHHunMu" Name="Layer" Kind="OutputPin" />
             </Node>
           </Canvas>
           <ProcessDefinition Id="K3skJQpQcjOLMCllgiUWXH">
@@ -797,10 +802,12 @@
           <Link Id="HLZEaUTRRBlO5TRwLOE6Nd" Ids="IvM1iN3mXFTOKjK9zwWFbh,GMcuqSQ9ZOkOmoJW24P4V4" />
           <Link Id="RNDmPDxOo8YM7b6yx7zg6l" Ids="DH91eSyLIjnOjCrqruM3oy,UR04YjtYkxrPcCWDEDZY1O" />
           <Link Id="SDowHQiwMC3NIqV80bcAWs" Ids="Qa4XVxS5sbcOa7M9FarESK,RkYYwBomoKQMSwEOhl1DrM" />
-          <Link Id="LpARzB3EoFCPjBKveTAqRJ" Ids="FMjjyT1HcAmNFDrpg9Gb3E,Tors3SMnrbLLrA86l7mnfY" />
           <Link Id="L0JY400YisRMWG3rzyDUQv" Ids="QUBDa0ThT7NQNL6VBkL55f,CQoF09aNpzuQAUPe8i86aB" />
+          <Link Id="Bhq9qBBqwxQMVQHL7ncAgE" Ids="IRSin7k8mtHLcgrMHHunMu,Tors3SMnrbLLrA86l7mnfY" />
           <Patch Id="Dgn5Gzm2QbmMaGVbZIFGyx" Name="Create" ParticipatingElements="KRn0tF5UGbQONmpFZCelLG" />
           <Patch Id="KRSa0CuoIkJQQC2KH0pwMT" Name="Update" ManuallySortedPins="true">
+            <Pin Id="LhMhXUzg4anQLstsvtR4x8" Name="Output" Kind="OutputPin" />
+            <Pin Id="Lcp2KTysRuENiQbytXyHNf" Name="Layer" Kind="OutputPin" Bounds="315,452" Visibility="Optional" />
             <Pin Id="VHDpdajbgk0QHYKOZE7kBj" Name="Input" Kind="InputPin" Bounds="544,182" />
             <Pin Id="RDeKp1LuIZ6QVF5GG3TDLJ" Name="Rescale" Kind="InputPin" Bounds="673,304" DefaultValue="1, 1">
               <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
@@ -809,10 +816,7 @@
             </Pin>
             <Pin Id="ADdeUS76Gv1LRdYxdFbJMx" Name="Color" Kind="InputPin" Bounds="427,326" />
             <Pin Id="TrgywtfUPmkPfzoruFqPhf" Name="New Format" Kind="InputPin" Bounds="826,374" />
-            <Pin Id="AlexqCeUvGZOS0MsyP0w5g" Name="Auto Render" Kind="InputPin" DefaultValue="False" Visibility="Optional" />
-            <Pin Id="JQxdKbU5LlJMxQSUTwZYFC" Name="View" Kind="InputPin" Visibility="Optional" />
-            <Pin Id="Lcp2KTysRuENiQbytXyHNf" Name="Layer" Kind="OutputPin" Bounds="315,452" Visibility="Optional" />
-            <Pin Id="MmuSYWECtuGPLL1HxNq6JB" Name="Output" Kind="OutputPin" />
+            <Pin Id="M3Wuki3ratdN5eDMMfakpL" Name="Auto Draw" Kind="InputPin" DefaultValue="True" Visibility="Optional" />
           </Patch>
         </Patch>
       </Node>
@@ -888,10 +892,9 @@
               <Pin Id="FMoDyJeKbWWPbs9Y5tfzeA" Name="Input" Kind="InputPin" />
               <Pin Id="PDogrjoKnZTLbS5NjYgijs" Name="Size" Kind="InputPin" />
               <Pin Id="TSJdpdTcF0wMFCo3uzFk6h" Name="New Format" Kind="InputPin" />
-              <Pin Id="VrJFsIwIZXPLvQlzjA9DnL" Name="Auto Render" Kind="InputPin" />
-              <Pin Id="OhrW5gwAVsSLaTJQFTQ6hN" Name="View" Kind="InputPin" />
-              <Pin Id="O0UGLmXNJAgQGrkEiJDQSn" Name="Layer" Kind="OutputPin" />
+              <Pin Id="TgovXUqvDqiNiJEMBRsW35" Name="Auto Draw" Kind="InputPin" />
               <Pin Id="M0MnfUV2Rv6Ob0Cu4CNE7U" Name="Output" Kind="OutputPin" />
+              <Pin Id="RdNi63fZ7neQE8cNHMM8IU" Name="Layer" Kind="OutputPin" />
             </Node>
           </Canvas>
           <ProcessDefinition Id="Gyl5y7LvGePMjDR85udX5b">
@@ -927,9 +930,6 @@
             <Pin Id="KQXuMYHYp1dOOKpglNJX08" Name="Color" Kind="InputPin" Bounds="578,318" />
             <Pin Id="Rty3ba7YkoRPnUqDs7LU1m" Name="Size" Kind="InputPin" Visibility="Optional" />
             <Pin Id="MwB0Vv5DxXVPFI0jxabgsV" Name="New Format" Kind="InputPin" Visibility="Optional" />
-            <Pin Id="Ef0kO3LvTAnP3PkZVcSlus" Name="Auto Render" Kind="InputPin" Visibility="Optional" />
-            <Pin Id="Ree1uRTCakjNLUK4qlz0HZ" Name="View" Kind="InputPin" Visibility="Optional" />
-            <Pin Id="JLzcjuokFogQCTuxkUs4DC" Name="Layer" Kind="OutputPin" Visibility="Optional" />
             <Pin Id="ESkbC4V1Mm1NOynhwpouw8" Name="Output" Kind="OutputPin" />
           </Patch>
         </Patch>
@@ -946,7 +946,7 @@
         <Patch Id="VXlFpoIsKNYNNQLmA8W9gD">
           <Canvas Id="OLO7b0M8NvSMeNpltpZIvo" CanvasType="Group">
             <Pad Id="Fa100Zt4tjmLByKOhe6Gad" SlotId="DB6uhS5EJbqMXUOD4jqkBo" Bounds="289,56" />
-            <ControlPoint Id="FaVgCnbLsXRQduSoEsN4Kk" Bounds="291,528" />
+            <ControlPoint Id="FaVgCnbLsXRQduSoEsN4Kk" Bounds="371,500" />
             <Node Bounds="286,-61,55,26" Id="De3BJjmAzXqPKyjEFB5S27">
               <p:NodeReference LastCategoryFullName="Stride.Rendering.Images.FXAAEffect" LastSymbolSource="Stride.Rendering.dll">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -1122,10 +1122,9 @@
               <Pin Id="BrERzXr3GYAO92s9XiYdbg" Name="Input" Kind="InputPin" />
               <Pin Id="Q3krcem0ROnQWqt1gRiN8p" Name="Size" Kind="InputPin" />
               <Pin Id="TAknIrLq1g5Nz2ZbTxSwzA" Name="New Format" Kind="InputPin" />
-              <Pin Id="UwlHiBYzFvDLtEyhoPAEKl" Name="Auto Render" Kind="InputPin" />
-              <Pin Id="NmjjCJuOLkbNxbZWAv3oqe" Name="View" Kind="InputPin" />
-              <Pin Id="BaNx67uVhMJODoJ92xpA8T" Name="Layer" Kind="OutputPin" />
+              <Pin Id="SVvmc7kTI1KLw0SXBJBGEe" Name="Auto Draw" Kind="InputPin" />
               <Pin Id="DEIPBilHbeHMiTcqyqjrWH" Name="Output" Kind="OutputPin" />
+              <Pin Id="K6ldQw4JYuTOOBWa8ohiJC" Name="Layer" Kind="OutputPin" />
             </Node>
           </Canvas>
           <ProcessDefinition Id="JDxD3jJtr8FQKx8j8gKY11">
@@ -1166,11 +1165,13 @@
           <Link Id="D6MdwT4Dg2qMfbuym0SVwB" Ids="RoJqd0kNFv6OQlglu5R24d,PuR6qO8AUB1P57biaZnitS" />
           <Link Id="DAW4gJ3vow1PNroxstlRz4" Ids="FItgrJMxbMhMNK6OACT0V8,CP18iMTjGAXLCQZhDcQYBs" />
           <Link Id="VwtlBmr2CVoN20cZW4Zid8" Ids="EO1Ow7w9MN0K9kKcsdhomU,BxkLMv3e9ROOsPB4rRV8K0" />
-          <Link Id="NtJphe7pNboO6SKpUBdqOr" Ids="BaNx67uVhMJODoJ92xpA8T,FaVgCnbLsXRQduSoEsN4Kk" />
           <Link Id="PnNvvippwmJOSPFM094w8X" Ids="E619hr2nHXYM5F3YYUkK4c,MGWawp8EwYwNk1QEin4SQc" IsHidden="true" />
+          <Link Id="RFSIXkv6bjBOOLvQhu104B" Ids="E619hr2nHXYM5F3YYUkK4c,TkKw6qOUIPCPzg0PFSkbE7" IsHidden="true" />
+          <Link Id="SlMsSGr3IOPMIrLZWb20EL" Ids="E619hr2nHXYM5F3YYUkK4c,LJa9KKYxb2ROXjk4NMLWy7" IsHidden="true" />
+          <Link Id="LTFoiPH0kVrM6c3TrZKNp4" Ids="E619hr2nHXYM5F3YYUkK4c,OrNSXCbedO1O8YNthokZkh" IsHidden="true" />
+          <Link Id="OCtxo0mhsRiN1e5LRN86jr" Ids="K6ldQw4JYuTOOBWa8ohiJC,FaVgCnbLsXRQduSoEsN4Kk" />
           <Patch Id="ObaZeJVSqMaL5AS2LkbIZO" Name="Create" ParticipatingElements="HeLx2PLXueuLUgONShuatR" />
-          <Patch Id="S7fcBDuoWzXPFSGu5zMNAS" Name="Update" ManuallySortedPins="true">
-            <Pin Id="Rdq5iTiaPU9QNjVfN75bG2" Name="Input" Kind="InputPin" />
+          <Patch Id="S7fcBDuoWzXPFSGu5zMNAS" Name="Update">
             <Pin Id="S62Qcr0stxxPABrrDVGoNI" Name="Input Luminance Alpha" Kind="InputPin" Bounds="423,390" />
             <Pin Id="E619hr2nHXYM5F3YYUkK4c" Name="Dither Type" Kind="InputPin" DefaultValue="Medium">
               <p:TypeAnnotation LastCategoryFullName="Stride.Rendering.Images.FXAAEffect" LastSymbolSource="Stride.Rendering.dll">
@@ -1182,20 +1183,13 @@
                 <Choice Kind="TypeFlag" Name="Integer32" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="Rdq5iTiaPU9QNjVfN75bG2" Name="Input" Kind="InputPin" />
             <Pin Id="DCQeMA85xa6QObeBoFCjD8" Name="Size" Kind="InputPin" Visibility="Optional" />
             <Pin Id="TUw9cv6ageXP81Db3RvsHl" Name="New Format" Kind="InputPin" Visibility="Optional" />
-            <Pin Id="OQemz8MsWmcQJdKbZD8DPA" Name="View" Kind="InputPin" Visibility="Optional" />
-            <Pin Id="QyyfEKOfj8JQSlmBIeWZzP" Name="Auto Render" Kind="InputPin" DefaultValue="True" Visibility="Optional">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Boolean" />
-              </p:TypeAnnotation>
-            </Pin>
+            <Pin Id="MyCsaWmBO5xPXTWDasxQki" Name="Auto Draw" Kind="InputPin" />
             <Pin Id="Mu4YP02mN8iMJcdKG7i8jM" Name="Layer" Kind="OutputPin" Bounds="315,452" Visibility="Optional" />
             <Pin Id="Mohu3YIfwNhNb1otI9BHYA" Name="Output" Kind="OutputPin" />
           </Patch>
-          <Link Id="RFSIXkv6bjBOOLvQhu104B" Ids="E619hr2nHXYM5F3YYUkK4c,TkKw6qOUIPCPzg0PFSkbE7" IsHidden="true" />
-          <Link Id="SlMsSGr3IOPMIrLZWb20EL" Ids="E619hr2nHXYM5F3YYUkK4c,LJa9KKYxb2ROXjk4NMLWy7" IsHidden="true" />
-          <Link Id="LTFoiPH0kVrM6c3TrZKNp4" Ids="E619hr2nHXYM5F3YYUkK4c,OrNSXCbedO1O8YNthokZkh" IsHidden="true" />
         </Patch>
       </Node>
     </Canvas>
@@ -1220,7 +1214,7 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="K08TNIU8XTsLzsNUwzw82F" Location="VL.Skia" Version="2020.2.0-0163-gd72514e599" />
+  <NugetDependency Id="K08TNIU8XTsLzsNUwzw82F" Location="VL.Skia" Version="2020.2.0-0178-gc1f9930a37" />
   <DocumentDependency Id="GU8U88sinjEPCVYLD2ricj" Location="./VL.Stride.Core.vl" />
   <DocumentDependency Id="Msnm4D4Er8bLmlwC1L1XQc" Location="./VL.Stride.Graphics.vl" />
   <DocumentDependency Id="M6gCO22oHy1LhLzIK6RyS2" Location="./VL.Stride.Rendering.vl" />
