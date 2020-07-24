@@ -23,17 +23,6 @@ namespace VL.Stride
             return nodeContext.GetGameProvider().GetHandle();
         }
 
-        // Game window
-        public static IResourceProvider<GameWindow> GetGameWindowProvider(this NodeContext nodeContext)
-        {
-            return nodeContext.Factory.CreateService<IResourceProvider<GameWindow>>(nodeContext);
-        }
-
-        public static IResourceHandle<GameWindow> GetGameWindowHandle(this NodeContext nodeContext)
-        {
-            return nodeContext.GetGameWindowProvider().GetHandle();
-        }
-
         // Graphics device
         public static IResourceProvider<GraphicsDevice> GetDeviceProvider(this NodeContext nodeContext)
         {
