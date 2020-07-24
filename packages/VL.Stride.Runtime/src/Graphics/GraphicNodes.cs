@@ -6,7 +6,7 @@ using VL.Core;
 
 namespace VL.Stride.Graphics
 {
-    static class GraphicNodes
+    static class GraphicsNodes
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {

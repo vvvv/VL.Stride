@@ -4,6 +4,7 @@ using System.ComponentModel;
 using VL.Core;
 using VL.Stride.Engine;
 using VL.Stride.Graphics;
+using VL.Stride.Rendering;
 using VL.Stride.Rendering.Composition;
 using VL.Stride.Rendering.Lights;
 using VL.Stride.Rendering.Materials;
@@ -40,7 +41,10 @@ namespace VL.Stride
             foreach (var n in PhysicsNodes.GetNodeDescriptions(this))
                 yield return n;
 
-            foreach (var n in GraphicNodes.GetNodeDescriptions(this))
+            foreach (var n in RenderingNodes.GetNodeDescriptions(this))
+                yield return n;
+
+            foreach (var n in GraphicsNodes.GetNodeDescriptions(this))
                 yield return n;
         }
     }

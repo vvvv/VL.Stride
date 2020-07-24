@@ -79,7 +79,7 @@ namespace VL.Stride.Engine
             where TPhysicsComponent : PhysicsComponent, new()
         {
             init ??= InitPhysicsComponent;
-            return factory.NewComponentNode<TPhysicsComponent>(name: name, category: category, init: init)
+            return factory.NewComponentNode(name: name, category: category, init: init)
                 .AddListInput(nameof(PhysicsComponent.ColliderShapes), x => x.ColliderShapes, ColliderShapeChanged)
                 ;
         }

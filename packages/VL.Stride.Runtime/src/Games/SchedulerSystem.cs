@@ -36,7 +36,11 @@ namespace VL.Stride.Games
 
         public void Remove(IGraphicsRendererBase graphicsRenderer)
         {
-            queue.OfType<MiniSystem>().ForEach(ms => ms.Remove(graphicsRenderer));
+            var mss = queue.OfType<MiniSystem>().ToList();
+            foreach(var ms in mss)
+            {
+                ms.Remove(graphicsRenderer);
+            }
         }
 
         public void Schedule(GameSystemBase gameSystem)
