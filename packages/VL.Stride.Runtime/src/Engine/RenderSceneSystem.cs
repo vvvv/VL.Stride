@@ -3,6 +3,7 @@ using Stride.Core.Serialization.Contents;
 using Stride.Engine;
 using Stride.Games;
 using Stride.Rendering;
+using VL.Stride.Input;
 
 namespace VL.Stride.Engine
 {
@@ -12,7 +13,7 @@ namespace VL.Stride.Engine
     public class RenderSceneSystem : SceneSystem, IGraphicsRendererBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameSystemBase" /> class.
+        /// Initializes a new instance of the <see cref="RenderSceneSystem" /> class.
         /// </summary>
         /// <param name="registry">The registry.</param>
         /// <remarks>The GameSystem is expecting the following services to be registered: <see cref="IGame" /> and <see cref="IContentManager" />.</remarks>
@@ -42,6 +43,12 @@ namespace VL.Stride.Engine
 
         public void Draw(RenderDrawContext context)
         {
+            if (SceneInstance?.RootScene != null)
+            {
+                context.RenderContext.GetWindowInputSource(out var inputSouce);
+                SceneInstance.RootScene.SetWindowInputSource(inputSouce);
+            }
+
             if (base.BeginDraw())
             {
                 base.Draw(context.RenderContext.Time);

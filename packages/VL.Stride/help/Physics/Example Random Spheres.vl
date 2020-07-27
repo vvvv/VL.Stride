@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="MkEek32c6HUMGE7dRJrixC" LanguageVersion="2020.2.0.176" Version="0.128">
-  <NugetDependency Id="TwGk0oqYRM9LNChgwzEPFV" Location="VL.CoreLib" Version="2020.2.0-0163-gd72514e599" />
+<Document xmlns:p="property" Id="MkEek32c6HUMGE7dRJrixC" LanguageVersion="2020.2.0.196" Version="0.128">
+  <NugetDependency Id="TwGk0oqYRM9LNChgwzEPFV" Location="VL.CoreLib" Version="2020.2.0-0196-g9e7995ef43" />
   <Patch Id="EZnIqZ0z0epNn1cF1kNIqy">
     <Canvas Id="OjqUphNS7lHNHXGqmkgtXs" DefaultCategory="Main" CanvasType="FullCategory" />
     <!--
@@ -36,7 +36,6 @@
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="IMFW3EsHSNOQZ7elgb9rWA" Name="Material" Kind="InputPin" />
-            <Pin Id="GxP6Rl5WBXtOHD9VKZiIAa" Name="Instance Transformations" Kind="InputPin" />
             <Pin Id="N26P0KF7Py5PvEhYAiD6ys" Name="Components" Kind="InputPin" />
             <Pin Id="Lu4Buu1t5JNL4mUX2v7P4n" Name="Children" Kind="InputPin" />
             <Pin Id="S1z1anheqzAQVIfHEBqXcH" Name="Name" Kind="InputPin" />
@@ -125,6 +124,7 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="T5DXmgVgSsNNAYBTckdBb8" Name="Transformation" Kind="InputPin" />
             <Pin Id="Mmes8KJvjYYL6cetUnhN5F" Name="Component" Kind="InputPin" />
             <Pin Id="Q951Im5dg7aPsgGOcYTwLw" Name="Children" Kind="InputPin" />
             <Pin Id="FHb0joGiYw1PLD6lwAdK0s" Name="Name" Kind="InputPin" />
@@ -195,12 +195,6 @@
                   </p:TypeAnnotation>
                 </Pin>
                 <Pin Id="Ct7d4ZHCwTqMzGoyww37jF" Name="Material" Kind="InputPin" />
-                <Pin Id="SSEx83jyZfeMzfD2FNc6tZ" Name="Instance Transformations" Kind="InputPin" />
-                <Pin Id="NeXeKlLSnPKQU18hcISs5T" Name="Model Transform Usage" Kind="InputPin" DefaultValue="PreMultiply">
-                  <p:TypeAnnotation LastCategoryFullName="Stride.Engine" LastSymbolSource="Stride.Engine.dll">
-                    <Choice Kind="TypeFlag" Name="ModelTransformUsage" />
-                  </p:TypeAnnotation>
-                </Pin>
                 <Pin Id="TBohTDgEt1BLRkbLFzfqeJ" Name="Components" Kind="InputPin" />
                 <Pin Id="Fi2Qn2b58GCM7hvZu0mL6h" Name="Children" Kind="InputPin" />
                 <Pin Id="UmKwlDEqCm5Psurf0FhGOZ" Name="Name" Kind="InputPin" />
@@ -210,22 +204,23 @@
                   </p:TypeAnnotation>
                 </Pin>
                 <Pin Id="Q1c4nSFeechPSCLXuE8bUZ" Name="Entity" Kind="OutputPin" />
+                <Pin Id="NeXeKlLSnPKQU18hcISs5T" Name="Model Transform Usage" Kind="InputPin" DefaultValue="PreMultiply">
+                  <p:TypeAnnotation LastCategoryFullName="Stride.Engine" LastSymbolSource="Stride.Engine.dll">
+                    <Choice Kind="TypeFlag" Name="ModelTransformUsage" />
+                  </p:TypeAnnotation>
+                </Pin>
               </Node>
               <Node Bounds="614,430,115,19" Id="LwU1UU4PWxENSdMMmPd8NY">
                 <p:NodeReference LastCategoryFullName="Stride.Physics" LastSymbolSource="VL.Stride.Runtime.dll">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                   <CategoryReference Kind="Category" Name="Stride" />
                   <CategoryReference Kind="Category" Name="Physics" />
-                  <Choice Kind="ProcessNode" Name="RigidbodyComponent" />
+                  <Choice Kind="ProcessNode" Name="DynamicColliderComponent" />
                 </p:NodeReference>
                 <Pin Id="AfMDfE0e4JpPTxO12APR1u" Name="Collider Shapes" Kind="InputPin" />
                 <Pin Id="K8VKJQrD8zqLjLhWHURwMZ" Name="Mass" Kind="InputPin" />
                 <Pin Id="GmTO7a9oHyBMcQPQWlSFcc" Name="Linear Damping" Kind="InputPin" />
                 <Pin Id="PHXANbbRFVRNxKN5HAn16E" Name="Angular Damping" Kind="InputPin" />
-                <Pin Id="NpTVKXCWPOcNSixblS1kKY" Name="Override Gravity" Kind="InputPin" />
-                <Pin Id="GQr5lBAUDZxNkdpZmYI6bk" Name="Gravity" Kind="InputPin" />
-                <Pin Id="Jzj01P7ejjnNuiq4CKFUnd" Name="Is Kinematic" Kind="InputPin" />
-                <Pin Id="HDlmKZTcYqLO0G0RL7pkfp" Name="Is Trigger" Kind="InputPin" />
                 <Pin Id="MY0m1q3OvbFMkGwyP9qiy0" Name="Restitution" Kind="InputPin">
                   <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                     <Choice Kind="TypeFlag" Name="Float32" />
@@ -285,7 +280,7 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
             </p:NodeReference>
-            <Pin Id="KL4ehzvAqkYOjJ9ylb2NQj" Name="Bounds" Kind="InputPin" DefaultValue="1139, 77, 725, 507">
+            <Pin Id="KL4ehzvAqkYOjJ9ylb2NQj" Name="Bounds" Kind="InputPin" DefaultValue="1139, 77, 768, 432">
               <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Rectangle" />
               </p:TypeAnnotation>
@@ -307,6 +302,8 @@
             </Pin>
             <Pin Id="EkjYBYq5PMSNq4Nc5WzutD" Name="Output" Kind="OutputPin" />
             <Pin Id="UFqBTaJZWyFN1aTF9nicrn" Name="Scene Instance" Kind="OutputPin" />
+            <Pin Id="OfetWLVsAf6QQhznlWIEbc" Name="Scene System" Kind="OutputPin" />
+            <Pin Id="Rs4xiOJE2gGPeOEdzog71L" Name="Input Source" Kind="OutputPin" />
           </Node>
           <Node Bounds="655,673,145,19" Id="Ndy8GmedBviLgndrQ4egBn">
             <p:NodeReference LastCategoryFullName="Stride.Lights" LastSymbolSource="VL.Stride.Engine.vl">
@@ -333,6 +330,7 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="SgfH9qQr1VuPBQpvZ8S4kt" Name="Transformation" Kind="InputPin" />
             <Pin Id="CsYNdQ2C0ehNuaO7EQFEFs" Name="Component" Kind="InputPin" />
             <Pin Id="CnSZrGwD1hKOGKVjA1giRS" Name="Children" Kind="InputPin" />
             <Pin Id="CTZcMgrcdxpNeCBEYatDB3" Name="Name" Kind="InputPin" />
@@ -368,6 +366,7 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="Od2GkaXW2tINPd5vkNmK1X" Name="Transformation" Kind="InputPin" />
             <Pin Id="CRDVcS9ULGyPY4FabZYBII" Name="Component" Kind="InputPin" />
             <Pin Id="HWzMOoglWrnNILrM7vjg3C" Name="Children" Kind="InputPin" />
             <Pin Id="TmMipunYZ4eQb9V34HSJVj" Name="Name" Kind="InputPin" />
@@ -631,5 +630,5 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Q6thn2Y7IMaPIwMZVU2Sfj" Location="VL.Stride" Version="0.7.189-g00561464aa" />
+  <NugetDependency Id="Q6thn2Y7IMaPIwMZVU2Sfj" Location="VL.Stride" Version="0.7.211-g78dc76df51" />
 </Document>

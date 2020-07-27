@@ -18,6 +18,10 @@ namespace VL.Stride.Rendering
             yield return NewInputRenderBaseNode<SetRenderView>(factory, category: renderingAdvancedCategory)
                 .AddInput(nameof(SetRenderView.RenderView), x => x.RenderView, (x, v) => x.RenderView = v)
                 ;
+
+            yield return NewInputRenderBaseNode<SetWindowInputSource>(factory, category: renderingAdvancedCategory)
+                .AddInput(nameof(SetWindowInputSource.InputSource), x => x.InputSource, (x, v) => x.InputSource = v)
+                ;
         }
 
         static CustomNodeDesc<TInputRenderBase> NewInputRenderBaseNode<TInputRenderBase>(IVLNodeDescriptionFactory factory, string category, string name = null)

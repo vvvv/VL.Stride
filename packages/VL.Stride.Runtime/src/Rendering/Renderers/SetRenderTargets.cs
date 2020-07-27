@@ -1,8 +1,11 @@
-﻿using Stride.Core.Mathematics;
+﻿using Stride.Core;
+using Stride.Core.Mathematics;
 using Stride.Graphics;
+using Stride.Input;
 using Stride.Rendering;
 using System;
 using System.Diagnostics;
+using VL.Stride.Input;
 
 namespace VL.Stride.Rendering
 {
@@ -73,6 +76,10 @@ namespace VL.Stride.Rendering
                     DrawInput(context);
                 }  
             }
+            else
+            {
+                DrawInput(context);
+            }
         }
     }
 
@@ -82,7 +89,6 @@ namespace VL.Stride.Rendering
 
         protected override void DrawInternal(RenderDrawContext context)
         {
-
             var renderView = RenderView;
             if (renderView != null)
             {
@@ -101,6 +107,32 @@ namespace VL.Stride.Rendering
                 {
                     DrawInput(context);
                 } 
+            }
+            else
+            {
+                DrawInput(context);
+            }
+        }
+    }
+
+    public class SetWindowInputSource : InputRenderBase
+    {
+        public IInputSource InputSource { get; set; }
+
+        protected override void DrawInternal(RenderDrawContext context)
+        {
+
+            var inputSource = InputSource;
+            if (inputSource != null)
+            {
+                using (context.RenderContext.PushTagAndRestore(InputExtensions.WindowInputSource, inputSource))
+                {
+                    DrawInput(context);
+                }
+            }
+            else
+            {
+                DrawInput(context);
             }
         }
     }
