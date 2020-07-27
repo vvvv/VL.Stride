@@ -32,9 +32,14 @@ namespace MyTests
             var vlStride = Directory.GetFiles(Path.Combine(MainLibPath, "VL.Stride"), "*.vl", SearchOption.AllDirectories);
             var vlStrideRuntime = Directory.GetFiles(Path.Combine(MainLibPath, "VL.Stride.Runtime"), "*.vl", SearchOption.AllDirectories);
             var vlStrideWindows = Directory.GetFiles(Path.Combine(MainLibPath, "VL.Stride.Windows"), "*.vl", SearchOption.AllDirectories);
+
+            var pathUri = new Uri(MainLibPath, UriKind.Absolute);
             // Yield all your VL docs
             foreach (var file in vlStrideRuntime.Concat(vlStride).Concat(vlStrideWindows))
-                yield return file;
+            {
+                var fileUri = new Uri(file, UriKind.Absolute);
+                yield return Uri.UnescapeDataString(pathUri.MakeRelativeUri(fileUri).ToString()).Replace("/", @"\");
+            }
         }
 
 
@@ -47,9 +52,9 @@ namespace MyTests
         static PatchTests()
         {
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            MainLibPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\.."));
-            RepositoriesPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\.."));
-            VLPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\..\..\vvvv50"));
+            MainLibPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\..\"));
+            RepositoriesPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\..\"));
+            VLPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\..\..\vvvv50\"));
 
             foreach (var pack in Packs)
                 AssemblyLoader.AddPackageRepositories(pack);
@@ -90,6 +95,7 @@ namespace MyTests
         [TestCaseSource(nameof(NormalPatches))]
         public static void IsntRed(string filePath)
         {
+            filePath = Path.Combine(MainLibPath, filePath);
             var solution = FCompiledSolution ?? (FCompiledSolution = Compile(NormalPatches()));
             var document = solution.GetOrAddDocument(filePath);
 
@@ -108,7 +114,7 @@ namespace MyTests
         {
             var solution = Session.CurrentSolution;
             foreach (var f in docs)
-                solution = solution.GetOrAddDocument(f).Solution;
+                solution = solution.GetOrAddDocument(Path.Combine(MainLibPath, f)).Solution;
             return solution.WithFreshCompilation();
         }
 
