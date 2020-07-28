@@ -1,6 +1,6 @@
-using VL.Stride.Rendering;
 using Stride.Engine;
 using Stride.Engine.Design;
+using VL.Stride.Engine;
 
 namespace VL.Stride.Games
 {
@@ -13,7 +13,6 @@ namespace VL.Stride.Games
         {
             SchedulerSystem = new SchedulerSystem(Services);
             Services.AddService<IGameSystemScheduler>(SchedulerSystem);
-            Services.AddService<IRendererScheduler>(SchedulerSystem);
         }
 
         protected override void PrepareContext()

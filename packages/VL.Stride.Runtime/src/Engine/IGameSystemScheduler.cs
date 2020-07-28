@@ -1,6 +1,6 @@
 ﻿using Stride.Games;
 
-namespace VL.Stride.Games
+namespace VL.Stride.Engine
 {
     /// <summary>
     /// Allows to schedule game systems in a frame. Their Update and Draw methods will be called in the order as they have been scheduled.
