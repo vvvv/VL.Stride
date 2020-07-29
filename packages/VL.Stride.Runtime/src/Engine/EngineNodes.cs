@@ -34,19 +34,6 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(SceneInstanceRenderer.SceneInstance), x => x.SceneInstance, (x, v) => x.SceneInstance = v)
                 .AddInput(nameof(SceneInstanceRenderer.GraphicsCompositor), x => x.GraphicsCompositor, (x, v) => x.GraphicsCompositor = v);
 
-            yield return new CustomNodeDesc<LayerSystem>(factory,
-                ctor: nodeContext =>
-                {
-                    var gameHandle = nodeContext.GetGameHandle();
-                    var game = gameHandle.Resource;
-                    var instance = new LayerSystem(game.Services);
-                    return (instance, () => gameHandle.Dispose());
-                },
-                category: "Stride",
-                copyOnWrite: false,
-                fragmented: true)
-                .AddInput(nameof(LayerSystem.Layer), x => x.Layer, (x, v) => x.Layer = v);
-
             var lightsCategory = "Stride.Lights";
 
             // Light components
