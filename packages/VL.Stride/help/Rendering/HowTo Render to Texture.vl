@@ -43,7 +43,7 @@
           <Node Bounds="614,525,145,19" Id="SwEahiA6VoWLu7UWNdrVrc">
             <p:NodeReference LastCategoryFullName="Stride" LastSymbolSource="VL.Stride.Engine.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="EntityTexture" />
+              <Choice Kind="ProcessAppFlag" Name="RenderTexture" />
             </p:NodeReference>
             <Pin Id="MgI1ole757rNACuYbbU7bp" Name="Input" Kind="InputPin" />
             <Pin Id="Qu8iMX2qNgjOyVOsCcun7b" Name="Camera" Kind="InputPin" />
@@ -92,6 +92,7 @@
             <Pin Id="DCwdjyrchguNOS9twwaMdC" Name="Child" Kind="InputPin" />
             <Pin Id="ARMPumrjFJsLmHmaTorkgp" Name="Child 2" Kind="InputPin" />
             <Pin Id="TVwyKv9NpniLV0GD1QcONn" Name="Child 3" Kind="InputPin" />
+            <Pin Id="Ot3XPhGznoMLSoStW7vBON" Name="Child 4" Kind="InputPin" />
             <Pin Id="CqrYlI2clcsLRwR1nBbt1s" Name="Name" Kind="InputPin" />
             <Pin Id="KkIRMMUddCHQXFcGaigpfI" Name="Enabled" Kind="InputPin" />
             <Pin Id="OrhiFun7LMjMlUx7Qm76yX" Name="Output" Kind="OutputPin" />
@@ -407,6 +408,44 @@
             <Pin Id="ICrdC1Rol30MLNzTgA2FqB" Name="Output" Kind="OutputPin" />
             <Pin Id="JqQRFnzmQREL573gdKG4qE" Name="Input Source" Kind="OutputPin" />
           </Node>
+          <Node Bounds="404,420" Id="NZnHxHMZWAWMbs7Guk2cq5">
+            <p:NodeReference LastCategoryFullName="Stride.Models" LastSymbolSource="VL.Stride.Engine.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="Plane" />
+            </p:NodeReference>
+            <Pin Id="PY700LXla95NgxOg1ASSHg" Name="Transformation" Kind="InputPin" />
+            <Pin Id="Jf04j3ht9seNd6YV9p1PcF" Name="Size" Kind="InputPin" />
+            <Pin Id="Kpjd5Z73cmSQDFCoxyF6oP" Name="Tesselation" Kind="InputPin" />
+            <Pin Id="TNZmEEoC5SXLP6G5ZLjzko" Name="Normal Direction" Kind="InputPin" />
+            <Pin Id="APUx6LV1dKcM3TC6urQGIk" Name="Generate Back Face" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="OH1cvhBSa0kLEuNa7cgJMy" Name="Material" Kind="InputPin" />
+            <Pin Id="VuhGpDKnBtdQQyJdWm1ZGt" Name="Instance Transformations" Kind="InputPin" />
+            <Pin Id="Kd9lKkeMm8rMGKD0DRFROh" Name="Children" Kind="InputPin" />
+            <Pin Id="CcJ3WL6RwgTM3iYeiH8qKO" Name="Name" Kind="InputPin" />
+            <Pin Id="KsV0noRN1QkPxFWWM4BpLF" Name="Enabled" Kind="InputPin" />
+            <Pin Id="PKDYGrWFdnGNJRl7RQ8WMb" Name="Entity" Kind="OutputPin" />
+          </Node>
+          <ControlPoint Id="BVqwV5kszvdPzxKYsUYo3F" Bounds="636,377" />
+          <Node Bounds="620,872" Id="DP7dmqfGZabNmyQcj4uiz7">
+            <p:NodeReference LastCategoryFullName="Stride.Lights" LastSymbolSource="VL.Stride.Engine.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="DirectionalLight" />
+            </p:NodeReference>
+            <Pin Id="OsA1QhcXgWGOmKL93bUczy" Name="Position" Kind="InputPin" />
+            <Pin Id="L6WGkWiUQuoMVkw9jnYVp2" Name="Target" Kind="InputPin" />
+            <Pin Id="Fj28hWfYRqhNid0G6fgoKi" Name="Color" Kind="InputPin" />
+            <Pin Id="QGDNpO3JnrdO8Tx9V9Muj1" Name="Intensity" Kind="InputPin" />
+            <Pin Id="Cz040EMFboUPxwrekKrGa4" Name="Transformation" Kind="InputPin" />
+            <Pin Id="JPv9tYgcrsPO3oKRlfshX3" Name="Component" Kind="InputPin" />
+            <Pin Id="JsVGqXTrRS2P9iI71MZDGr" Name="Children" Kind="InputPin" />
+            <Pin Id="IZuMF58Luc4MWqrIiHIPxX" Name="Name" Kind="InputPin" />
+            <Pin Id="I43mMDUa6BROD8BcaNTpGP" Name="Enabled" Kind="InputPin" />
+            <Pin Id="RXJyKlXbWORQYTCG1OPxMX" Name="Entity" Kind="OutputPin" />
+          </Node>
         </Canvas>
         <Patch Id="MlJDEAkmWSCNFrBbC1wcnK" Name="Create" />
         <Patch Id="FH0PMPoKAjCPHHW3NlP1Bj" Name="Update" />
@@ -417,14 +456,12 @@
         <Link Id="GnLTAaOOmELNaiARMftVmV" Ids="Jmthv6WsYkvMlKdc1wosh6,U3lU3DpAjgMOZtVDMMALvX" />
         <Link Id="PqxZ5f3dJDJONWRzNFVpfc" Ids="U90Un1tkrDLMoL9k3njMTG,RzUpgipktQGL5F5nIEFLhU" />
         <Link Id="C0kS5rr1Y5uLAoRR6o4WnA" Ids="RXnzUMKE4YYNj49fyDN3d5,DCwdjyrchguNOS9twwaMdC" />
-        <Link Id="T9vTaKPyFtqL5Kbuc0unGL" Ids="SmFVEcWeSGhNM20Jo3ixjl,ARMPumrjFJsLmHmaTorkgp" />
         <Link Id="Vs6yzz6xKLFOGtxHmOc1hW" Ids="NHTZXVHcI1lQSCvGSHntfR,NT4MFqrjguIMjDRjEtPzeT" />
         <Link Id="TZmS4diTLAtPRpXY5teKJ9" Ids="SgbUViPU9QmNF7DZj32x9j,Ix6zK6YjqrGLk86uXoiPnw" />
         <Link Id="Oyf9HpndUVyMtTcByjNdlz" Ids="RmOL4fjtPK4LIVO048j4ZA,JU272bEaFAjMaSBXbfdvTX" />
         <Link Id="SUtyT99wrE3Moq5cd9uqMc" Ids="AMlhKKloR2YLaQ0zsUEUIj,VOWErryYbyENlD04jmsXzY" />
         <Link Id="DuKoKLYLie0LbLz7pEyYuP" Ids="SMaFku6IDdcP31c653mifh,SNELkgVo2DsOEonlSAgDEY" />
         <Link Id="PU468RDCH6iOvz7hEjLeFn" Ids="HT3jZW4lJX1QBpWKMpxoHu,S6IFkdGIjC4MOMJCbwY70k" />
-        <Link Id="Uu8N8hm55rDMJkQNJhbwjV" Ids="Gas7I0VGRs7ONop7TR6bzT,CwjQxZlIQLrPNetwpCfHUW" />
         <Link Id="M0HT7gUAWrFOGa5u8vffVX" Ids="KSLHofZBWDGPOpq48AqGOo,MgI1ole757rNACuYbbU7bp" />
         <Link Id="A32mwcPKd0XM4jdkUNO4wi" Ids="CzcUCr9Su2XQdUjJBBJoCG,KAG38TQmSATLH0emcd2GQd" />
         <Link Id="Kczz3hstqdiL94Pd5wwgff" Ids="GGnqAYInBQdL10tHZ6Dq2K,IwozVMCX4weM6ienygTYW2" />
@@ -439,6 +476,10 @@
         <Link Id="UWahDjvaaccQEeMwo1kD1d" Ids="SgE6ZPVe2TcPP9h4uxeVit,ORWmYXK0MtUNtpOb3q7Ywv" />
         <Link Id="V4b7rSv9RpPOh76FkJ2vRb" Ids="OrhiFun7LMjMlUx7Qm76yX,DBdl3Bz28kHLaPoOk6GgVN" />
         <Link Id="O3VcpXJYPghLqpzUTBEtpX" Ids="MOAPnw4OomeL7CBuZqZoW4,FRfyPQatKZYMl9xG1sVOkg" />
+        <Link Id="NjChetrUdFpL8P7qLjfmqm" Ids="PKDYGrWFdnGNJRl7RQ8WMb,ARMPumrjFJsLmHmaTorkgp" />
+        <Link Id="Dq6ogyir2xLOOIpbrqZxBd" Ids="Gas7I0VGRs7ONop7TR6bzT,BVqwV5kszvdPzxKYsUYo3F,CwjQxZlIQLrPNetwpCfHUW" />
+        <Link Id="LFg9khZ57yZNMFqgfY91Zl" Ids="SmFVEcWeSGhNM20Jo3ixjl,TVwyKv9NpniLV0GD1QcONn" />
+        <Link Id="CSqCLNEkZjmNqySskydI96" Ids="RXJyKlXbWORQYTCG1OPxMX,Ot3XPhGznoMLSoStW7vBON" />
       </Patch>
     </Node>
   </Patch>
