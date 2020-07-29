@@ -8,19 +8,46 @@ namespace VL.Stride.Engine
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {
-            var lightsCategory = "Stride.Lights";
-
-            yield return new CustomNodeDesc<SceneInstance>(factory,
+            yield return new CustomNodeDesc<SceneInstanceSystem>(factory,
                 ctor: nodeContext =>
                 {
                     var gameHandle = nodeContext.GetGameHandle();
                     var game = gameHandle.Resource;
-                    var instance = new SceneInstance(game.Services);
+                    var instance = new SceneInstanceSystem(game.Services);
                     return (instance, () => gameHandle.Dispose());
                 },
                 category: "Stride",
                 copyOnWrite: false)
-                .AddInput(nameof(SceneInstance.RootScene), x => x.RootScene, (x, v) => x.RootScene = v);
+                .AddInput(nameof(SceneInstanceSystem.RootScene), x => x.RootScene, (x, v) => x.RootScene = v)
+                .AddOutput(nameof(SceneInstanceSystem.SceneInstance), x => x.SceneInstance);
+
+            yield return new CustomNodeDesc<SceneInstanceRenderer>(factory,
+                ctor: nodeContext =>
+                {
+                    var gameHandle = nodeContext.GetGameHandle();
+                    var game = gameHandle.Resource;
+                    var instance = new SceneInstanceRenderer();
+                    return (instance, () => gameHandle.Dispose());
+                },
+                category: "Stride",
+                copyOnWrite: false)
+                .AddInput(nameof(SceneInstanceRenderer.SceneInstance), x => x.SceneInstance, (x, v) => x.SceneInstance = v)
+                .AddInput(nameof(SceneInstanceRenderer.GraphicsCompositor), x => x.GraphicsCompositor, (x, v) => x.GraphicsCompositor = v);
+
+            yield return new CustomNodeDesc<LayerSystem>(factory,
+                ctor: nodeContext =>
+                {
+                    var gameHandle = nodeContext.GetGameHandle();
+                    var game = gameHandle.Resource;
+                    var instance = new LayerSystem(game.Services);
+                    return (instance, () => gameHandle.Dispose());
+                },
+                category: "Stride",
+                copyOnWrite: false,
+                fragmented: true)
+                .AddInput(nameof(LayerSystem.Layer), x => x.Layer, (x, v) => x.Layer = v);
+
+            var lightsCategory = "Stride.Lights";
 
             // Light components
             yield return factory.NewComponentNode<LightComponent>(lightsCategory)

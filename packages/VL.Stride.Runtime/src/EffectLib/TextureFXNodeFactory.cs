@@ -19,6 +19,7 @@ using System.Threading;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Stride.Core;
+using VL.Stride.Engine;
 using VL.Stride.Rendering;
 
 [assembly:NodeFactory(typeof(VL.Stride.EffectLib.TextureFXNodeFactory))]
@@ -285,6 +286,7 @@ namespace VL.Stride.EffectLib
                                 var gameHandle = nodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
                                 var graphicsDevice = game.GraphicsDevice;
+                                var layerSystem = new LayerSystem(game.Services);
                                 var current = default((TextureDescription inputDesc, Texture outputTexture));
                                 var mainOutput = new DelegatePin<Texture>(getter: () =>
                                 {
@@ -305,9 +307,12 @@ namespace VL.Stride.EffectLib
                                     outputTextureInput.Value = outputTexture;
 
                                     var effect = node.Outputs[0].Value as TextureFXEffect;
-                                    var rendererScheduler = game.Services.GetService<IRendererScheduler>();
-                                    if (rendererScheduler != null && effect != null && effect.IsInputAssigned && effect.IsOutputAssigned)
-                                        rendererScheduler.Schedule(effect);
+                                    var scheduler = game.Services.GetService<IGameSystemScheduler>();
+                                    if (scheduler != null && effect != null && effect.IsInputAssigned && effect.IsOutputAssigned)
+                                    {
+                                        layerSystem.Layer = effect;
+                                        scheduler.Schedule(layerSystem);
+                                    }
 
                                     return outputTexture;
                                 });
