@@ -286,7 +286,6 @@ namespace VL.Stride.EffectLib
                                 var gameHandle = nodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
                                 var graphicsDevice = game.GraphicsDevice;
-                                var layerSystem = new LayerSystem(game.Services);
                                 var current = default((TextureDescription inputDesc, Texture outputTexture));
                                 var mainOutput = new DelegatePin<Texture>(getter: () =>
                                 {
@@ -307,11 +306,10 @@ namespace VL.Stride.EffectLib
                                     outputTextureInput.Value = outputTexture;
 
                                     var effect = node.Outputs[0].Value as TextureFXEffect;
-                                    var scheduler = game.Services.GetService<IGameSystemScheduler>();
+                                    var scheduler = game.Services.GetService<SchedulerSystem>();
                                     if (scheduler != null && effect != null && effect.IsInputAssigned && effect.IsOutputAssigned)
                                     {
-                                        layerSystem.Layer = effect;
-                                        scheduler.Schedule(layerSystem);
+                                        scheduler.Schedule(effect);
                                     }
 
                                     return outputTexture;

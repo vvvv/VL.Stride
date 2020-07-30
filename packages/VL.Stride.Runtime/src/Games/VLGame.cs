@@ -12,7 +12,7 @@ namespace VL.Stride.Games
             : base()
         {
             SchedulerSystem = new SchedulerSystem(Services);
-            Services.AddService<IGameSystemScheduler>(SchedulerSystem);
+            Services.AddService(SchedulerSystem);
         }
 
         protected override void PrepareContext()
