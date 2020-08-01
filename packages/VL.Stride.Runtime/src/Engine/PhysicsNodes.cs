@@ -46,6 +46,15 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(SphereColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
                 ;
 
+            yield return NewColliderShapeNode<CapsuleColliderShapeDesc>(factory, physicsColliderShapesCategory)
+                .AddInput(nameof(CapsuleColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddInput(nameof(CapsuleColliderShapeDesc.Length), x => x.Length, (x, v) => x.Length = v, 0.5f)
+                .AddInput(nameof(CapsuleColliderShapeDesc.Orientation), x => x.Orientation, (x, v) => x.Orientation = v, ShapeOrientation.UpY)
+                .AddInput(nameof(CapsuleColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddInput(nameof(CapsuleColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
+                .AddInput(nameof(CapsuleColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
+                ;
+
             yield return NewColliderShapeNode<BoxColliderShapeDesc>(factory, physicsColliderShapesCategory, "CubeColliderShapeDesc")
                 .AddInput(nameof(BoxColliderShapeDesc.Size), x => x.Size, (x, v) => x.Size = v, Vector3.One)
                 .AddInput(nameof(BoxColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
