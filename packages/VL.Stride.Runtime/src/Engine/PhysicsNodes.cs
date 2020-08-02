@@ -40,12 +40,6 @@ namespace VL.Stride.Engine
                 .AddSimulationParams()
                 .WithEnabledPin();
 
-            yield return NewColliderShapeNode<SphereColliderShapeDesc>(factory, physicsColliderShapesCategory)
-                .AddInput(nameof(SphereColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
-                .AddInput(nameof(SphereColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
-                .AddInput(nameof(SphereColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
-                ;
-
             yield return NewColliderShapeNode<CapsuleColliderShapeDesc>(factory, physicsColliderShapesCategory)
                 .AddInput(nameof(CapsuleColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
                 .AddInput(nameof(CapsuleColliderShapeDesc.Length), x => x.Length, (x, v) => x.Length = v, 0.5f)
@@ -55,6 +49,24 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(CapsuleColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
                 ;
 
+            yield return NewColliderShapeNode<ConeColliderShapeDesc>(factory, physicsColliderShapesCategory)
+                .AddInput(nameof(ConeColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddInput(nameof(ConeColliderShapeDesc.Height), x => x.Radius, (x, v) => x.Radius = v, 1.0f)
+                .AddInput(nameof(ConeColliderShapeDesc.Orientation), x => x.Orientation, (x, v) => x.Orientation = v, ShapeOrientation.UpY)
+                .AddInput(nameof(ConeColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddInput(nameof(ConeColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
+                .AddInput(nameof(ConeColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                ;
+
+            yield return NewColliderShapeNode<CylinderColliderShapeDesc>(factory, physicsColliderShapesCategory)
+                .AddInput(nameof(CylinderColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddInput(nameof(CylinderColliderShapeDesc.Height), x => x.Radius, (x, v) => x.Radius = v, 1.0f)
+                .AddInput(nameof(CylinderColliderShapeDesc.Orientation), x => x.Orientation, (x, v) => x.Orientation = v, ShapeOrientation.UpY)
+                .AddInput(nameof(CylinderColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddInput(nameof(CylinderColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
+                .AddInput(nameof(CylinderColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                ;
+
             yield return NewColliderShapeNode<BoxColliderShapeDesc>(factory, physicsColliderShapesCategory, "CubeColliderShapeDesc")
                 .AddInput(nameof(BoxColliderShapeDesc.Size), x => x.Size, (x, v) => x.Size = v, Vector3.One)
                 .AddInput(nameof(BoxColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
@@ -62,10 +74,24 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(BoxColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
                 ;
 
+            yield return NewColliderShapeNode<HeightfieldColliderShapeDesc>(factory, physicsColliderShapesCategory)
+                .AddInput(nameof(HeightfieldColliderShapeDesc.FlipQuadEdges), x => x.FlipQuadEdges, (x, v) => x.FlipQuadEdges = v, false)
+                .AddInput(nameof(HeightfieldColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddInput(nameof(HeightfieldColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
+                .AddInput(nameof(HeightfieldColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                ;
+
+            yield return NewColliderShapeNode<SphereColliderShapeDesc>(factory, physicsColliderShapesCategory)
+                .AddInput(nameof(SphereColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddInput(nameof(SphereColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddInput(nameof(SphereColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
+                ;
+
             yield return NewColliderShapeNode<StaticPlaneColliderShapeDesc>(factory, physicsColliderShapesCategory)
                 .AddInput(nameof(StaticPlaneColliderShapeDesc.Normal), x => x.Normal, (x, v) => x.Normal = v, Vector3.UnitY)
                 .AddInput(nameof(StaticPlaneColliderShapeDesc.Offset), x => x.Offset, (x, v) => x.Offset = v, 0f)
                 ;
+
         }
 
         static CustomNodeDesc<TColliderShape> NewColliderShapeNode<TColliderShape>(IVLNodeDescriptionFactory factory, string category, string name = null)
