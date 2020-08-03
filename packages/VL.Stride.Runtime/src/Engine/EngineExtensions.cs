@@ -10,7 +10,7 @@ namespace VL.Stride.Engine
         public static bool GetNearestWindowInputSource(this Entity entity, out IInputSource inputSource)
         {
             inputSource = null;
-            var scene = entity.Scene;
+            var scene = entity?.Scene;
             
             while (scene != null && inputSource is null)
             {

@@ -21,7 +21,7 @@ namespace VL.Stride
         /// The color of the text displayed during profiling
         /// </summary>
         [Display(4, "Text color")]
-        public Color TextColor { get; set; } = Color.LightGreen;
+        public Color4 TextColor { get; set; } = Color.LightGreen;
 
         /// <summary>
         /// The time between two refreshes of the profiling information in milliseconds.
@@ -47,6 +47,8 @@ namespace VL.Stride
         [Display(3, "Display page")]
         public uint ResultPage { get; set; } = 1;
 
+        public IKeyboardDevice Keyboard { get; set; }
+
         public void SetEnabled(bool enabled = true)
         {
             if (Enabled != enabled)
@@ -66,70 +68,73 @@ namespace VL.Stride
 
             while (Game.IsRunning)
             {
-                GameProfiler.TextColor = TextColor;
-                GameProfiler.RefreshTime = RefreshTime;
-                GameProfiler.SortingMode = SortingMode;
-                GameProfiler.FilteringMode = FilteringMode;
-                GameProfiler.CurrentResultPage = ResultPage;
-                ResultPage = GameProfiler.CurrentResultPage;
-
-                if (Input.IsKeyDown(Keys.LeftShift) && Input.IsKeyDown(Keys.LeftCtrl) && Input.IsKeyReleased(Keys.P))
+                if (Keyboard != null)
                 {
-                    SetEnabled(!Enabled);
-                }
-
-                if (Enabled)
-                {
-                    // toggle the filtering mode
-                    if (Input.IsKeyPressed(Keys.F5))
+                    if (Keyboard.IsKeyDown(Keys.LeftShift) && Keyboard.IsKeyDown(Keys.LeftCtrl) && Keyboard.IsKeyReleased(Keys.P))
                     {
-                        FilteringMode = (GameProfilingResults)(((int)FilteringMode + 1) % Enum.GetValues(typeof(GameProfilingResults)).Length);
-                    }
-                    // toggle the sorting mode
-                    if (Input.IsKeyPressed(Keys.F6))
-                    {
-                        SortingMode = (GameProfilingSorting)(((int)SortingMode + 1) % Enum.GetValues(typeof(GameProfilingSorting)).Length);
+                        SetEnabled(!Enabled);
                     }
 
-                    // update the result page
-                    if (Input.IsKeyPressed(Keys.F7))
+                    if (Enabled)
                     {
-                        ResultPage = Math.Max(1, --ResultPage);
-                    }
-                    else if (Input.IsKeyPressed(Keys.F8))
-                    {
-                        ++ResultPage;
-                    }
-                    if (Input.IsKeyPressed(Keys.D1))
-                    {
-                        ResultPage = 1;
-                    }
-                    else if (Input.IsKeyPressed(Keys.D2))
-                    {
-                        ResultPage = 2;
-                    }
-                    else if (Input.IsKeyPressed(Keys.D3))
-                    {
-                        ResultPage = 3;
-                    }
-                    else if (Input.IsKeyPressed(Keys.D4))
-                    {
-                        ResultPage = 4;
-                    }
-                    else if (Input.IsKeyPressed(Keys.D5))
-                    {
-                        ResultPage = 5;
-                    }
+                        GameProfiler.TextColor = TextColor;
+                        GameProfiler.RefreshTime = RefreshTime;
+                        GameProfiler.SortingMode = SortingMode;
+                        GameProfiler.FilteringMode = FilteringMode;
+                        GameProfiler.CurrentResultPage = ResultPage;
+                        ResultPage = GameProfiler.CurrentResultPage;
 
-                    // update the refreshing speed
-                    if (Input.IsKeyPressed(Keys.Subtract) || Input.IsKeyPressed(Keys.OemMinus))
-                    {
-                        RefreshTime = Math.Min(RefreshTime * 2, 10000);
-                    }
-                    else if (Input.IsKeyPressed(Keys.Add) || Input.IsKeyPressed(Keys.OemPlus))
-                    {
-                        RefreshTime = Math.Max(RefreshTime / 2, 100);
-                    }
+                        // toggle the filtering mode
+                        if (Keyboard.IsKeyPressed(Keys.F5))
+                        {
+                            FilteringMode = (GameProfilingResults)(((int)FilteringMode + 1) % Enum.GetValues(typeof(GameProfilingResults)).Length);
+                        }
+                        // toggle the sorting mode
+                        if (Keyboard.IsKeyPressed(Keys.F6))
+                        {
+                            SortingMode = (GameProfilingSorting)(((int)SortingMode + 1) % Enum.GetValues(typeof(GameProfilingSorting)).Length);
+                        }
+
+                        // update the result page
+                        if (Keyboard.IsKeyPressed(Keys.F7))
+                        {
+                            ResultPage = Math.Max(1, --ResultPage);
+                        }
+                        else if (Keyboard.IsKeyPressed(Keys.F8))
+                        {
+                            ++ResultPage;
+                        }
+                        if (Keyboard.IsKeyPressed(Keys.D1))
+                        {
+                            ResultPage = 1;
+                        }
+                        else if (Keyboard.IsKeyPressed(Keys.D2))
+                        {
+                            ResultPage = 2;
+                        }
+                        else if (Keyboard.IsKeyPressed(Keys.D3))
+                        {
+                            ResultPage = 3;
+                        }
+                        else if (Keyboard.IsKeyPressed(Keys.D4))
+                        {
+                            ResultPage = 4;
+                        }
+                        else if (Keyboard.IsKeyPressed(Keys.D5))
+                        {
+                            ResultPage = 5;
+                        }
+
+                        // update the refreshing speed
+                        if (Keyboard.IsKeyPressed(Keys.Subtract) || Keyboard.IsKeyPressed(Keys.OemMinus))
+                        {
+                            RefreshTime = Math.Min(RefreshTime * 2, 10000);
+                        }
+                        else if (Keyboard.IsKeyPressed(Keys.Add) || Keyboard.IsKeyPressed(Keys.OemPlus))
+                        {
+                            RefreshTime = Math.Max(RefreshTime / 2, 100);
+                        }
+                    } 
                 }
 
                 await Script.NextFrame();

@@ -1,5 +1,6 @@
 ﻿using Stride.Core;
 using Stride.Core.Annotations;
+using Stride.Core.Diagnostics;
 using Stride.Games;
 using Stride.Graphics;
 using Stride.Rendering;
@@ -67,17 +68,23 @@ namespace VL.Stride.Engine
         {
             try
             {
-                foreach (var s in queue)
+                foreach (var system in queue)
                 {
-                    if (s.Visible)
-                        s.Draw(gameTime);
+                    if (system.Visible)
+                    {
+                        if (system.BeginDraw())
+                        {
+                            system.Draw(gameTime);
+                            system.EndDraw();
+                        }
+                    }
                 }
             }
             finally
             {
                 // Put back into the pool
-                foreach (var s in queue)
-                    if (s is ConsecutiveLayerSystem c)
+                foreach (var system in queue)
+                    if (system is ConsecutiveLayerSystem c)
                         pool.Push(c);
 
                 queue.Clear();

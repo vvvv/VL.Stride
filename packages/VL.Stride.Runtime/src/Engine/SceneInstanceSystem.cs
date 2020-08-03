@@ -35,9 +35,10 @@ namespace VL.Stride.Engine
             SceneInstance.Update(gameTime);
         }
 
-        public override void Draw(GameTime gameTime)
+        public override bool BeginDraw()
         {
             // Do nothing. We can get drawn by multiple sinks through the IGraphicsRendererBase.Draw call.
+            return false;
         }
     }
 }
