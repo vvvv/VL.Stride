@@ -128,7 +128,7 @@ namespace VL.Stride.Engine
                     using (renderDrawContext.PushRenderTargetsAndRestore())
                     {
                         foreach (var layer in Layers)
-                            layer.Draw(renderDrawContext);
+                            layer?.Draw(renderDrawContext);
                     }
                 }
                 finally

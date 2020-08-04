@@ -40,7 +40,7 @@ namespace VL.Stride.Rendering
         }
     }
 
-    public class SetRenderTargetsAndViewPort : InputRenderBase
+    public class WithRenderTargetsAndViewPort : InputRenderBase
     {
         ViewportState viewportState = new ViewportState();
 
@@ -83,7 +83,7 @@ namespace VL.Stride.Rendering
         }
     }
 
-    public class SetRenderView : InputRenderBase
+    public class WithRenderView : InputRenderBase
     {
         public RenderView RenderView  { get; set; }
 
@@ -115,7 +115,7 @@ namespace VL.Stride.Rendering
         }
     }
 
-    public class SetWindowInputSource : InputRenderBase
+    public class WithWindowInputSource : InputRenderBase
     {
         public IInputSource InputSource { get; set; }
 
@@ -133,6 +133,28 @@ namespace VL.Stride.Rendering
             else
             {
                 DrawInput(context);
+            }
+        }
+    }
+
+    public class GetWindowInputSource : IGraphicsRendererBase
+    {
+        public IGraphicsRendererBase Input { get; set; }
+        public IInputSource InputSource { get; private set; }
+
+        public void Draw(RenderDrawContext context)
+        {
+            try
+            {
+                var renderContext = context.RenderContext;
+                renderContext.GetWindowInputSource(out var inputSource);
+                InputSource = inputSource;
+
+                Input?.Draw(context);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
             }
         }
     }
