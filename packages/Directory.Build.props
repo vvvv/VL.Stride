@@ -32,6 +32,10 @@
     
     <!-- Disabled for now as it causes old nuget API to crash when used as source package -->
     <!--<PackageIcon>stride_package_logo.png</PackageIcon>-->
+
+    <!-- Check for .git/HEAD to determine whether we're in our private repo -->
+    <InPrivateRepo>true</InPrivateRepo>
+    <InPrivateRepo Condition="Exists('$(MsBuildThisFileDirectory)..\.git\HEAD')">false</InPrivateRepo>
   </PropertyGroup>
 
   <!-- https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#packing-an-icon-image-file -->

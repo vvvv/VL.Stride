@@ -18,10 +18,10 @@
     <ProjectReference Include="..\..\StrideLiveEditor\StrideLiveEditor\StrideLiveEditor.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   
-  <ItemGroup Condition="'$(SolutionName)' == 'VL'">
+  <ItemGroup Condition="'$(InPrivateRepo)' == 'true'">
     <ProjectReference Include="..\..\..\..\..\vvvv50\VL.Lang\src\VL.Lang.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(SolutionName)' != 'VL'">
+  <ItemGroup Condition="'$(InPrivateRepo)' != 'true'">
     <PackageReference Include="VL.Lang" Version="$(VLVersion)" />
   </ItemGroup>
   
@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <!-- The following propertie and targets are only active if we're building outside of our main solution -->
-  <PropertyGroup Condition="'$(SolutionName)' != 'VL'">
+  <PropertyGroup Condition="'$(InPrivateRepo)' != 'true'">
     <!-- We need to pass the folder containing the native libraries to Stride (NativeLibrary.PreloadLib) - they're normally beside the exe  -->
     <__OutputPath__>$(MsBuildThisFileDirectory)bin\$(Configuration)\$(TargetFramework)</__OutputPath__>
     <NativeLibraryPath>$(__OutputPath__)\x64</NativeLibraryPath>
@@ -51,7 +51,7 @@
   </PropertyGroup>
 
   <!-- As long as VL doesn't understand package restore put whole build output into the package -->
-  <Target Name="CollectRuntimeOutputs" BeforeTargets="_GetPackageFiles" Condition="'$(SolutionName)' != 'VL'">
+  <Target Name="CollectRuntimeOutputs" BeforeTargets="_GetPackageFiles" Condition="'$(InPrivateRepo)' != 'true'">
     <!-- Collect these items inside a target that runs after build but before packaging. -->
     <ItemGroup>
       <Content Include="$(OutputPath)\*.dll">
