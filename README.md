@@ -1,6 +1,9 @@
 # VL.Stride
 
-VL library with tools and nodes to ease the patch workflow with Stride.
+[Stride 3d Engine](http://stride3d.net) for VL.
+
+Try it with vvvv, the visual live-programming environment for .NET  
+Download: http://visualprogramming.net
 
 ## Contributing
 
@@ -17,5 +20,5 @@ A deep bow before those who believed in VL.Stride from the beginning and substan
 * [Marshmellow Laser Feast](http://marshmallowlaserfeast.com)
 * [schnellebuntebilder](http://schnellebuntebilder.de)
 * [m box](http://m-box.de)
-* [Refik Anadol](http://refikanadol.com])
+* [Refik Anadol](http://refikanadol.com)
 * Jarrad Hope
