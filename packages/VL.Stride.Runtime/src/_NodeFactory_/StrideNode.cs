@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 using VL.Core;
 
@@ -18,7 +19,7 @@ namespace VL.Stride
     class StrideNode<TInstance> : StrideNode, IVLNode
         where TInstance : new()
     {
-        readonly Pin[] inputs;
+        readonly ImmutableArray<Pin> inputs;
         readonly StrideNodeDesc<TInstance> nodeDescription;
         readonly StatePin output;
 
@@ -28,15 +29,15 @@ namespace VL.Stride
             Context = nodeContext;
             nodeDescription = description;
 
-            inputs = description.Inputs.OfType<PinDescription>().Select(d => d.CreatePin(this)).ToArray();
-            Outputs = new IVLPin[] { output = new StatePin(this, new TInstance()) };
+            inputs = description.Inputs.OfType<PinDescription>().Select(d => d.CreatePin(this)).ToImmutableArray();
+            Outputs = ImmutableArray.Create<IVLPin>(output = new StatePin(this, new TInstance()));
         }
 
         public IVLNodeDescription NodeDescription => nodeDescription;
 
-        public IVLPin[] Inputs => inputs;
+        public ImmutableArray<IVLPin> Inputs => ImmutableArray<IVLPin>.CastUp(inputs);
 
-        public IVLPin[] Outputs { get; }
+        public ImmutableArray<IVLPin> Outputs { get; }
 
         public void Update()
         {

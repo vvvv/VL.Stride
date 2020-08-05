@@ -11,6 +11,7 @@ using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.ComputeEffect;
+using System.Collections.Immutable;
 
 namespace VL.Stride.EffectLib
 {
@@ -97,9 +98,9 @@ namespace VL.Stride.EffectLib
             initialized = true;
         }
 
-        public IVLPin[] Inputs { get; }
+        public ImmutableArray<IVLPin> Inputs { get; }
 
-        public IVLPin[] Outputs { get; }
+        public ImmutableArray<IVLPin> Outputs { get; }
 
         public void Update()
         {

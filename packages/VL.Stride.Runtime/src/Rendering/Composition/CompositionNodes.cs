@@ -21,7 +21,7 @@ namespace VL.Stride.Rendering.Composition
 {
     static class CompositionNodes
     {
-        public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(StrideNodeFactory nodeFactory)
+        public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory nodeFactory)
         {
             string renderingCategory = "Stride.Rendering";
 

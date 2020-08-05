@@ -13,6 +13,8 @@ using Stride.Shaders;
 using Stride.Shaders.Compiler;
 using Buffer = Stride.Graphics.Buffer;
 using VL.Stride.Core;
+using System.Collections.Immutable;
+using System.Reactive.Subjects;
 
 namespace VL.Stride.EffectLib
 {
@@ -38,7 +40,8 @@ namespace VL.Stride.EffectLib
 
         public static readonly PinDescription<bool> ComputeEnabledInput = new PinDescription<bool>("Enabled", true);
 
-        EffectPinDescription[] inputs, outputs;
+        readonly Subject<IVLNodeDescription> invalidated = new Subject<IVLNodeDescription>();
+        ImmutableArray<EffectPinDescription> inputs, outputs;
         bool? isCompute;
         CompilerResults compilerResults;
 
@@ -74,9 +77,9 @@ namespace VL.Stride.EffectLib
 
         public bool Fragmented => false;
 
-        public EffectPinDescription[] Inputs => inputs ?? (inputs = GetInputsSafe());
+        public ImmutableArray<EffectPinDescription> Inputs => !inputs.IsDefault ? inputs : (inputs = GetInputsSafe());
 
-        public EffectPinDescription[] Outputs => outputs ?? (outputs = GetOuputs().ToArray());
+        public ImmutableArray<EffectPinDescription> Outputs => !outputs.IsDefault ? outputs : (outputs = GetOuputs().ToImmutableArray());
 
         public bool IsCompute
         {
@@ -93,16 +96,27 @@ namespace VL.Stride.EffectLib
 
         public int Version { get; internal set; }
 
-        public IEnumerable<Message> Messages
+        public ImmutableArray<Message> Messages
         {
             get
             {
-                foreach (var m in CompilerResults.Messages)
-                    yield return new Message(m.Type.ToMessageType(), m.Text);
-                var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();
-                foreach (var m in bytecodeCompilerResults.CompilationLog.Messages)
-                    yield return new Message(m.Type.ToMessageType(), m.Text);
+                return !messages.IsDefault ? messages : (messages = Compute().ToImmutableArray());
+
+                IEnumerable<Message> Compute()
+                {
+                    foreach (var m in CompilerResults.Messages)
+                        yield return new Message(m.Type.ToMessageType(), m.Text);
+                    var bytecodeCompilerResults = CompilerResults.Bytecode.WaitForResult();
+                    foreach (var m in bytecodeCompilerResults.CompilationLog.Messages)
+                        yield return new Message(m.Type.ToMessageType(), m.Text);
+                }
             }
+        }
+        ImmutableArray<Message> messages;
+
+        public void Invalidate()
+        {
+            invalidated.OnNext(this);
         }
 
         public IVLNode CreateInstance(NodeContext context)
@@ -113,23 +127,24 @@ namespace VL.Stride.EffectLib
                 return new EffectNode(context, this);
         }
 
-        public IVLPin[] CreateNodeInputs(IVLNode node, ParameterCollection parameters) => Inputs.Select(p => p.CreatePin(parameters)).ToArray();
+        public ImmutableArray<IVLPin> CreateNodeInputs(IVLNode node, ParameterCollection parameters) => Inputs.Select(p => p.CreatePin(parameters)).ToImmutableArray();
 
-        public IVLPin[] CreateNodeOutputs(IVLNode node, ParameterCollection parameters)
+        public ImmutableArray<IVLPin> CreateNodeOutputs(IVLNode node, ParameterCollection parameters)
         {
-            var result = new IVLPin[Outputs.Length];
+            var result = ImmutableArray.CreateBuilder<IVLPin>(Outputs.Length);
             for (int i = 0; i < Outputs.Length; i++)
             {
-                result[i] = Outputs[i].CreatePin(parameters);
+                result.Add(Outputs[i].CreatePin(parameters));
                 if (i == 0)
                     result[i].Value = node; // Instance output
             }
-            return result;
+            return result.MoveToImmutable();
         }
 
         IVLNodeDescriptionFactory IVLNodeDescription.Factory => Factory;
-        IReadOnlyList<IVLPinDescription> IVLNodeDescription.Inputs => Inputs;
-        IReadOnlyList<IVLPinDescription> IVLNodeDescription.Outputs => Outputs;
+        ImmutableArray<IVLPinDescription> IVLNodeDescription.Inputs => ImmutableArray<IVLPinDescription>.CastUp(Inputs);
+        ImmutableArray<IVLPinDescription> IVLNodeDescription.Outputs => ImmutableArray<IVLPinDescription>.CastUp(Outputs);
+        IObservable<IVLNodeDescription> IVLNodeDescription.Invalidated => invalidated;
 
         bool GetIsCompute()
         {
@@ -149,16 +164,16 @@ namespace VL.Stride.EffectLib
             }
         }
 
-        EffectPinDescription[] GetInputsSafe()
+        ImmutableArray<EffectPinDescription> GetInputsSafe()
         {
             try
             {
-                return GetInputs().ToArray();
+                return GetInputs().ToImmutableArray();
             }
             catch (Exception e)
             {
                 Trace.TraceError(e.ToString());
-                return Array.Empty<EffectPinDescription>();
+                return ImmutableArray<EffectPinDescription>.Empty;
             }
         }
 

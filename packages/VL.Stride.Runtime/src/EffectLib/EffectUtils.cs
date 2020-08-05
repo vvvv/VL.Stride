@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using VL.Core;
-using VL.Core.Diagnostics;
-using Stride.Core.Diagnostics;
 using Stride.Core.Mathematics;
 using Stride.Rendering;
+using System.Collections.Immutable;
 
 namespace VL.Stride.EffectLib
 {
@@ -16,7 +13,7 @@ namespace VL.Stride.EffectLib
     {
         static readonly Regex FCamelCasePattern = new Regex("[a-z][A-Z0-9]", RegexOptions.Compiled);
 
-        public static void SelectPin<TPin>(this IVLPin[] pins, IVLPinDescription description, ref TPin pin) where TPin : Pin
+        public static void SelectPin<TPin>(this ImmutableArray<IVLPin> pins, IVLPinDescription description, ref TPin pin) where TPin : Pin
         {
             pin = pins.OfType<TPin>().FirstOrDefault(p => p.Name == description.Name);
         }

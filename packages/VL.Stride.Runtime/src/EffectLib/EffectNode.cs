@@ -6,6 +6,7 @@ using VL.Stride.Shaders;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering;
+using System.Collections.Immutable;
 
 namespace VL.Stride.EffectLib
 {
@@ -47,9 +48,9 @@ namespace VL.Stride.EffectLib
                 customParameterSetterPin = Inputs[Inputs.Length - 1] as Pin<Action<ParameterCollection, RenderView, RenderDrawContext>>;
         }
 
-        public IVLPin[] Inputs { get; }
+        public ImmutableArray<IVLPin> Inputs { get; }
 
-        public IVLPin[] Outputs { get; }
+        public ImmutableArray<IVLPin> Outputs { get; }
 
         public void Update()
         {

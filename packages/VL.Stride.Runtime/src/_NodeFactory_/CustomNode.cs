@@ -3,7 +3,9 @@ using Stride.Core.Collections;
 using Stride.Engine;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Reactive.Linq;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Lib.Collections.TreePatching;
@@ -105,6 +107,7 @@ namespace VL.Stride
         readonly List<CustomPinDesc> inputs = new List<CustomPinDesc>();
         readonly List<CustomPinDesc> outputs = new List<CustomPinDesc>();
         readonly Func<NodeContext, (TInstance, Action)> ctor;
+        ImmutableArray<IVLPinDescription> _inputs, _outputs;
 
         public CustomNodeDesc(IVLNodeDescriptionFactory factory, Func<NodeContext, (TInstance, Action)> ctor, 
             string name = default, 
@@ -135,11 +138,13 @@ namespace VL.Stride
 
         public bool CopyOnWrite { get; }
 
-        public IReadOnlyList<IVLPinDescription> Inputs => inputs;
+        public ImmutableArray<IVLPinDescription> Inputs => !_inputs.IsDefault ? _inputs : (_inputs = ImmutableArray<IVLPinDescription>.CastUp(inputs.ToImmutableArray()));
 
-        public IReadOnlyList<IVLPinDescription> Outputs => outputs;
+        public ImmutableArray<IVLPinDescription> Outputs => !_outputs.IsDefault ? _outputs : (_outputs = ImmutableArray<IVLPinDescription>.CastUp(outputs.ToImmutableArray()));
 
-        public IEnumerable<Message> Messages => Enumerable.Empty<Message>();
+        public ImmutableArray<Message> Messages => ImmutableArray<Message>.Empty;
+
+        public IObservable<IVLNodeDescription> Invalidated => Observable.Empty<IVLNodeDescription>();
 
         public IVLNode CreateInstance(NodeContext context)
         {
@@ -150,11 +155,11 @@ namespace VL.Stride
                 NodeDescription = this
             };
 
-            var inputs = this.inputs.Select(p => p.CreatePin(node, instance)).ToArray();
-            var outputs = this.outputs.Select(p => p.CreatePin(node, instance)).ToArray();
+            var inputs = this.inputs.Select(p => p.CreatePin(node, instance)).ToImmutableArray();
+            var outputs = this.outputs.Select(p => p.CreatePin(node, instance)).ToImmutableArray();
 
-            node.Inputs = inputs;
-            node.Outputs = outputs;
+            node.Inputs = ImmutableArray<IVLPin>.CastUp(inputs);
+            node.Outputs = ImmutableArray<IVLPin>.CastUp(outputs);
 
             if (CopyOnWrite)
             {
@@ -472,9 +477,9 @@ namespace VL.Stride
 
             public IVLNodeDescription NodeDescription { get; set; }
 
-            public IVLPin[] Inputs { get; set; }
+            public ImmutableArray<IVLPin> Inputs { get; set; }
 
-            public IVLPin[] Outputs { get; set; }
+            public ImmutableArray<IVLPin> Outputs { get; set; }
 
             public void Dispose() => disposeAction?.Invoke();
 

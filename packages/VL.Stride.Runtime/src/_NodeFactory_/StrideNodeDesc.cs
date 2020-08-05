@@ -2,19 +2,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
 using VL.Core;
 using VL.Core.Diagnostics;
 
 namespace VL.Stride
 {
-    class StrideNodeDesc<TMaterial> : IVLNodeDescription, IEnumerable
+    class StrideNodeDesc<TMaterial> : IVLNodeDescription
         where TMaterial : new()
     {
-        private List<PinDescription> inputs;
-        private List<StateOutput> outputs;
+        private ImmutableArray<PinDescription> inputs;
+        private ImmutableArray<StateOutput> outputs;
         internal Type stateOutputType;
 
         public StrideNodeDesc(IVLNodeDescriptionFactory factory, string name = default, string category = default, Type stateOutputType = default, bool isFragmented = false)
@@ -36,11 +38,11 @@ namespace VL.Stride
 
         public bool Fragmented { get; }
 
-        public IReadOnlyList<IVLPinDescription> Inputs
+        public ImmutableArray<IVLPinDescription> Inputs
         {
             get
             {
-                return inputs ?? (inputs = Compute().ToList());
+                return ImmutableArray<IVLPinDescription>.CastUp(!inputs.IsDefault ? inputs : (inputs = Compute().ToImmutableArray()));
 
                 IEnumerable<PinDescription> Compute()
                 {
@@ -108,11 +110,11 @@ namespace VL.Stride
             }
         }
 
-        public IReadOnlyList<IVLPinDescription> Outputs
+        public ImmutableArray<IVLPinDescription> Outputs
         {
             get
             {
-                return outputs ?? (outputs = Compute().ToList());
+                return ImmutableArray<IVLPinDescription>.CastUp(!outputs.IsDefault ? outputs : (outputs = Compute().ToImmutableArray()));
 
                 IEnumerable<StateOutput> Compute()
                 {
@@ -121,7 +123,9 @@ namespace VL.Stride
             }
         }
 
-        public IEnumerable<Message> Messages => Enumerable.Empty<Message>();
+        public ImmutableArray<Message> Messages => ImmutableArray<Message>.Empty;
+
+        public IObservable<IVLNodeDescription> Invalidated => Observable.Empty<IVLNodeDescription>();
 
         public IVLNode CreateInstance(NodeContext context)
         {
@@ -131,11 +135,6 @@ namespace VL.Stride
         public bool OpenEditor()
         {
             return false;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
         }
 
         class StateOutput : IVLPinDescription

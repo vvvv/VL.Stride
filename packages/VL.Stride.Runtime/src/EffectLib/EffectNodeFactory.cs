@@ -1,34 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using VL.Core;
-using VL.Stride.Games;
-using Stride.Core;
-using Stride.Core.Diagnostics;
 using Stride.Core.IO;
-using Stride.Core.Mathematics;
 using Stride.Core.Serialization.Contents;
-using Stride.Core.Storage;
-using Stride.Engine;
-using Stride.Engine.Processors;
-using Stride.Games;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Shaders;
 using Stride.Shaders.Compiler;
 using ServiceRegistry = Stride.Core.ServiceRegistry;
-using VLServiceRegistry = VL.Core.ServiceRegistry;
 using VL.Stride.Core;
 using System.Collections.Immutable;
-using System.ComponentModel;
-
-[assembly: NodeFactory(typeof(VL.Stride.EffectLib.EffectNodeFactory))]
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace VL.Stride.EffectLib
 {
@@ -41,7 +28,6 @@ namespace VL.Stride.EffectLib
 
         readonly DirectoryWatcher directoryWatcher;
         readonly SynchronizationContext mainContext;
-        ImmutableArray<IVLNodeDescription> nodeDescriptions;
         Timer timer;
 
         public EffectNodeFactory()
@@ -54,7 +40,7 @@ namespace VL.Stride.EffectLib
 
             mainContext = Services.GetService<SynchronizationContext>() ?? SynchronizationContext.Current;
 
-            nodeDescriptions = GetNodeDescriptions(Content).ToImmutableArray();
+            NodeDescriptions = GetNodeDescriptions(Content).ToImmutableArray();
 
             var effectSystem = EffectSystem;
             // Ensure the effect system tracks the same files as we do
@@ -63,28 +49,21 @@ namespace VL.Stride.EffectLib
             directoryWatcher.Modified += DirectoryWatcher_Modified;
         }
 
-        public ImmutableArray<IVLNodeDescription> NodeDescriptions
-        {
-            get => nodeDescriptions;
-            private set
-            {
-                if (!value.SequenceEqual(nodeDescriptions))
-                {
-                    nodeDescriptions = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NodeDescriptions)));
-                }
-            }
-        }
+        public ImmutableArray<IVLNodeDescription> NodeDescriptions { get; private set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        public string Identifier => "VL.Stride.EffectNodeFactory";
         public ContentManager Content { get; private set; }
         public ServiceRegistry Services { get; private set; }
         public GraphicsDevice GraphicsDevice { get; private set; }
         public IGraphicsDeviceService GraphicsDeviceService { get; private set; }
         public EffectSystem EffectSystem { get; private set; }
 
+        // Would be needed if shaders could be added or deleted
+        public IObservable<IVLNodeDescriptionFactory> Invalidated => Observable.Empty<IVLNodeDescriptionFactory>();
+
         public readonly object SyncRoot = new object();
+
+        public IVLNodeDescriptionFactory ForPath(string path) => null;
 
         public CompilerResults GetCompilerResults(string effectName)
         {
@@ -191,13 +170,15 @@ namespace VL.Stride.EffectLib
             EffectSystem.Update(null);
 
             var newDescriptions = ImmutableArray.CreateBuilder<IVLNodeDescription>();
-            foreach (EffectNodeDescription description in nodeDescriptions)
+            foreach (EffectNodeDescription description in NodeDescriptions)
             {
                 var updatedDescription = new EffectNodeDescription(this, description.Name, description.EffectName);
                 if (updatedDescription.HasCompilerErrors != description.HasCompilerErrors ||
-                    !updatedDescription.Inputs.SequenceEqual(description.Inputs, PinDescriptionComparer.Default) ||
-                    !updatedDescription.Outputs.SequenceEqual(description.Outputs, PinDescriptionComparer.Default))
+                    !ImmutableArray<IVLPinDescription>.CastUp(updatedDescription.Inputs).SequenceEqual(description.Inputs, PinDescriptionComparer.Default) ||
+                    !ImmutableArray<IVLPinDescription>.CastUp(updatedDescription.Outputs).SequenceEqual(description.Outputs, PinDescriptionComparer.Default))
                 {
+                    description.Invalidate();
+
                     if (updatedDescription.HasCompilerErrors)
                     {
                         // Keep the signature of previous description but show errors and since we have errors kill all living instances so they don't have to deal with it
