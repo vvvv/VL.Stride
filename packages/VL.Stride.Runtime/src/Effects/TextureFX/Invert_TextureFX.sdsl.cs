@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class InvertKeys
+    public static partial class Invert_TextureFXKeys
     {
         public static readonly ValueParameterKey<float> Factor = ParameterKeys.NewValue<float>(1);
     }

@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class ChromaKeyKeys
+    public static partial class ChromaKey_TextureFXKeys
     {
         public static readonly ValueParameterKey<Color4> chromaKey = ParameterKeys.NewValue<Color4>(new Color4(0.05f,0.63f,0.14f,1.0f));
         public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,0.0f));

@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class ThresholdKeys
+    public static partial class Threshold_TextureFXKeys
     {
         public static readonly ValueParameterKey<Color4> ColorA = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));
         public static readonly ValueParameterKey<Color4> ColorB = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
