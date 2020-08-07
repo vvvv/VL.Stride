@@ -26,11 +26,12 @@ namespace VL.Stride.Rendering.Composition
             string renderingCategory = "Stride.Rendering";
 
             string compositionCategory = $"{renderingCategory}.Composition";
-            yield return nodeFactory.NewNode<GraphicsCompositor>(category: compositionCategory)
-                .AddInput(nameof(GraphicsCompositor.Game), x => x.Game, (x, v) => x.Game = v)
-                .AddInput(nameof(GraphicsCompositor.SingleView), x => x.SingleView, (x, v) => x.SingleView = v)
-                .AddListInput(nameof(GraphicsCompositor.RenderStages), x => x.RenderStages)
-                .AddListInput(nameof(GraphicsCompositor.RenderFeatures), x => x.RenderFeatures);
+            yield return nodeFactory.NewNode<VLGraphicsCompositor>(name: nameof(GraphicsCompositor), category: compositionCategory)
+                .AddInput(nameof(VLGraphicsCompositor.BeforeDraw), x => x.BeforeDraw, (x, v) => x.BeforeDraw = v)
+                .AddInput(nameof(VLGraphicsCompositor.Game), x => x.Game, (x, v) => x.Game = v)
+                .AddInput(nameof(VLGraphicsCompositor.SingleView), x => x.SingleView, (x, v) => x.SingleView = v)
+                .AddListInput(nameof(VLGraphicsCompositor.RenderStages), x => x.RenderStages)
+                .AddListInput(nameof(VLGraphicsCompositor.RenderFeatures), x => x.RenderFeatures);
 
             yield return nodeFactory.NewNode<RenderStage>(category: compositionCategory)
                 .AddInput(nameof(RenderStage.Name), x => x.Name, (x, v) => x.Name = v, defaultValue: "RenderStage")

@@ -29,7 +29,8 @@ namespace VL.Stride.Engine
             if (SceneInstance?.RootScene != null)
             {
                 renderContext.GetWindowInputSource(out var inputSouce);
-                SceneInstance.RootScene.SetWindowInputSource(inputSouce);
+                if (inputSouce != null)
+                    SceneInstance.RootScene.SetWindowInputSource(inputSouce);
             }
 
             // Reset the context
