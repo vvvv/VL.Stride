@@ -6,25 +6,19 @@ using VL.Stride.Input;
 
 namespace VL.Stride.Rendering
 {
-    public class GetWindowInputSource : IGraphicsRendererBase
+    public class GetWindowInputSource : RendererBase
     {
-        public IGraphicsRendererBase Input { get; set; }
         public IInputSource InputSource { get; private set; }
 
-        public void Draw(RenderDrawContext context)
-        {
-            try
-            {
-                var renderContext = context.RenderContext;
-                renderContext.GetWindowInputSource(out var inputSource);
-                InputSource = inputSource;
+        public override bool AlwaysRender => true;
 
-                Input?.Draw(context);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-            }
+        protected override void DrawInternal(RenderDrawContext context)
+        {
+            var renderContext = context.RenderContext;
+            renderContext.GetWindowInputSource(out var inputSource);
+            InputSource = inputSource;
+
+            Input?.Draw(context);
         }
     }
 }
