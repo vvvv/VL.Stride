@@ -23,7 +23,7 @@ namespace VL.Stride.Spout
         {
             if (AddNameToSendersList(senderName))
             {
-                sharedMemory = MemoryMappedFile.CreateNew(SenderName, 280);
+                sharedMemory = MemoryMappedFile.CreateOrOpen(SenderName, 280);
                 sharedMemoryStream = sharedMemory.CreateViewStream();
                 byte[] nameBytes = Encoding.Unicode.GetBytes(SenderName);
                 Array.Copy(nameBytes, 0, textureDesc.Description, 0, nameBytes.Length);
