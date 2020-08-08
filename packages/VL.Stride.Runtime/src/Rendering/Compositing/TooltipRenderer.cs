@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using VL.Core;
 
-namespace VL.Stride.Rendering.Composition
+namespace VL.Stride.Rendering.Compositing
 {
     public class TooltipRenderer : SingleStageRenderer
     {

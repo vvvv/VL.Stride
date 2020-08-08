@@ -5,7 +5,7 @@ using VL.Core;
 using VL.Stride.Engine;
 using VL.Stride.Graphics;
 using VL.Stride.Rendering;
-using VL.Stride.Rendering.Composition;
+using VL.Stride.Rendering.Compositing;
 using VL.Stride.Rendering.Lights;
 using VL.Stride.Rendering.Materials;
 
@@ -32,7 +32,7 @@ namespace VL.Stride
             foreach (var n in LightNodes.GetNodeDescriptions(this))
                 yield return n;
 
-            foreach (var n in CompositionNodes.GetNodeDescriptions(this))
+            foreach (var n in CompositingNodes.GetNodeDescriptions(this))
                 yield return n;
 
             foreach (var n in EngineNodes.GetNodeDescriptions(this))
