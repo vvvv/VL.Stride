@@ -1,7 +1,7 @@
-﻿shader ColorQuad_VLNode : VS_PS_Base, ColorBase, ShaderUtils
+﻿shader ConstantColor_VLNode : VS_PS_Base, ColorBase, ShaderUtils
 {
     [Color]
-    stage float4 ColorInput;
+    stage float4 ColorInput = float4(1, 1, 1, 1);
 
     override stage void VSMain()
     {
@@ -12,5 +12,4 @@
     {
         streams.ColorTarget = ColorInput * ColorInput.a;
     }
-
 };

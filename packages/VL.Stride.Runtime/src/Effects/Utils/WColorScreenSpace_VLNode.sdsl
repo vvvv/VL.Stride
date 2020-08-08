@@ -1,11 +1,10 @@
-﻿shader WColor_ScreenSpace_VLNode : VS_PS_Base, ColorBase, ShaderUtils
+﻿shader WColorScreenSpace_VLNode : VS_PS_Base, ColorBase, ShaderUtils
 {
     override stage void VSMain()
     {
         float4 pos = streams.Position;
         streams.Color = BitsToColor(pos.w);
         pos.w = 1;
-
         streams.ShadingPosition = mul(pos, Projection);
     }
 
