@@ -11,9 +11,9 @@ namespace VL.Stride.Rendering
             var renderingCategory = "Stride.Rendering";
             var renderingAdvancedCategory = $"{renderingCategory}.Advanced";
 
-            yield return NewInputRenderBaseNode<WithRenderTargetsAndViewPort>(factory, category: renderingCategory)
-                .AddInput(nameof(WithRenderTargetsAndViewPort.RenderTarget), x => x.RenderTarget, (x, v) => x.RenderTarget = v)
-                .AddInput(nameof(WithRenderTargetsAndViewPort.DepthBuffer), x => x.DepthBuffer, (x, v) => x.DepthBuffer = v)
+            yield return NewInputRenderBaseNode<WithRenderTargetAndViewPort>(factory, category: renderingCategory)
+                .AddInput(nameof(WithRenderTargetAndViewPort.RenderTarget), x => x.RenderTarget, (x, v) => x.RenderTarget = v)
+                .AddInput(nameof(WithRenderTargetAndViewPort.DepthBuffer), x => x.DepthBuffer, (x, v) => x.DepthBuffer = v)
                 ;
 
             yield return NewInputRenderBaseNode<WithRenderView>(factory, category: renderingAdvancedCategory)
@@ -25,7 +25,7 @@ namespace VL.Stride.Rendering
                 ;
 
             yield return factory.NewNode<GetWindowInputSource>(name: nameof(GetWindowInputSource), category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true)
-                .AddInput(nameof(InputRenderBase.Input), x => x.Input, (x, v) => x.Input = v)
+                .AddInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v)
                 .AddOutput(nameof(GetWindowInputSource.InputSource), x => x.InputSource)
             ;
 
@@ -40,10 +40,10 @@ namespace VL.Stride.Rendering
         }
 
         static CustomNodeDesc<TInputRenderBase> NewInputRenderBaseNode<TInputRenderBase>(IVLNodeDescriptionFactory factory, string category, string name = null)
-            where TInputRenderBase : InputRenderBase, new()
+            where TInputRenderBase : RendererBase, new()
         {
             return factory.NewNode<TInputRenderBase>(name: name, category: category, copyOnWrite: false, fragmented: true)
-                .AddInput(nameof(InputRenderBase.Input), x => x.Input, (x, v) => x.Input = v)
+                .AddInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v)
                 ;
         }
     }
