@@ -6,6 +6,7 @@ using Stride.Core;
 using Stride.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace VL.Stride.Windows.WglInterop
 {
@@ -36,6 +37,9 @@ namespace VL.Stride.Windows.WglInterop
         {
             MakeCurrent();
 
+            foreach (var t in textures.Values.ToArray())
+                t?.Dispose();
+
             if (DeviceHandle != IntPtr.Zero)
                 Wgl.DXCloseDeviceNV(DeviceHandle);
 
@@ -54,10 +58,7 @@ namespace VL.Stride.Windows.WglInterop
                 lock (textures)
                 {
                     if (!textures.TryGetValue(dxTexture.NativePointer, out var interopTexture))
-                    {
                         textures.Add(dxTexture.NativePointer, interopTexture = new InteropTexture(this, texture, dxTexture.NativePointer));
-                        interopTexture.DisposeBy(texture);
-                    }
                     return interopTexture;
                 }
             }
@@ -65,17 +66,11 @@ namespace VL.Stride.Windows.WglInterop
             return null;
         }
 
-        public void Reset()
+        internal void Remove(InteropTexture interopTexture)
         {
-            if (DeviceHandle == IntPtr.Zero)
-                return;
-
             lock (textures)
             {
-                foreach (var t in textures)
-                    t.Value.Dispose();
-
-                textures.Clear();
+                textures.Remove(interopTexture.DxTexture);
             }
         }
 

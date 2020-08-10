@@ -16,6 +16,13 @@ namespace VL.Stride.Windows.WglInterop
             Name = (uint)GL.GenRenderbuffer();
 
             RegisterTexture();
+
+            texture.Destroyed += Texture_Destroyed;
+        }
+
+        private void Texture_Destroyed(object sender, EventArgs e)
+        {
+            Dispose();
         }
 
         public InteropContext Context { get; }
@@ -51,7 +58,11 @@ namespace VL.Stride.Windows.WglInterop
 
         public void Dispose()
         {
+            Texture.Destroyed -= Texture_Destroyed;
+
             Context.MakeCurrent();
+
+            Context.Remove(this);
 
             UnregisterTexture();
 

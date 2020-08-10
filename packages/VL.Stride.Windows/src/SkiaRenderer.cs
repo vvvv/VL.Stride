@@ -22,7 +22,6 @@ namespace VL.Stride.Windows
 {
     public partial class SkiaRenderer : IGraphicsRendererBase
     {
-        private readonly PropertyKey<IDisposable> ResizingSubscription = new PropertyKey<IDisposable>(nameof(ResizingSubscription), typeof(SkiaRenderer));
         private readonly SerialDisposable InputSubscription = new SerialDisposable();
         private IInputSource LastInputSource;
         
@@ -46,30 +45,6 @@ namespace VL.Stride.Windows
             var sharedSurface = skiaContext.GetSharedSurface(commandList.RenderTarget, commandList.DepthStencilBuffer);
             if (sharedSurface is null)
                 return;
-
-            // Subscribe to resizing events
-            var windowRenderer = context.RenderContext.Tags.Get(VL.Stride.Games.GameWindowRenderer2.Current);
-            if (windowRenderer != null && !windowRenderer.Tags.ContainsKey(ResizingSubscription))
-            {
-                var subscription = Observable.FromEventPattern<EventArgs>(windowRenderer, nameof(windowRenderer.Resizing))
-                    .Subscribe(_ =>
-                    {
-                        // Delete all our resources
-                        skiaContext.Reset();
-
-                        // Dispose all input subscriptions (bounds changed)
-                        windowRenderer.Tags.Get(ResizingSubscription)?.Dispose();
-
-                        // Remove the subscription so we can subscribe again in next Draw
-                        windowRenderer.Tags.Remove(ResizingSubscription);
-                    });
-
-                // Tie the lifetime of the subscription to the window
-                subscription.DisposeBy(windowRenderer);
-
-                // Remember that we're subscribed to this sink
-                windowRenderer.Tags.Set(ResizingSubscription, subscription);
-            }
 
             // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
             var inputSource = context.RenderContext.Tags.Get(InputExtensions.WindowInputSource);
@@ -152,19 +127,12 @@ namespace VL.Stride.Windows
             public void Dispose()
             {
                 InteropContext.MakeCurrent();
+
+                foreach (var e in surfaces.ToArray())
+                    e.Value?.Dispose();
+                surfaces.Clear();
+
                 GraphicsContext.Dispose();
-            }
-
-            public void Reset()
-            {
-                lock (surfaces)
-                {
-                    foreach (var e in surfaces.ToArray())
-                        e.Value?.Dispose();
-                    surfaces.Clear();
-
-                    InteropContext.Reset();
-                }
             }
 
             public SharedSurface GetSharedSurface(Texture colorTexture, Texture depthTexture)
@@ -200,9 +168,6 @@ namespace VL.Stride.Windows
                         return null;
                     }
 
-                    surface.DisposeBy(colorTexture);
-                    surface.DisposeBy(depthTexture);
-
                     return surface;
                 }
             }
@@ -213,7 +178,7 @@ namespace VL.Stride.Windows
             {
                 lock (surfaces)
                 {
-                    surfaces.RemoveAll(e => e.Value == sharedSurface);
+                    surfaces.Remove((sharedSurface.Color.DxTexture, sharedSurface.Depth.DxTexture));
                 }
             }
         }
@@ -260,6 +225,14 @@ namespace VL.Stride.Windows
                 Textures = new InteropTexture[] { color, depth };
                 Framebuffer = framebuffer;
                 Surface = skiaSurface;
+
+                color.Texture.Destroyed += Texture_Destroyed;
+                depth.Texture.Destroyed += Texture_Destroyed;
+            }
+
+            private void Texture_Destroyed(object sender, EventArgs e)
+            {
+                Dispose();
             }
 
             ~SharedSurface()
@@ -290,6 +263,10 @@ namespace VL.Stride.Windows
                 if (!Disposed)
                 {
                     Disposed = true;
+
+                    Color.Texture.Destroyed -= Texture_Destroyed;
+                    Depth.Texture.Destroyed -= Texture_Destroyed;
+
                     SkiaContext.MakeCurrent();
                     SkiaContext.Remove(this);
                     Surface.Dispose();
