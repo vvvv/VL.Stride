@@ -231,13 +231,6 @@ namespace VL.Stride
             return this;
         }
 
-        // Hack to workaround equality bug (https://github.com/stride3d/stride/issues/735)
-        public CustomNodeDesc<TInstance> AddInputWithRefEquality<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter)
-            where T : class
-        {
-            return AddInput(name, getter, setter, equals: ReferenceEqualityComparer<T>.Default.Equals);
-        }
-
         static bool SequenceEqual<T>(IEnumerable<T> a, IEnumerable<T> b)
         {
             if (a is null)

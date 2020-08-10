@@ -40,8 +40,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(nameof(ShadingAttributes.Diffuse), x => x.Diffuse, (x, v) => x.Diffuse = v)
                 .AddInput(nameof(ShadingAttributes.DiffuseModel), x => x.DiffuseModel, (x, v) => x.DiffuseModel = v)
                 .AddInput(nameof(ShadingAttributes.Specular), x => x.Specular, (x, v) => x.Specular = v)
-                // Hack to workaround equality bug (https://github.com/stride3d/stride/issues/735)
-                .AddInputWithRefEquality(nameof(ShadingAttributes.SpecularModel), x => x.SpecularModel, (x, v) => x.SpecularModel = v)
+                .AddInput(nameof(ShadingAttributes.SpecularModel), x => x.SpecularModel, (x, v) => x.SpecularModel = v)
                 .AddInput(nameof(ShadingAttributes.Emissive), x => x.Emissive, (x, v) => x.Emissive = v)
                 .AddInput(nameof(ShadingAttributes.SubsurfaceScattering), x => x.SubsurfaceScattering, (x, v) => x.SubsurfaceScattering = v);
 
