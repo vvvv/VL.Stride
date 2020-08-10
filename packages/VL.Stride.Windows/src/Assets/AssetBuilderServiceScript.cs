@@ -10,12 +10,12 @@ namespace VL.Stride.Assets
     /// <summary>
     /// Custom vl script that sets MSBuild
     /// </summary>
-    public class AssetBuildService : AsyncScript
+    public class AssetBuilderServiceScript : AsyncScript
     {
         public RuntimeContentLoader ContentLoader;
         ConcurrentQueue<AssetItem> workQueue = new ConcurrentQueue<AssetItem>();
 
-        public AssetBuildService()
+        public AssetBuilderServiceScript()
         {
             //set msbuild
             PackageSessionPublicHelper.FindAndSetMSBuildVersion();

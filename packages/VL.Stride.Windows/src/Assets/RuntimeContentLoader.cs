@@ -93,7 +93,7 @@ namespace VL.Stride.Assets
             database = runtimDatabase;
             UpdateGameSettings(game);
 
-            //TODO: just a hack for now
+            //TODO: just a hack for now, merges the databases
             var defaultDatabase = game.Services.GetService<IDatabaseFileProviderService>().FileProvider;
             MicrothreadLocalDatabases.AddToSharedGroup(defaultDatabase.ContentIndexMap.GetMergedIdMap()
                 .Select(idm => new OutputObject(new ObjectUrl(UrlType.Content, idm.Key), idm.Value)).ToDictionary(e => e.Url));

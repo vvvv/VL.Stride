@@ -45,7 +45,7 @@ namespace VL.Stride.Lib
                                 game.GraphicsDeviceManager.DeviceCreationFlags |= DeviceCreationFlags.Debug;
 #endif
 
-                                var assetBuildService = new AssetBuildService();
+                                var assetBuildService = new AssetBuilderServiceScript();
                                 game.Services.AddService(assetBuildService);
 
                                 var gameStartedHandler = default(EventHandler);
