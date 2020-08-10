@@ -11,10 +11,12 @@
     <None Include="..\Demos\*.vl" Pack="true" PackagePath="Demos\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="OpenTK" Version="3.2.0" />
     <PackageReference Include="Stride.Assets" Version="$(StrideVersion)" />
     <PackageReference Include="Stride.Assets.Models" Version="$(StrideVersion)" />
     <!-- A pure package dependency so on install all VL packages come in -->
     <PackageReference Include="Stride.TextureConverter" Version="$(StrideVersion)" />
+    <PackageReference Include="VL.Skia" Version="$(VLVersion)" PrivateAssets="all" />
   </ItemGroup>
   <Target Name="IncludeStridePackageContent" BeforeTargets="InferPackageContents" DependsOnTargets="_StridePrepareAssetsForPack">
     <Message Importance="high" Text="Called Stride package targets" />

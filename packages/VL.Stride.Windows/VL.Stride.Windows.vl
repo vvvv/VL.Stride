@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="Qi7h0S2HFoXQSgcrQLzJIk" LanguageVersion="2020.2.0.227" Version="0.128">
-  <NugetDependency Id="SJgSFgD1CesN5MC8rsaNSL" Location="VL.CoreLib" Version="2020.2.0-0223-g1a1ed73021" />
+<Document xmlns:p="property" Id="Qi7h0S2HFoXQSgcrQLzJIk" LanguageVersion="2020.2.0.217" Version="0.128">
+  <NugetDependency Id="SJgSFgD1CesN5MC8rsaNSL" Location="VL.CoreLib" Version="2020.2.0-0217-g78b13ed816" />
   <Patch Id="M21FntPMZoCL02r89zSLlQ">
     <Canvas Id="D192YDr7hmaNzHwM0fWMJw" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="Tt6Qf4otnwyMtWWT8Xss6j" Name="Graphics" Position="301,221">
@@ -107,6 +107,71 @@
           </Canvas>
         </Canvas>
       </Canvas>
+      <!--
+
+    ************************ SkiaRenderer ************************
+
+-->
+      <Node Name="SkiaRenderer" Bounds="358,351" Id="IEd55BzWse2Oia6S1gwrae">
+        <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+          <Choice Kind="ContainerDefinition" Name="Process" />
+        </p:NodeReference>
+        <Patch Id="QZd69fLB8RwLjHiDRNxz2B">
+          <Canvas Id="FpKz5UJjhASPZrc6FUuKuc" CanvasType="Group">
+            <Node Bounds="448,334,63,26" Id="RY3vdFhsbIZNiAwUReL0Gn">
+              <p:NodeReference LastCategoryFullName="VL.Stride.Windows.SkiaRenderer" LastSymbolSource="VL.Stride.Windows.dll">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <CategoryReference Kind="AssemblyCategory" Name="SkiaRenderer" />
+                <Choice Kind="OperationCallFlag" Name="Create" />
+              </p:NodeReference>
+              <Pin Id="QlhICPfU2vdMsqQSsxxgBA" Name="Output" Kind="StateOutputPin" />
+            </Node>
+            <Node Bounds="446,445,63,26" Id="MNzQjbk09BbLnyKOoEmIlS">
+              <p:NodeReference LastCategoryFullName="VL.Stride.Windows.SkiaRenderer" LastSymbolSource="VL.Stride.Windows.dll">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <CategoryReference Kind="AssemblyCategory" Name="SkiaRenderer" />
+                <Choice Kind="OperationCallFlag" Name="SetLayer" />
+              </p:NodeReference>
+              <Pin Id="GFhhOA4m6dEOpI8R9zEaEQ" Name="Input" Kind="StateInputPin" />
+              <Pin Id="KqR3xWYVZ59LjK6sTwav9N" Name="Value" Kind="InputPin" />
+              <Pin Id="Q2bwvqYYqzGNelRhKruP34" Name="Output" Kind="StateOutputPin" />
+            </Node>
+            <Pad Id="LfQoQaTmJSMMk09ZlPLtCn" SlotId="Bz45zRVV3XZNmmT26HZdlK" Bounds="450,386" />
+            <ControlPoint Id="HXlXeTzWoCOQWqaHmxjjo4" Bounds="448,543" />
+            <ControlPoint Id="AOmaX3UxFjmNLcMUfMdDEG" Bounds="553,356" />
+            <ControlPoint Id="Qz2klBJB7XgOH9apc5r6fx" Bounds="659,354" />
+            <Node Bounds="550,408,112,19" Id="M4gDUHMgV8HMofJYzPvDUe">
+              <p:NodeReference LastCategoryFullName="Graphics.Skia.Transform" LastSymbolSource="VL.Skia.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="ProcessAppFlag" Name="WithinCommonSpace" />
+              </p:NodeReference>
+              <Pin Id="Jf5Qlmvz04XOZc1tL2zjAT" Name="Input" Kind="InputPin" />
+              <Pin Id="VsHSB9oGcxGMjmaGmXbXUB" Name="Space" Kind="InputPin" />
+              <Pin Id="DZnY9684kC7QFFJhAi18N0" Name="Output" Kind="OutputPin" />
+            </Node>
+          </Canvas>
+          <Patch Id="GZkc8CkVqFKOOg4gQ6g24t" Name="Create" ParticipatingElements="RY3vdFhsbIZNiAwUReL0Gn" />
+          <ProcessDefinition Id="ThXd6Afpr1YPRXUB3G6Nbc">
+            <Fragment Id="QCdqmBNzWNwM1fJOp69kUW" Patch="GZkc8CkVqFKOOg4gQ6g24t" Enabled="true" />
+            <Fragment Id="JreIT3wmvcOLTbr1aDVnGd" Patch="P3K9RJY3p6xPBqjPdaQggb" Enabled="true" />
+          </ProcessDefinition>
+          <Slot Id="Bz45zRVV3XZNmmT26HZdlK" Name="Instance" />
+          <Link Id="D937uG3mjVfPrxIShiabIR" Ids="QlhICPfU2vdMsqQSsxxgBA,LfQoQaTmJSMMk09ZlPLtCn" />
+          <Link Id="Asu6u460W7hMYf8r5bKZTb" Ids="LfQoQaTmJSMMk09ZlPLtCn,GFhhOA4m6dEOpI8R9zEaEQ" />
+          <Link Id="LRNKN61WrxkNgfB832kpBe" Ids="HXlXeTzWoCOQWqaHmxjjo4,RnkGZUiRpeINMMUxyH1NDB" IsHidden="true" />
+          <Link Id="VbK1jLzpBzbOFfHXcIhola" Ids="AB86DM3zQk8MFK5nDiLwCR,AOmaX3UxFjmNLcMUfMdDEG" IsHidden="true" />
+          <Link Id="P8uL8MJkIwaLNYsqcQSFAo" Ids="Rnjv1hNULuhLOtVVj8xCmt,Qz2klBJB7XgOH9apc5r6fx" IsHidden="true" />
+          <Link Id="ClNnlZ4P683O0HwhF7s6fu" Ids="AOmaX3UxFjmNLcMUfMdDEG,Jf5Qlmvz04XOZc1tL2zjAT" />
+          <Link Id="KXcrWFNq2CMMb1bxdrlTcs" Ids="DZnY9684kC7QFFJhAi18N0,KqR3xWYVZ59LjK6sTwav9N" />
+          <Link Id="CmiCXFkllWiPdavrQijIZP" Ids="Qz2klBJB7XgOH9apc5r6fx,VsHSB9oGcxGMjmaGmXbXUB" />
+          <Patch Id="P3K9RJY3p6xPBqjPdaQggb" Name="Update">
+            <Pin Id="AB86DM3zQk8MFK5nDiLwCR" Name="Input" Kind="InputPin" />
+            <Pin Id="Rnjv1hNULuhLOtVVj8xCmt" Name="Space" Kind="InputPin" />
+            <Pin Id="RnkGZUiRpeINMMUxyH1NDB" Name="Output" Kind="OutputPin" />
+          </Patch>
+          <Link Id="AJpiy68HwPgMCgxZg3BTJh" Ids="Q2bwvqYYqzGNelRhKruP34,HXlXeTzWoCOQWqaHmxjjo4" />
+        </Patch>
+      </Node>
     </Canvas>
     <!--
 
@@ -129,9 +194,10 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Atmu2olrIbgN6W8C10FCUv" Location="VL.Stride.Runtime" Version="0.7.267-gb294d936e2" />
+  <NugetDependency Id="Atmu2olrIbgN6W8C10FCUv" Location="VL.Stride.Runtime" Version="0.7.268-g98cc4acb0e" />
   <PlatformDependency Id="OYXKghOSTHeP6lP3xiPFHx" Location="SharpDX.Direct3D11.dll" />
   <PlatformDependency Id="MrEmya3NafTPYyBdNEw69S" Location="Stride.Graphics.dll" />
   <PlatformDependency Id="FsB8b3wL45VLEHptTDEWXQ" Location="./src/bin/Debug/net472/VL.Stride.Windows.dll" />
   <DocumentDependency Id="LhpQXXxgPVGN8EgidqtOBc" Location="./VL.Stride.Graphics.Windows.vl" IsForward="true" />
+  <NugetDependency Id="LzLfrrlVfFILmJVxcZlKfw" Location="VL.Skia" Version="2020.2.0-0217-g78b13ed816" />
 </Document>
