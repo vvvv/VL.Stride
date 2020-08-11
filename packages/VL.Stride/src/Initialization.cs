@@ -73,6 +73,9 @@ namespace VL.Stride.Lib
                                 game.SceneSystem.SceneInstance = null;
                                 game.SceneSystem.GraphicsCompositor = null;
 
+                                // Make sure the main window doesn't block the main loop
+                                game.GraphicsDevice.Presenter.PresentInterval = PresentInterval.Immediate;
+
                                 var frameClock = factory.CreateService<IFrameClock>(nodeContext);
                                 clockSubscription = frameClock.GetFrameFinished().Subscribe(ffm =>
                                 {
