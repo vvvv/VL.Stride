@@ -1,11 +1,11 @@
-﻿using Stride.Core;
-using Stride.Core.Collections;
+﻿using Stride.Core.Collections;
 using Stride.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using VL.Core;
 using VL.Core.Diagnostics;
+using VL.Lib.Basics.Resources;
 using VL.Lib.Collections.TreePatching;
 using VL.Lib.Experimental;
 
@@ -231,13 +231,6 @@ namespace VL.Stride
             return this;
         }
 
-        // Hack to workaround equality bug (https://github.com/stride3d/stride/issues/735)
-        public CustomNodeDesc<TInstance> AddInputWithRefEquality<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter)
-            where T : class
-        {
-            return AddInput(name, getter, setter, equals: ReferenceEqualityComparer<T>.Default.Equals);
-        }
-
         static bool SequenceEqual<T>(IEnumerable<T> a, IEnumerable<T> b)
         {
             if (a is null)
@@ -284,6 +277,27 @@ namespace VL.Stride
                 });
         }
 
+        public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, IndexingDictionary<T>> getter)
+            where T : class
+        {
+            return AddInput<IReadOnlyList<T>>(name,
+                getter: x => getter(x).Values.ToList(),
+                equals: SequenceEqual,
+                setter: (x, v) =>
+                {
+                    var currentItems = getter(x);
+                    currentItems.Clear();
+
+                    if (v != null)
+                    {
+                        for (int i = 0; i < v.Count; i++)
+                        {
+                            currentItems[i] = v[i];
+                        }
+                    }
+                });
+        }
+
         public CustomNodeDesc<TInstance> AddOutput<T>(string name, Func<TInstance, T> getter)
         {
             outputs.Add(new CustomPinDesc()
@@ -313,6 +327,21 @@ namespace VL.Stride
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
                 CreatePin = (node, instance) => new CachedOutputPin<T>(node, instance, x => getter(node.Context, instance))
+            });
+            return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, (Func<TInstance, T>, IDisposable)> ctor)
+        {
+            outputs.Add(new CustomPinDesc()
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                CreatePin = (node, instance) =>
+                {
+                    var (getter, disposable) = ctor(node.Context);
+                    return new CachedOutputPin<T>(node, instance, getter, disposable);
+                }
             });
             return this;
         }
@@ -382,7 +411,7 @@ namespace VL.Stride
                 this.equals = equals ?? EqualityComparer<T>.Default.Equals;
                 this.getter = getter;
                 this.setter = setter;
-                this.InitialValue = initialValue;
+                this.InitialValue = lastValue = initialValue;
                 setter(instance, initialValue);
             }
 
@@ -436,12 +465,14 @@ namespace VL.Stride
             }
         }
 
-        class CachedOutputPin<T> : OutputPin<T>
+        class CachedOutputPin<T> : OutputPin<T>, IDisposable
         {
-            public CachedOutputPin(Node node, TInstance instance, Func<TInstance, T> getter)
+            readonly IDisposable disposeable;
+
+            public CachedOutputPin(Node node, TInstance instance, Func<TInstance, T> getter, IDisposable disposeable = default)
                 : base(node, instance, getter)
             {
-                cachedValue = getter(instance);
+                this.disposeable = disposeable;
             }
 
             public override T Value
@@ -458,13 +489,18 @@ namespace VL.Stride
                 set => throw new InvalidOperationException();
             }
             T cachedValue;
+
+            public void Dispose()
+            {
+                disposeable?.Dispose();
+            }
         }
 
         class Node : VLObject, IVLNode
         {
             public Action updateAction;
             public Action disposeAction;
-            public bool needsUpdate;
+            public bool needsUpdate = true;
 
             public Node(NodeContext nodeContext) : base(nodeContext)
             {
@@ -476,7 +512,14 @@ namespace VL.Stride
 
             public IVLPin[] Outputs { get; set; }
 
-            public void Dispose() => disposeAction?.Invoke();
+            public void Dispose()
+            {
+                foreach (var p in Outputs)
+                    if (p is IDisposable d)
+                        d.Dispose();
+
+                disposeAction?.Invoke();
+            }
 
             public void Update() => updateAction?.Invoke();
         }
