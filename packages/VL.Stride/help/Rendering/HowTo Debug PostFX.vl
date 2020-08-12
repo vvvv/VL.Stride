@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="CUIzzMtXbMXL1PSyxhqGoY" LanguageVersion="2020.2.0.232" Version="0.128">
+<Document xmlns:p="property" Id="CUIzzMtXbMXL1PSyxhqGoY" LanguageVersion="2020.2.0.237" Version="0.128">
   <NugetDependency Id="Rq1hxtGm4prLgcbPnzpr1q" Location="VL.CoreLib" Version="2020.2.0-0229-g52056e19ba" />
   <Patch Id="EflKC5Ddi2BN1mZWLv60qK">
     <Canvas Id="NBB3K3ClmntMsyQxzUGU5L" DefaultCategory="Main" CanvasType="FullCategory">
@@ -22,14 +22,11 @@
               </p:NodeReference>
               <Pin Id="MKPK2sGwq8wMxT8g7CTEZQ" Name="Transformation" Kind="InputPin" />
               <Pin Id="Vxv9nnxHRwoLkcLh2AbT1f" Name="Size" Kind="InputPin" />
-              <Pin Id="Bk7pAhlpyEkOd035l0503n" Name="Tesselation" Kind="InputPin" />
-              <Pin Id="NYwNalyszSELCnMiyG3VoJ" Name="Normal Direction" Kind="InputPin">
-                <p:TypeAnnotation LastCategoryFullName="Stride.Graphics.GeometricPrimitives" LastSymbolSource="Stride.Graphics.dll">
-                  <Choice Kind="TypeFlag" Name="NormalDirection" />
-                </p:TypeAnnotation>
-              </Pin>
+              <Pin Id="SIkyJgZH8DBN8c8KO5W9gU" Name="Tessellation" Kind="InputPin" />
+              <Pin Id="JZ1ENq7JN0XOBrY6N4IhI0" Name="Normal" Kind="InputPin" />
               <Pin Id="HKyG0tAhBxMORpMY8CegUM" Name="Generate Back Face" Kind="InputPin" />
               <Pin Id="NcLSueO6mHqMfTcB9CPZTu" Name="Material" Kind="InputPin" />
+              <Pin Id="OxhPgUdbLp0Mc0zFY6mLJ9" Name="Is Shadow Caster" Kind="InputPin" />
               <Pin Id="NmHlc7wMv0wQGKEjp9ajGa" Name="Children" Kind="InputPin" />
               <Pin Id="Qilg6N954CKLPZcNtnvQSn" Name="Name" Kind="InputPin" />
               <Pin Id="F0daTODh4FRNyctyTNumTk" Name="Enabled" Kind="InputPin" />
@@ -231,16 +228,22 @@
                       <Choice Kind="TypeFlag" Name="Float32" />
                     </p:TypeAnnotation>
                   </Pin>
-                  <Pin Id="Nx6xkE3NsncLSd0u9FX5oQ" Name="Tesselation" Kind="InputPin" DefaultValue="32">
+                  <Pin Id="KaNAsPYro3GOVpxbJacEaK" Name="Tessellation" Kind="InputPin" DefaultValue="32">
                     <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                       <Choice Kind="TypeFlag" Name="Integer32" />
                     </p:TypeAnnotation>
                   </Pin>
                   <Pin Id="UMUDspD7DazO7AV6IcdcJF" Name="Material" Kind="InputPin" />
+                  <Pin Id="Jsy98c4nHQEMZOZdWRFa6G" Name="Is Shadow Caster" Kind="InputPin" />
                   <Pin Id="HHhkCRAwI25Nhqqhv5V7Do" Name="Children" Kind="InputPin" />
                   <Pin Id="Kv5mndpbsHMNXWdBJ6NitA" Name="Name" Kind="InputPin" />
                   <Pin Id="BnRbvzBQleBPgK0LCoPSnA" Name="Enabled" Kind="InputPin" />
                   <Pin Id="AIBYuNcNOxANGU7o5nB3UP" Name="Entity" Kind="OutputPin" />
+                  <Pin Id="Nx6xkE3NsncLSd0u9FX5oQ" Name="Tesselation" Kind="InputPin" DefaultValue="32">
+                    <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                      <Choice Kind="TypeFlag" Name="Integer32" />
+                    </p:TypeAnnotation>
+                  </Pin>
                 </Node>
                 <Node Bounds="368,428,67,19" Id="Q5qVYLI2sbZPVcqe3soPaQ">
                   <p:NodeReference LastCategoryFullName="3D.Matrix" LastSymbolSource="CoreLibBasics.vl">
@@ -509,7 +512,7 @@
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="IuwForP1zEgMohU3l12kYE" Name="Key Value" Kind="InputPin" DefaultValue="0.72">
+            <Pin Id="IuwForP1zEgMohU3l12kYE" Name="Key Value" Kind="InputPin" DefaultValue="0.68">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
@@ -519,7 +522,7 @@
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="DYqFi0wosy1PwgoHSoJyTg" Name="Exposure" Kind="InputPin" DefaultValue="1.11">
+            <Pin Id="DYqFi0wosy1PwgoHSoJyTg" Name="Exposure" Kind="InputPin" DefaultValue="0">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
@@ -542,7 +545,7 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="VLq2xk3q3CIP0xZGaNUk3s" Name="Enabled" Kind="InputPin" DefaultValue="True">
+            <Pin Id="VLq2xk3q3CIP0xZGaNUk3s" Name="Enabled" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
@@ -592,7 +595,7 @@
               <Choice Kind="ProcessAppFlag" Name="BrightFilter" />
               <CategoryReference Kind="Category" Name="PostFX" NeedsToBeDirectParent="true" />
             </p:NodeReference>
-            <Pin Id="DhyDrDIBqugOo5dtC8MZYt" Name="Threshold" Kind="InputPin" DefaultValue="0.57">
+            <Pin Id="DhyDrDIBqugOo5dtC8MZYt" Name="Threshold" Kind="InputPin" DefaultValue="0.34">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
@@ -620,7 +623,7 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="LkXXz5yzr1fOkUt0Qo0I0E" Name="Amount" Kind="InputPin" DefaultValue="0.52">
+            <Pin Id="LkXXz5yzr1fOkUt0Qo0I0E" Name="Amount" Kind="InputPin" DefaultValue="0.22">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
@@ -637,7 +640,7 @@
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="LtDSESV2XSpNPP3nXyXowm" Name="Enabled" Kind="InputPin" DefaultValue="True">
+            <Pin Id="LtDSESV2XSpNPP3nXyXowm" Name="Enabled" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
@@ -674,7 +677,7 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessNode" Name="LightStreak" />
             </p:NodeReference>
-            <Pin Id="DRlWhdDA0baNuVVfcpGKMf" Name="Amount" Kind="InputPin" DefaultValue="0.14">
+            <Pin Id="DRlWhdDA0baNuVVfcpGKMf" Name="Amount" Kind="InputPin" DefaultValue="0.41">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
@@ -700,7 +703,7 @@
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="GRvrWVlbA7gMKHM7Uy9u3d" Name="Enabled" Kind="InputPin" DefaultValue="True">
+            <Pin Id="GRvrWVlbA7gMKHM7Uy9u3d" Name="Enabled" Kind="InputPin" DefaultValue="False">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
@@ -768,6 +771,8 @@
             <Pin Id="RI3P12KOPHmOikkDQR6ih9" Name="Enable Keyboard Shortcuts" Kind="InputPin" />
             <Pin Id="LOVoK6jStoKLhZshv98782" Name="Enable Default Camera Interaction" Kind="InputPin" />
             <Pin Id="PLEaFTQRADxMA0jvQEkENe" Name="Camera" Kind="InputPin" />
+            <Pin Id="Qta33DcTWYbOxSfAzwkvjf" Name="Clear" Kind="InputPin" />
+            <Pin Id="MV57MIr9vJRNqBVg3IPDmI" Name="Clear Color" Kind="InputPin" />
             <Pin Id="QkraFFn3fm7NoAJz5OOXQs" Name="Post Effects" Kind="InputPin" />
             <Pin Id="IuSHDtVuUrILBhJQuuUdf2" Name="Title" Kind="InputPin" />
             <Pin Id="N3O9gR2lvMMPeFFT6qkO9q" Name="Enabled" Kind="InputPin" />
@@ -788,9 +793,21 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessNode" Name="LocalReflections" />
             </p:NodeReference>
-            <Pin Id="CamzQMCf6h0O1bfFOXLyok" Name="Raycast BRDF Bias" Kind="InputPin" />
-            <Pin Id="DD8tE1dIPCYQXvfT1LMafX" Name="Raycast Depth Resolution" Kind="InputPin" />
-            <Pin Id="Q1oni6C8rO7OADzSo5C0EH" Name="Raycast Gloss Threshold" Kind="InputPin" />
+            <Pin Id="CamzQMCf6h0O1bfFOXLyok" Name="Raycast BRDF Bias" Kind="InputPin" DefaultValue="0.88">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Float32" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="DD8tE1dIPCYQXvfT1LMafX" Name="Raycast Depth Resolution" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Stride.Rendering.Images.LocalReflections" LastSymbolSource="Stride.Rendering.dll">
+                <Choice Kind="TypeFlag" Name="ResolutionMode" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="Q1oni6C8rO7OADzSo5C0EH" Name="Raycast Gloss Threshold" Kind="InputPin" DefaultValue="0.91">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Float32" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="GOYHkcwtjpzMuSPDbCqL2j" Name="Raycast Max Steps" Kind="InputPin" />
             <Pin Id="Su56afpql1AMpQaymUjdD2" Name="Raycast Ray Start Bias" Kind="InputPin" />
             <Pin Id="ELGVB3K7GW5MxFgNtf89hg" Name="Raycast Resolution" Kind="InputPin" DefaultValue="Full">
@@ -803,14 +820,22 @@
                 <Choice Kind="TypeFlag" Name="ResolutionMode" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="H5uYwjg7BzcMhjRQG1bW8C" Name="Resolve Samples" Kind="InputPin" />
+            <Pin Id="H5uYwjg7BzcMhjRQG1bW8C" Name="Resolve Samples" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Integer32" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="TrnJZQ65YFaMmCIa7fTePp" Name="Resolve Reduce Highlights" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="PzXWwvh0MreNoyuFOFGRfk" Name="Resolve Edge Fade Factor" Kind="InputPin" />
-            <Pin Id="IOdINTPnhM9L1gxciNGcCC" Name="Resolve Use Color Buffer Mips" Kind="InputPin" />
+            <Pin Id="IOdINTPnhM9L1gxciNGcCC" Name="Resolve Use Color Buffer Mips" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="QJXAGAbNbIjOE3OPJVUGF4" Name="Temporal Response" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
@@ -821,7 +846,7 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="L0Kz9x1qVRwNr9YUhkQv9n" Name="Temporal Effect" Kind="InputPin">
+            <Pin Id="L0Kz9x1qVRwNr9YUhkQv9n" Name="Temporal Effect" Kind="InputPin" DefaultValue="True">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
@@ -834,7 +859,7 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessNode" Name="LensFlare" />
             </p:NodeReference>
-            <Pin Id="CLKvP4xR60FObqxrQ0pfTe" Name="Amount" Kind="InputPin" DefaultValue="1.22">
+            <Pin Id="CLKvP4xR60FObqxrQ0pfTe" Name="Amount" Kind="InputPin" DefaultValue="0.4">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
@@ -849,7 +874,7 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="Myn9IujzFYTLOwUFl3bvCj" Name="Enabled" Kind="InputPin" DefaultValue="True">
+            <Pin Id="Myn9IujzFYTLOwUFl3bvCj" Name="Enabled" Kind="InputPin" DefaultValue="False">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
@@ -893,5 +918,5 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.7.272-g283a3429ae" />
+  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.7.282-gaf3089a8df" />
 </Document>

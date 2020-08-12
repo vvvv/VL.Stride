@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="ASSuu2qaVBiOOBs5YCdf9t" LanguageVersion="2020.2.0.229" Version="0.128">
+<Document xmlns:p="property" Id="ASSuu2qaVBiOOBs5YCdf9t" LanguageVersion="2020.2.0.237" Version="0.128">
   <NugetDependency Id="TwGk0oqYRM9LNChgwzEPFV" Location="VL.CoreLib" Version="2020.2.0-0229-g52056e19ba" />
   <Patch Id="EZnIqZ0z0epNn1cF1kNIqy">
     <Canvas Id="OjqUphNS7lHNHXGqmkgtXs" DefaultCategory="Main" CanvasType="FullCategory">
@@ -416,6 +416,12 @@
             </Pin>
             <Pin Id="JKWcWBeG6BVPd5W27E2XYT" Name="Enable Default Camera Interaction" Kind="InputPin" />
             <Pin Id="EeiOQpcKvVqMC68j0ErLRu" Name="Camera" Kind="InputPin" />
+            <Pin Id="KHsH9NQzhuUMdTYN8woOC3" Name="Clear" Kind="InputPin" />
+            <Pin Id="KbVhi1Iv99sOdAG5cEnX8J" Name="Clear Color" Kind="InputPin" DefaultValue="0.03869998, 0.3595661, 0.43, 1">
+              <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="RGBA" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="TjvbvzE1kqTQaGzWY1G2Sn" Name="Post Effects" Kind="InputPin" />
             <Pin Id="MN00KL9F88AOzDnrOdBg0n" Name="Title" Kind="InputPin" />
             <Pin Id="H7mzL1AyDhsOkCt4LulHW9" Name="Enabled" Kind="InputPin">
@@ -427,11 +433,6 @@
             <Pin Id="PHI3yJzlrfvOT5mTJctj08" Name="Input Source" Kind="OutputPin" />
             <Pin Id="GVIzbGS7j5jLslQevPiiNd" Name="Back Buffer" Kind="OutputPin" />
             <Pin Id="DueZHDgMt6EMa6uS4ZQ9EJ" Name="Depth Buffer" Kind="OutputPin" />
-            <Pin Id="KbVhi1Iv99sOdAG5cEnX8J" Name="Clear Color" Kind="InputPin" DefaultValue="0.03869998, 0.3595661, 0.43, 1">
-              <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="RGBA" />
-              </p:TypeAnnotation>
-            </Pin>
           </Node>
           <Node Bounds="477,605,165,19" Id="Ndy8GmedBviLgndrQ4egBn">
             <p:NodeReference LastCategoryFullName="Stride.Lights" LastSymbolSource="VL.Stride.Engine.vl">
@@ -453,7 +454,7 @@
                 <Choice Kind="TypeFlag" Name="RGBA" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="KatJWqaOSpoOJzVLQB31FU" Name="Intensity" Kind="InputPin" DefaultValue="4.38">
+            <Pin Id="KatJWqaOSpoOJzVLQB31FU" Name="Intensity" Kind="InputPin" DefaultValue="1">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
@@ -483,8 +484,8 @@
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="NEOOuRl6ZUkNjEoFdLXVM1" Name="Size" Kind="InputPin" />
-            <Pin Id="SFpp7AZq41VPGVFzeTkqTG" Name="Tesselation" Kind="InputPin" />
-            <Pin Id="DtdfxHgyJw6NK2kjHLwCsd" Name="Normal Direction" Kind="InputPin" />
+            <Pin Id="BYU29L84ZUtQaBWT2iEdhB" Name="Tessellation" Kind="InputPin" />
+            <Pin Id="LPezPBIdBnUP82C9GUIvAW" Name="Normal" Kind="InputPin" />
             <Pin Id="AbYlUc3pB2MNLg0iJqd1mW" Name="Generate Back Face" Kind="InputPin" />
             <Pin Id="LpDa3QTCWdNOKiyCpAy1m9" Name="Material" Kind="InputPin" />
             <Pin Id="DQHEFmWATQ1LZ5y0LQMEru" Name="Children" Kind="InputPin" />
@@ -563,7 +564,7 @@
             <Pin Id="TmVC26lMeKuMQm44XRarze" Name="Enabled" Kind="InputPin" />
             <Pin Id="Km290vZCGlfNQvmYbpR2IN" Name="Entity" Kind="OutputPin" />
           </Node>
-          <Pad Id="VCA3XTYWsYVLczBnJRnyJP" Comment="Intensity" Bounds="648,625,35,15" ShowValueBox="true" isIOBox="true" Value="0.26">
+          <Pad Id="VCA3XTYWsYVLczBnJRnyJP" Comment="Intensity" Bounds="648,625,35,15" ShowValueBox="true" isIOBox="true" Value="0.09999999">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Float32" />
             </p:TypeAnnotation>
@@ -609,6 +610,7 @@
             <Pin Id="PUUTyaBmAfjONqdJvfyAe2" Name="Radius" Kind="InputPin" />
             <Pin Id="U81zRyfw4WmLaIKJMgsAD0" Name="Tessellation" Kind="InputPin" />
             <Pin Id="Ty7UNCF9xMyNTL4lfiKYeH" Name="Material" Kind="InputPin" />
+            <Pin Id="HPwfh2SsZEwL9IKdhcmKSR" Name="Is Shadow Caster" Kind="InputPin" />
             <Pin Id="FJwEbPGGz7pLxs3TKUeAbJ" Name="Components" Kind="InputPin" />
             <Pin Id="VJ4T7L92yWvNBnCoollgdL" Name="Children" Kind="InputPin" />
             <Pin Id="HXV01yNJGwCL5MvUCqKxLS" Name="Name" Kind="InputPin" />
@@ -623,6 +625,7 @@
             <Pin Id="OKrovnZwR19M5TiEhXbfQi" Name="Transformation" Kind="InputPin" />
             <Pin Id="CFZsoeOHsHBMsu32CEb2Nl" Name="Size" Kind="InputPin" />
             <Pin Id="QAOyXbgnYXzPUGOJ9XID7r" Name="Material" Kind="InputPin" />
+            <Pin Id="LFlsY2Ji50JPo9vP9DLNkZ" Name="Is Shadow Caster" Kind="InputPin" />
             <Pin Id="TZFOgdmvVn2Pb5aa7xpei5" Name="Components" Kind="InputPin" />
             <Pin Id="FEjfIS2sNPsOy191LIJV55" Name="Children" Kind="InputPin" />
             <Pin Id="LaJDRZnGOyXP5gQ8mlPCsj" Name="Name" Kind="InputPin" />
@@ -821,5 +824,5 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Q6thn2Y7IMaPIwMZVU2Sfj" Location="VL.Stride" Version="0.7.268-g98cc4acb0e" />
+  <NugetDependency Id="Q6thn2Y7IMaPIwMZVU2Sfj" Location="VL.Stride" Version="0.7.282-gaf3089a8df" />
 </Document>
