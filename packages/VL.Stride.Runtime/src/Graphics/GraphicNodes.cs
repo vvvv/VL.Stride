@@ -1,6 +1,8 @@
-﻿using Stride.Graphics;
+﻿using Stride.Core.Mathematics;
+using Stride.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Disposables;
 using System.Text;
 using VL.Core;
 
@@ -59,6 +61,42 @@ namespace VL.Stride.Graphics
                 .AddInput(nameof(RenderOutputDescription.DepthStencilFormat), x => x.DepthStencilFormat, (x, v) => x.DepthStencilFormat = v)
                 .AddInput(nameof(RenderOutputDescription.MultisampleCount), x => x.MultisampleCount, (x, v) => x.MultisampleCount = v)
                 .AddInput(nameof(RenderOutputDescription.ScissorTestEnable), x => x.ScissorTestEnable, (x, v) => x.ScissorTestEnable = v);
+
+            yield return factory.NewNode(name: "SamplerState", category: graphicsCategory, copyOnWrite: false, hasStateOutput: false, fragmented: true, ctor: () => new StructRef<SamplerStateDescription>(SamplerStateDescription.Default))
+                .AddInput(nameof(SamplerStateDescription.Filter), x => x.v.Filter, (x, v) => x.v.Filter = v, TextureFilter.Linear)
+                .AddInput(nameof(SamplerStateDescription.AddressU), x => x.v.AddressU, (x, v) => x.v.AddressU = v, TextureAddressMode.Clamp)
+                .AddInput(nameof(SamplerStateDescription.AddressV), x => x.v.AddressV, (x, v) => x.v.AddressV = v, TextureAddressMode.Clamp)
+                .AddInput(nameof(SamplerStateDescription.AddressW), x => x.v.AddressW, (x, v) => x.v.AddressW = v, TextureAddressMode.Clamp)
+                .AddInput(nameof(SamplerStateDescription.BorderColor), x => x.v.BorderColor, (x, v) => x.v.BorderColor = v, Color4.Black)
+                .AddInput(nameof(SamplerStateDescription.MaxAnisotropy), x => x.v.MaxAnisotropy, (x, v) => x.v.MaxAnisotropy = v, 16)
+                .AddInput(nameof(SamplerStateDescription.MinMipLevel), x => x.v.MinMipLevel, (x, v) => x.v.MinMipLevel = v, 0f)
+                .AddInput(nameof(SamplerStateDescription.MaxMipLevel), x => x.v.MaxMipLevel, (x, v) => x.v.MaxMipLevel = v, float.MaxValue)
+                .AddInput(nameof(SamplerStateDescription.MipMapLevelOfDetailBias), x => x.v.MipMapLevelOfDetailBias, (x, v) => x.v.MipMapLevelOfDetailBias = v, 0f)
+                .AddInput(nameof(SamplerStateDescription.CompareFunction), x => x.v.CompareFunction, (x, v) => x.v.CompareFunction = v, CompareFunction.Never)
+                .AddCachedOutput("Output", nodeContext =>
+                {
+                    var disposable = new SerialDisposable();
+                    Func<StructRef<SamplerStateDescription>, SamplerState> getter = generator =>
+                    {
+                        var gdh = nodeContext.GetDeviceHandle();
+                        var st = SamplerState.New(gdh.Resource, generator.v);
+                        gdh.Dispose();
+                        disposable.Disposable = st;
+                        return st;
+                    };
+                    return (getter, disposable);
+                });
+            ;
+        }
+
+        class StructRef<T> where T : struct
+        {
+            public T v;
+
+            public StructRef(T value)
+            {
+                v = value;
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ namespace VL.Stride.Shaders.ShaderFX
 {
     public class InputValue<T> : ComputeValue<T> where T : struct
     {
-        public InputValue(ValueParameterKey<T> key, string constantBufferName = "PerUpdate")
+        public InputValue(ValueParameterKey<T> key, string constantBufferName)
         {
             Key = key;
             ConstantBufferName = constantBufferName;
@@ -58,7 +58,15 @@ namespace VL.Stride.Shaders.ShaderFX
                 // remember parameters for updates from main loop 
                 Parameters = context.Parameters;
 
-                shaderClassSource = GetShaderSourceForType<T>("Input", UsedKey, ConstantBufferName);
+                // find constant buffer name
+                var constantBufferName = ConstantBufferName;
+
+                if (string.IsNullOrWhiteSpace(constantBufferName))
+                {
+                    constantBufferName = context is MaterialGeneratorContext ? "PerMaterial" : "PerUpdate";
+                }
+
+                shaderClassSource = GetShaderSourceForType<T>("Input", UsedKey, constantBufferName);
             }
             else
             {

@@ -42,7 +42,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
             TextureDecl.GenerateShaderSource(context, baseKeys);
 
-            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, TextureDecl.BufferKey);
+            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, TextureDecl.Key);
 
             var mixin = shaderClassSource.CreateMixin();
 

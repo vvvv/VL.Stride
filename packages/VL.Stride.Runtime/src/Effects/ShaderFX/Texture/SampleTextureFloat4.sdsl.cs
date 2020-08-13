@@ -6,18 +6,4 @@
 // and re-save the associated .sdfx.
 // </auto-generated>
 
-using System;
-using Stride.Core;
-using Stride.Rendering;
-using Stride.Graphics;
-using Stride.Shaders;
-using Stride.Core.Mathematics;
-using Buffer = Stride.Graphics.Buffer;
-
-namespace Stride.Rendering
-{
-    public static partial class SampleTextureFloat4Keys
-    {
-        public static readonly ObjectParameterKey<SamplerState> LinearRepeatSampler = ParameterKeys.NewObject<SamplerState>();
-    }
-}
+// Nothing to generate

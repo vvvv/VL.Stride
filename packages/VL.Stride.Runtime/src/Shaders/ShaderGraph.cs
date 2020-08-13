@@ -23,7 +23,7 @@ namespace VL.Stride.Shaders.ShaderFX
         public static IComputeVoid SomeComputeFXGraph(Buffer buffer)
         {
             var bufferDecl = new DeclBuffer();
-            bufferDecl.Buffer = buffer;
+            bufferDecl.Resource = buffer;
             var getItem = new GetItemBuffer<float>(bufferDecl, new ComputeValue<uint>());
 
             var value1 = new ComputeValue<float>();

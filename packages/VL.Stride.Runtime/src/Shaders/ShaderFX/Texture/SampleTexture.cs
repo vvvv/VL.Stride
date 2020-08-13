@@ -15,10 +15,11 @@ namespace VL.Stride.Shaders.ShaderFX
     public class SampleTexture<T> : ComputeValue<T>
     {
 
-        public SampleTexture(DeclTexture buffer, IComputeValue<Vector2> index, bool isRW = false)
+        public SampleTexture(DeclTexture texture, DeclSampler sampler, IComputeValue<Vector2> texCoord, bool isRW = false)
         {
-            TextureDecl = buffer;
-            TexCd = index;
+            TextureDecl = texture;
+            SamplerDecl = sampler;
+            TexCd = texCoord;
             IsRW = isRW;
 
             ShaderName = IsRW ? "SampleTextureRW" : "SampleTexture";
@@ -26,18 +27,21 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public DeclTexture TextureDecl { get; }
 
+        public DeclSampler SamplerDecl { get; }
+
         public IComputeValue<Vector2> TexCd { get; }
 
         public bool IsRW { get; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            if (TextureDecl == null)
+            if (TextureDecl == null || SamplerDecl == null)
                 return GetShaderSourceForType<T>("Compute");
 
             TextureDecl.GenerateShaderSource(context, baseKeys);
+            SamplerDecl.GenerateShaderSource(context, baseKeys);
 
-            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, TextureDecl.TextureKey);
+            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, TextureDecl.Key, TextureDecl.GetResourceGroupName(context), SamplerDecl.Key, SamplerDecl.GetResourceGroupName(context));
 
             if (TexCd != null)
             {

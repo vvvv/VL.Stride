@@ -1,16 +1,13 @@
-﻿shader SampleTextureFloat<LinkType TextureName> : ComputeFloat, DeclTexture<TextureName, PerMaterial>
+﻿shader SampleTextureFloat<LinkType TextureName, MemberName TextureResourceGroupName, 
+    LinkType SamplerName, MemberName SamplerResourceGroupName> 
+        : ComputeFloat,
+        DeclTexture<TextureName, TextureResourceGroupName>, 
+        DeclSampler<SamplerName, SamplerResourceGroupName>
 {
     compose ComputeFloat2 TexCd;
 
-    stage SamplerState LinearRepeatSampler
-    {
-        Filter = MIN_MAG_MIP_LINEAR;
-        AddressU = Wrap;
-        AddressV = Wrap;
-    };
-
     override float Compute()
     {
-        return DynamicTexture.Sample(LinearRepeatSampler, TexCd.Compute()).x;
+        return DynamicTexture.Sample(DynamicSampler, TexCd.Compute()).x;
     }  
 };

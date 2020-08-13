@@ -85,6 +85,7 @@ namespace VL.Stride.Shaders.ShaderFX
             KnownTypes.Add(typeof(bool), "Bool");
             KnownTypes.Add(typeof(Buffer), "Buffer");
             KnownTypes.Add(typeof(Texture), "Texture");
+            KnownTypes.Add(typeof(SamplerState), "Sampler");
         }
 
         public static string GetNameForType<T>()

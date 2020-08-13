@@ -6,51 +6,10 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
-    public class DeclBuffer : ComputeNode<Buffer>, IComputeVoid
+    public class DeclBuffer : DeclResource<Buffer>
     {
-        private Buffer buffer;
-
-        /// <summary>
-        /// Can be updated from mainloop
-        /// </summary>
-        public Buffer Buffer
-        { 
-            get => buffer;
-
-            set
-            {
-                if (buffer != value || compiled)
-                {
-                    buffer = value;
-
-                    if (Parameters != null && BufferKey != null)
-                        Parameters.Set(BufferKey, buffer); 
-                }
-            }
-        }
-
-        public ObjectParameterKey<Buffer> BufferKey { get; protected set; }
-        ParameterCollection Parameters;
-        private bool compiled;
-
-        public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        public DeclBuffer(string resourceGroupName = null) : base(resourceGroupName)
         {
-            BufferKey = ContextKeyMap<Buffer>.GetParameterKey(context, this);
-
-            context.Parameters.Set(BufferKey, Buffer);
-
-            // remember parameters for updates from main loop 
-            Parameters = context.Parameters;
-
-            compiled = true;
-
-            //no shader source to create here, only the key
-            return new ShaderClassSource("ComputeVoid");
-        }
-
-        public override string ToString()
-        {
-            return string.Format("Buffer {0}", BufferKey.Name);
         }
     }
 }
