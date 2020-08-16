@@ -24,10 +24,10 @@ namespace VL.Stride.Rendering.Lights
             yield return NewDirectLightNode<LightDirectional>(factory, lightTypesCategory);
 
             yield return NewDirectLightNode<LightPoint>(factory, lightTypesCategory)
-                .AddInput(nameof(LightPoint.Radius), x => x.Radius, (x, v) => x.Radius = v, 1f);
+                .AddInput(nameof(LightPoint.Radius), x => x.Radius, (x, v) => x.Radius = v, 5f);
 
             yield return NewDirectLightNode<LightSpot>(factory, lightTypesCategory)
-                .AddInput(nameof(LightSpot.Range), x => x.Range, (x, v) => x.Range = v, 3f)
+                .AddInput(nameof(LightSpot.Range), x => x.Range, (x, v) => x.Range = v, 5f)
                 .AddInput(nameof(LightSpot.AngleInner), x => x.AngleInner, (x, v) => x.AngleInner = v, 30f)
                 .AddInput(nameof(LightSpot.AngleOuter), x => x.AngleOuter, (x, v) => x.AngleOuter = v, 35f)
                 .AddInput(nameof(LightSpot.ProjectiveTexture), x => x.ProjectiveTexture, (x, v) => x.ProjectiveTexture = v)
