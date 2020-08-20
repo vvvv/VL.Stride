@@ -13,6 +13,8 @@ Download: http://visualprogramming.net
 - Install a vvvv gamma version from teamcity.vvvv.org as specified by the `VLVersion` property in `packages\Directory.Build.props`
 - Open the solution `packages\VL.Stride.sln`, switch it to `Release` mode, set VL.Stride as startup project and press `Ctrl+F5` to start vvvv. (VL.Stride is configured as a source package automatically)
 
+Compiling and running in `Debug` requires the [graphic diagnostic tools](https://docs.microsoft.com/en-us/windows/uwp/gaming/use-the-directx-runtime-and-visual-studio-graphics-diagnostic-features) to be installed.
+
 ## Credits
 
 A deep bow before those who believed in VL.Stride from the beginning and substantially supported its development:
