@@ -75,7 +75,12 @@ namespace VL.Stride.Rendering.Compositing
                 .AddInput(nameof(EntityRendererStageSelector.AfterScene), x => x.AfterScene, (x, v) => x.AfterScene = v);
 
             // Renderers
-            yield return new StrideNodeDesc<ClearRenderer>(nodeFactory, category: compositionCategory) { CopyOnWrite = false };
+            yield return nodeFactory.NewNode<ClearRenderer>(category: compositionCategory, copyOnWrite: false, fragmented: true)
+                .AddInput(nameof(ClearRenderer.ClearFlags), x => x.ClearFlags, (x, v) => x.ClearFlags = v)
+                .AddInput(nameof(ClearRenderer.Color), x => x.Color, (x, v) => x.Color = v, Color4.Black)
+                .AddInput(nameof(ClearRenderer.Depth), x => x.Depth, (x, v) => x.Depth = v, 1f)
+                .AddInput(nameof(ClearRenderer.Stencil), x => x.Stencil, (x, v) => x.Stencil = v)
+                .AddInput(nameof(ClearRenderer.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true);
 
             yield return nodeFactory.NewNode<DebugRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddListInput(nameof(DebugRenderer.DebugRenderStages), x => x.DebugRenderStages);
