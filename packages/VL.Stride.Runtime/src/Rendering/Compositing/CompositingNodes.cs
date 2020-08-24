@@ -88,9 +88,6 @@ namespace VL.Stride.Rendering.Compositing
             yield return nodeFactory.NewNode<SingleStageRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddInput(nameof(SingleStageRenderer.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
 
-            yield return nodeFactory.NewNode<TooltipRenderer>(category: compositionCategory, copyOnWrite: false)
-                .AddInput(nameof(SingleStageRenderer.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
-
             yield return nodeFactory.NewNode<ForceAspectRatioSceneRenderer>(category: compositionCategory, copyOnWrite: false)
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.FixedAspectRatio), x => x.FixedAspectRatio, (x, v) => x.FixedAspectRatio = v)
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.ForceAspectRatio), x => x.ForceAspectRatio, (x, v) => x.ForceAspectRatio = v)
