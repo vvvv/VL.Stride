@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2020.2.0.243" Version="0.128">
+<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2020.2.0.252" Version="0.128">
   <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2020.2.0-0241-g1bd7669e3e" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride" CanvasType="FullCategory">
@@ -11207,8 +11207,9 @@
 
 -->
         <Node Name="PointLight" Bounds="389,277" Id="PDmjownASUwNSVYz29pdBz">
-          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="Builtin">
-            <Choice Kind="ContainerDefinition" Name="Process" />
+          <p:NodeReference>
+            <Choice Kind="ClassDefinition" Name="Class" />
+            <FullNameCategoryReference ID="Primitive" />
           </p:NodeReference>
           <Patch Id="GWnr9tNrX7ENUAao7NRQLo">
             <Canvas Id="KUqIakoEE1JONK47qexcjw" CanvasType="Group">
@@ -11280,6 +11281,44 @@
               <ControlPoint Id="TGpriJmgZfpNoTlNJvylIU" Bounds="575,265" />
               <ControlPoint Id="SfdJz7vL7UPOeWvIlhRdwA" Bounds="815,593" />
               <Pad Id="HR2QgVhoZC5P6rYzKWZrAi" SlotId="I944ZzFE9iPMOX14gEGBsw" Bounds="815,649" />
+              <Node Bounds="810,335,54,19" Id="OVwzkOFjCBINaPtzBsn1nJ">
+                <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="OnOpen" />
+                </p:NodeReference>
+                <Pin Id="SQ86CAIRTjFP3xBL8LsvX3" Name="Simulate" Kind="InputPin" />
+                <Pin Id="PQiDHSPTZrjOMqDGFWJzIi" Name="Output" Kind="OutputPin" />
+              </Node>
+              <Node Bounds="810,379,149,102" Id="HMDY3CzkpZENpRnFkVxeWm">
+                <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="VL.CoreLib.dll">
+                  <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                  <Choice Kind="ApplicationStatefulRegion" Name="If" />
+                  <CategoryReference Kind="Category" Name="Primitive" />
+                </p:NodeReference>
+                <Pin Id="SzBRsw74KXcOJpxgxiZ1y5" Name="Condition" Kind="InputPin" />
+                <Patch Id="Jn0wCwfHseUObqejbGwkOW" ManuallySortedPins="true">
+                  <Patch Id="JHBKQRZJLcmNamHK2eh8FL" Name="Create" ManuallySortedPins="true" />
+                  <Patch Id="C1Y9ZS6WGf7OMlk7TIJUQ1" Name="Then" ManuallySortedPins="true" />
+                  <Node Bounds="822,435" Id="O6HI54AOCm4NSz50GGiNnr">
+                    <p:NodeReference LastCategoryFullName="Stride.Lights.PointLight" LastSymbolSource="VL.Stride.Engine.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <CategoryReference Kind="ClassType" Name="PointLight" />
+                      <Choice Kind="OperationCallFlag" Name="SetPosition" />
+                    </p:NodeReference>
+                    <Pin Id="T3X1rIK9Fh5NP4omUHdyMG" Name="Input" Kind="InputPin" />
+                    <Pin Id="CXLEEdBHQcBLTnwhOO1uvX" Name="Position" Kind="InputPin" />
+                    <Pin Id="JQo21CduWGZOLkC7sWb29B" Name="Output" Kind="OutputPin" />
+                  </Node>
+                  <Node Bounds="822,402,16,19" Id="IFG0MPI4Q2PLaL4MNHTV4D">
+                    <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="ProcessAppFlag" Name="This" />
+                      <CategoryReference Kind="Category" Name="Primitive" />
+                    </p:NodeReference>
+                    <Pin Id="QTv3hcjoT9MLsWPCykGcUl" Name="Instance" Kind="OutputPin" />
+                  </Node>
+                </Patch>
+              </Node>
             </Canvas>
             <Patch Id="MOtdEXeBWByMaAc7kdl32p" Name="Create" ParticipatingElements="U6IheePQ8wOPe9ELFqnweR,BjiAmJTOMczQTb1XtdbTRp" />
             <Patch Id="SEZUzvi2mu8OT6xY5kRPTi" Name="Update" ManuallySortedPins="true">
@@ -11353,6 +11392,8 @@
             <Link Id="Fgwlc29XqcCPsdergIkTlG" Ids="TTafi7rNSAXPH7vocebstI,SfdJz7vL7UPOeWvIlhRdwA" IsHidden="true" />
             <Link Id="EcNb9EI8jP5PLWGgWaXQtF" Ids="SfdJz7vL7UPOeWvIlhRdwA,HR2QgVhoZC5P6rYzKWZrAi" />
             <Link Id="UhXeaG8jcKELQHJ45ynqRi" Ids="HR2QgVhoZC5P6rYzKWZrAi,DGOX9NlktRnNhLfantjFOK" />
+            <Link Id="FGU8igikcJvMbb0FUn5FSI" Ids="PQiDHSPTZrjOMqDGFWJzIi,SzBRsw74KXcOJpxgxiZ1y5" />
+            <Link Id="QXLqtZpJDwsOTOWqcoZIXj" Ids="QTv3hcjoT9MLsWPCykGcUl,T3X1rIK9Fh5NP4omUHdyMG" />
           </Patch>
         </Node>
         <!--
@@ -13467,25 +13508,6 @@
           <Patch Id="ORQGpo43sS1N91q6FW4OTU">
             <Canvas Id="PuRccKGX1UxMmr87cLe90p" BordersChecked="false" CanvasType="Group" />
             <ProcessDefinition Id="PYmM0uQmQ5uPj9UddEWihy" IsHidden="true" />
-          </Patch>
-        </Node>
-        <!--
-
-    ************************ DefaultEngineSetup ************************
-
--->
-        <Node Name="DefaultEngineSetup" Bounds="337,421" Id="GUsyHad1RBYMGirvkrWHcz">
-          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
-            <Choice Kind="ContainerDefinition" Name="Process" />
-          </p:NodeReference>
-          <Patch Id="OuobMOHrgD5Lr6NZSyO6Ig">
-            <Canvas Id="GcqmIiuvoWqLv2sioAnm34" CanvasType="Group" />
-            <Patch Id="Ea3uQw7jV7NMslg0F22PB3" Name="Create" />
-            <Patch Id="TvBQ32J970ULPO762KvwKC" Name="Update" ManuallySortedPins="true" />
-            <ProcessDefinition Id="QbMW6ec1uoHQK9W9bBsq0S">
-              <Fragment Id="H3rthDVoaBvPjsZMUQC3Sy" Patch="Ea3uQw7jV7NMslg0F22PB3" Enabled="true" />
-              <Fragment Id="G5MBR1UiDpDNsn4H6OnfLE" Patch="TvBQ32J970ULPO762KvwKC" Enabled="true" />
-            </ProcessDefinition>
           </Patch>
         </Node>
         <!--
