@@ -51,8 +51,8 @@ namespace VL.Stride.EffectLib
                 ReportException(e);
             }
             parameters = instance.Parameters;
-            Inputs = description.CreateNodeInputs(this, parameters);
-            Outputs = description.CreateNodeOutputs(this, parameters);
+            Inputs = description.CreateNodeInputs(this, graphicsDevice, parameters: parameters);
+            Outputs = description.CreateNodeOutputs(this, graphicsDevice, parameters: parameters);
 
             profilingKey = new ProfilingKey(description.EffectName);
         }

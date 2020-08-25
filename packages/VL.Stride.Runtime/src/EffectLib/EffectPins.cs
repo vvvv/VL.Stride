@@ -4,6 +4,7 @@ using System.Reflection;
 using VL.Core;
 using Stride.Rendering;
 using Stride.Core.Mathematics;
+using Stride.Graphics;
 
 namespace VL.Stride.EffectLib
 {
@@ -15,7 +16,7 @@ namespace VL.Stride.EffectLib
 
         object IVLPinDescription.DefaultValue => DefaultValueBoxed;
 
-        public abstract IVLPin CreatePin(ParameterCollection parameters);
+        public abstract IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters);
     }
 
     public class PinDescription<T> : EffectPinDescription
@@ -31,7 +32,7 @@ namespace VL.Stride.EffectLib
         public override object DefaultValueBoxed => DefaultValue;
         public T DefaultValue { get; }
 
-        public override IVLPin CreatePin(ParameterCollection parameters) => new Pin<T>(Name, DefaultValue);
+        public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => new Pin<T>(Name, DefaultValue);
     }
 
     public class ParameterPinDescription : EffectPinDescription
@@ -69,13 +70,16 @@ namespace VL.Stride.EffectLib
         public override string Name { get; }
         public override Type Type { get; }
         public override object DefaultValueBoxed { get; }
-        public override IVLPin CreatePin(ParameterCollection parameters) => EffectPins.CreatePin(parameters, Key, Count, IsPermutationKey);
+        public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => EffectPins.CreatePin(graphicsDevice, parameters, Key, Count, IsPermutationKey);
     }
 
     static class EffectPins
     {
-        public static IVLPin CreatePin(ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey)
+        public static IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey)
         {
+            if (key is ValueParameterKey<Color4> colorKey)
+                return new ColorParameterPin(parameters, colorKey, graphicsDevice.ColorSpace);
+
             var argument = key.GetType().GetGenericArguments()[0];
             if (isPermutationKey)
             {
@@ -187,6 +191,31 @@ namespace VL.Stride.EffectLib
         {
             get => Value;
             set => Value = (T)value;
+        }
+    }
+
+    class ColorParameterPin : ParameterPin, IVLPin
+    {
+        public readonly ValueParameterKey<Color4> Key;
+        public readonly ColorSpace ColorSpace;
+
+        public ColorParameterPin(ParameterCollection parameters, ValueParameterKey<Color4> key, ColorSpace colorSpace)
+            : base(parameters, key)
+        {
+            this.Key = key;
+            this.ColorSpace = colorSpace;
+        }
+
+        public Color4 Value
+        {
+            get => Parameters.Get(Key);
+            set => Parameters.Set(Key, value.ToColorSpace(ColorSpace));
+        }
+
+        object IVLPin.Value
+        {
+            get => Value;
+            set => Value = (Color4)value;
         }
     }
 

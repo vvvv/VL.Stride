@@ -44,6 +44,9 @@ namespace VL.Stride.Lib
 #if DEBUG
                                 game.GraphicsDeviceManager.DeviceCreationFlags |= DeviceCreationFlags.Debug;
 #endif
+                                // for now we don't let the user decide upon the colorspace
+                                // as we'd need to either recreate all textures and swapchains in that moment or make sure that these weren't created yet.
+                                game.GraphicsDeviceManager.PreferredColorSpace = ColorSpace.Linear;
 
                                 var assetBuildService = new AssetBuilderServiceScript();
                                 game.Services.AddService(assetBuildService);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="OKkRkA3ViSjQag6JhhryA1" LanguageVersion="2020.2.0.245" Version="0.128">
-  <NugetDependency Id="Pjvx7U3lByeP4Ex1a3ogDH" Location="VL.CoreLib" Version="2020.2.0-0241-g1bd7669e3e" />
+<Document xmlns:p="property" Id="OKkRkA3ViSjQag6JhhryA1" LanguageVersion="2020.2.0.217" Version="0.128">
+  <NugetDependency Id="Pjvx7U3lByeP4Ex1a3ogDH" Location="VL.CoreLib" Version="2020.2.0-0217-g78b13ed816" />
   <Patch Id="RQ2SqooQlVYNkdgiwokBCj">
     <Canvas Id="GRXPKQ1bEkEMuITycgAX4J" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="AKUFSwsgVmBOaGdPtN3ts9" Name="Internal" Position="329,231">
@@ -1361,6 +1361,12 @@
                   <Choice Kind="TypeFlag" Name="Boolean" />
                 </p:TypeAnnotation>
               </Pin>
+              <Pin Id="ONEjTjug04mOqo8owtq8LL" Name="Back Buffer Format" Kind="InputPin" DefaultValue="R8G8B8A8_UNorm_SRgb" Visibility="Optional">
+                <p:TypeAnnotation LastCategoryFullName="Stride.API.Graphics" LastSymbolSource="VL.Stride.Graphics.vl">
+                  <Choice Kind="TypeFlag" Name="PixelFormat" />
+                </p:TypeAnnotation>
+              </Pin>
+              <Pin Id="L9c7ct9wnSgPfVEU3SAoNm" Name="Depth Buffer Format" Kind="InputPin" Visibility="Optional" />
             </Patch>
             <Patch Id="Bar6DS9YVFzLYHn53J7OL1" Name="Update" ParticipatingElements="Bk0SxCLtlajQbOKtxiM4Bj,TmK9UP36I1KNiYkxR2Agc6" ManuallySortedPins="true">
               <Pin Id="G2zYsnakedoQXsLGTBQaRZ" Name="Input" Kind="InputPin" Bounds="667,-18" />
@@ -1446,14 +1452,8 @@
             <Link Id="JuJ4RvyfLKiQJEtVHQpzW4" Ids="RGEny7NikeVNpBNkeHODAK,Vqo5C9ttYI3P8QoJbf6lWA" IsHidden="true" />
             <Link Id="TfmNSrMr1q9P6MV1cI1KED" Ids="Vqo5C9ttYI3P8QoJbf6lWA,ALNrJ9gplUAQRvda3E3vbG" />
             <Link Id="QWIodNyP9dKPmIPxnYg0KQ" Ids="GQ41vi5PbDJOJyGcQJj3I7,Q6rHfXbmWhUMoPQYvxf9X3" />
-            <Patch Id="FLWjEou851IOoBDfjkpW9t" Name="SetDepthBufferFormat">
-              <Pin Id="KYsKVB60g8jN6DTnvPBmde" MergeId="617310" Name="Depth Buffer Format" Kind="InputPin" />
-            </Patch>
-            <Patch Id="PphxDFpz7XvP68sOecUTMs" Name="SetBackbufferFormat">
-              <Pin Id="IrPRDPIV06zMmGosyiKPm9" MergeId="622237" Name="Back Buffer Format" Kind="InputPin" DefaultValue="R16G16B16A16_Float" />
-            </Patch>
-            <Link Id="AK9iust3urINiFUvFHEmXi" Ids="KYsKVB60g8jN6DTnvPBmde,C0WBo3utEdfLCxDECSyup3" IsHidden="true" />
-            <Link Id="JuekGo0QyJONfAxMhHrxAn" Ids="IrPRDPIV06zMmGosyiKPm9,DCczU959Mz7O8JX6juE9Rc" IsHidden="true" />
+            <Link Id="AK9iust3urINiFUvFHEmXi" Ids="L9c7ct9wnSgPfVEU3SAoNm,C0WBo3utEdfLCxDECSyup3" IsHidden="true" />
+            <Link Id="JuekGo0QyJONfAxMhHrxAn" Ids="ONEjTjug04mOqo8owtq8LL,DCczU959Mz7O8JX6juE9Rc" IsHidden="true" />
             <Link Id="KmHIcODy5e4LrYftLggYNF" Ids="DCczU959Mz7O8JX6juE9Rc,HitXEB46RtULm3hOJIgw1f" />
             <Link Id="Qwm5hHJEY4PNXlcoTgk2XM" Ids="C0WBo3utEdfLCxDECSyup3,Qm4WjdeIO3ALDUOgh7gh6g" />
             <Patch Id="RpcGev77BT5MS22hd3oMhF" Name="BackBuffer">
@@ -1508,6 +1508,14 @@
             <Link Id="TmK9UP36I1KNiYkxR2Agc6" Ids="DC737Bf9vaeORDDcnLFoab,LgDOXqgTjYLQSL1w8LEx57" />
             <Link Id="Ord6SuxAX6WLlyYfKLHRbY" Ids="E9MZmrBrDgjOd8L0M2fY0z,JLTtJI4HrOxOO6AuJ7tjCP" />
             <Link Id="MwW7dz2Df6dLR7g8VYyfjW" Ids="SAu22CAIPU2MwrrgUCc4Iy,Vnger0vrm1JLJnQppiDXz3" />
+            <ProcessDefinition Id="QpjukEVrEoXMCdZPc6o0iN">
+              <Fragment Id="B8nPYjCFzipNR4fjnBFIbu" Patch="PyCdCDp4kyxQMNVZLYcMLv" Enabled="true" />
+              <Fragment Id="RY3jh7z0TtpOm6JRI4Qk0U" Patch="Bar6DS9YVFzLYHn53J7OL1" Enabled="true" />
+              <Fragment Id="HXi4lKRpVE5O7qoGaEKlYd" Patch="PcpDaTyXJpqNPbzPok3m5I" Enabled="true" />
+              <Fragment Id="GM3fGC9BdVwNK8O5vt14fq" Patch="RpcGev77BT5MS22hd3oMhF" Enabled="true" />
+              <Fragment Id="BH04CZlY2OZLoNpMeMW9wj" Patch="ET3htmDkQIEPfWEXfR3xXW" Enabled="true" />
+              <Fragment Id="RjQjtxxYaIFPd3LIcMWBqa" Patch="VynfSLhuuuwO3jPI5jff7s" Enabled="true" />
+            </ProcessDefinition>
             <Patch Id="VynfSLhuuuwO3jPI5jff7s" Name="SetPresentInterval">
               <Pin Id="JBTjKvukhoyOF2Uha4Jku5" MergeId="643435" Name="Present Interval" Kind="InputPin" DefaultValue="Immediate" />
             </Patch>
@@ -1516,16 +1524,6 @@
             <Link Id="MizFNtpWUQbQYMm6Toy3HY" Ids="M710EQcepsxOEQeZXl4S3m,EDvIiZWsVO2PXlCeObYVwx" />
             <Link Id="I3UacmjaEroPnMS3HbZ8y0" Ids="LWG8JT3OYQrLCgbiXKyDWp,B0TSe0LwOYKOJ19xmXlnQU" />
             <Link Id="BomCpEdnU8bP1brXkXkBSg" Ids="OH9Xx7D4j9kLhCAfGtumi4,ACVptNzZW7eP7rUGAgnycw" />
-            <ProcessDefinition Id="QpjukEVrEoXMCdZPc6o0iN">
-              <Fragment Id="B8nPYjCFzipNR4fjnBFIbu" Patch="PyCdCDp4kyxQMNVZLYcMLv" Enabled="true" />
-              <Fragment Id="RY3jh7z0TtpOm6JRI4Qk0U" Patch="Bar6DS9YVFzLYHn53J7OL1" Enabled="true" />
-              <Fragment Id="Pfft9aZ7WkENKKkfwlrnb3" Patch="PphxDFpz7XvP68sOecUTMs" Enabled="true" />
-              <Fragment Id="A6FV3rxxuyLMAZAkCGs94J" Patch="FLWjEou851IOoBDfjkpW9t" Enabled="true" />
-              <Fragment Id="RjQjtxxYaIFPd3LIcMWBqa" Patch="VynfSLhuuuwO3jPI5jff7s" Enabled="true" />
-              <Fragment Id="HXi4lKRpVE5O7qoGaEKlYd" Patch="PcpDaTyXJpqNPbzPok3m5I" Enabled="true" />
-              <Fragment Id="GM3fGC9BdVwNK8O5vt14fq" Patch="RpcGev77BT5MS22hd3oMhF" Enabled="true" />
-              <Fragment Id="BH04CZlY2OZLoNpMeMW9wj" Patch="ET3htmDkQIEPfWEXfR3xXW" Enabled="true" />
-            </ProcessDefinition>
             <Link Id="Nojrx8cI98EN0DRB7TGFF9" Ids="T8Vuz3kcIo8PcWspR8lVKQ,ItvMdDZfXWiM2PLhYnNwvd" />
             <Link Id="By6196Ga7urOXimUNPXl2J" Ids="ItvMdDZfXWiM2PLhYnNwvd,Vv8I2UxUT3zNgGG6y234Wj" />
             <Link Id="SvPn1HAMhiBLHk3uKv0Sjw" Ids="DWCbVfepmd3MuTpu72SiaK,B6Uyu9ewSDDMbgqLPEXtFm" />
@@ -1543,7 +1541,7 @@
         </p:NodeReference>
         <Patch Id="LEHkDSFnVmrMkwRDgr9jGv">
           <Canvas Id="AL60MQS52MuN5t6DykLVuH" CanvasType="Group">
-            <ControlPoint Id="AyJuqNnKkLKOAqYUmbVBiK" Bounds="814,509" />
+            <ControlPoint Id="AyJuqNnKkLKOAqYUmbVBiK" Bounds="954,506" />
             <ControlPoint Id="DA8gEHrN8QXO4Nsaz1u1rj" Bounds="332,631,312,0" />
             <Node Bounds="329,569,577,19" Id="OqKswrkjctsLMNlXHq1bzj">
               <p:NodeReference LastCategoryFullName="Stride.Windowing" LastSymbolSource="VL.Stride.vl">
@@ -1558,20 +1556,20 @@
               <Pin Id="VEirvNLgGcfQJt5EJtXHIy" Name="Bound to Document" Kind="InputPin" />
               <Pin Id="JvifEDKtIkUN4L6XkjFREf" Name="Dialog If Document Changed" Kind="InputPin" />
               <Pin Id="RCrQy2tUt8WNEwq9h4M6vp" Name="Save Bounds" Kind="InputPin" />
+              <Pin Id="F3wAvElVooLMHJ6ndmzuan" Name="Back Buffer Format" Kind="InputPin" />
+              <Pin Id="PEnjV90iBMLN7k2EWcCNgB" Name="Depth Buffer Format" Kind="InputPin" />
               <Pin Id="PIjPSsPDtJNOA8iZzo2cNC" Name="Input" Kind="InputPin" />
               <Pin Id="J9YDaPucjGqOB1bXfKSj1M" Name="Title" Kind="InputPin" />
               <Pin Id="Ku7eyjFFBADL4rmq6xgGfw" Name="Enable Keyboard Shortcuts" Kind="InputPin" />
               <Pin Id="Rinamj9FJmjM3kbFphAbEA" Name="Render View" Kind="InputPin" />
               <Pin Id="Tk6fNiV7nfrPhyPI31WjUH" Name="Enabled" Kind="InputPin" />
-              <Pin Id="F3wAvElVooLMHJ6ndmzuan" Name="Back Buffer Format" Kind="InputPin" />
-              <Pin Id="PEnjV90iBMLN7k2EWcCNgB" Name="Depth Buffer Format" Kind="InputPin" />
-              <Pin Id="Fina4lWGn6NLBzhNH5Zv4y" Name="Present Interval" Kind="InputPin" />
               <Pin Id="TUc1W6CptpRLQEvYVSQMLT" Name="Output" Kind="OutputPin" />
               <Pin Id="IOYgtpvxCG8PG1XF02zQyA" Name="Input Source" Kind="OutputPin" />
               <Pin Id="PKXnJBBJJwXN0DZLY70xCG" Name="Back Buffer" Kind="OutputPin" />
               <Pin Id="LurPxT8TB4rOYWkD18wd2N" Name="Depth Buffer" Kind="OutputPin" />
+              <Pin Id="Fina4lWGn6NLBzhNH5Zv4y" Name="Present Interval" Kind="InputPin" />
             </Node>
-            <ControlPoint Id="KY41gk72Kx6MzfbaGXUL3O" Bounds="594,508" />
+            <ControlPoint Id="KY41gk72Kx6MzfbaGXUL3O" Bounds="734,505" />
             <ControlPoint Id="VKasdo0XxXkPU9xdAIRcd6" Bounds="294,470" />
             <ControlPoint Id="JW5TQgtI8iQOJi7YZxEpww" Bounds="522,631" />
             <ControlPoint Id="LhE7lVPs4LGLZhZBiYZi2Z" Bounds="322,488" />
@@ -1579,8 +1577,8 @@
             <ControlPoint Id="Cu1MzLKaoONLJ7JTjDa68U" Bounds="420,525" />
             <ControlPoint Id="K4H1i8eBb3rOWGxyGQZKnL" Bounds="712,631" />
             <ControlPoint Id="ABGqU2CgI00Ng124MPn2Jh" Bounds="903,624" />
-            <ControlPoint Id="VwXcWH2A5aWPsTZUA3yeCw" Bounds="657,511" />
-            <Pad Id="Hiq7HFSNqBDLC8F1as5mj4" Bounds="679,543,119,25" ShowValueBox="true" isIOBox="true" Value="Clear and RenderView setup are done via Compositor">
+            <ControlPoint Id="VwXcWH2A5aWPsTZUA3yeCw" Bounds="797,508" />
+            <Pad Id="Hiq7HFSNqBDLC8F1as5mj4" Bounds="767,540,119,25" ShowValueBox="true" isIOBox="true" Value="Clear and RenderView setup are done via Compositor">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="String" />
               </p:TypeAnnotation>
@@ -1589,10 +1587,10 @@
                 <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
               </p:ValueBoxSettings>
             </Pad>
-            <ControlPoint Id="VjO9twFtXd2NkpY2hGHGPd" Bounds="502,240" />
-            <ControlPoint Id="B1r8Fzw3TkUL9hLQTpEAsa" Bounds="534,277" />
-            <ControlPoint Id="KAPysxTdEZHLKE7IJiwTAE" Bounds="657,336" />
-            <Node Bounds="501,392,128,19" Id="FgRlis0TzieOK5pfT2n97b">
+            <ControlPoint Id="VjO9twFtXd2NkpY2hGHGPd" Bounds="674,218" />
+            <ControlPoint Id="B1r8Fzw3TkUL9hLQTpEAsa" Bounds="706,255" />
+            <ControlPoint Id="KAPysxTdEZHLKE7IJiwTAE" Bounds="767,311" />
+            <Node Bounds="673,370,128,19" Id="FgRlis0TzieOK5pfT2n97b">
               <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Engine.vl">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="ProcessAppFlag" Name="DefaultCompositorSetup" />
@@ -1606,13 +1604,13 @@
               <Pin Id="NMglmoxnDejPlSaUpH9t5l" Name="VR Settings" Kind="InputPin" />
               <Pin Id="MXcc6DpfQmeO5HRUeM8tKr" Name="Output" Kind="OutputPin" />
             </Node>
-            <ControlPoint Id="HibhMqyF9M2LXXLSoT86BH" Bounds="698,363" />
-            <ControlPoint Id="GXP6hPU9IvTPDTuVqTeiA2" Bounds="565,310" />
-            <ControlPoint Id="NLYwME8X7LrNX44znCsggb" Bounds="577,341" />
-            <ControlPoint Id="BOedWM5oaEfMXKi64JqzW1" Bounds="596,359" />
-            <ControlPoint Id="KOZeCIUsmFgLNjZMUnACY7" Bounds="908,506" />
-            <ControlPoint Id="FuOGbQjAn4xN4fh0Dh2dsx" Bounds="868,476" />
-            <ControlPoint Id="LTZpkKZZF2fQX9ZKalTWoZ" Bounds="948,526" />
+            <ControlPoint Id="HibhMqyF9M2LXXLSoT86BH" Bounds="798,339" />
+            <ControlPoint Id="GXP6hPU9IvTPDTuVqTeiA2" Bounds="737,288" />
+            <ControlPoint Id="NLYwME8X7LrNX44znCsggb" Bounds="564,327" />
+            <ControlPoint Id="BOedWM5oaEfMXKi64JqzW1" Bounds="596,300" />
+            <ControlPoint Id="KOZeCIUsmFgLNjZMUnACY7" Bounds="537,500" />
+            <ControlPoint Id="FuOGbQjAn4xN4fh0Dh2dsx" Bounds="518,472" />
+            <ControlPoint Id="LTZpkKZZF2fQX9ZKalTWoZ" Bounds="982,540" />
           </Canvas>
           <Link Id="KWO3X51ZB8TPofYKAEj6Oq" Ids="FbSsqKjXNeVNDOqmYsWH0C,AyJuqNnKkLKOAqYUmbVBiK" IsHidden="true" />
           <Link Id="NTcN5LYS3RCLaIPdtaw6ee" Ids="DA8gEHrN8QXO4Nsaz1u1rj,IFAbr4YzmKWPbeOjGhCs77" IsHidden="true" />
@@ -1630,36 +1628,6 @@
           <Link Id="F4Yip82zp6LORVktaaxDNp" Ids="JW5TQgtI8iQOJi7YZxEpww,HgObbkOE3pEPDG9qSBvIDN" IsHidden="true" />
           <Link Id="PXpcJ3FtXjwLEpIxh20YiQ" Ids="LhE7lVPs4LGLZhZBiYZi2Z,VEirvNLgGcfQJt5EJtXHIy" />
           <Link Id="PGmPKJP78u3P0MshcIaJiS" Ids="BfSYxH1Q2VoO578IAqkdP5,LhE7lVPs4LGLZhZBiYZi2Z" IsHidden="true" />
-          <Patch Id="JUZ2eLircQRP5fkoONFll4" Name="Create" ManuallySortedPins="true">
-            <Pin Id="NdInUgYsu1VLDw8UPPbVIJ" Name="Bounds" Kind="InputPin" />
-            <Pin Id="BfSYxH1Q2VoO578IAqkdP5" Name="Bound to Document" Kind="InputPin" Bounds="424,767" Visibility="Optional" />
-            <Pin Id="KTNkaN6UI26MWuXphyJV1P" Name="Dialog If Document Changed" Kind="InputPin" Bounds="446,764" Visibility="Optional" />
-            <Pin Id="VDtR2d7NlEWN7MMfYdpDTn" Name="Save Bounds" Kind="InputPin" Visibility="Optional" />
-          </Patch>
-          <Patch Id="I8JaPAsZ6wPPpgSKlGy4BL" Name="Update" ManuallySortedPins="true">
-            <Pin Id="A1c4RdCPd8AMGiofM92N7a" Name="Input" Kind="InputPin" Bounds="251,226" />
-            <Pin Id="LCrMdVqaPrtLJ9F4FeNr3D" Name="Enable Keyboard Shortcuts" Kind="InputPin" Bounds="642,1" />
-            <Pin Id="UFyvnqbVfbyNgRBaCSL9ai" Name="Enable Default Camera Interaction" Kind="InputPin" Bounds="647,235" />
-            <Pin Id="MJjcvl2i9kwNw9LIGtYFOW" Name="Camera" Kind="InputPin" Bounds="826,560" />
-            <Pin Id="Dl4IQN4bFuDPZrTUWkTUWq" Name="Clear" Kind="InputPin" Bounds="577,341" />
-            <Pin Id="BeKoWr5O26gLf9aYddXjXJ" Name="Clear Color" Kind="InputPin" Bounds="596,359" />
-            <Pin Id="DFvWuPCbfL8O3n1CaYEeZl" Name="Post Effects" Kind="InputPin" Bounds="864,478" />
-            <Pin Id="PKKoRj6VSlrLCHoEs1LqOc" Name="Title" Kind="InputPin" DefaultValue="Stride">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="String" />
-              </p:TypeAnnotation>
-            </Pin>
-            <Pin Id="FbSsqKjXNeVNDOqmYsWH0C" Name="Enabled" Kind="InputPin" DefaultValue="True">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Boolean" />
-              </p:TypeAnnotation>
-            </Pin>
-            <Pin Id="OyVLEL0GpGENgYliiN7ggC" Name="VR Settings" Kind="InputPin" Bounds="510,271" Visibility="Optional" />
-            <Pin Id="IFAbr4YzmKWPbeOjGhCs77" Name="Output" Kind="OutputPin" Bounds="404,481" />
-            <Pin Id="HgObbkOE3pEPDG9qSBvIDN" Name="Input Source" Kind="OutputPin" Bounds="613,879" />
-            <Pin Id="AOA12zsJdoHL8Mc2o8wndK" Name="Back Buffer" Kind="OutputPin" Bounds="513,918" />
-            <Pin Id="MppmkGEzQhkNYndYLbxZMl" Name="Depth Buffer" Kind="OutputPin" Bounds="702,915" />
-          </Patch>
           <Link Id="NkqjKwWrzrCPjZjESW1Q7e" Ids="H1w48uSodsTOkPsZ4BZ71t,JvifEDKtIkUN4L6XkjFREf" />
           <Link Id="TZdneE6PRN8PLw37wokBd0" Ids="KTNkaN6UI26MWuXphyJV1P,H1w48uSodsTOkPsZ4BZ71t" IsHidden="true" />
           <Link Id="TWFgEqemCwrPqaVoZrnBll" Ids="Cu1MzLKaoONLJ7JTjDa68U,RCrQy2tUt8WNEwq9h4M6vp" />
@@ -1688,21 +1656,49 @@
           <Link Id="R25c6XbH0JvMY2NjniCro9" Ids="Dl4IQN4bFuDPZrTUWkTUWq,NLYwME8X7LrNX44znCsggb" IsHidden="true" />
           <Link Id="V07jEixwV2VQDJVa1nx2UC" Ids="BOedWM5oaEfMXKi64JqzW1,PmjRvxxlnwBMtVBnh1vVNN" />
           <Link Id="To5IwZdb7GVNCZosMx5DrQ" Ids="BeKoWr5O26gLf9aYddXjXJ,BOedWM5oaEfMXKi64JqzW1" IsHidden="true" />
-          <Patch Id="UJhezOU59gaPzEsviYDipb" Name="SetDepthBufferFormat">
-            <Pin Id="DKBunbd42QlPRdpOUDAj7v" MergeId="179376" Name="Depth Buffer Format" Kind="InputPin" Visibility="Optional" />
-          </Patch>
-          <Patch Id="SQohiReTf4QOoSR71f45dG" Name="SetBackbufferFormat">
-            <Pin Id="TBBl3rthsMHNFoy8xWOzeX" MergeId="179378" Name="Back Buffer Format" Kind="InputPin" DefaultValue="R16G16B16A16_Float" Visibility="Optional" />
-          </Patch>
-          <Patch Id="GHpIckWdeDWMe1yjsyTDT7" Name="SetPresentInterval">
-            <Pin Id="R0q31hypLTNL3UeycykZJo" MergeId="658386" Name="Present Interval" Kind="InputPin" DefaultValue="Immediate" Visibility="Optional" />
-          </Patch>
-          <Link Id="TSOyFfQuS6KL7rnCZsmAqE" Ids="DKBunbd42QlPRdpOUDAj7v,KOZeCIUsmFgLNjZMUnACY7" IsHidden="true" />
-          <Link Id="LsEmbMyRFFpNoVuzIHVi2b" Ids="TBBl3rthsMHNFoy8xWOzeX,FuOGbQjAn4xN4fh0Dh2dsx" IsHidden="true" />
+          <Link Id="TSOyFfQuS6KL7rnCZsmAqE" Ids="SFCawWwavhlLSJVoAeAr7o,KOZeCIUsmFgLNjZMUnACY7" IsHidden="true" />
+          <Link Id="LsEmbMyRFFpNoVuzIHVi2b" Ids="S6xtpPRlkQIMV7wVTEPgcH,FuOGbQjAn4xN4fh0Dh2dsx" IsHidden="true" />
           <Link Id="EZPbLgS7JKtMjug6fE0LAZ" Ids="R0q31hypLTNL3UeycykZJo,LTZpkKZZF2fQX9ZKalTWoZ" IsHidden="true" />
           <Link Id="GAuEM7hVsCbMNotJkd20ra" Ids="FuOGbQjAn4xN4fh0Dh2dsx,F3wAvElVooLMHJ6ndmzuan" />
           <Link Id="SzPmDUrkj1aNV4Gk31nOAe" Ids="KOZeCIUsmFgLNjZMUnACY7,PEnjV90iBMLN7k2EWcCNgB" />
           <Link Id="FtGMpy1HJpeLyXxz9L2h6c" Ids="LTZpkKZZF2fQX9ZKalTWoZ,Fina4lWGn6NLBzhNH5Zv4y" />
+          <Patch Id="JUZ2eLircQRP5fkoONFll4" Name="Create" ManuallySortedPins="true">
+            <Pin Id="NdInUgYsu1VLDw8UPPbVIJ" Name="Bounds" Kind="InputPin" />
+            <Pin Id="BfSYxH1Q2VoO578IAqkdP5" Name="Bound to Document" Kind="InputPin" Bounds="424,767" Visibility="Optional" />
+            <Pin Id="KTNkaN6UI26MWuXphyJV1P" Name="Dialog If Document Changed" Kind="InputPin" Bounds="446,764" Visibility="Optional" />
+            <Pin Id="VDtR2d7NlEWN7MMfYdpDTn" Name="Save Bounds" Kind="InputPin" Visibility="Optional" />
+            <Pin Id="S6xtpPRlkQIMV7wVTEPgcH" Name="Back Buffer Format" Kind="InputPin" Visibility="Optional" />
+            <Pin Id="SFCawWwavhlLSJVoAeAr7o" Name="Depth Buffer Format" Kind="InputPin" Visibility="Optional" />
+          </Patch>
+          <Patch Id="I8JaPAsZ6wPPpgSKlGy4BL" Name="Update" ManuallySortedPins="true">
+            <Pin Id="A1c4RdCPd8AMGiofM92N7a" Name="Input" Kind="InputPin" Bounds="251,226" />
+            <Pin Id="LCrMdVqaPrtLJ9F4FeNr3D" Name="Enable Keyboard Shortcuts" Kind="InputPin" Bounds="642,1" />
+            <Pin Id="UFyvnqbVfbyNgRBaCSL9ai" Name="Enable Default Camera Interaction" Kind="InputPin" Bounds="647,235" />
+            <Pin Id="MJjcvl2i9kwNw9LIGtYFOW" Name="Camera" Kind="InputPin" Bounds="826,560" />
+            <Pin Id="DFvWuPCbfL8O3n1CaYEeZl" Name="Post Effects" Kind="InputPin" Bounds="864,478" />
+            <Pin Id="PKKoRj6VSlrLCHoEs1LqOc" Name="Title" Kind="InputPin" DefaultValue="Stride">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="String" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="FbSsqKjXNeVNDOqmYsWH0C" Name="Enabled" Kind="InputPin" DefaultValue="True">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="OyVLEL0GpGENgYliiN7ggC" Name="VR Settings" Kind="InputPin" Bounds="510,271" Visibility="Optional" />
+            <Pin Id="IFAbr4YzmKWPbeOjGhCs77" Name="Output" Kind="OutputPin" Bounds="404,481" />
+            <Pin Id="HgObbkOE3pEPDG9qSBvIDN" Name="Input Source" Kind="OutputPin" Bounds="613,879" />
+            <Pin Id="AOA12zsJdoHL8Mc2o8wndK" Name="Back Buffer" Kind="OutputPin" Bounds="513,918" />
+            <Pin Id="MppmkGEzQhkNYndYLbxZMl" Name="Depth Buffer" Kind="OutputPin" Bounds="702,915" />
+            <Pin Id="Dl4IQN4bFuDPZrTUWkTUWq" Name="Clear" Kind="InputPin" Bounds="577,341" />
+            <Pin Id="BeKoWr5O26gLf9aYddXjXJ" Name="Clear Color" Kind="InputPin" Bounds="596,359" />
+          </Patch>
+          <Patch Id="UJhezOU59gaPzEsviYDipb" Name="SetDepthBufferFormat" />
+          <Patch Id="SQohiReTf4QOoSR71f45dG" Name="SetBackbufferFormat" />
+          <Patch Id="GHpIckWdeDWMe1yjsyTDT7" Name="SetPresentInterval">
+            <Pin Id="R0q31hypLTNL3UeycykZJo" MergeId="658386" Name="Present Interval" Kind="InputPin" DefaultValue="Immediate" Visibility="Optional" />
+          </Patch>
         </Patch>
       </Node>
     </Canvas>
@@ -1734,10 +1730,10 @@
   <PlatformDependency Id="Jr3OfX7eGjVNYnl8beWbat" Location="./src/bin/Debug/net472/Stride.Rendering.dll" />
   <PlatformDependency Id="C3CWxgfcGw6N26ms1qaSET" Location="./src/bin/Debug/net472/VL.Stride.Runtime.dll" />
   <PlatformDependency Id="GFbBTnLBobXPJtF4TwmB6S" Location="./src/bin/Debug/net472/Stride.Graphics.dll" />
-  <NugetDependency Id="QIiReSnZJLRNq4bIUb0c0J" Location="VL.Lang" Version="2020.2.0-0241-g1bd7669e3e" />
-  <NugetDependency Id="L4T6ZlQ8XdeLlACIH7reFi" Location="VL.UI.Core" Version="2020.2.0-0241-g1bd7669e3e" />
+  <NugetDependency Id="QIiReSnZJLRNq4bIUb0c0J" Location="VL.Lang" Version="2020.2.0-0217-g78b13ed816" />
+  <NugetDependency Id="L4T6ZlQ8XdeLlACIH7reFi" Location="VL.UI.Core" Version="2020.2.0-0217-g78b13ed816" />
   <PlatformDependency Id="DkNgn2lBRDHNJz26dbi97L" Location="./src/bin/Debug/net472/Stride.Core.Mathematics.dll" />
   <PlatformDependency Id="JWyiDaVMXKOMKV3AXWFfiH" Location="System" />
-  <NugetDependency Id="AI9yRrFEuCJQSmOSbAgvFy" Location="VL.Stride.Runtime" IsForward="true" Version="0.7.290-ge5d5d00b96" />
-  <NugetDependency Id="TaH4M7RLF1ENr1pCUev3DZ" Location="VL.Stride.Windows" IsForward="true" Version="0.7.290-ge5d5d00b96" />
+  <NugetDependency Id="AI9yRrFEuCJQSmOSbAgvFy" Location="VL.Stride.Runtime" IsForward="true" Version="0.7.298-gf81d04748f" />
+  <NugetDependency Id="TaH4M7RLF1ENr1pCUev3DZ" Location="VL.Stride.Windows" IsForward="true" Version="0.7.298-gf81d04748f" />
 </Document>

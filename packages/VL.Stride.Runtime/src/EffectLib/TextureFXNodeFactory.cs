@@ -225,7 +225,7 @@ namespace VL.Stride.EffectLib
                                     else if (_input == _enabledInput)
                                         inputs.Add(enabledInput = new DelegatePin<bool>(() => effect.Enabled, v => effect.Enabled = v));
                                     else if (_input is ParameterPinDescription parameterPinDescription)
-                                        inputs.Add(parameterPinDescription.CreatePin(effect.Parameters));
+                                        inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, effect.Parameters));
                                     else if (_input is PinDescription<Texture> textureInput)
                                     {
                                         var slot = textureCount++;
