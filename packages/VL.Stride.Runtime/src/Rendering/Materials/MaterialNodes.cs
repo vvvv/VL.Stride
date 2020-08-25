@@ -111,11 +111,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(
                     name: nameof(ComputeColor.Value),
                     getter: x => x.Value,
-                    setter: (x, v) =>
-                    {
-                        x.Value = v;
-                        x.Parameters?.Set(x.Accessor, v);
-                    },
+                    setter: (x, v) => x.SetValue(v),
                     defaultValue: Color4.White)
                 .AddOutput<ComputeColor>("Output", x => x);
 
@@ -187,10 +183,25 @@ namespace VL.Stride.Rendering.Materials
         {
             public ParameterCollection Parameters { get; private set; }
             public ValueParameter<Color4> Accessor { get; private set; }
+            public ColorSpace ColorSpace { get; private set; }
+
+            public void SetValue(Color4 value)
+            {
+                Value = value; // Already takes care of color space conversion when generating the shader
+                if (Parameters != null)
+                {
+                    // But when setting it later while the shader is running (live) we need to do it on our own
+                    value = value.ToColorSpace(ColorSpace);
+                    if (PremultiplyAlpha)
+                        value = Color4.PremultiplyAlpha(value);
+                    Parameters.Set(Accessor, value);
+                }
+            }
 
             public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
             {
                 var shaderSource = base.GenerateShaderSource(context, baseKeys);
+                ColorSpace = context.ColorSpace;
                 Parameters = context.Parameters;
                 Accessor = context.Parameters.GetAccessor(UsedKey as ValueParameterKey<Color4>);
                 return shaderSource;
