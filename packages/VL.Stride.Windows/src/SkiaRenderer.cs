@@ -17,6 +17,7 @@ using VL.Skia;
 using VL.Stride.Input;
 using VL.Stride.Windows.WglInterop;
 using PixelFormat = Stride.Graphics.PixelFormat;
+using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 namespace VL.Stride.Windows
 {
@@ -195,14 +196,15 @@ namespace VL.Stride.Windows
                 GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.StencilAttachment, RenderbufferTarget.Renderbuffer, depth.Name);
 
                 var pixelFormat = color.Texture.Format;
-                var colorType = GetColorType(pixelFormat);
-                var glInfo = new GRGlFramebufferInfo(framebuffer, colorType.ToGlSizedFormat());
+                var pixelConfig = GetPixelConfig(pixelFormat);
+                var glInfo = new GRGlFramebufferInfo(framebuffer, pixelConfig.ToGlSizedFormat());
                 var renderTarget = new GRBackendRenderTarget(color.Texture.Width, color.Texture.Height, sampleCount: 0, stencilBits: 8, glInfo);
                 var colorspace =
                     pixelFormat.IsSRgb() ? SKColorSpace.CreateSrgb() :
                     pixelFormat.IsHDR() ? SKColorSpace.CreateSrgbLinear() :
                     default;
                 var skContext = skiaContext.GraphicsContext;
+                var colorType = pixelConfig.ToColorType();
                 var skiaSurface = SKSurface.Create(skContext, renderTarget, GRSurfaceOrigin.TopLeft, colorType, colorspace: colorspace);
                 if (skiaSurface != null)
                 {
@@ -274,28 +276,34 @@ namespace VL.Stride.Windows
                 }
             }
 
-            static SKColorType GetColorType(PixelFormat format)
+            static GRPixelConfig GetPixelConfig(PixelFormat format)
             {
                 switch (format)
                 {
                     case PixelFormat.B8G8R8A8_UNorm:
+                        return GRPixelConfig.Bgra8888;
                     case PixelFormat.B8G8R8A8_UNorm_SRgb:
-                        return SKColorType.Bgra8888;
+                        return GRPixelConfig.Sbgra8888;
                     case PixelFormat.R8G8B8A8_UNorm:
+                        return GRPixelConfig.Rgba8888;
                     case PixelFormat.R8G8B8A8_UNorm_SRgb:
-                        return SKColorType.Rgba8888;
-                    case PixelFormat.R16G16B16A16_Float:
-                        return SKColorType.RgbaF16;
-                    case PixelFormat.A8_UNorm:
-                        return SKColorType.Alpha8;
-                    case PixelFormat.R8_UNorm:
-                        return SKColorType.Gray8;
-                    case PixelFormat.B5G6R5_UNorm:
-                        return SKColorType.Rgb565;
+                        return GRPixelConfig.Srgba8888;
                     case PixelFormat.R10G10B10A2_UNorm:
-                        return SKColorType.Rgba1010102;
+                        return GRPixelConfig.Rgba1010102;
+                    case PixelFormat.R16G16B16A16_Float:
+                        return GRPixelConfig.RgbaHalf;
+                    case PixelFormat.R32G32B32A32_Float:
+                        return GRPixelConfig.RgbaFloat;
+                    case PixelFormat.R32G32_Float:
+                        return GRPixelConfig.RgFloat;
+                    case PixelFormat.A8_UNorm:
+                        return GRPixelConfig.Alpha8;
+                    case PixelFormat.R8_UNorm:
+                        return GRPixelConfig.Gray8;
+                    case PixelFormat.B5G6R5_UNorm:
+                        return GRPixelConfig.Rgb565;
                     default:
-                        return SKColorType.Unknown;
+                        return GRPixelConfig.Unknown;
                 }
             }
 
