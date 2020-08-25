@@ -13,6 +13,7 @@ using Stride.Shaders;
 using Stride.Shaders.Compiler;
 using Buffer = Stride.Graphics.Buffer;
 using VL.Stride.Core;
+using Stride.Graphics;
 
 namespace VL.Stride.EffectLib
 {
@@ -113,14 +114,17 @@ namespace VL.Stride.EffectLib
                 return new EffectNode(context, this);
         }
 
-        public IVLPin[] CreateNodeInputs(IVLNode node, ParameterCollection parameters) => Inputs.Select(p => p.CreatePin(parameters)).ToArray();
+        public IVLPin[] CreateNodeInputs(IVLNode node, GraphicsDevice graphicsDevice, ParameterCollection parameters)
+        {
+            return Inputs.Select(p => p.CreatePin(graphicsDevice, parameters)).ToArray();
+        }
 
-        public IVLPin[] CreateNodeOutputs(IVLNode node, ParameterCollection parameters)
+        public IVLPin[] CreateNodeOutputs(IVLNode node, GraphicsDevice graphicsDevice, ParameterCollection parameters)
         {
             var result = new IVLPin[Outputs.Length];
             for (int i = 0; i < Outputs.Length; i++)
             {
-                result[i] = Outputs[i].CreatePin(parameters);
+                result[i] = Outputs[i].CreatePin(graphicsDevice, parameters);
                 if (i == 0)
                     result[i].Value = node; // Instance output
             }

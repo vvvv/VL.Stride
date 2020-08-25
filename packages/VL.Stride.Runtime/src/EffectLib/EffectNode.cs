@@ -35,8 +35,8 @@ namespace VL.Stride.EffectLib
             }
             parameters = instance.Parameters;
 
-            Inputs = description.CreateNodeInputs(this, parameters);
-            Outputs = description.CreateNodeOutputs(this, parameters);
+            Inputs = description.CreateNodeInputs(this, graphicsDevice, parameters);
+            Outputs = description.CreateNodeOutputs(this, graphicsDevice, parameters);
 
             perFrameParams = parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
             perViewParams = parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
