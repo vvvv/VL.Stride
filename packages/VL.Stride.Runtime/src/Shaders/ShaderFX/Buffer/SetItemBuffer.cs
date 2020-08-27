@@ -32,7 +32,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
             BufferDecl.GenerateShaderSource(context, baseKeys);
 
-            var shaderClassSource = GetShaderSourceForType<T>("SetItemRWBuffer", BufferDecl.Key);
+            var shaderClassSource = GetShaderSourceForType<T>("SetItemRWBuffer", BufferDecl.Key, BufferDecl.GetResourceGroupName(context));
 
             var mixin = shaderClassSource.CreateMixin();
 

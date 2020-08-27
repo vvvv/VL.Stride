@@ -52,7 +52,7 @@ namespace VL.Stride.Shaders.ShaderFX
             return new ShaderClassSource("ComputeVoid");
         }
 
-        public string GetResourceGroupName(ShaderGeneratorContext context)
+        public virtual string GetResourceGroupName(ShaderGeneratorContext context)
         {
             if (string.IsNullOrWhiteSpace(resourceGroupName))
             {

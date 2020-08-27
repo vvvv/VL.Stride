@@ -16,7 +16,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public GetItemBuffer(DeclBuffer buffer, IComputeValue<uint> index, bool isRW = false, bool isStructured = false)
         {
-            TextureDecl = buffer;
+            BufferDecl = buffer;
             Index = index;
             IsRW = isRW;
             IsStructured = isStructured;
@@ -27,7 +27,7 @@ namespace VL.Stride.Shaders.ShaderFX
             ShaderName = prefix + bufferType;
         }
 
-        public DeclBuffer TextureDecl { get; }
+        public DeclBuffer BufferDecl { get; }
 
         public IComputeValue<uint> Index { get; }
 
@@ -37,12 +37,12 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            if (TextureDecl == null)
+            if (BufferDecl == null)
                 return GetShaderSourceForType<T>("Compute");
 
-            TextureDecl.GenerateShaderSource(context, baseKeys);
+            BufferDecl.GenerateShaderSource(context, baseKeys);
 
-            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, TextureDecl.Key);
+            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, BufferDecl.Key, BufferDecl.GetResourceGroupName(context));
 
             var mixin = shaderClassSource.CreateMixin();
 
@@ -52,7 +52,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
-            return ReturnIfNotNull(TextureDecl, Index);
+            return ReturnIfNotNull(BufferDecl, Index);
         }
     }
 }

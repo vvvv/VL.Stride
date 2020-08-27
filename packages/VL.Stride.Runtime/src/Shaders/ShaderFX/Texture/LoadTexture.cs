@@ -37,7 +37,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
             TextureDecl.GenerateShaderSource(context, baseKeys);
 
-            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, TextureDecl.Key);
+            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, TextureDecl.Key, TextureDecl.GetResourceGroupName(context));
 
             if (TexCd != null)
             {
