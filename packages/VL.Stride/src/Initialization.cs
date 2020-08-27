@@ -25,7 +25,7 @@ namespace VL.Stride.Lib
         }
 
         // Remove once tested enough
-        bool UseSDL = true;
+        bool UseSDL = false;
 
         protected override void RegisterServices(IVLFactory factory)
         {

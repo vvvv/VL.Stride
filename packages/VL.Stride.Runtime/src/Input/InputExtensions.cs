@@ -1,4 +1,5 @@
 ﻿using Stride.Core;
+using Stride.Engine;
 using Stride.Input;
 using System;
 using System.Collections.Generic;
@@ -52,5 +53,22 @@ namespace VL.Stride.Input
 
             return inputSource;
         }
+
+
+
+        public static bool GetNearestWindowInputSource(this Entity entity, out IInputSource inputSource)
+        {
+            inputSource = null;
+            var scene = entity?.Scene;
+
+            while (scene != null && inputSource is null)
+            {
+                scene.GetWindowInputSource(out inputSource);
+                scene = scene.Parent;
+            }
+
+            return inputSource != null;
+        }
+
     }
 }
