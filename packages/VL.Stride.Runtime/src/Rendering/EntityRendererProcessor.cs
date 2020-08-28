@@ -55,6 +55,7 @@ namespace VL.Stride.Rendering
                 if (renderRenderer.Enabled)
                 {
                     renderRenderer.SingleCallPerFrame = component.SingleCallPerFrame;
+                    renderRenderer.RenderGroup = component.RenderGroup;
                     renderRenderer.ParentTransformation = component.Entity.Transform.WorldMatrix;
                     renderRenderer.Renderer = component.Renderer;
                 }
