@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Basics.Resources;
+using VL.Stride.Input;
 
 namespace VL.Stride.Engine
 {
@@ -122,6 +123,13 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(TorusProceduralModel.Thickness), x => x.Thickness, (x, v) => x.Thickness = v, 0.25f)
                 .AddInput(nameof(TorusProceduralModel.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
                 .AddDefaultPins();
+
+
+            // Input components
+            var inputCategory = "Stride.Input";
+
+            yield return factory.NewComponentNode<InputSourceComponent>(inputCategory)
+                .AddOutput(nameof(InputSourceComponent.InputSource), c => c.InputSource);
         }
 
         public static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey)
