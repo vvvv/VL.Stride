@@ -21,7 +21,7 @@ namespace VL.Stride.Windows
             if (inputManager is null)
                 return Disposable.Empty;       
 
-            var callerInfo = CallerInfo.InRenderer(sharedSurface.Width, sharedSurface.Height, sharedSurface.Surface.Canvas);
+            var callerInfo = CallerInfo.InRenderer(sharedSurface.Width, sharedSurface.Height, sharedSurface.Surface.Canvas, sharedSurface.SkiaContext.GraphicsContext);
 
             var mouseButtonListener = NewMouseButtonListener(inputSource, callerInfo);
             inputManager.AddListener(mouseButtonListener);

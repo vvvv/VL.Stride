@@ -70,7 +70,7 @@ namespace VL.Stride.Windows
                 //GL.Vertex2(-0.5f, 0.5f);
                 //GL.End();
 
-                Layer.Render(CallerInfo.InRenderer(sharedSurface.Width, sharedSurface.Height, sharedSurface.Surface.Canvas));
+                Layer.Render(CallerInfo.InRenderer(sharedSurface.Width, sharedSurface.Height, sharedSurface.Surface.Canvas, sharedSurface.SkiaContext.GraphicsContext));
                 sharedSurface.Surface.Canvas.Flush();
             }
         }
