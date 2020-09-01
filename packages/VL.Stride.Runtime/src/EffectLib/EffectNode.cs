@@ -85,7 +85,6 @@ namespace VL.Stride.EffectLib
                 {
                     var world = worldPin.Value;
                     Matrix.Multiply(ref world, ref parentTransformation, out var result);
-                    worldPin.Value = result;
                     parameters.SetPerDrawParameters(perDrawParams, renderView, ref result);
                 }
                 else
