@@ -1,4 +1,5 @@
-﻿shader ShaderUtils : Transformation
+﻿
+shader ShaderUtils : Transformation
 {
     // CONSTANTS ==============================================================
  
@@ -6,7 +7,7 @@
     #define invTwoPi		0.15915494309189533576888376337251
     #define Pi 				3.1415926535897932384626433832795
     #define invPi 			0.31830988618379067153776752674503
-
+    #define Epsilon         0.0000000596 // as 5.96e-08 
 
     // SPRITES UTILS ==============================================================
  
@@ -17,7 +18,6 @@
             discard;
         }
     }
-
 
     static const float3 QuadPositions[4] = {
         float3(-1, 1,0),
@@ -66,8 +66,6 @@
         return c;
     }
 
-
-
     float3 HUEtoRGB(in float H)
     {
         H=frac(H);
@@ -110,26 +108,45 @@
         return HSV;
     }
 
+    /* previous RGBtoHSL */
+    //float3 RGBtoHSL(in float3 RGB)
+    //{
+    //    float3 HSL = 0;
+    //    float U, V;
+    //    U = -min(RGB.r, min(RGB.g, RGB.b));
+    //    V = max(RGB.r, max(RGB.g, RGB.b));
+    //    HSL.z = (V - U) * 0.5;
+    //    float C = V + U;
+    //    if (C != 0)
+    //    {
+    //        float3 Delta = (V - RGB) / C;
+    //        Delta.rgb -= Delta.brg;
+    //        Delta.rgb += float3(2,4,6);
+    //        Delta.brg = step(V, RGB) * Delta.brg;
+    //        HSL.x = max(Delta.r, max(Delta.g, Delta.b));
+    //        HSL.x = frac(HSL.x / 6);
+    //        HSL.y = C / (1 - abs(2 * HSL.z - 1));
+    //    }
+    //    return HSL;
+    //}
+
+    float3 RGBtoHCV(in float3 RGB)
+      {
+        // RGB - HSL - HSV conversions as by https://www.chilliant.com/rgb2hsv.html
+        // Based on work by Sam Hocevar and Emil Persson
+        float4 P = (RGB.g < RGB.b) ? float4(RGB.bg, -1.0, 2.0/3.0) : float4(RGB.gb, 0.0, -1.0/3.0);
+        float4 Q = (RGB.r < P.x) ? float4(P.xyw, RGB.r) : float4(RGB.r, P.yzx);
+        float C = Q.x - min(Q.w, Q.y);
+        float H = abs((Q.w - Q.y) / (6 * C + Epsilon) + Q.z);
+        return float3(H, C, Q.x);
+    }
+
     float3 RGBtoHSL(in float3 RGB)
     {
-        float3 HSL = 0;
-        float U, V;
-        U = -min(RGB.r, min(RGB.g, RGB.b));
-        V = max(RGB.r, max(RGB.g, RGB.b));
-        HSL.z = (V - U) * 0.5;
-        float C = V + U;
-        if (C != 0)
-        {
-            float3 Delta = (V - RGB) / C;
-            Delta.rgb -= Delta.brg;
-            Delta.rgb += float3(2,4,6);
-            Delta.brg = step(V, RGB) * Delta.brg;
-            HSL.x = max(Delta.r, max(Delta.g, Delta.b));
-            HSL.x = frac(HSL.x / 6);
-            HSL.y = C / (1 - abs(2 * HSL.z - 1));
-        }
-
-        return HSL;
+        float3 HCV = RGBtoHCV(RGB);
+        float L = HCV.z - HCV.y * 0.5;
+        float S = HCV.y / (1 - abs(L * 2 - 1) + Epsilon);
+        return float3(HCV.x, S, L);
     }
 
     // VALUE UTILS ==============================================================
