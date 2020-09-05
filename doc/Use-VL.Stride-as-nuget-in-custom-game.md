@@ -1,5 +1,5 @@
 ## Install Xenko
-* Before running the Xenko launcher, edit the file **%AppData%\NuGet\NuGet.Config** to add the vvvv nuget feed:
+* Before running the Xenko launcher, edit the file **%AppData%\NuGet\NuGet.Config** (sometimes **%AppData%\Roaming\NuGet\NuGet.Config**) to add the vvvv nuget feed:
 ```xml
 <add key="vvvv-public-feed" value="http://teamcity.vvvv.org/guestAuth/app/nuget/v1/FeedService.svc/" />
 ```
