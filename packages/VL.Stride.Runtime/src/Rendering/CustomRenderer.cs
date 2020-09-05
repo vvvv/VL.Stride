@@ -1,17 +1,20 @@
 ﻿using Stride.Rendering;
 using Stride.Rendering.Compositing;
 using System;
+using VL.Core;
 
 namespace VL.Stride.Rendering
 {
     /// <summary>
     /// A renderer which can provide <see cref="RendererBase.Draw"/> implementation with a stateful region.
     /// </summary>
+    [HotSwap]
     public sealed class CustomRenderer<TState> : SceneRendererBase
         where TState : class
     {
         private Func<TState> CreateFunc;
         private Func<TState, RenderDrawContext, TState> UpdateFunc;
+        [HotSwap]
         private TState State;
 
         public void Update(Func<TState> create, Func<TState, RenderDrawContext, TState> update)
@@ -34,4 +37,46 @@ namespace VL.Stride.Rendering
             base.Destroy();
         }
     }
+
+    //public sealed class ProxyRenderer<TState> : ISceneRenderer
+    //{
+    //    public ISceneRenderer Input { get; private set; }
+
+    //    public ProxyRenderer(ISceneRenderer input)
+    //    {
+    //        Input = input;
+    //    }
+
+    //    public bool Enabled
+    //    {
+    //        get => Input?.Enabled ?? false;
+    //        set
+    //        {
+    //            if (Input != null)
+    //                Input.Enabled = value;
+    //        }
+    //    }
+
+    //    public bool Initialized => Input?.Initialized ?? false;
+
+    //    public void Collect(RenderContext context)
+    //    {
+    //        Input?.Collect(context);
+    //    }
+
+    //    public void Dispose()
+    //    {
+    //        Input?.Dispose();
+    //    }
+
+    //    public void Draw(RenderDrawContext context)
+    //    {
+    //        Input?.Draw(context);
+    //    }
+
+    //    public void Initialize(RenderContext context)
+    //    {
+    //        Input?.Initialize(context);
+    //    }
+    //}
 }
