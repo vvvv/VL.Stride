@@ -11,8 +11,14 @@ namespace VL.Stride.Engine
     /// <summary>
     /// Renders a scene instance with a graphics compositor.
     /// </summary>
-    public class SceneInstanceRenderer : IGraphicsRendererBase
+    public class SceneInstanceRenderer : RendererBase
     {
+        /// <summary>
+        /// The fallback scene to use in case no scene is connected. 
+        /// This is needed because we clear the render target through the compositor which in turn expects visibility groups only provided by the scene instance.
+        /// </summary>
+        private SceneInstance fallbackSceneInstance;
+
         /// <summary>
         /// Gets or sets the scene instance.
         /// </summary>
@@ -23,14 +29,21 @@ namespace VL.Stride.Engine
         /// </summary>
         public GraphicsCompositor GraphicsCompositor { get; set; }
 
-        public void Draw(RenderDrawContext renderDrawContext)
+        protected override void InitializeCore()
+        {
+            base.InitializeCore();
+            fallbackSceneInstance = new SceneInstance(Services);
+        }
+
+        protected override void DrawCore(RenderDrawContext renderDrawContext)
         {
             var renderContext = renderDrawContext.RenderContext;
-            if (SceneInstance?.RootScene != null)
+            var sceneInstance = SceneInstance ?? fallbackSceneInstance;
+            if (sceneInstance.RootScene != null)
             {
                 renderContext.GetWindowInputSource(out var inputSouce);
                 if (inputSouce != null)
-                    SceneInstance.RootScene.SetWindowInputSource(inputSouce);
+                    sceneInstance.RootScene.SetWindowInputSource(inputSouce);
             }
 
             // Reset the context
@@ -41,13 +54,13 @@ namespace VL.Stride.Engine
 
             // Execute Draw step of SceneInstance
             // This will run entity processors
-            SceneInstance?.Draw(renderContext);
+            sceneInstance.Draw(renderContext);
 
             renderDrawContext.ResourceGroupAllocator.Flush();
             renderDrawContext.QueryManager.Flush();
 
-            // Push context (pop after using)
-            using (renderDrawContext.RenderContext.PushTagAndRestore(SceneInstance.Current, SceneInstance))
+            // The graphics compositor is also clearing the render target
+            using (renderDrawContext.RenderContext.PushTagAndRestore(SceneInstance.Current, sceneInstance))
             {
                 GraphicsCompositor?.Draw(renderDrawContext);
             }
