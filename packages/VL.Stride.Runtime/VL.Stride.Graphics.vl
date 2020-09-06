@@ -2781,16 +2781,16 @@
         </Node>
         <!--
 
-    ************************ TextureReader ************************
+    ************************ TextureReader (Advanced) ************************
 
 -->
-        <Node Name="TextureReader" Bounds="251,260" Id="SuhhYHXEeLuPgUT5qYP6MU">
+        <Node Name="TextureReader (Advanced)" Bounds="253,259" Id="SuhhYHXEeLuPgUT5qYP6MU" Summary="Blocking texture file reader.">
           <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
             <Choice Kind="ContainerDefinition" Name="Process" />
           </p:NodeReference>
           <Patch Id="TrY4HlClJtfO5UAfljbvVh">
             <Canvas Id="Rehs4ATxSy2MPWXhB9swjE" CanvasType="Group">
-              <Node Bounds="362,284,422,442" Id="BYJSyDQgQkrPM3zUNEGMJU">
+              <Node Bounds="362,284,550,442" Id="BYJSyDQgQkrPM3zUNEGMJU">
                 <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="VL.CoreLib.dll">
                   <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                   <Choice Kind="ProcessStatefulRegion" Name="Cache" />
@@ -2890,31 +2890,86 @@
                     <Pin Id="JtAX3WYZuR2MajsnL8cVH9" Name="Input" Kind="StateInputPin" />
                     <Pin Id="Cx60zu0SKWXPeWPpe8Cc2K" Name="Exists" Kind="OutputPin" />
                   </Node>
+                  <Node Bounds="681,514,45,19" Id="DTOsT0xxbhXP8mkcDeQ96O">
+                    <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="OperationCallFlag" Name="Switch" />
+                      <CategoryReference Kind="Category" Name="Control" NeedsToBeDirectParent="true" />
+                    </p:NodeReference>
+                    <Pin Id="QlNuseirlPFL8xnDtELKGd" Name="Index" Kind="InputPin" />
+                    <Pin Id="VybmvMWFdzHLAUQDkGFXtJ" Name="Input" Kind="InputPin" />
+                    <Pin Id="VEMmSHxAhVEOWAgJnvU1kh" Name="Input 2" Kind="InputPin" />
+                    <Pin Id="F7MsVBPlqTbLWUlQxznuAZ" Name="Output" Kind="OutputPin" />
+                  </Node>
+                  <Node Bounds="697,431,71,26" Id="CwhVqqyYxBmMaIUEANkO9z">
+                    <p:NodeReference LastCategoryFullName="Stride.Utils.GraphicsDevice" LastSymbolSource="VL.Stride.Graphics.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="OperationCallFlag" Name="ColorSpace" />
+                    </p:NodeReference>
+                    <Pin Id="GRsfQpj5RZzMDYdstlTRpl" Name="Input" Kind="StateInputPin" />
+                    <Pin Id="E08AQOiDiKQLNWHD1DvEjE" Name="Output" Kind="StateOutputPin" />
+                    <Pin Id="IKSwrMHsXjhOcJorbYg17A" Name="Color Space" Kind="OutputPin" />
+                  </Node>
+                  <Node Bounds="697,397,86,19" Id="VGzk3VAu0HVLv5qop9XjJj">
+                    <p:NodeReference LastCategoryFullName="Stride.Utils" LastSymbolSource="VL.Stride.Graphics.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="ProcessAppFlag" Name="GraphicsDevice" />
+                      <CategoryReference Kind="Category" Name="Utils" NeedsToBeDirectParent="true">
+                        <p:OuterCategoryReference Kind="Category" Name="Stride" NeedsToBeDirectParent="true" />
+                      </CategoryReference>
+                    </p:NodeReference>
+                    <Pin Id="RW3ASk5gHO9OnsbWyF4gx4" Name="Output" Kind="OutputPin" />
+                  </Node>
+                  <Node Bounds="763,475,25,19" Id="R7ZVMEtoaqpOeqijlF10kn">
+                    <p:NodeReference LastCategoryFullName="Stride.Graphics.ColorSpace" LastSymbolSource="Stride.dll">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="OperationCallFlag" Name="=" />
+                      <CategoryReference Kind="AssemblyCategory" Name="ColorSpace" NeedsToBeDirectParent="true" />
+                    </p:NodeReference>
+                    <Pin Id="Ufr4DaETfPAPOvPdXxOyIs" Name="Input" Kind="InputPin" />
+                    <Pin Id="Dw4HWRLGytzP8CLESaAhJB" Name="Input 2" Kind="InputPin">
+                      <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                        <Choice Kind="TypeFlag" Name="Integer32" />
+                      </p:TypeAnnotation>
+                    </Pin>
+                    <Pin Id="KXv299YaF9iLokYiT5SxV8" Name="Result" Kind="OutputPin" />
+                  </Node>
+                  <Pad Id="EBChdxx50fQM7A02RbJoy6" Bounds="731,518,162,29" ShowValueBox="true" isIOBox="true" Value="If the device colorspace is linear (true by default) AND content is a regular image (colors are in gamma space) then we need to Load As sRGB.">
+                    <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                      <Choice Kind="TypeFlag" Name="String" />
+                    </p:TypeAnnotation>
+                    <p:ValueBoxSettings>
+                      <p:fontsize p:Type="Int32">4</p:fontsize>
+                      <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+                    </p:ValueBoxSettings>
+                  </Pad>
+                  <Pad Id="TDYI1IHhnlMOtdCV7kOXCg" Bounds="703,556,142,36" ShowValueBox="true" isIOBox="true" Value="PixelShaders will now sample the texture in a way that the shader performas its computations in linear color space.">
+                    <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                      <Choice Kind="TypeFlag" Name="String" />
+                    </p:TypeAnnotation>
+                    <p:ValueBoxSettings>
+                      <p:fontsize p:Type="Int32">4</p:fontsize>
+                      <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+                    </p:ValueBoxSettings>
+                  </Pad>
                 </Patch>
+                <ControlPoint Id="AgCgbRfJJ9QMBtI8W5GhCG" Bounds="653,290" Alignment="Top" />
               </Node>
               <ControlPoint Id="E4taeeUFNd6OuvTlgWl7Te" Bounds="386,208" />
               <ControlPoint Id="Md1yfa72KXMNPC56oxxKeF" Bounds="525,782" />
-              <Pad Id="VrbMqFia1d3L5HsoKDLqT2" Comment="Dispose Cached Outputs" Bounds="781,265,35,15" ShowValueBox="true" isIOBox="true" Value="True">
+              <Pad Id="VrbMqFia1d3L5HsoKDLqT2" Comment="Dispose Cached Outputs" Bounds="908,249,35,15" ShowValueBox="true" isIOBox="true" Value="True">
                 <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                   <Choice Kind="TypeFlag" Name="Boolean" />
                 </p:TypeAnnotation>
               </Pad>
-              <ControlPoint Id="IkrkXG3EbOjOdKFHvs5q2c" Bounds="618,206" />
-              <Node Bounds="616,241,72,19" Id="CIh1hOsmeZ0MHhBbS47EPo">
-                <p:NodeReference LastCategoryFullName="Stride.Textures" LastSymbolSource="VL.Stride.Graphics.vl">
-                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                  <Choice Kind="ProcessAppFlag" Name="LoadAsSRgb" />
-                </p:NodeReference>
-                <Pin Id="Q27n4jeldhAMx3LWLGv02r" Name="Is Linear Already" Kind="InputPin" />
-                <Pin Id="IJsC588lgvKL8TQaRKrMtG" Name="Load As SRGB" Kind="OutputPin" />
-              </Node>
+              <ControlPoint Id="IkrkXG3EbOjOdKFHvs5q2c" Bounds="653,214" />
             </Canvas>
             <Patch Id="FyrYo4wlVt6PhVpUDB4nDv" Name="Create" />
             <Patch Id="MaN8SEk1bFUPkZ3WKmhllU" Name="Update">
               <Pin Id="Jcjlk37N67xPVVp3b10RnU" Name="File Path" Kind="InputPin" Bounds="706,276" />
               <Pin Id="Brkd68JZou0Py46le959mP" Name="Output" Kind="OutputPin" Bounds="774,804" />
-              <Pin Id="NdvydVNAsAiPK06W7kuoxW" Name="Is Linear Already" Kind="InputPin">
-                <p:TypeAnnotation>
+              <Pin Id="NdvydVNAsAiPK06W7kuoxW" Name="Is sRGB" Kind="InputPin" DefaultValue="True" Summary="Describes whether the file content is in sRGB aka gamma color space.">
+                <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                   <Choice Kind="TypeFlag" Name="Boolean" />
                 </p:TypeAnnotation>
               </Pin>
@@ -2941,124 +2996,12 @@
             <Link Id="OaSsPu19GTtN44xL44uVM0" Ids="MwZ1Pb2V1xCPtrLcMfTXG3,U8AvMIilryBNJQuUmUU9RD" />
             <Link Id="EdSg8YRWqVvMMeSMYDrh4T" Ids="U8AvMIilryBNJQuUmUU9RD,FHihszavlm3POLh3YdITmk" />
             <Link Id="HU1x2ImBca4O8aupvbGpxv" Ids="NdvydVNAsAiPK06W7kuoxW,IkrkXG3EbOjOdKFHvs5q2c" IsHidden="true" />
-            <Link Id="Tib1sJ11xjIMPnHrI6oZp4" Ids="IkrkXG3EbOjOdKFHvs5q2c,Q27n4jeldhAMx3LWLGv02r" />
-            <Link Id="F31VXZXCInvOUxaZkcpslD" Ids="IJsC588lgvKL8TQaRKrMtG,L8XRVqWJbyvOTBMSyVvWPZ" />
-          </Patch>
-        </Node>
-        <!--
-
-    ************************ LoadAsSRgb (Advanced) ************************
-
--->
-        <Node Name="LoadAsSRgb (Advanced)" Bounds="749,289" Id="U2A1gE0r97pPYwZiKQGhoV">
-          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
-            <Choice Kind="ContainerDefinition" Name="Process" />
-          </p:NodeReference>
-          <Patch Id="Acya2rU2H3sNOPAsHNsm41">
-            <Canvas Id="CP4rtCGqUq7Lges71fhTYJ" CanvasType="Group">
-              <ControlPoint Id="RSWWe5UhyMAP5jAixLseRV" Bounds="385,279" />
-              <Node Bounds="370,314,238,241" Id="AhwwCwlTXbiLQI508b0UcW">
-                <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="VL.CoreLib.dll">
-                  <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
-                  <Choice Kind="ProcessStatefulRegion" Name="Cache" />
-                  <CategoryReference Kind="Category" Name="Primitive" />
-                </p:NodeReference>
-                <Pin Id="C29VEuLKJUkLi6rZC9WXv6" Name="Force" Kind="InputPin" />
-                <Pin Id="ExbTnmD3lLZLowrWMNKCLZ" Name="Dispose Cached Outputs" Kind="InputPin" />
-                <Pin Id="MIOSirdAZUbLfh2xR8SAKw" Name="Has Changed" Kind="OutputPin" />
-                <Patch Id="NtzTBNRzQvOMDAirv68AQ6" ManuallySortedPins="true">
-                  <Patch Id="NgZ1hRLdxlqQAz7K415tHI" Name="Create" ManuallySortedPins="true" />
-                  <Patch Id="K9iiUORibjiOwNn1NkrQ7g" Name="Then" ManuallySortedPins="true" />
-                  <Node Bounds="382,464,45,19" Id="Kkt80v4tQYGMvxUJJmDSoj">
-                    <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
-                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="OperationCallFlag" Name="Switch" />
-                      <CategoryReference Kind="Category" Name="Control" NeedsToBeDirectParent="true" />
-                    </p:NodeReference>
-                    <Pin Id="VI5LEG7ZVR1OJsGecb1YSj" Name="Index" Kind="InputPin" />
-                    <Pin Id="JUSJi6jtBTeQWVZkRVppzA" Name="Input" Kind="InputPin" />
-                    <Pin Id="RW5rpvshWR7PkDkWJutSns" Name="Input 2" Kind="InputPin" />
-                    <Pin Id="V7sLTp0qFEqMgKQTrJYJoo" Name="Output" Kind="OutputPin" />
-                  </Node>
-                  <Node Bounds="398,381,71,26" Id="N7FabnN7osvPJacfFP6HUY">
-                    <p:NodeReference LastCategoryFullName="Stride.Utils.GraphicsDevice" LastSymbolSource="VL.Stride.Graphics.vl">
-                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="OperationCallFlag" Name="ColorSpace" />
-                    </p:NodeReference>
-                    <Pin Id="FG9Mnr7WE5OOHUQi9JCaP0" Name="Input" Kind="StateInputPin" />
-                    <Pin Id="OXGN2ndUYGqMRWUFwIBV6h" Name="Output" Kind="StateOutputPin" />
-                    <Pin Id="IHE2Sum2HTaQSdSuL5uMt4" Name="Color Space" Kind="OutputPin" />
-                  </Node>
-                  <Node Bounds="398,347,86,19" Id="CddqqiZbgHhQHfeXDmElmN">
-                    <p:NodeReference LastCategoryFullName="Stride.Utils" LastSymbolSource="VL.Stride.Graphics.vl">
-                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="ProcessAppFlag" Name="GraphicsDevice" />
-                      <CategoryReference Kind="Category" Name="Utils" NeedsToBeDirectParent="true">
-                        <p:OuterCategoryReference Kind="Category" Name="Stride" NeedsToBeDirectParent="true" />
-                      </CategoryReference>
-                    </p:NodeReference>
-                    <Pin Id="C4Vn1bNKzCcQBXyPav6ZUp" Name="Output" Kind="OutputPin" />
-                  </Node>
-                  <Node Bounds="464,425,25,19" Id="DE3Onc7MgiCM9V5phDEW6n">
-                    <p:NodeReference LastCategoryFullName="Stride.Graphics.ColorSpace" LastSymbolSource="Stride.dll">
-                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                      <Choice Kind="OperationCallFlag" Name="=" />
-                      <CategoryReference Kind="AssemblyCategory" Name="ColorSpace" NeedsToBeDirectParent="true" />
-                    </p:NodeReference>
-                    <Pin Id="J1MZSY40KykO8XzfkrAfA6" Name="Input" Kind="InputPin" />
-                    <Pin Id="KaGIV35BrC9NPE4BVPwzax" Name="Input 2" Kind="InputPin">
-                      <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                        <Choice Kind="TypeFlag" Name="Integer32" />
-                      </p:TypeAnnotation>
-                    </Pin>
-                    <Pin Id="DCwS2lvZgwdNPHOMqFVVJh" Name="Result" Kind="OutputPin" />
-                  </Node>
-                  <Pad Id="MvliWjtXlB6OSK9yixcxaS" Bounds="427,466,162,29" ShowValueBox="true" isIOBox="true" Value="If the device colorspace is linear (true by default) AND content is a regular image (colors are in gamma space) then we need to Load As SRGB.">
-                    <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                      <Choice Kind="TypeFlag" Name="String" />
-                    </p:TypeAnnotation>
-                    <p:ValueBoxSettings>
-                      <p:fontsize p:Type="Int32">4</p:fontsize>
-                      <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
-                    </p:ValueBoxSettings>
-                  </Pad>
-                  <Pad Id="RKohwPoEF2jNNqKC9fK8XU" Bounds="404,506,142,36" ShowValueBox="true" isIOBox="true" Value="PixelShaders will now sample the texture in a way that the shader performas its computations in linear color space.">
-                    <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                      <Choice Kind="TypeFlag" Name="String" />
-                    </p:TypeAnnotation>
-                    <p:ValueBoxSettings>
-                      <p:fontsize p:Type="Int32">4</p:fontsize>
-                      <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
-                    </p:ValueBoxSettings>
-                  </Pad>
-                </Patch>
-                <ControlPoint Id="UnyA9mYkuPVMiw2lhbM4Zr" Bounds="385,320" Alignment="Top" />
-                <ControlPoint Id="LBweEqPbpcDLg8F2vAm4MF" Bounds="384,538" Alignment="Bottom" />
-              </Node>
-              <ControlPoint Id="M4EaamTorQQNgUc0d2hr6a" Bounds="384,593" />
-            </Canvas>
-            <Patch Id="HXBjxVxFBJVNi8X1ncRiPb" Name="Create" />
-            <Patch Id="NbRv5p1qlx9PYsYz27uADp" Name="Update">
-              <Pin Id="CU25uUS2a5cMjbrkGMwlcF" Name="Is Linear Already" Kind="InputPin">
-                <p:TypeAnnotation>
-                  <Choice Kind="TypeFlag" Name="Boolean" />
-                </p:TypeAnnotation>
-              </Pin>
-              <Pin Id="NVbppksvll6N4lsaD7hi0X" Name="Load As SRGB" Kind="OutputPin" Bounds="384,593" />
-            </Patch>
-            <ProcessDefinition Id="EqmqZWASqsHLU84lfOPtKf">
-              <Fragment Id="QURWBMBnkpsL6N7ZcMOh4S" Patch="HXBjxVxFBJVNi8X1ncRiPb" Enabled="true" />
-              <Fragment Id="Om9EI7vnrJYLs5oG2pi8B7" Patch="NbRv5p1qlx9PYsYz27uADp" Enabled="true" />
-            </ProcessDefinition>
-            <Link Id="Od0afN68vn9PIH5Knrbowh" Ids="CU25uUS2a5cMjbrkGMwlcF,RSWWe5UhyMAP5jAixLseRV" IsHidden="true" />
-            <Link Id="KSfOmJ3BpswQKGUobYYUNh" Ids="RSWWe5UhyMAP5jAixLseRV,UnyA9mYkuPVMiw2lhbM4Zr" />
-            <Link Id="UxmZ2UCHbzZNufBNBifMug" Ids="C4Vn1bNKzCcQBXyPav6ZUp,FG9Mnr7WE5OOHUQi9JCaP0" />
-            <Link Id="CtCoBWOrTMIMxt3lXP9vWz" Ids="IHE2Sum2HTaQSdSuL5uMt4,J1MZSY40KykO8XzfkrAfA6" />
-            <Link Id="Lp30yhOTLF2PzI6bZMrvZF" Ids="UnyA9mYkuPVMiw2lhbM4Zr,VI5LEG7ZVR1OJsGecb1YSj" />
-            <Link Id="EUH3vUtoZrnNUJ2bsRbbki" Ids="DCwS2lvZgwdNPHOMqFVVJh,JUSJi6jtBTeQWVZkRVppzA" />
-            <Link Id="C2K4TdsRtduNVcDHu4UCZL" Ids="V7sLTp0qFEqMgKQTrJYJoo,LBweEqPbpcDLg8F2vAm4MF" />
-            <Link Id="Rj307l2qWf2MeCvMkqdVEf" Ids="LBweEqPbpcDLg8F2vAm4MF,M4EaamTorQQNgUc0d2hr6a" />
-            <Link Id="CxMLBLUAit7MkAIJZWHpm8" Ids="M4EaamTorQQNgUc0d2hr6a,NVbppksvll6N4lsaD7hi0X" IsHidden="true" />
+            <Link Id="RrdgTwpgaS3QaG5QoLoKt0" Ids="RW3ASk5gHO9OnsbWyF4gx4,GRsfQpj5RZzMDYdstlTRpl" />
+            <Link Id="BEeeLoxpiVgLxjDesHzsZf" Ids="IKSwrMHsXjhOcJorbYg17A,Ufr4DaETfPAPOvPdXxOyIs" />
+            <Link Id="J4kiyM0YKXTMEymh04fyTR" Ids="KXv299YaF9iLokYiT5SxV8,VEMmSHxAhVEOWAgJnvU1kh" />
+            <Link Id="Dggf5GuiI3MPaG80oBMzJY" Ids="IkrkXG3EbOjOdKFHvs5q2c,AgCgbRfJJ9QMBtI8W5GhCG" />
+            <Link Id="AsjghDwpspZMiBdIbaE4To" Ids="AgCgbRfJJ9QMBtI8W5GhCG,QlNuseirlPFL8xnDtELKGd" />
+            <Link Id="FMmJ7BmysXcQc0xy2kPaZ1" Ids="F7MsVBPlqTbLWUlQxznuAZ,L8XRVqWJbyvOTBMSyVvWPZ" />
           </Patch>
         </Node>
       </Canvas>
