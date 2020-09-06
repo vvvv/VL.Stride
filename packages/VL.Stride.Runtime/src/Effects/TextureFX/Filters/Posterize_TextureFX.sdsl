@@ -1,0 +1,14 @@
+﻿shader Posterize_TextureFX : TextureFX
+{
+    float Factor = 1;
+    bool help;
+
+    stage override float4 Shading()
+    {
+        float4 c = InTex();
+        c.rgb = lerp(c.rgb, 1 - c.rgb, Factor);
+        return c;
+    }
+};
+
+
