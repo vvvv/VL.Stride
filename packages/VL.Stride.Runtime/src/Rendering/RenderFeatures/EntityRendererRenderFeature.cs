@@ -24,6 +24,9 @@ namespace VL.Stride.Rendering
         private int lastFrameNr;
         private IVLRuntime runtime;
 
+        public RenderStage HelpersRenderStage { get; set; } // TODO: shouldn't be a pin
+        public IGraphicsRendererBase HelpersRenderer { get; set; }
+
         public EntityRendererRenderFeature()
         {
             // Pre adjust render priority, low numer is early, high number is late (advantage of backbuffer culling)
@@ -37,6 +40,17 @@ namespace VL.Stride.Rendering
         }
 
         public override Type SupportedRenderObjectType => typeof(RenderRenderer);
+
+
+        public override void Draw(RenderDrawContext context, RenderView renderView, RenderViewStage renderViewStage)
+        {
+            base.Draw(context, renderView, renderViewStage);
+
+            if (HelpersRenderStage != null && HelpersRenderer != null && renderViewStage.Index == HelpersRenderStage.Index)
+            {
+                HelpersRenderer.Draw(context);
+            }
+        }
 
         public override void Draw(RenderDrawContext context, RenderView renderView, RenderViewStage renderViewStage, int startIndex, int endIndex)
         {

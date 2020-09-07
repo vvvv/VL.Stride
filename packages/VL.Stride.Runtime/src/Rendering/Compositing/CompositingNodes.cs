@@ -221,7 +221,9 @@ namespace VL.Stride.Rendering.Compositing
                 .AddListInput(nameof(SpriteRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
             yield return nodeFactory.NewNode<EntityRendererRenderFeature>(category: renderingCategory)
-                .AddListInput(nameof(EntityRendererRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
+                .AddListInput(nameof(EntityRendererRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors)
+                .AddInput(nameof(EntityRendererRenderFeature.HelpersRenderStage), x => x.HelpersRenderStage, (x, v) => x.HelpersRenderStage = v)
+                .AddInput(nameof(EntityRendererRenderFeature.HelpersRenderer), x => x.HelpersRenderer, (x, v) => x.HelpersRenderer = v);
 
             // Sub render features for mesh render feature
             var renderFeaturesCategory = $"{renderingCategory}.RenderFeatures";
