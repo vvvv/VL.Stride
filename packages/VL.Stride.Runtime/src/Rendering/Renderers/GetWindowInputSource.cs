@@ -15,7 +15,7 @@ namespace VL.Stride.Rendering
         protected override void DrawInternal(RenderDrawContext context)
         {
             var renderContext = context.RenderContext;
-            renderContext.GetWindowInputSource(out var inputSource);
+            var inputSource = renderContext.GetWindowInputSource();
             InputSource = inputSource;
 
             Input?.Draw(context);

@@ -9,7 +9,7 @@ using VL.Stride.Shaders.ShaderFX;
 namespace VL.Stride.Input
 {
     [DefaultEntityComponentProcessorAttribute(typeof(InputSourceProcessor), ExecutionMode = ExecutionMode.All)]
-    public class InputSourceComponent : EntityComponent
+    public class InputSourceComponent : ActivableEntityComponent
     {
         public IInputSource InputSource { get; set; }
     }
@@ -28,22 +28,33 @@ namespace VL.Stride.Input
 
         public override void Draw(RenderContext context)
         {
-            // fetch input source from render context (not from scene). We probably could get rid of the idea of having a input source per scene.
-            context.GetWindowInputSource(out var inputSource);
+            var inputSource = context.GetWindowInputSource();
 
             if (inputSource != null)
             {
-
-                // Go thru components
                 foreach (var entityKeyPair in ComponentDatas)
                 {
                     var component = entityKeyPair.Key;
                     //var associatedData = entityKeyPair.Value;
-                    component.InputSource = inputSource;
+
+                    if (component.Enabled)
+                        component.InputSource = inputSource;
+                    else
+                        component.InputSource = null;
                 }
 
-                base.Draw(context);
             }
+            base.Draw(context);
         }
+
+        /// <summary>Run when a matching entity is removed from this entity processor.</summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="component"></param>
+        /// <param name="data">  The associated data.</param>
+        protected override void OnEntityComponentRemoved(Entity entity, [NotNull] InputSourceComponent component, [NotNull] InputSourceProcessor.AssociatedData data)
+        {
+            component.InputSource = null;
+        }
+
     }
 }

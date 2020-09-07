@@ -20,7 +20,7 @@ namespace VL.Stride.Rendering.Compositing
         protected override void PreDrawCore(RenderDrawContext renderDrawContext)
         {
             var renderContext = renderDrawContext.RenderContext;
-            renderContext.GetWindowInputSource(out var inputSouce);
+            var inputSouce = renderContext.GetWindowInputSource();
             S.Value = inputSouce;
             base.PreDrawCore(renderDrawContext);
         }

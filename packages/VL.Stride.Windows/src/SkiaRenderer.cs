@@ -48,7 +48,7 @@ namespace VL.Stride.Windows
                 return;
 
             // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
-            var inputSource = context.RenderContext.Tags.Get(InputExtensions.WindowInputSource);
+            var inputSource = context.RenderContext.GetWindowInputSource();
             if (inputSource != LastInputSource)
             {
                 LastInputSource = inputSource;

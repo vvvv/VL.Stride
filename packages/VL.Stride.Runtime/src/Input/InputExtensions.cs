@@ -1,11 +1,6 @@
 ﻿using Stride.Core;
-using Stride.Engine;
 using Stride.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Stride.Rendering;
 
 namespace VL.Stride.Input
 {
@@ -16,17 +11,13 @@ namespace VL.Stride.Input
         /// </summary>
         public static readonly PropertyKey<IInputSource> WindowInputSource = new PropertyKey<IInputSource>("WindowInputSource", typeof(IInputSource));
 
-        public static T SetWindowInputSource<T>(this T input, IInputSource inputSource) where T : ComponentBase
+        public static RenderContext SetWindowInputSource(this RenderContext input, IInputSource inputSource) 
         {
             input.Tags.Set(WindowInputSource, inputSource);
             return input;
         }
 
-        public static T GetWindowInputSource<T>(this T input, out IInputSource inputSource) where T : ComponentBase
-        {
-            inputSource = input.Tags.Get(WindowInputSource);
-            return input;
-        }
+        public static IInputSource GetWindowInputSource(this RenderContext input) => input.Tags.Get(WindowInputSource);
 
         public static IInputSource GetDevices(this IInputSource inputSource, out IMouseDevice mouseDevice, out IKeyboardDevice keyboardDevice, out IPointerDevice pointerDevice)
         {
@@ -53,22 +44,5 @@ namespace VL.Stride.Input
 
             return inputSource;
         }
-
-
-
-        public static bool GetNearestWindowInputSource(this Entity entity, out IInputSource inputSource)
-        {
-            inputSource = null;
-            var scene = entity?.Scene;
-
-            while (scene != null && inputSource is null)
-            {
-                scene.GetWindowInputSource(out inputSource);
-                scene = scene.Parent;
-            }
-
-            return inputSource != null;
-        }
-
     }
 }

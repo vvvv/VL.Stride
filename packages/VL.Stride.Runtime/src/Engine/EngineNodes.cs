@@ -2,6 +2,7 @@
 using Stride.Engine;
 using Stride.Graphics.GeometricPrimitives;
 using Stride.Rendering;
+using Stride.Rendering.Compositing;
 using Stride.Rendering.ProceduralModels;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,23 @@ namespace VL.Stride.Engine
             yield return factory.NewComponentNode<LightShaftBoundingVolumeComponent>(lightsCategory)
                 .AddInput(nameof(LightShaftBoundingVolumeComponent.Model), x => x.Model, (x, v) => x.Model = v) // Ensure to check for change! Property throws event!
                 .AddInput(nameof(LightShaftBoundingVolumeComponent.LightShaft), x => x.LightShaft, (x, v) => x.LightShaft = v) // Ensure to check for change! Property throws event!
+                .WithEnabledPin();
+
+            // Model components
+            var camerasCategory = "Stride.Cameras";
+
+            yield return factory.NewComponentNode<CameraComponent>(camerasCategory, cam => cam.Slot = new SceneCameraSlotId(new Guid()))
+                .AddInput(nameof(CameraComponent.UseCustomViewMatrix), x => x.UseCustomViewMatrix, (x, v) => x.UseCustomViewMatrix = v)
+                .AddInput(nameof(CameraComponent.ViewMatrix), x => x.ViewMatrix, (x, v) => x.ViewMatrix = v)
+                .AddInput(nameof(CameraComponent.Projection), x => x.Projection, (x, v) => x.Projection = v)
+                .AddInput(nameof(CameraComponent.VerticalFieldOfView), x => x.VerticalFieldOfView, (x, v) => x.VerticalFieldOfView = v)
+                .AddInput(nameof(CameraComponent.UseCustomAspectRatio), x => x.UseCustomAspectRatio, (x, v) => x.UseCustomAspectRatio = v)
+                .AddInput(nameof(CameraComponent.AspectRatio), x => x.AspectRatio, (x, v) => x.AspectRatio = v)
+                .AddInput(nameof(CameraComponent.NearClipPlane), x => x.NearClipPlane, (x, v) => x.NearClipPlane = v)
+                .AddInput(nameof(CameraComponent.FarClipPlane), x => x.FarClipPlane, (x, v) => x.FarClipPlane = v)
+                .AddInput(nameof(CameraComponent.UseCustomProjectionMatrix), x => x.UseCustomProjectionMatrix, (x, v) => x.UseCustomProjectionMatrix = v)
+                .AddInput(nameof(CameraComponent.ProjectionMatrix), x => x.ProjectionMatrix, (x, v) => x.ProjectionMatrix = v)
+                .AddOutput(nameof(CameraComponent.Frustum), x => x.Frustum)
                 .WithEnabledPin();
 
             // Model components

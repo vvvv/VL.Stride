@@ -39,12 +39,6 @@ namespace VL.Stride.Engine
         {
             var renderContext = renderDrawContext.RenderContext;
             var sceneInstance = SceneInstance ?? fallbackSceneInstance;
-            if (sceneInstance.RootScene != null)
-            {
-                renderContext.GetWindowInputSource(out var inputSouce);
-                if (inputSouce != null)
-                    sceneInstance.RootScene.SetWindowInputSource(inputSouce);
-            }
 
             // Reset the context
             renderContext.Reset();
