@@ -124,11 +124,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(
                     name: nameof(ComputeFloat.Value),
                     getter: x => x.Value,
-                    setter: (x, v) =>
-                    {
-                        x.Value = v;
-                        x.Parameters?.Set(x.Accessor, x.Value);
-                    },
+                    setter: (x, v) => x.SetValue(v),
                     defaultValue: 1f)
                 .AddOutput<ComputeFloat>("Output", x => x);
 
@@ -168,13 +164,21 @@ namespace VL.Stride.Rendering.Materials
         class LiveComputeFloat : ComputeFloat
         {
             public ParameterCollection Parameters { get; private set; }
-            public ValueParameter<float> Accessor { get; private set; }
+
+            public void SetValue(float value)
+            {
+                Value = value;
+                // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
+                if (UsedKey is ValueParameterKey<float> floatKey)
+                    Parameters?.Set(floatKey, value);
+            }
 
             public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
             {
                 var shaderSource = base.GenerateShaderSource(context, baseKeys);
                 Parameters = context.Parameters;
-                Accessor = context.Parameters.GetAccessor(UsedKey as ValueParameterKey<float>);
+                // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
+                //Accessor = context.Parameters.GetAccessor(UsedKey as ValueParameterKey<float>);
                 return shaderSource;
             }
         }
@@ -182,7 +186,6 @@ namespace VL.Stride.Rendering.Materials
         class LiveComputeColor : ComputeColor
         {
             public ParameterCollection Parameters { get; private set; }
-            public ValueParameter<Color4> Accessor { get; private set; }
             public ColorSpace ColorSpace { get; private set; }
 
             public void SetValue(Color4 value)
@@ -194,7 +197,12 @@ namespace VL.Stride.Rendering.Materials
                     value = value.ToColorSpace(ColorSpace);
                     if (PremultiplyAlpha)
                         value = Color4.PremultiplyAlpha(value);
-                    Parameters.Set(Accessor, value);
+
+                    // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
+                    if (UsedKey is ValueParameterKey<Color4> color4Key)
+                        Parameters.Set(color4Key, value);
+                    else if (UsedKey is ValueParameterKey<Color3> color3Key)
+                        Parameters.Set(color3Key, value.ToColor3());
                 }
             }
 
@@ -203,7 +211,6 @@ namespace VL.Stride.Rendering.Materials
                 var shaderSource = base.GenerateShaderSource(context, baseKeys);
                 ColorSpace = context.ColorSpace;
                 Parameters = context.Parameters;
-                Accessor = context.Parameters.GetAccessor(UsedKey as ValueParameterKey<Color4>);
                 return shaderSource;
             }
         }
