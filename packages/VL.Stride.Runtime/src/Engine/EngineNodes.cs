@@ -64,16 +64,16 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(LightShaftBoundingVolumeComponent.LightShaft), x => x.LightShaft, (x, v) => x.LightShaft = v) // Ensure to check for change! Property throws event!
                 .WithEnabledPin();
 
-            // Model components
+            // Camera components
             var camerasCategory = "Stride.Cameras";
 
             yield return factory.NewComponentNode<CameraComponent>(camerasCategory, cam => cam.Slot = new SceneCameraSlotId(new Guid()))
                 .AddInput(nameof(CameraComponent.UseCustomViewMatrix), x => x.UseCustomViewMatrix, (x, v) => x.UseCustomViewMatrix = v)
                 .AddInput(nameof(CameraComponent.ViewMatrix), x => x.ViewMatrix, (x, v) => x.ViewMatrix = v)
                 .AddInput(nameof(CameraComponent.Projection), x => x.Projection, (x, v) => x.Projection = v)
-                .AddInput(nameof(CameraComponent.VerticalFieldOfView), x => x.VerticalFieldOfView, (x, v) => x.VerticalFieldOfView = v)
+                .AddInput(nameof(CameraComponent.VerticalFieldOfView), x => (double)x.VerticalFieldOfView / 360, (x, v) => x.VerticalFieldOfView = (float)(v * 360), 45d / 360)
                 .AddInput(nameof(CameraComponent.UseCustomAspectRatio), x => x.UseCustomAspectRatio, (x, v) => x.UseCustomAspectRatio = v)
-                .AddInput(nameof(CameraComponent.AspectRatio), x => x.AspectRatio, (x, v) => x.AspectRatio = v)
+                .AddInput(nameof(CameraComponent.AspectRatio), x => x.AspectRatio, (x, v) => x.AspectRatio = v, 1f)
                 .AddInput(nameof(CameraComponent.NearClipPlane), x => x.NearClipPlane, (x, v) => x.NearClipPlane = v)
                 .AddInput(nameof(CameraComponent.FarClipPlane), x => x.FarClipPlane, (x, v) => x.FarClipPlane = v)
                 .AddInput(nameof(CameraComponent.UseCustomProjectionMatrix), x => x.UseCustomProjectionMatrix, (x, v) => x.UseCustomProjectionMatrix = v)
@@ -147,7 +147,15 @@ namespace VL.Stride.Engine
             var inputCategory = "Stride.Input";
 
             yield return factory.NewComponentNode<InputSourceComponent>(inputCategory)
+                .AddInput(nameof(InputSourceComponent.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true)
                 .AddOutput(nameof(InputSourceComponent.InputSource), c => c.InputSource);
+
+            yield return factory.NewComponentNode<CameraInputSourceComponent>(inputCategory)
+                .AddInput(nameof(CameraInputSourceComponent.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true)
+                .AddOutput(nameof(CameraInputSourceComponent.InputSource), c => c.InputSource);
+
+            yield return factory.NewNode<CameraInputSourceSceneRenderer>(name: nameof(CameraInputSourceSceneRenderer), category: inputCategory)
+                .AddInput(nameof(CameraInputSourceSceneRenderer.CameraInputSourceComponent), x => x.CameraInputSourceComponent, (x, v) => x.CameraInputSourceComponent = v);
         }
 
         public static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey)
