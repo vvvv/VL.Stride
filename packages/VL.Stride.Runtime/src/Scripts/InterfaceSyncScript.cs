@@ -8,26 +8,49 @@ namespace VL.Stride.Scripts
 {
     public class InterfaceSyncScript : SyncScript
     {
-        ISyncScript script;
+        private ISyncScript patchScript;
 
-        public InterfaceSyncScript(ISyncScript script)
+        public ISyncScript PatchScript
         {
-            this.script = script;
+            get => patchScript;
+            
+            set
+            {
+                if (value != patchScript)
+                {
+                    // Cancel current script
+                    patchScript?.Cancel();
+
+                    // Assign to field
+                    patchScript = value;
+
+                    // Call Start() if the entity is in the scene graph
+                    if (value != null && Entity != null && Entity.Scene != null)
+                    {
+                        patchScript.Start(this);
+                    }
+                }
+            }
         }
 
         public override void Start()
         {
-            script?.Start(this);
+            patchScript?.Start(this);
         }
 
         public override void Update()
         {
-            script?.Update();
+            patchScript?.ScriptUpdate();
+        }
+
+        protected override void PriorityUpdated()
+        {
+            patchScript?.PriorityUpdated();
         }
 
         public override void Cancel()
         {
-            script?.Cancel();
+            patchScript?.Cancel();
         }
     }
 }

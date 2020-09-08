@@ -7,10 +7,12 @@ namespace VL.Stride.Scripts
 {
     public interface ISyncScript
     {
-        void Start(InterfaceSyncScript syncScriptComponent);
+        void Start(ScriptComponent component);
 
-        void Update();
+        void ScriptUpdate();
 
         void Cancel();
+
+        void PriorityUpdated();
     }
 }

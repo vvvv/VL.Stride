@@ -11,7 +11,7 @@ namespace VL.Stride.Rendering
     {
         public class RendererData
         {
-            public DrawerRenderStage RenderStage;
+            public EntityRendererComponent RenderComponent;
             public RenderRenderer RenderRenderer;
         }
 
@@ -19,13 +19,8 @@ namespace VL.Stride.Rendering
 
         protected override RendererData GenerateComponentData([NotNull] Entity entity, [NotNull] EntityRendererComponent component)
         {
-            var data = new RendererData() { RenderStage = component.RenderStage };
+            var data = new RendererData() { RenderComponent = component };
             return data;
-        }
-
-        protected override bool IsAssociatedDataValid([NotNull] Entity entity, [NotNull] EntityRendererComponent component, [NotNull] RendererData associatedData)
-        {
-            return associatedData.RenderStage == component.RenderStage;
         }
 
         public override void Draw(RenderContext context)
@@ -39,15 +34,15 @@ namespace VL.Stride.Rendering
                 // Component was just added
                 if (rendererData.RenderRenderer == null)
                 {
-                    CreateAndAddRenderObject(rendererData);
+                    CreateAndAddRenderObject(rendererData, component);
                 }
 
-                // Stage has changed
-                if (rendererData.RenderStage != component.RenderStage)
+                // Stage or group has changed
+                if (rendererData.RenderRenderer.RenderStage != component.RenderStage 
+                    || rendererData.RenderRenderer.RenderGroup != component.RenderGroup)
                 {
                     VisibilityGroup.RenderObjects.Remove(rendererData.RenderRenderer);
-                    rendererData.RenderStage = component.RenderStage;
-                    CreateAndAddRenderObject(rendererData);
+                    CreateAndAddRenderObject(rendererData, component);
                 }
 
                 var renderRenderer = rendererData.RenderRenderer;
@@ -55,7 +50,6 @@ namespace VL.Stride.Rendering
                 if (renderRenderer.Enabled)
                 {
                     renderRenderer.SingleCallPerFrame = component.SingleCallPerFrame;
-                    renderRenderer.RenderGroup = component.RenderGroup;
                     renderRenderer.ParentTransformation = component.Entity.Transform.WorldMatrix;
                     renderRenderer.Renderer = component.Renderer;
                 }
@@ -64,9 +58,9 @@ namespace VL.Stride.Rendering
             base.Draw(context);
         }
 
-        private void CreateAndAddRenderObject(RendererData rendererData)
+        private void CreateAndAddRenderObject(RendererData rendererData, EntityRendererComponent component)
         {
-            rendererData.RenderRenderer = new RenderRenderer() { RenderStage = rendererData.RenderStage };
+            rendererData.RenderRenderer = new RenderRenderer() { RenderStage = component.RenderStage, RenderGroup = component.RenderGroup };
             VisibilityGroup.RenderObjects.Add(rendererData.RenderRenderer);
         }
 
