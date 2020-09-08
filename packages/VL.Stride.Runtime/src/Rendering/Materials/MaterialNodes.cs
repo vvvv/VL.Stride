@@ -113,6 +113,7 @@ namespace VL.Stride.Rendering.Materials
                     getter: x => x.Value,
                     setter: (x, v) => x.SetValue(v),
                     defaultValue: Color4.White)
+                .AddInput(nameof(ComputeColor.PremultiplyAlpha), x => x.PremultiplyAlpha, (x, v) => x.PremultiplyAlpha = v, true)
                 .AddOutput<ComputeColor>("Output", x => x);
 
             yield return nodeFactory.NewNode<LiveComputeFloat>(
@@ -185,32 +186,32 @@ namespace VL.Stride.Rendering.Materials
 
         class LiveComputeColor : ComputeColor
         {
-            public ParameterCollection Parameters { get; private set; }
-            public ColorSpace ColorSpace { get; private set; }
+            private ParameterCollection UsedParameters;
+            private ColorSpace UsedColorSpace;
 
             public void SetValue(Color4 value)
             {
                 Value = value; // Already takes care of color space conversion when generating the shader
-                if (Parameters != null)
+                if (UsedParameters != null)
                 {
                     // But when setting it later while the shader is running (live) we need to do it on our own
-                    value = value.ToColorSpace(ColorSpace);
+                    value = value.ToColorSpace(UsedColorSpace);
                     if (PremultiplyAlpha)
                         value = Color4.PremultiplyAlpha(value);
 
                     // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
                     if (UsedKey is ValueParameterKey<Color4> color4Key)
-                        Parameters.Set(color4Key, value);
+                        UsedParameters.Set(color4Key, ref value);
                     else if (UsedKey is ValueParameterKey<Color3> color3Key)
-                        Parameters.Set(color3Key, value.ToColor3());
+                        UsedParameters.Set(color3Key, value.ToColor3());
                 }
             }
 
             public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
             {
                 var shaderSource = base.GenerateShaderSource(context, baseKeys);
-                ColorSpace = context.ColorSpace;
-                Parameters = context.Parameters;
+                UsedColorSpace = context.ColorSpace;
+                UsedParameters = context.Parameters;
                 return shaderSource;
             }
         }
