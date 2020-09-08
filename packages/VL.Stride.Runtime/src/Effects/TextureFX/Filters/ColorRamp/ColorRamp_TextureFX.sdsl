@@ -1,10 +1,51 @@
 ﻿shader ColorRamp_TextureFX : TextureFX
 {
+    stage float2 FromXY;
+    stage float2 ToXY;
+    stage float Grayscale;
+
+    Texture2D GradientTexture; 
+
+    stage float4 Ramp(Texture2D tex, float2 fromXY, float2 toXY, float4 c)
+    {
+        return float4(
+            tex.Sample(Sampler, lerp(fromXY, toXY, c.r)).r,
+            tex.Sample(Sampler, lerp(fromXY, toXY, c.g)).g,
+            tex.Sample(Sampler, lerp(fromXY, toXY, c.b)).b,
+            tex.Sample(Sampler, lerp(fromXY, toXY, c.a)).a
+        );
+    }
+
     stage override float4 Shading()
     {
         float4 c = InTex();
+        float pa = c.a;
+        c = Ramp(Texture1, FromXY, ToXY, c);
+        c.a *= pa;
         return c;
     }
 };
 
+//float4 pLUMA(float2 vp:vpos):color{float2 x=(vp+.5)/R;
+//    float4 c=tex2D(s0,x);float pa=c.a;
+//    c.rgb=dot(c.rgb,float3(.33,.59,.11));
+//    c=ramp(FromXY,ToXY,s1,c);
+//    c.a*=pa;
+//    return c;
+//}
+//float3 rgb2hsl(float3 c){float cmax=max(c.r,max(c.g,c.b)),cmin=min(c.r,min(c.g,c.b)),l=(cmax+cmin)/2,d=(cmax-cmin),s=l>.5?d/(2-cmax-cmin)/l/2:d/(cmax+cmin),h;float3 ch=(cmax==c);if(ch.r==ch.g&&ch.r==1)ch.rg=float2(1,0);if(ch.g==ch.b&&ch.g==1)ch.gb=float2(1,0);if(ch.b==ch.r&&ch.b==1)ch.br=float2(1,0);h=frac((dot(min(2,ch),(c.gbr-c.brg)/d+float3(0,2,4)))/6);if(cmax==cmin)h=s=0;return float3(h,s,l);}
+//float4 pHUE(float2 vp:vpos):color{float2 x=(vp+.5)/R;
+//    float4 c=tex2D(s0,x);float pa=c.a;
+//    c.rgb=rgb2hsl(c.rgb).x;
+//    c=ramp(FromXY,ToXY,s1,c);
+//    c.a*=pa;
+//    return c;
+//}
+//float4 pSATURATION(float2 vp:vpos):color{float2 x=(vp+.5)/R;
+//    float4 c=tex2D(s0,x);float pa=c.a;
+//    c.rgb=rgb2hsl(c.rgb).y;
+//    c=ramp(FromXY,ToXY,s1,c);
+//    c.a*=pa;
+//    return c;
+//}
 
