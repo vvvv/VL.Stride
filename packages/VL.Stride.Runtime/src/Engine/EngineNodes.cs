@@ -10,6 +10,7 @@ using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Basics.Resources;
 using VL.Stride.Input;
+using VL.Stride.Scripts;
 
 namespace VL.Stride.Engine
 {
@@ -19,6 +20,8 @@ namespace VL.Stride.Engine
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {
+            var strideCategory = "Stride";
+
             yield return new CustomNodeDesc<SceneInstanceSystem>(factory,
                 ctor: nodeContext =>
                 {
@@ -27,7 +30,7 @@ namespace VL.Stride.Engine
                     var instance = new SceneInstanceSystem(game.Services);
                     return (instance, () => gameHandle.Dispose());
                 },
-                category: "Stride",
+                category: strideCategory,
                 copyOnWrite: false)
                 .AddInput(nameof(SceneInstanceSystem.RootScene), x => x.RootScene, (x, v) => x.RootScene = v)
                 .AddOutput(nameof(SceneInstanceSystem.SceneInstance), x => x.SceneInstance);
@@ -40,7 +43,7 @@ namespace VL.Stride.Engine
                     var instance = new SceneInstanceRenderer();
                     return (instance, () => gameHandle.Dispose());
                 },
-                category: "Stride",
+                category: strideCategory,
                 copyOnWrite: false)
                 .AddInput(nameof(SceneInstanceRenderer.SceneInstance), x => x.SceneInstance, (x, v) => x.SceneInstance = v)
                 .AddInput(nameof(SceneInstanceRenderer.GraphicsCompositor), x => x.GraphicsCompositor, (x, v) => x.GraphicsCompositor = v);
@@ -148,6 +151,14 @@ namespace VL.Stride.Engine
 
             yield return factory.NewComponentNode<InputSourceComponent>(inputCategory)
                 .AddOutput(nameof(InputSourceComponent.InputSource), c => c.InputSource);
+
+            
+            // Patchable script
+            yield return factory.NewComponentNode<InterfaceSyncScript>(strideCategory, name: "PatchScriptComponent")
+                .AddInput(nameof(InterfaceSyncScript.PatchScript), x => x.PatchScript, (x, v) => x.PatchScript = v)
+                ;
+
+
         }
 
         public static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey)
