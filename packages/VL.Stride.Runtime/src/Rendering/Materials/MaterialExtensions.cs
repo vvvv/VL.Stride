@@ -59,6 +59,10 @@ namespace VL.Stride.Rendering
         public static Material New(GraphicsDevice device, MaterialDescriptor descriptor, ContentManager content)
         {
             var m = Material.New(device, descriptor);
+
+            // Attach the descriptor (not sure why Stride is not doing that on its own) as its needed for material layers
+            m.Descriptor = descriptor;
+
             foreach (var pass in m.Passes)
             {
                 //var t = pass.Parameters.Get(MaterialSpecularMicrofacetEnvironmentGGXLUTKeys.EnvironmentLightingDFG_LUT);
