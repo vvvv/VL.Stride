@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading;
 using VL.Core;
 using VL.Core.Diagnostics;
+using VL.Model;
 using VL.Stride.Core;
 using VL.Stride.Engine;
 using VL.Stride.Rendering;
@@ -98,13 +99,27 @@ namespace VL.Stride.EffectLib
                 var effectName = Path.GetFileNameWithoutExtension(file);
                 if (effectName.EndsWith(suffix))
                 {
-                    var name = effectName.Substring(0, effectName.Length - suffix.Length);
-                    var shaderNodeName = $"{name}Shader";
+                    var name = GetNodeName(effectName);
+                    var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
 
                     IVLNodeDescription shaderNodeDescription;
-                    yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName);
+                    yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName, name.NamePart);
                     yield return NewImageEffectNode(shaderNodeDescription, name);
                 }
+            }
+
+            static NameAndVersion GetNodeName(string effectName)
+            {
+                // Levels_ClampBoth_TextureFX
+                var name = effectName.Substring(0, effectName.Length - suffix.Length);
+                // Levels_ClampBoth
+                var nameParts = name.Split('_');
+                if (nameParts.Length > 0)
+                {
+                    name = nameParts[0];
+                    return new NameAndVersion(name, string.Join(" ", nameParts.Skip(1)));
+                }
+                return new NameAndVersion(name);
             }
 
             string GetPathOfSdslShader(string effectName)
@@ -117,7 +132,10 @@ namespace VL.Stride.EffectLib
                 }
             }
 
-            IVLNodeDescription NewImageEffectShaderNode(string name, string effectName)
+            // name = LevelsShader (ClampBoth)
+            // effectName = Levels_ClampBoth_TextureFX
+            // effectMainName = Levels
+            IVLNodeDescription NewImageEffectShaderNode(NameAndVersion name, string effectName, string effectMainName)
             {
                 return new DelegateNodeDescription(
                     factory: factory,
@@ -183,7 +201,7 @@ namespace VL.Stride.EffectLib
                                     continue;
 
                                 // Skip unbound parameters
-                                if (parameter.BindingSlot < 0 && !name.StartsWith(effectName))
+                                if (parameter.BindingSlot < 0 && !name.StartsWith(effectMainName))
                                     continue;
 
                                 if (key.PropertyType == typeof(Texture))
