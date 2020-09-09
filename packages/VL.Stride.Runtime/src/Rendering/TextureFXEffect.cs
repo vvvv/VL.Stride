@@ -20,7 +20,7 @@ namespace VL.Stride.Rendering
 
         protected override void PreDrawCore(RenderDrawContext context)
         {
-            if (IsInputAssigned && IsOutputAssigned)
+            if (IsOutputAssigned)
                 base.PreDrawCore(context);
         }
 
@@ -30,7 +30,7 @@ namespace VL.Stride.Rendering
             if (time != null && (time.Total - lastExceptionTime) < retryTime)
                 return;
 
-            if (IsInputAssigned && IsOutputAssigned)
+            if (IsOutputAssigned)
             {
                 try
                 {
@@ -47,7 +47,7 @@ namespace VL.Stride.Rendering
 
         protected override void PostDrawCore(RenderDrawContext context)
         {
-            if (IsInputAssigned && IsOutputAssigned)
+            if (IsOutputAssigned)
                 base.PostDrawCore(context);
         }
     }

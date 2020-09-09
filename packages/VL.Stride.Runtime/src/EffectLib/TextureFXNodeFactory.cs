@@ -326,7 +326,7 @@ namespace VL.Stride.EffectLib
 
                                     var effect = node.Outputs[0].Value as TextureFXEffect;
                                     var scheduler = game.Services.GetService<SchedulerSystem>();
-                                    if (scheduler != null && effect != null && effect.IsInputAssigned && effect.IsOutputAssigned)
+                                    if (scheduler != null && effect != null && effect.IsOutputAssigned)
                                     {
                                         scheduler.Schedule(effect);
                                     }
