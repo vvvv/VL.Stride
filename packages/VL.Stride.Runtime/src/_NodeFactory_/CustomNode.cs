@@ -3,6 +3,7 @@ using Stride.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Lib.Basics.Resources;
@@ -100,7 +101,7 @@ namespace VL.Stride
         }
     }
 
-    class CustomNodeDesc<TInstance> : IVLNodeDescription
+    class CustomNodeDesc<TInstance> : IVLNodeDescription, IInfo
     {
         readonly List<CustomPinDesc> inputs = new List<CustomPinDesc>();
         readonly List<CustomPinDesc> outputs = new List<CustomPinDesc>();
@@ -140,6 +141,10 @@ namespace VL.Stride
         public IReadOnlyList<IVLPinDescription> Outputs => outputs;
 
         public IEnumerable<Message> Messages => Enumerable.Empty<Message>();
+
+        public string Summary => typeof(TInstance).GetSummary();
+
+        public string Remarks => typeof(TInstance).GetRemarks();
 
         public IVLNode CreateInstance(NodeContext context)
         {
@@ -208,9 +213,9 @@ namespace VL.Stride
             return false;
         }
 
-        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default)
+        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default, string summary = default, string remarks = default)
         {
-            inputs.Add(new CustomPinDesc()
+            inputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
@@ -219,9 +224,9 @@ namespace VL.Stride
             return this;
         }
 
-        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue)
+        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue, string summary = default, string remarks = default)
         {
-            inputs.Add(new CustomPinDesc()
+            inputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
@@ -300,7 +305,7 @@ namespace VL.Stride
 
         public CustomNodeDesc<TInstance> AddOutput<T>(string name, Func<TInstance, T> getter)
         {
-            outputs.Add(new CustomPinDesc()
+            outputs.Add(new CustomPinDesc(name)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
@@ -311,7 +316,7 @@ namespace VL.Stride
 
         public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<TInstance, T> getter)
         {
-            outputs.Add(new CustomPinDesc()
+            outputs.Add(new CustomPinDesc(name)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
@@ -322,7 +327,7 @@ namespace VL.Stride
 
         public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, TInstance, T> getter)
         {
-            outputs.Add(new CustomPinDesc()
+            outputs.Add(new CustomPinDesc(name)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
@@ -333,7 +338,7 @@ namespace VL.Stride
 
         public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, (Func<TInstance, T>, IDisposable)> ctor)
         {
-            outputs.Add(new CustomPinDesc()
+            outputs.Add(new CustomPinDesc(name)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
@@ -346,8 +351,19 @@ namespace VL.Stride
             return this;
         }
 
-        class CustomPinDesc : IVLPinDescription
+        class CustomPinDesc : IVLPinDescription, IInfo
         {
+            readonly string memberName;
+            string summary;
+            string remarks;
+
+            public CustomPinDesc(string memberName, string summary = default, string remarks = default)
+            {
+                this.memberName = memberName;
+                this.summary = summary;
+                this.remarks = remarks;
+            }
+
             public string Name { get; set; }
 
             public Type Type { get; set; }
@@ -355,6 +371,10 @@ namespace VL.Stride
             public object DefaultValue { get; set; }
 
             public Func<Node, TInstance, Pin> CreatePin { get; set; }
+
+            public string Summary => summary ?? (summary = typeof(TInstance).GetSummary(memberName));
+
+            public string Remarks => remarks ?? (remarks = typeof(TInstance).GetRemarks(memberName));
         }
 
         abstract class Pin : IVLPin
@@ -403,7 +423,7 @@ namespace VL.Stride
 
         class InputPin<T> : Pin<T>, IVLPin
         {
-            public readonly Func<T, T, bool> equals;
+            readonly Func<T, T, bool> equals;
 
             public InputPin(Node node, TInstance instance, Func<TInstance, T> getter, Action<TInstance, T> setter, T initialValue, Func<T, T, bool> equals = default) 
                 : base(node, instance)
@@ -435,6 +455,7 @@ namespace VL.Stride
                     }
                 }
             }
+
             T lastValue;
 
             public override void Update(TInstance instance)

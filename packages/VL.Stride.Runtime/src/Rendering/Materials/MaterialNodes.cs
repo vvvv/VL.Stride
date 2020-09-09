@@ -217,12 +217,26 @@ namespace VL.Stride.Rendering.Materials
         }
     }
 
+    /// <summary>
+    /// Material attributes define the core characteristics of a material, such as its diffuse color, diffuse shading model, and so on. Attributes are organized into geometry, shading, and misc.
+    /// </summary>
     internal class GroupedMaterialAttributes
     {
         readonly MaterialAttributes @default = new MaterialAttributes();
 
+        /// <summary>
+        /// The shape of the material.
+        /// </summary>
         public GeometryAttributes Geometry { get; set; }
+
+        /// <summary>
+        /// The color characteristics of the material and how it reacts to light.
+        /// </summary>
         public ShadingAttributes Shading { get; set; }
+
+        /// <summary>
+        /// Occlusion, transparency and material layers.
+        /// </summary>
         public MiscAttributes Misc { get; set; }
 
         public MaterialAttributes ToMaterialAttributes()
@@ -248,30 +262,122 @@ namespace VL.Stride.Rendering.Materials
         }
     }
 
+    /// <summary>
+    /// The material geometry attributes define the shape of a material.
+    /// </summary>
     public class GeometryAttributes
     {
+        /// <summary>
+        /// Gets or sets the tessellation.
+        /// </summary>
+        /// <value>The tessellation.</value>
+        /// <userdoc>The method used for tessellation (subdividing model poligons to increase realism)</userdoc>
         public IMaterialTessellationFeature Tessellation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the displacement.
+        /// </summary>
+        /// <value>The displacement.</value>
+        /// <userdoc>The method used for displacement (altering vertex positions by adding offsets)</userdoc>
         public IMaterialDisplacementFeature Displacement { get; set; }
+
+        /// <summary>
+        /// Gets or sets the surface.
+        /// </summary>
+        /// <value>The surface.</value>
+        /// <userdoc>The method used to alter macrosurface aspects (eg perturbing the normals of the model)</userdoc>
         public IMaterialSurfaceFeature Surface { get; set; }
+
+        /// <summary>
+        /// Gets or sets the micro surface.
+        /// </summary>
+        /// <value>The micro surface.</value>
+        /// <userdoc>The method used to alter the material microsurface</userdoc>
         public IMaterialMicroSurfaceFeature MicroSurface { get; set; }
     }
 
+    /// <summary>
+    /// The material shading attributes define the color characteristics of the material and how it reacts to light.
+    /// </summary>
     public class ShadingAttributes
     {
+        /// <summary>
+        /// Gets or sets the diffuse.
+        /// </summary>
+        /// <value>The diffuse.</value>
+        /// <userdoc>The method used to determine the diffuse color of the material. 
+        /// The diffuse color is the essential (pure) color of the object without reflections.</userdoc>
         public IMaterialDiffuseFeature Diffuse { get; set; }
+
+        /// <summary>
+        /// Gets or sets the diffuse model.
+        /// </summary>
+        /// <value>The diffuse model.</value>
+        /// <userdoc>The shading model used to render the diffuse color.</userdoc>
         public IMaterialDiffuseModelFeature DiffuseModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the specular.
+        /// </summary>
+        /// <value>The specular.</value>
+        /// <userdoc>The method used to determine the specular color. 
+        /// This is the color produced by the reflection of a white light on the object.</userdoc>
         public IMaterialSpecularFeature Specular { get; set; }
+
+        /// <summary>
+        /// Gets or sets the specular model.
+        /// </summary>
+        /// <value>The specular model.</value>
+        /// <userdoc>The shading model used to render the material specular color</userdoc>
         public IMaterialSpecularModelFeature SpecularModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the emissive.
+        /// </summary>
+        /// <value>The emissive.</value>
+        /// <userdoc>The method used to determine the emissive color (the color emitted by the object)
+        /// </userdoc>
         public IMaterialEmissiveFeature Emissive { get; set; }
         public IMaterialSubsurfaceScatteringFeature SubsurfaceScattering { get; set; }
     }
 
+    /// <summary>
+    /// The material misc attributes allow to set the occulsion, transparency and material layers.
+    /// </summary>
     public class MiscAttributes
     {
+        /// <summary>
+        /// Gets or sets the occlusion.
+        /// </summary>
+        /// <value>The occlusion.</value>
+        /// <userdoc>The occlusion method. Occlusions modulate the ambient and direct lighting of the material to simulate shadows or cavity artifacts.
+        /// </userdoc>
         public IMaterialOcclusionFeature Occlusion { get; set; }
+
+        /// <summary>
+        /// Gets or sets the transparency.
+        /// </summary>
+        /// <value>The transparency.</value>
+        /// <userdoc>The method used to determine the transparency</userdoc>
         public IMaterialTransparencyFeature Transparency { get; set; }
+
+        /// <summary>
+        /// Gets or sets the overrides.
+        /// </summary>
+        /// <value>The overrides.</value>
+        /// <userdoc>Override properties of the current material</userdoc>
         public MaterialOverrides Overrides { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cull mode used for the material.
+        /// </summary>
+        /// <userdoc>Cull some faces of the model depending on orientation</userdoc>
         public CullMode CullMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the clear coat shading features for the material.
+        /// </summary>
+        /// <userdoc>Use clear-coat shading to simulate vehicle paint</userdoc>
         public IMaterialClearCoatFeature ClearCoat { get; set; }
     }
 }
