@@ -10,7 +10,7 @@ using VL.Core.Diagnostics;
 
 namespace VL.Stride
 {
-    class StrideNodeDesc<TMaterial> : IVLNodeDescription, IEnumerable
+    class StrideNodeDesc<TMaterial> : IVLNodeDescription, IEnumerable, IInfo
         where TMaterial : new()
     {
         private List<PinDescription> inputs;
@@ -122,6 +122,10 @@ namespace VL.Stride
         }
 
         public IEnumerable<Message> Messages => Enumerable.Empty<Message>();
+
+        public string Summary => typeof(TMaterial).GetSummary();
+
+        public string Remarks => typeof(TMaterial).GetRemarks();
 
         public IVLNode CreateInstance(NodeContext context)
         {

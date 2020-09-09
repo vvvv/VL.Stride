@@ -6,7 +6,7 @@ using VL.Core;
 
 namespace VL.Stride
 {
-    abstract class PinDescription : IVLPinDescription
+    abstract class PinDescription : IVLPinDescription, IInfo
     {
         protected readonly MemberInfo property;
 
@@ -21,6 +21,10 @@ namespace VL.Stride
         public abstract Type Type { get; }
 
         public abstract object DefaultValue { get; }
+
+        public string Summary => property.GetSummary();
+
+        public string Remarks => property.GetRemarks();
 
         public abstract Pin CreatePin(StrideNode node);
     }
