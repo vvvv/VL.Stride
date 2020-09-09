@@ -11,12 +11,9 @@ namespace VL.Stride.Shaders.ShaderFX
     public class Semantic<T> : Var<T>
     {
         public Semantic(string semantic, string name = "SemanticValue")
-            : base(null, name)
+            : base(null, null, name, semantic, true)
         {
-            SemanticName = semantic;
         }
-
-        public string SemanticName { get; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
