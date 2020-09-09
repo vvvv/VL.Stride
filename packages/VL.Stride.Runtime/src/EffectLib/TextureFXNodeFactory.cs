@@ -291,13 +291,14 @@ namespace VL.Stride.EffectLib
                                 {
                                     var inputTexture = textureInput?.Value as Texture;
                                     var outputTexture = outputTextureInput.Value as Texture;
-                                    if (!(inputTexture is null) && outputTexture is null)
+                                    if (inputTexture != null && outputTexture is null)
                                     {
-                                        if (inputTexture.Description != current.inputDesc)
+                                        var desc = inputTexture.Description;
+                                        if (desc != current.inputDesc)
                                         {
                                             current.outputTexture?.Dispose();
-                                            current.inputDesc = inputTexture.Description;
-                                            current.outputTexture = Texture.New(graphicsDevice, TextureDescription.FromDescription(current.inputDesc, TextureFlags.RenderTarget | TextureFlags.ShaderResource, GraphicsResourceUsage.Default));
+                                            current.inputDesc = desc;
+                                            current.outputTexture = Texture.New2D(graphicsDevice, desc.Width, desc.Height, desc.Format, TextureFlags.ShaderResource | TextureFlags.RenderTarget);
                                         }
                                         outputTexture = current.outputTexture;
                                     }
