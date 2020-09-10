@@ -1,0 +1,30 @@
+﻿shader Stripes_TextureFX : TextureFX
+{
+    int Tiling = 1;
+    bool HorizontalStripes = false;
+    float Offset = 0;
+    float Seed = 0;
+
+    // TODO: Extend with varying stripe sizes
+
+    float offset (float xmod)
+    {
+        float shuffle = sin(xmod * 125.23432 * Seed + Offset) * 100000.0;
+        float o = 0.5 + sign(shuffle) * frac(shuffle)/2;
+        return o;
+    }
+
+    stage override float4 Shading()
+    {
+        float4 c = InTex();
+        float2 uv = streams.TexCoord;
+        float x = HorizontalStripes ? uv.y : uv.x;
+        float stripes = fmod(x, 1.0) - fmod(x, 1.0/Tiling);
+        stripes += 1.0/Tiling; // to mitigate first stripe being 0
+        c.rgb += offset(stripes);
+        c.a = 1.0;
+        return c;
+    }
+};
+
+
