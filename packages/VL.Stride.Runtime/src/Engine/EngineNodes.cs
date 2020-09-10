@@ -82,7 +82,6 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(CameraComponent.FarClipPlane), x => x.FarClipPlane, (x, v) => x.FarClipPlane = v)
                 .AddInput(nameof(CameraComponent.UseCustomProjectionMatrix), x => x.UseCustomProjectionMatrix, (x, v) => x.UseCustomProjectionMatrix = v)
                 .AddInput(nameof(CameraComponent.ProjectionMatrix), x => x.ProjectionMatrix, (x, v) => x.ProjectionMatrix = v)
-                .AddOutput(nameof(CameraComponent.Frustum), x => x.Frustum)
                 .WithEnabledPin();
 
             // Model components
