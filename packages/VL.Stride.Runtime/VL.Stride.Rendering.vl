@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="PwY6LKPeo6iO0yovVrdC7t" LanguageVersion="2020.2.0.225" Version="0.128">
-  <NugetDependency Id="RpPAo2Mz2hINnzdyPwCgpq" Location="VL.CoreLib" Version="2020.2.0-0225-ga403b07bdf" />
+<Document xmlns:p="property" Id="PwY6LKPeo6iO0yovVrdC7t" LanguageVersion="2020.2.0.230" Version="0.128">
+  <NugetDependency Id="RpPAo2Mz2hINnzdyPwCgpq" Location="VL.CoreLib" Version="2020.2.0-0230-g7bbb4ede63" />
   <Patch Id="J2Vq6inJsyVOtMcCMNylcQ">
     <Canvas Id="JSu0taSJ8rOOa9Gx7GIL6b" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="KouU4NDrV4yMANodMZ0uIi" Name="Utils" Position="180,530">
@@ -10728,13 +10728,26 @@
                 <Pin Id="M4o2mI8ztYWOEPxlzMsnD7" Name="Depth Buffer" Kind="InputPin" />
                 <Pin Id="ThRokQlR6v5OODeC5hWI5G" Name="Output" Kind="OutputPin" />
               </Node>
+              <Node Bounds="418,627" Id="D0SIcAY1uPXNICQEXev2VY">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="ClearRenderer" />
+                  <CategoryReference Kind="Category" Name="Rendering" NeedsToBeDirectParent="true">
+                    <p:OuterCategoryReference Kind="Category" Name="Stride" NeedsToBeDirectParent="true" />
+                  </CategoryReference>
+                </p:NodeReference>
+                <Pin Id="RqIG9xWFbe6OWBuIZDc1zA" Name="Input" Kind="InputPin" />
+                <Pin Id="OPdD3ApMwAbMA4iabwq5Vs" Name="Color" Kind="InputPin" />
+                <Pin Id="E7e67UbkWZNPMDvPP59cIr" Name="Enabled" Kind="InputPin" />
+                <Pin Id="ShnczaZYR0XMYXmNSshf0r" Name="Output" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="BBYWdTBAUpXOPPPjdm1KbH" Bounds="486,559" />
+              <ControlPoint Id="GJF06QIY8QxLFEwR68Nl4G" Bounds="513,598" />
             </Canvas>
             <Patch Id="IWCMZn0ARmtPOpXomoDdPW" Name="Create" />
             <Patch Id="PXv51segOD5P9MVUJJNcuG" Name="Update" ManuallySortedPins="true">
-              <Pin Id="CLaVdBHvQ3gPrcS2MKQUWn" Name="Layer" Kind="OutputPin" Bounds="459,622" Visibility="Optional" />
-              <Pin Id="GmqNqJYhaSmOIzIf74SlxL" Name="Color" Kind="OutputPin" Bounds="193,470" />
-              <Pin Id="T6Oxds1USEUPj7m8fU194L" Name="Depth" Kind="OutputPin" Bounds="726,613" />
               <Pin Id="CQD1UWhpB0pOvDntDRuWL5" Name="Input" Kind="InputPin" Bounds="45,260" />
+              <Pin Id="QotBQ1hDzfhLxqPtgRZ3jp" Name="Render View" Kind="InputPin" Bounds="437,412" />
               <Pin Id="KbTslNF1W0ROHDERA5ARHr" Name="Width" Kind="InputPin" Bounds="646,267" DefaultValue="1280">
                 <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                   <Choice Kind="TypeFlag" Name="Integer32" />
@@ -10745,14 +10758,18 @@
                   <Choice Kind="TypeFlag" Name="Integer32" />
                 </p:TypeAnnotation>
               </Pin>
-              <Pin Id="QotBQ1hDzfhLxqPtgRZ3jp" Name="Render View" Kind="InputPin" Bounds="437,412" />
               <Pin Id="LvKJYfEGDOgMzErm2SPNt3" Name="Format" Kind="InputPin" Bounds="237,275" DefaultValue="R8G8B8A8_UNorm_SRgb" />
               <Pin Id="GEIqaoj3lHPLxe9nimivbT" Name="Depth Format" Kind="InputPin" Bounds="432,380" DefaultValue="D24_UNorm_S8_UInt">
                 <p:TypeAnnotation LastCategoryFullName="Stride.API.Graphics" LastSymbolSource="VL.Stride.Graphics.vl">
                   <Choice Kind="TypeFlag" Name="PixelFormat" />
                 </p:TypeAnnotation>
               </Pin>
+              <Pin Id="DdrTROJ0iHYP5H8Xe9YOu9" Name="Clear Color" Kind="InputPin" Bounds="486,559" />
+              <Pin Id="RcXXVyPNqGlLrx6QwWJLOX" Name="Clear" Kind="InputPin" Bounds="514,596" />
               <Pin Id="JfrNPiUaYWqMCyAQqgrNo3" Name="Auto Render" Kind="InputPin" Bounds="77,519" Visibility="Optional" />
+              <Pin Id="CLaVdBHvQ3gPrcS2MKQUWn" Name="Layer" Kind="OutputPin" Bounds="459,622" Visibility="Optional" />
+              <Pin Id="GmqNqJYhaSmOIzIf74SlxL" Name="Color" Kind="OutputPin" Bounds="193,470" />
+              <Pin Id="T6Oxds1USEUPj7m8fU194L" Name="Depth" Kind="OutputPin" Bounds="726,613" />
             </Patch>
             <ProcessDefinition Id="OLYKjWz5I82M2X0a75EsrK">
               <Fragment Id="TX7Xkq5kdZaLCLKfwYbCCn" Patch="IWCMZn0ARmtPOpXomoDdPW" Enabled="true" />
@@ -10787,8 +10804,13 @@
             <Link Id="TleVhhsq6unQSxQWLCLKus" Ids="JYNdEODuyY3OCh4m8UhbLK,KE8BCtWnf68OosTFi2hZ13" />
             <Link Id="IbKKso7h0cJOESTujfBewC" Ids="P1lhArxBwJvLu2pAzKSVUZ,M4o2mI8ztYWOEPxlzMsnD7" />
             <Link Id="QdDHaeXLfKEQbOOkSA12jM" Ids="ThRokQlR6v5OODeC5hWI5G,Qg7uEVT9J3kOOu4IQutFds" />
-            <Link Id="KPDlc8VcWfEPt2dGsXdi7W" Ids="H9tmXcdcGtWPZBkzKuCkKy,FpFBQZTmoBILy8wWAcQyi9" />
             <Link Id="QJbNwC9q8vwQIgVrD6Me8K" Ids="ThRokQlR6v5OODeC5hWI5G,QASPKHo7oUGM7IoaSdXZHO" />
+            <Link Id="BPG7mXK2TH7O5oB2mlvvoE" Ids="BBYWdTBAUpXOPPPjdm1KbH,OPdD3ApMwAbMA4iabwq5Vs" />
+            <Link Id="AUVrCbWFYdGOJmtRPvdcQU" Ids="DdrTROJ0iHYP5H8Xe9YOu9,BBYWdTBAUpXOPPPjdm1KbH" IsHidden="true" />
+            <Link Id="MlH3ixyT6UkL5JWe1P7sd7" Ids="GJF06QIY8QxLFEwR68Nl4G,E7e67UbkWZNPMDvPP59cIr" />
+            <Link Id="Iig8ObNwXWhOoEw8u8LpOm" Ids="RcXXVyPNqGlLrx6QwWJLOX,GJF06QIY8QxLFEwR68Nl4G" IsHidden="true" />
+            <Link Id="LRpRJQwMmeGLVyIdtOPf9i" Ids="H9tmXcdcGtWPZBkzKuCkKy,RqIG9xWFbe6OWBuIZDc1zA" />
+            <Link Id="BMNIis3zVZTNpsfTqddOE5" Ids="ShnczaZYR0XMYXmNSshf0r,FpFBQZTmoBILy8wWAcQyi9" />
           </Patch>
         </Node>
         <!--
@@ -13818,11 +13840,11 @@
   <PlatformDependency Id="Rmk1hhUSQ4uOQmsJAH5lsU" Location="Stride.Core.Mathematics.dll" />
   <PlatformDependency Id="Tc8NoUSn0SuMMBZAUjprPJ" Location="Stride.Rendering.dll" />
   <PlatformDependency Id="CszHwhDkPr3NhEtP3Djfl7" Location="Stride.Graphics.dll" />
-  <NugetDependency Id="EkUWkHqtRXcQVEg26rgBpq" Location="VL.Core" Version="2020.2.0-0225-ga403b07bdf" />
+  <NugetDependency Id="EkUWkHqtRXcQVEg26rgBpq" Location="VL.Core" Version="2020.2.0-0230-g7bbb4ede63" />
   <DocumentDependency Id="GgJFG0lRV0ZOQUkVvPG0vL" Location="./VL.Stride.Games.vl" />
   <PlatformDependency Id="ARsp3DhFm9mL1X4DOx1Vtm" Location="Stride.Games.dll" />
   <PlatformDependency Id="MwArYn0D5CiNAmmLjqaRgA" Location="Stride.dll" />
   <PlatformDependency Id="Q7nST93Js7JPC6j1sTV9L9" Location="Stride.Core.dll" />
-  <NugetDependency Id="EjPOOnYIHFTPiEWYlANtiy" Location="VL.UI.Core" Version="2020.2.0-0225-ga403b07bdf" />
+  <NugetDependency Id="EjPOOnYIHFTPiEWYlANtiy" Location="VL.UI.Core" Version="2020.2.0-0230-g7bbb4ede63" />
   <DocumentDependency Id="UObWgh0LBvhOQjw1GfoR4z" Location="./VL.Stride.Input.vl" />
 </Document>
