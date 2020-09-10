@@ -1,0 +1,24 @@
+﻿shader BoxBlur_TextureFX : TextureFX
+{
+    int KernelSize;
+
+    stage override float4 Shading()
+    {
+        float3 sum = float3(0.0, 0.0, 0.0);
+
+        int upper = ((KernelSize - 1) / 2);
+        int lower = -upper;
+
+        for (int x = lower; x <= upper; ++x)
+        {
+            for (int y = lower; y <= upper; ++y)
+            {
+                float2 offset = float2(Texture0TexelSize.x * x, Texture0TexelSize.y * y);
+		        sum += Texture0.SampleLevel(Sampler0, streams.TexCoord + offset, 0);
+            }
+        }
+
+        sum /= (KernelSize * KernelSize);
+        return float4(sum, 1.0);
+    }
+};

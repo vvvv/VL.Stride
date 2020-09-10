@@ -9,8 +9,7 @@
         float offX = -maxOffsets.x + mask.r * 2 * maxOffsets.x; 
         float offY = -maxOffsets.y + mask.r * 2 * maxOffsets.y; 
         float2 off = float2(uv.x + offX/10.0, uv.y + offY/10.0);
-        //TODO: replace sampling method with a pin
-        float4 col = Texture0.SampleLevel(AnisotropicRepeatSampler,off,0);
+        float4 col = Texture0.SampleLevel(Sampler0,off,0);
         return col;
     }
 };
