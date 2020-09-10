@@ -23,9 +23,10 @@ namespace VL.Stride.Rendering.Compositing
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(StrideNodeFactory nodeFactory)
         {
-            string renderingCategory = "Stride.Rendering";
+            var renderingCategory = "Stride.Rendering";
+            var renderingCategoryAdvanced = $"{renderingCategory}.Advanced";
 
-            string compositionCategory = $"{renderingCategory}.Compositing";
+            var compositionCategory = $"{renderingCategoryAdvanced}.Compositing";
             yield return nodeFactory.NewGraphicsRendererNode<GraphicsCompositor>(category: compositionCategory)
                 .AddInput(nameof(GraphicsCompositor.Game), x => x.Game, (x, v) => x.Game = v)
                 .AddInput(nameof(GraphicsCompositor.SingleView), x => x.SingleView, (x, v) => x.SingleView = v)
@@ -209,24 +210,24 @@ namespace VL.Stride.Rendering.Compositing
             yield return new StrideNodeDesc<ToneMapReinhardOperator>(nodeFactory, "Reinhard", category: operatorsCategory) { CopyOnWrite = false };
 
             // Root render features
-            yield return nodeFactory.NewNode<MeshRenderFeature>(category: renderingCategory)
+            yield return nodeFactory.NewNode<MeshRenderFeature>(category: renderingCategoryAdvanced)
                 .AddListInput(nameof(MeshRenderFeature.RenderFeatures), x => x.RenderFeatures)
                 .AddListInput(nameof(MeshRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors)
                 .AddListInput(nameof(MeshRenderFeature.PipelineProcessors), x => x.PipelineProcessors);
 
-            yield return nodeFactory.NewNode<BackgroundRenderFeature>(category: renderingCategory)
+            yield return nodeFactory.NewNode<BackgroundRenderFeature>(category: renderingCategoryAdvanced)
                 .AddListInput(nameof(BackgroundRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
-            yield return nodeFactory.NewNode<SpriteRenderFeature>(category: renderingCategory)
+            yield return nodeFactory.NewNode<SpriteRenderFeature>(category: renderingCategoryAdvanced)
                 .AddListInput(nameof(SpriteRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
-            yield return nodeFactory.NewNode<EntityRendererRenderFeature>(category: renderingCategory)
+            yield return nodeFactory.NewNode<EntityRendererRenderFeature>(category: renderingCategoryAdvanced)
                 .AddListInput(nameof(EntityRendererRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors)
                 .AddInput(nameof(EntityRendererRenderFeature.HelpersRenderStage), x => x.HelpersRenderStage, (x, v) => x.HelpersRenderStage = v)
                 .AddInput(nameof(EntityRendererRenderFeature.HelpersRenderer), x => x.HelpersRenderer, (x, v) => x.HelpersRenderer = v);
 
             // Sub render features for mesh render feature
-            var renderFeaturesCategory = $"{renderingCategory}.RenderFeatures";
+            var renderFeaturesCategory = $"{renderingCategoryAdvanced}.RenderFeatures";
             yield return new StrideNodeDesc<TransformRenderFeature>(nodeFactory, category: renderFeaturesCategory);
             yield return new StrideNodeDesc<SkinningRenderFeature>(nodeFactory, category: renderFeaturesCategory);
             yield return new StrideNodeDesc<MaterialRenderFeature>(nodeFactory, category: renderFeaturesCategory);
@@ -237,7 +238,7 @@ namespace VL.Stride.Rendering.Compositing
                 .AddListInput(nameof(ForwardLightingRenderFeature.LightRenderers), x => x.LightRenderers)
                 .AddInput(nameof(ForwardLightingRenderFeature.ShadowMapRenderer), x => x.ShadowMapRenderer, (x, v) => x.ShadowMapRenderer = v);
 
-            var pipelineProcessorsCategory = $"{renderingCategory}.PipelineProcessors";
+            var pipelineProcessorsCategory = $"{renderingCategoryAdvanced}.PipelineProcessors";
             yield return nodeFactory.NewNode<MeshPipelineProcessor>(category: pipelineProcessorsCategory)
                 .AddInput(nameof(MeshPipelineProcessor.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v);
 
@@ -249,7 +250,7 @@ namespace VL.Stride.Rendering.Compositing
                 .AddInput(nameof(WireframePipelineProcessor.RenderStage), x => x.RenderStage, (x, v) => x.RenderStage = v);
 
             // Light renderers - make enum
-            var lightsCategory = $"{renderingCategory}.Light";
+            var lightsCategory = $"{renderingCategoryAdvanced}.Light";
             yield return new StrideNodeDesc<LightAmbientRenderer>(nodeFactory, category: lightsCategory);
             yield return new StrideNodeDesc<LightSkyboxRenderer>(nodeFactory, category: lightsCategory);
             yield return new StrideNodeDesc<LightDirectionalGroupRenderer>(nodeFactory, category: lightsCategory);
@@ -259,7 +260,7 @@ namespace VL.Stride.Rendering.Compositing
             yield return new StrideNodeDesc<LightProbeRenderer>(nodeFactory, category: lightsCategory);
 
             // Shadow map renderers
-            var shadowsCategory = $"{renderingCategory}.Shadow";
+            var shadowsCategory = $"{renderingCategoryAdvanced}.Shadow";
             yield return nodeFactory.NewNode<ShadowMapRenderer>(category: shadowsCategory)
                 .AddListInput(nameof(ShadowMapRenderer.Renderers), x => x.Renderers);
 
