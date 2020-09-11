@@ -271,7 +271,7 @@ namespace VL.Stride.Rendering.Compositing
 
             IVLNodeDescription CreatePostEffectsNode()
             {
-                return nodeFactory.NewNode<PostProcessingEffects>(category: postFxCategory, copyOnWrite: false, 
+                return nodeFactory.NewNode<PostProcessingEffects>(name: "PostFX", category: renderingCategory, copyOnWrite: false, 
                     init: effects =>
                     {
                         // Can't use effects.DisableAll() - disables private effects used by AA
@@ -362,7 +362,9 @@ namespace VL.Stride.Rendering.Compositing
                         }
                         else
                         {
-                            s.Enabled = false;
+                            // Keep the bright filter enabled. Needed by Bloom, LightStreak and LensFlare. 
+                            // Stride will only use it if one of those is enabled.
+                            s.Enabled = true;
                         }
                     }, defaultValue: null /* null is used to disable */)
                     .AddInput(nameof(PostProcessingEffects.Bloom), x => x.Bloom, (x, v) =>
