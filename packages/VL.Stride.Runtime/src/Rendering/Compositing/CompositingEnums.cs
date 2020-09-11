@@ -19,7 +19,11 @@ namespace VL.Stride.Rendering.Compositing
         /// <summary>
         /// Sort elements according to the pattern: [RenderFeature Sort Key 8 bits] RenderObject states 32 bits] [Distance front to back 16 bits]
         /// </summary>
-        StateChange
+        StateChange,
+        /// <summary>
+        ///  Sort elements according to the pattern: [RenderFeature Sort Key 8 bits] [Distance far to near 16 bits] [RenderObject states 32 bits]
+        /// </summary>
+        FarToNear,
     }
 
     public static class EnumExtensions
@@ -36,6 +40,8 @@ namespace VL.Stride.Rendering.Compositing
                     return new FrontToBackSortMode();
                 case PredefinedSortMode.StateChange:
                     return new StateChangeSortMode();
+                case PredefinedSortMode.FarToNear:
+                    return new FarToNearSortMode();
                 default:
                     throw new NotImplementedException();
             }
@@ -51,6 +57,8 @@ namespace VL.Stride.Rendering.Compositing
                 return PredefinedSortMode.FrontToBack;
             if (value is StateChangeSortMode)
                 return PredefinedSortMode.StateChange;
+            if (value is FarToNearSortMode)
+                return PredefinedSortMode.FarToNear;
             throw new NotImplementedException();
         }
     }
