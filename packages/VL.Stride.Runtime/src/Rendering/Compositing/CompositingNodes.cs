@@ -21,7 +21,7 @@ namespace VL.Stride.Rendering.Compositing
 {
     static class CompositingNodes
     {
-        public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(StrideNodeFactory nodeFactory)
+        public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory nodeFactory)
         {
             var renderingCategory = "Stride.Rendering";
             var renderingCategoryAdvanced = $"{renderingCategory}.Advanced";
@@ -102,11 +102,7 @@ namespace VL.Stride.Rendering.Compositing
                 .AddInput(nameof(ForceAspectRatioSceneRenderer.Child), x => x.Child, (x, v) => x.Child = v)
                 .AddEnabledPin();
 
-            var cameraComponent = new CameraComponent() { ViewMatrix = Matrix.Translation(0, 0, -2), UseCustomViewMatrix = true };
-            yield return nodeFactory.NewGraphicsRendererNode<SceneExternalCameraRenderer>(name: "CameraRenderer", category: compositionCategory)
-                .AddInput("Camera", x => x.ExternalCamera ?? cameraComponent, (x, v) => x.ExternalCamera = v)
-                .AddInput(nameof(SceneExternalCameraRenderer.Child), x => x.Child, (x, v) => x.Child = v)
-                .AddEnabledPin();
+            // The CameraRenderer can be found in the EngineNodes due to its dependency on CameraComponent
 
             yield return nodeFactory.NewGraphicsRendererNode<RenderTextureSceneRenderer>(category: compositionCategory)
                 .AddInput(nameof(RenderTextureSceneRenderer.RenderTexture), x => x.RenderTexture, (x, v) => x.RenderTexture = v)
@@ -425,13 +421,13 @@ namespace VL.Stride.Rendering.Compositing
             }
         }
 
-        static CustomNodeDesc<TRenderer> NewGraphicsRendererNode<TRenderer>(this IVLNodeDescriptionFactory factory, string category, string name = null)
+        internal static CustomNodeDesc<TRenderer> NewGraphicsRendererNode<TRenderer>(this IVLNodeDescriptionFactory factory, string category, string name = null)
             where TRenderer : IGraphicsRenderer, new()
         {
             return factory.NewNode<TRenderer>(name: name, category: category, copyOnWrite: false, fragmented: true);
         }
 
-        static CustomNodeDesc<TRenderer> AddEnabledPin<TRenderer>(this CustomNodeDesc<TRenderer> node)
+        internal static CustomNodeDesc<TRenderer> AddEnabledPin<TRenderer>(this CustomNodeDesc<TRenderer> node)
             where TRenderer : IGraphicsRenderer
         {
             return node.AddInput(nameof(IGraphicsRenderer.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, defaultValue: true);

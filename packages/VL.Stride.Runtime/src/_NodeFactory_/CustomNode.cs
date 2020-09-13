@@ -3,6 +3,7 @@ using Stride.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
 using VL.Core;
 using VL.Core.Diagnostics;
@@ -145,6 +146,8 @@ namespace VL.Stride
         public string Summary => typeof(TInstance).GetSummary();
 
         public string Remarks => typeof(TInstance).GetRemarks();
+
+        public IObservable<IVLNodeDescription> Invalidated => Observable.Empty<IVLNodeDescription>();
 
         public IVLNode CreateInstance(NodeContext context)
         {

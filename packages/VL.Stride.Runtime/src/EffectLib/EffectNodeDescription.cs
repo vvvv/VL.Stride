@@ -14,6 +14,7 @@ using Stride.Shaders.Compiler;
 using Buffer = Stride.Graphics.Buffer;
 using VL.Stride.Core;
 using Stride.Graphics;
+using System.Reactive.Subjects;
 
 namespace VL.Stride.EffectLib
 {
@@ -39,6 +40,7 @@ namespace VL.Stride.EffectLib
 
         public static readonly PinDescription<bool> ComputeEnabledInput = new PinDescription<bool>("Enabled", true);
 
+        readonly Subject<IVLNodeDescription> invalidated = new Subject<IVLNodeDescription>();
         EffectPinDescription[] inputs, outputs;
         bool? isCompute;
         CompilerResults compilerResults;
@@ -106,6 +108,11 @@ namespace VL.Stride.EffectLib
             }
         }
 
+        public void Invalidate()
+        {
+            invalidated.OnNext(this);
+        }
+
         public IVLNode CreateInstance(NodeContext context)
         {
             if (IsCompute)
@@ -134,6 +141,7 @@ namespace VL.Stride.EffectLib
         IVLNodeDescriptionFactory IVLNodeDescription.Factory => Factory;
         IReadOnlyList<IVLPinDescription> IVLNodeDescription.Inputs => Inputs;
         IReadOnlyList<IVLPinDescription> IVLNodeDescription.Outputs => Outputs;
+        IObservable<IVLNodeDescription> IVLNodeDescription.Invalidated => invalidated;
 
         bool GetIsCompute()
         {

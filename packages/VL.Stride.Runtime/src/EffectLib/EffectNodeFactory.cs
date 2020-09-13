@@ -27,8 +27,7 @@ using VLServiceRegistry = VL.Core.ServiceRegistry;
 using VL.Stride.Core;
 using System.Collections.Immutable;
 using System.ComponentModel;
-
-[assembly: NodeFactory(typeof(VL.Stride.EffectLib.EffectNodeFactory))]
+using System.Reactive.Linq;
 
 namespace VL.Stride.EffectLib
 {
@@ -63,28 +62,23 @@ namespace VL.Stride.EffectLib
             directoryWatcher.Modified += DirectoryWatcher_Modified;
         }
 
-        public ImmutableArray<IVLNodeDescription> NodeDescriptions
-        {
-            get => nodeDescriptions;
-            private set
-            {
-                if (!value.SequenceEqual(nodeDescriptions))
-                {
-                    nodeDescriptions = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NodeDescriptions)));
-                }
-            }
-        }
+        public ImmutableArray<IVLNodeDescription> NodeDescriptions => nodeDescriptions;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public string Identifier => "VL.Stride.EffectNodes";
         public ContentManager Content { get; private set; }
         public ServiceRegistry Services { get; private set; }
         public GraphicsDevice GraphicsDevice { get; private set; }
         public IGraphicsDeviceService GraphicsDeviceService { get; private set; }
         public EffectSystem EffectSystem { get; private set; }
 
+        // Would be needed if shaders could be added or deleted
+        public IObservable<IVLNodeDescriptionFactory> Invalidated => Observable.Empty<IVLNodeDescriptionFactory>();
+
         public readonly object SyncRoot = new object();
+
+        public IVLNodeDescriptionFactory ForPath(string path) => null;
 
         public CompilerResults GetCompilerResults(string effectName)
         {
@@ -198,6 +192,8 @@ namespace VL.Stride.EffectLib
                     !updatedDescription.Inputs.SequenceEqual(description.Inputs, PinDescriptionComparer.Default) ||
                     !updatedDescription.Outputs.SequenceEqual(description.Outputs, PinDescriptionComparer.Default))
                 {
+                    updatedDescription.Invalidate();
+
                     if (updatedDescription.HasCompilerErrors)
                     {
                         // Keep the signature of previous description but show errors and since we have errors kill all living instances so they don't have to deal with it
@@ -221,7 +217,7 @@ namespace VL.Stride.EffectLib
                     newDescriptions.Add(description);
                 }
             }
-            NodeDescriptions = newDescriptions.ToImmutable();
+            nodeDescriptions = newDescriptions.ToImmutable();
         }
     }
 }

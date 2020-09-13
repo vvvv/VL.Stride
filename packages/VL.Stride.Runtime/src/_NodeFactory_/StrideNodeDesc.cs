@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
 using VL.Core;
 using VL.Core.Diagnostics;
@@ -122,6 +123,8 @@ namespace VL.Stride
         }
 
         public IEnumerable<Message> Messages => Enumerable.Empty<Message>();
+
+        public IObservable<IVLNodeDescription> Invalidated => Observable.Empty<IVLNodeDescription>();
 
         public string Summary => typeof(TMaterial).GetSummary();
 

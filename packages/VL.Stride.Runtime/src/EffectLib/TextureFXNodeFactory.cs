@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -24,58 +25,17 @@ using VL.Stride.Core;
 using VL.Stride.Engine;
 using VL.Stride.Rendering;
 
-[assembly:NodeFactory(typeof(VL.Stride.EffectLib.TextureFXNodeFactory))]
-
 namespace VL.Stride.EffectLib
 {
-    public class TextureFXNodeFactory : IVLNodeDescriptionFactory
+    static class TextureFXNodeFactory
     {
-        readonly DirectoryWatcher directoryWatcher;
-
-        public TextureFXNodeFactory()
+        public static void Register(IVLFactory services)
         {
-            var services = SharedServices.GetRegistry();
-            var effectSystem = services.GetService<EffectSystem>();
-
-            // Ensure the effect system tracks the same files as we do
-            var timer = default(Timer);
-            var fieldInfo = typeof(EffectSystem).GetField("directoryWatcher", BindingFlags.NonPublic | BindingFlags.Instance);
-            directoryWatcher = fieldInfo.GetValue(effectSystem) as DirectoryWatcher;
-            directoryWatcher.Modified += (s, e) =>
+            services.RegisterNodeFactory("VL.Stride.TextureFXNodeFactory", factory =>
             {
-                if (e.ChangeType == FileEventChangeType.Changed || e.ChangeType == FileEventChangeType.Renamed)
-                {
-                    timer?.Dispose();
-                    timer = new Timer(_ => ReloadNodeDescriptions(), null, 50, Timeout.Infinite);
-                }
-            };
-        }
-
-        public ImmutableArray<IVLNodeDescription> NodeDescriptions
-        {
-            get
-            {
-                if (nodeDescriptions.IsDefault)
-                    nodeDescriptions = GetNodeDescriptions(this).ToImmutableArray();
-                return nodeDescriptions;
-            }
-        }
-        ImmutableArray<IVLNodeDescription> nodeDescriptions;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        void ReloadNodeDescriptions()
-        {
-            // Check if someone is even interested
-            if (nodeDescriptions.IsDefault)
-                return;
-
-            var newDescriptions = GetNodeDescriptions(this).ToImmutableArray();
-            if (!newDescriptions.SequenceEqual(nodeDescriptions, NodeDescriptionComparer.Default))
-            {
-                nodeDescriptions = newDescriptions;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NodeDescriptions)));
-            }
+                var nodes = GetNodeDescriptions(factory);
+                return nodes.ToImmutableArray();
+            });
         }
 
         static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
@@ -85,6 +45,14 @@ namespace VL.Stride.EffectLib
             var graphicsDevice = graphicsDeviceService.GraphicsDevice;
             var contentManager = serviceRegistry.GetService<ContentManager>();
             var effectSystem = serviceRegistry.GetService<EffectSystem>();
+
+            // Ensure the effect system tracks the same files as we do
+            var fieldInfo = typeof(EffectSystem).GetField("directoryWatcher", BindingFlags.NonPublic | BindingFlags.Instance);
+            var directoryWatcher = fieldInfo.GetValue(effectSystem) as DirectoryWatcher;
+            var modifications = Observable.FromEventPattern<FileEvent>(directoryWatcher, nameof(DirectoryWatcher.Modified))
+                .Select(e => e.EventArgs)
+                .Where(e => e.ChangeType == FileEventChangeType.Changed || e.ChangeType == FileEventChangeType.Renamed);
+
 
             // Effect system deals with its internal cache on update, so make sure its called.
             effectSystem.Update(default);
@@ -138,15 +106,14 @@ namespace VL.Stride.EffectLib
             // effectMainName = Levels
             IVLNodeDescription NewImageEffectShaderNode(NameAndVersion name, string effectName, string effectMainName)
             {
-                return new DelegateNodeDescription(
-                    factory: factory,
+                return factory.NewNodeDescription(
                     name: name,
                     category: "Stride.ImageShaders",
                     fragmented: true,
-                    init: self =>
+                    init: buildContext =>
                     {
                         var _inputs = new List<IVLPinDescription>();
-                        var _outputs = new List<IVLPinDescription>() { DelegatePinDescription.New<ImageEffectShader>("Output") };
+                        var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(ImageEffectShader)) };
                         var _messages = ImmutableArray<Message>.Empty;
 
                         using var _effect = new DynamicEffectInstance(effectName);
@@ -221,53 +188,52 @@ namespace VL.Stride.EffectLib
                         _inputs.Add(_outputTextureInput = new PinDescription<Texture>("Output Texture"));
                         _inputs.Add(_enabledInput = new PinDescription<bool>("Enabled", defaultValue: true));
 
-                        return (
+                        return buildContext.Implementation(
                             inputs: _inputs,
                             outputs: _outputs,
                             messages: _messages,
-                            createInstance: nodeContext =>
+                            newNode: nodeBuildContext =>
                             {
                                 var effect = new TextureFXEffect(effectName);
                                 var inputs = new List<IVLPin>();
-                                var enabledInput = default(DelegatePin<bool>);
+                                var enabledInput = default(IVLPin);
                                 var textureCount = 0;
                                 foreach (var _input in _inputs)
                                 {
                                     // Handle the predefined pins first
                                     if (_input == _outputTextureInput)
                                     {
-                                        inputs.Add(new DelegatePin<Texture>(setter: t =>
+                                        inputs.Add(nodeBuildContext.Input<Texture>(setter: t =>
                                         {
                                             if (t != null)
                                                 effect.SetOutput(t);
                                         }));
                                     }
                                     else if (_input == _enabledInput)
-                                        inputs.Add(enabledInput = new DelegatePin<bool>(() => effect.Enabled, v => effect.Enabled = v));
+                                        inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => effect.Enabled = v));
                                     else if (_input is ParameterPinDescription parameterPinDescription)
                                         inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, effect.Parameters));
                                     else if (_input is PinDescription<Texture> textureInput)
                                     {
                                         var slot = textureCount++;
-                                        inputs.Add(new DelegatePin<Texture>(setter: t =>
+                                        inputs.Add(nodeBuildContext.Input<Texture>(setter: t =>
                                         {
                                             effect.SetInput(slot, t);
                                         }));
                                     }
                                 }
 
-                                var effectOutput = ToOutput(effect, () =>
+                                var effectOutput = ToOutput(nodeBuildContext, effect, () =>
                                 {
                                     //effect.Enabled = enabledInput.Value && effect.IsInputAssigned && effect.IsOutputAssigned;
                                 });
-                                return new DelegateNode(
-                                    nodeContext: nodeContext,
-                                    nodeDescription: self,
-                                    inputs: inputs.ToArray(),
+                                return nodeBuildContext.Node(
+                                    inputs: inputs,
                                     outputs: new[] { effectOutput },
                                     update: default,
                                     dispose: () => effect.Dispose());
                             },
+                            invalidated: modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName),
                             openEditor: () =>
                             {
                                 var path = GetPathOfSdslShader(effectName);
@@ -287,12 +253,11 @@ namespace VL.Stride.EffectLib
 
             IVLNodeDescription NewImageEffectNode(IVLNodeDescription shaderDescription, string name)
             {
-                return new DelegateNodeDescription(
-                    factory: shaderDescription.Factory,
+                return factory.NewNodeDescription(
                     name: name,
                     category: "Stride.TextureFX",
                     fragmented: true,
-                    init: self =>
+                    init: buildContext =>
                     {
                         const int defaultSize = 512;
                         const PixelFormat defaultFormat = PixelFormat.R8G8B8A8_UNorm;
@@ -305,24 +270,26 @@ namespace VL.Stride.EffectLib
                             _inputs.Insert(1, new PinDescription<int>("Height", defaultSize));
                             _inputs.Insert(2, new PinDescription<PixelFormat>("Format", defaultFormat));
                         }
-                        return (
+                        return buildContext.Implementation(
                             inputs: _inputs,
-                            outputs: new[] { new PinDescription<Texture>("Output") },
-                            messages: shaderDescription.Messages.ToList(),
-                            createInstance: nodeContext =>
+                            outputs: new[] { buildContext.Pin("Output", typeof(Texture)) },
+                            messages: shaderDescription.Messages,
+                            invalidated: shaderDescription.Invalidated,
+                            newNode: nodeBuildContext =>
                             {
+                                var nodeContext = nodeBuildContext.NodeContext;
                                 var node = shaderDescription.CreateInstance(nodeContext);
                                 var inputs = node.Inputs.ToList();
                                 var textureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == "Texture"));
                                 var outputTextureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == "Output Texture"));
 
-                                DelegatePin<int> outputWidth = default, outputHeight = default;
-                                DelegatePin<PixelFormat> outputFormat = default;
+                                IVLPin<int> outputWidth = default, outputHeight = default;
+                                IVLPin<PixelFormat> outputFormat = default;
                                 if (!hasTextureInput)
                                 {
-                                    inputs.Insert(0, outputWidth = new DelegatePin<int>(value: defaultSize));
-                                    inputs.Insert(1, outputHeight = new DelegatePin<int>(value: defaultSize));
-                                    inputs.Insert(2, outputFormat = new DelegatePin<PixelFormat>(value: defaultFormat));
+                                    inputs.Insert(0, outputWidth = nodeBuildContext.Input(defaultSize));
+                                    inputs.Insert(1, outputHeight = nodeBuildContext.Input(defaultSize));
+                                    inputs.Insert(2, outputFormat = nodeBuildContext.Input(defaultFormat));
                                 }
 
                                 var gameHandle = nodeContext.GetGameHandle();
@@ -331,7 +298,7 @@ namespace VL.Stride.EffectLib
                                 var graphicsDevice = game.GraphicsDevice;
                                 var output1 = default(((int width, int height, PixelFormat format) desc, Texture texture));
                                 var output2 = default(((int width, int height, PixelFormat format) desc, Texture texture));
-                                var mainOutput = new DelegatePin<Texture>(getter: () =>
+                                var mainOutput = nodeBuildContext.Output<Texture>(getter: () =>
                                 {
                                     var inputTexture = textureInput?.Value as Texture;
                                     var outputTexture = outputTextureInput.Value as Texture;
@@ -382,10 +349,8 @@ namespace VL.Stride.EffectLib
 
                                     return null;
                                 });
-                                return new DelegateNode(
-                                    nodeContext: nodeContext,
-                                    nodeDescription: self,
-                                    inputs: inputs.ToArray(),
+                                return nodeBuildContext.Node(
+                                    inputs: inputs,
                                     outputs: new[] { mainOutput },
                                     dispose: () =>
                                     {
@@ -401,147 +366,13 @@ namespace VL.Stride.EffectLib
             }
         }
 
-        static DelegatePin<T> ToOutput<T>(T value, Action getter)
+        static IVLPin ToOutput<T>(NodeBuilding.NodeInstanceBuildContext c, T value, Action getter)
         {
-            return new DelegatePin<T>(() =>
+            return c.Output(() =>
             {
                 getter();
                 return value;
             });
-        }
-
-        class DelegateNodeDescription : IVLNodeDescription
-        {
-            readonly Lazy<(IReadOnlyList<IVLPinDescription> inputs, IReadOnlyList<IVLPinDescription> outputs, IReadOnlyList<Message> messages, Func<NodeContext, IVLNode> createInstance, Func<bool> openEditor)> init;
-
-            public DelegateNodeDescription(
-                IVLNodeDescriptionFactory factory,
-                string name,
-                string category,
-                bool fragmented,
-                Func<IVLNodeDescription, (IReadOnlyList<IVLPinDescription> inputs, IReadOnlyList<IVLPinDescription> outputs, IReadOnlyList<Message> messages, Func<NodeContext, IVLNode> createInstance, Func<bool> openEditor)> init)
-            {
-                Name = name;
-                Category = category;
-                Fragmented = fragmented;
-                Factory = factory;
-                this.init = new Lazy<(IReadOnlyList<IVLPinDescription> inputs, IReadOnlyList<IVLPinDescription> outputs, IReadOnlyList<Message> messages, Func<NodeContext, IVLNode> createInstance, Func<bool> openEditor)>(() => init(this), LazyThreadSafetyMode.ExecutionAndPublication);
-            }
-
-            public IVLNodeDescriptionFactory Factory { get; }
-
-            public string Name { get; }
-
-            public string Category { get; }
-
-            public bool Fragmented { get; }
-
-            public IReadOnlyList<IVLPinDescription> Inputs => init.Value.inputs;
-
-            public IReadOnlyList<IVLPinDescription> Outputs => init.Value.outputs;
-
-            public IEnumerable<Message> Messages => init.Value.messages;
-
-            public IVLNode CreateInstance(NodeContext context) => init.Value.createInstance(context);
-
-            public bool OpenEditor() => init.Value.openEditor?.Invoke() ?? false;
-        }
-
-        class DelegatePinDescription : IVLPinDescription
-        {
-            public static DelegatePinDescription New<T>(string name, T defaultValue = default)
-            {
-                return new DelegatePinDescription(name, typeof(T), defaultValue);
-            }
-
-            public DelegatePinDescription(string name, Type type, object defaultValue)
-            {
-                Name = name;
-                Type = type;
-                DefaultValue = defaultValue;
-            }
-
-            public string Name { get; }
-
-            public Type Type { get; }
-
-            public object DefaultValue { get; }
-        }
-
-        class DelegateNode : VLObject, IVLNode
-        {
-            readonly Action update, dispose;
-
-            public DelegateNode(NodeContext nodeContext, IVLNodeDescription nodeDescription, IVLPin[] inputs, IVLPin[] outputs, Action update = default, Action dispose = default)
-                : base(nodeContext)
-            {
-                this.NodeDescription = nodeDescription;
-                this.Inputs = inputs;
-                this.Outputs = outputs;
-                this.update = update;
-                this.dispose = dispose;
-            }
-
-            public IVLNodeDescription NodeDescription { get; }
-
-            public IVLPin[] Inputs { get; }
-
-            public IVLPin[] Outputs { get; }
-
-            public void Update() => update?.Invoke();
-
-            public void Dispose() => dispose?.Invoke();
-        }
-
-        class Pin<T> : IVLPin
-        {
-            public Pin(T defaultValue)
-            {
-                Value = defaultValue;
-            }
-
-            public T Value { get; set; }
-            object IVLPin.Value { get => Value; set => Value = (T)value; }
-        }
-
-        class DelegatePin : IVLPin
-        {
-            readonly Func<object> getter;
-            readonly Action<object> setter;
-
-            public DelegatePin(Func<object> getter, Action<object> setter)
-            {
-                this.getter = getter;
-                this.setter = setter;
-            }
-
-            public object Value { get => getter(); set => setter(value); }
-        }
-
-        class DelegatePin<T> : IVLPin
-        {
-            readonly Func<T> getter;
-            readonly Action<T> setter;
-            T value;
-
-            public DelegatePin(Func<T> getter = default, Action<T> setter = default, T value = default)
-            {
-                this.getter = getter;
-                this.setter = setter;
-                this.value = value;
-            }
-
-            public T Value 
-            {
-                get => getter != null ? getter.Invoke() : value;
-                set 
-                { 
-                    this.value = value; 
-                    setter?.Invoke(value); 
-                }
-            }
-
-            object IVLPin.Value { get => Value; set => Value = (T)value; }
         }
     }
 }
