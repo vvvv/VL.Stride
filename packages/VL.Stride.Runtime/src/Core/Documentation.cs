@@ -179,41 +179,34 @@ namespace VL.Stride
 
 		internal static void LoadXmlDocumentation(Assembly assembly)
 		{
-			if (loadedAssemblies.Contains(assembly))
+			lock (loadedAssemblies)
 			{
-				return;
-			}
-			string directoryPath = assembly.GetDirectoryPath();
-			string xmlFilePath = Path.Combine(directoryPath, assembly.GetName().Name + ".xml");
-			if (File.Exists(xmlFilePath))
-			{
-				using StreamReader streamReader = new StreamReader(xmlFilePath);
-				LoadXmlDocumentation(streamReader);
-			}
-			// currently marking assembly as loaded even if the XML file was not found
-			// may want to adjust in future, but I think this is good for now
-			loadedAssemblies.Add(assembly);
-		}
-
-		/// <summary>Loads the XML code documentation into memory so it can be accessed by extension methods on reflection types.</summary>
-		/// <param name="xmlDocumentation">The content of the XML code documentation.</param>
-		public static void LoadXmlDocumentation(string xmlDocumentation)
-		{
-			using StringReader stringReader = new StringReader(xmlDocumentation);
-			LoadXmlDocumentation(stringReader);
-		}
-
-		/// <summary>Loads the XML code documentation into memory so it can be accessed by extension methods on reflection types.</summary>
-		/// <param name="textReader">The text reader to process in an XmlReader.</param>
-		public static void LoadXmlDocumentation(TextReader textReader)
-		{
-			using XmlReader xmlReader = XmlReader.Create(textReader);
-			while (xmlReader.Read())
-			{
-				if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "member")
+				if (loadedAssemblies.Contains(assembly))
 				{
-					string raw_name = xmlReader["name"];
-					loadedXmlDocumentation[raw_name] = xmlReader.ReadInnerXml();
+					return;
+				}
+				string directoryPath = assembly.GetDirectoryPath();
+				string xmlFilePath = Path.Combine(directoryPath, assembly.GetName().Name + ".xml");
+				if (File.Exists(xmlFilePath))
+				{
+					using StreamReader streamReader = new StreamReader(xmlFilePath);
+					LoadXmlDocumentation(streamReader);
+				}
+				// currently marking assembly as loaded even if the XML file was not found
+				// may want to adjust in future, but I think this is good for now
+				loadedAssemblies.Add(assembly);
+			}
+
+			static void LoadXmlDocumentation(TextReader textReader)
+			{
+				using XmlReader xmlReader = XmlReader.Create(textReader);
+				while (xmlReader.Read())
+				{
+					if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "member")
+					{
+						string raw_name = xmlReader["name"];
+						loadedXmlDocumentation[raw_name] = xmlReader.ReadInnerXml();
+					}
 				}
 			}
 		}
