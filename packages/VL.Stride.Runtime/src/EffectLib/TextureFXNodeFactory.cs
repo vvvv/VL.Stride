@@ -40,19 +40,22 @@ namespace VL.Stride.EffectLib
                 },
                 forPath: (path, factory) =>
                 {
+                    // In case "shaders" directory gets modified invalidate the whole factory
+                    var invalidated = NodeBuilding.WatchDir(path)
+                        .Where(e => e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
+
                     // File provider crashes if directory doesn't exist :/
                     var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
                     if (Directory.Exists(shadersPath))
                     {
                         var nodes = GetNodeDescriptions(factory, path, shadersPath);
-                        var invalidated = NodeBuilding.WatchDir(shadersPath)
-                            .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed);
+                        // Additionaly watch out for new/deleted/renamed files
+                        invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
+                            .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed));
                         return (nodes.ToImmutableArray(), invalidated);
                     }
                     else
                     {
-                        var invalidated = NodeBuilding.WatchDir(path)
-                            .Where(e => e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
                         return (ImmutableArray<IVLNodeDescription>.Empty, invalidated);
                     }
                 });
