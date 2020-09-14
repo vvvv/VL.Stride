@@ -22,6 +22,7 @@ using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Model;
 using VL.Stride.Core;
+using VL.Stride.Core.IO;
 using VL.Stride.Engine;
 using VL.Stride.Rendering;
 
@@ -31,20 +32,43 @@ namespace VL.Stride.EffectLib
     {
         public static void Register(IVLFactory services)
         {
-            services.RegisterNodeFactory("VL.Stride.TextureFXNodeFactory", factory =>
-            {
-                var nodes = GetNodeDescriptions(factory);
-                return nodes.ToImmutableArray();
-            });
+            services.RegisterNodeFactory("VL.Stride.TextureFXNodeFactory",
+                init: factory =>
+                {
+                    var nodes = GetNodeDescriptions(factory);
+                    return nodes.ToImmutableArray();
+                },
+                forPath: (path, factory) =>
+                {
+                    // File provider crashes if directory doesn't exist :/
+                    var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
+                    if (Directory.Exists(shadersPath))
+                    {
+                        var nodes = GetNodeDescriptions(factory, path, shadersPath);
+                        var invalidated = NodeBuilding.WatchDir(shadersPath)
+                            .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed);
+                        return (nodes.ToImmutableArray(), invalidated);
+                    }
+                    else
+                    {
+                        var invalidated = NodeBuilding.WatchDir(path)
+                            .Where(e => e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
+                        return (ImmutableArray<IVLNodeDescription>.Empty, invalidated);
+                    }
+                });
         }
 
-        static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
+        static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory, string path = default, string shadersPath = default)
         {
             var serviceRegistry = SharedServices.GetRegistry();
             var graphicsDeviceService = serviceRegistry.GetService<IGraphicsDeviceService>();
             var graphicsDevice = graphicsDeviceService.GraphicsDevice;
             var contentManager = serviceRegistry.GetService<ContentManager>();
             var effectSystem = serviceRegistry.GetService<EffectSystem>();
+
+            // Ensure path is visible to the effect system
+            if (path != null)
+                effectSystem.EnsurePathIsVisible(path);
 
             // Ensure the effect system tracks the same files as we do
             var fieldInfo = typeof(EffectSystem).GetField("directoryWatcher", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -62,8 +86,14 @@ namespace VL.Stride.EffectLib
             const string sdslFileFilter = "*.sdsl";
             const string suffix = "_TextureFX";
 
-            var files = contentManager.FileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.AllDirectories);
-            foreach (var file in files)
+            // Traverse either the "shaders" folder in the database or in the given path (if present)
+            IVirtualFileProvider fileProvider = default;
+            if (path != null)
+                fileProvider = new FileSystemProvider(null, path);
+            else
+                fileProvider = contentManager.FileProvider;
+
+            foreach (var file in fileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.TopDirectoryOnly))
             {
                 var effectName = Path.GetFileNameWithoutExtension(file);
                 if (effectName.EndsWith(suffix))
@@ -93,12 +123,21 @@ namespace VL.Stride.EffectLib
 
             string GetPathOfSdslShader(string effectName)
             {
-                var fileProvider = contentManager.FileProvider;
-                using (var pathStream = fileProvider.OpenStream(EffectCompilerBase.GetStoragePathFromShaderType(effectName) + "/path", VirtualFileMode.Open, VirtualFileAccess.Read))
-                using (var reader = new StreamReader(pathStream))
+                var path = EffectCompilerBase.GetStoragePathFromShaderType(effectName);
+                if (fileProvider.TryGetFileLocation(path, out var filePath, out _, out _))
+                    return filePath;
+
+                var pathUrl = path + "/path";
+                if (fileProvider.FileExists(pathUrl))
                 {
-                    return reader.ReadToEnd();
+                    using (var pathStream = fileProvider.OpenStream(pathUrl, VirtualFileMode.Open, VirtualFileAccess.Read))
+                    using (var reader = new StreamReader(pathStream))
+                    {
+                        return reader.ReadToEnd();
+                    }
                 }
+
+                return null;
             }
 
             // name = LevelsShader (ClampBoth)
@@ -117,6 +156,7 @@ namespace VL.Stride.EffectLib
                         var _messages = ImmutableArray<Message>.Empty;
 
                         using var _effect = new DynamicEffectInstance(effectName);
+                        IObservable<object> invalidated = modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName);
                         try
                         {
                             _effect.Initialize(serviceRegistry);
@@ -124,6 +164,14 @@ namespace VL.Stride.EffectLib
                         }
                         catch (InvalidOperationException)
                         {
+                            // Setup our own watcher as Stride doesn't track shaders with errors
+                            if (path != null)
+                            {
+                                invalidated = NodeBuilding.WatchDir(shadersPath)
+                                    .Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName)
+                                    .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { effectName }));
+                            }
+
                             try
                             {
                                 // Compile manually to get detailed errors
@@ -194,6 +242,14 @@ namespace VL.Stride.EffectLib
                             messages: _messages,
                             newNode: nodeBuildContext =>
                             {
+                                // Ensure the path to the shader is visible to the effect system
+                                if (path != null)
+                                {
+                                    using var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
+                                    var effectSystem = gameHandle.Resource.EffectSystem;
+                                    effectSystem.EnsurePathIsVisible(path);
+                                }
+
                                 var effect = new TextureFXEffect(effectName);
                                 var inputs = new List<IVLPin>();
                                 var enabledInput = default(IVLPin);
@@ -233,7 +289,7 @@ namespace VL.Stride.EffectLib
                                     update: default,
                                     dispose: () => effect.Dispose());
                             },
-                            invalidated: modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName),
+                            invalidated: invalidated,
                             openEditor: () =>
                             {
                                 var path = GetPathOfSdslShader(effectName);
