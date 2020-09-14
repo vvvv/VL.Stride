@@ -242,10 +242,10 @@ namespace VL.Stride.EffectLib
                             messages: _messages,
                             newNode: nodeBuildContext =>
                             {
+                                var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
                                 // Ensure the path to the shader is visible to the effect system
                                 if (path != null)
                                 {
-                                    using var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
                                     var effectSystem = gameHandle.Resource.EffectSystem;
                                     effectSystem.EnsurePathIsVisible(path);
                                 }
@@ -287,7 +287,11 @@ namespace VL.Stride.EffectLib
                                     inputs: inputs,
                                     outputs: new[] { effectOutput },
                                     update: default,
-                                    dispose: () => effect.Dispose());
+                                    dispose: () =>
+                                    {
+                                        effect.Dispose();
+                                        gameHandle.Dispose();
+                                    });
                             },
                             invalidated: invalidated,
                             openEditor: () =>

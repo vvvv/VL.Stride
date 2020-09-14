@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace VL.Stride.Core.IO
 {
@@ -72,8 +73,23 @@ namespace VL.Stride.Core.IO
                 lock (virtualFileProviders)
                 {
                     foreach (var provider in virtualFileProviders)
+                    {
                         if (provider.FileExists(url))
-                            return provider.OpenStream(url, mode, access, share, streamFlags);
+                        {
+                            for (int i = 0; i < 10; i++)
+                            {
+                                try
+                                {
+                                    return provider.OpenStream(url, mode, access, share, streamFlags);
+                                }
+                                catch (IOException)
+                                {
+                                    // We sometimes get file already in use exception. Let's try again.
+                                    Thread.Sleep(10);
+                                }
+                            }
+                        }
+                    }
 
                     throw new FileNotFoundException(string.Format("Unable to find the file [{0}]", url));
                 }
