@@ -33,7 +33,7 @@ namespace VL.Stride.Shaders.ShaderFX
             if (Var is Constant<T> constant)
                 shaderSource = GetShaderSourceForType<T>("Constant", GetAsShaderString((dynamic)constant.ConstantValue));
             else if (Var is Semantic<T> semantic)
-                shaderSource = GetShaderSourceForType<T>("GetSemantic", "SemanticValue", semantic.SemanticName);
+                shaderSource = GetShaderSourceForType<T>("GetSemantic", semantic.VarName, semantic.SemanticName);
             else
                 shaderSource = Var != null ? GetShaderSourceForType<T>("GetVar", VarName) : GetShaderSourceForType<T>("Compute");
 

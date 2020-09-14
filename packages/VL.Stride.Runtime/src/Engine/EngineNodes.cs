@@ -21,6 +21,7 @@ namespace VL.Stride.Engine
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {
             var strideCategory = "Stride";
+            var strideCategoryAdvanced = "Stride.Advanced";
 
             yield return new CustomNodeDesc<SceneInstanceSystem>(factory,
                 ctor: nodeContext =>
@@ -30,7 +31,7 @@ namespace VL.Stride.Engine
                     var instance = new SceneInstanceSystem(game.Services);
                     return (instance, () => gameHandle.Dispose());
                 },
-                category: strideCategory,
+                category: strideCategoryAdvanced,
                 copyOnWrite: false)
                 .AddInput(nameof(SceneInstanceSystem.RootScene), x => x.RootScene, (x, v) => x.RootScene = v)
                 .AddOutput(nameof(SceneInstanceSystem.SceneInstance), x => x.SceneInstance);
@@ -43,7 +44,7 @@ namespace VL.Stride.Engine
                     var instance = new SceneInstanceRenderer();
                     return (instance, () => gameHandle.Dispose());
                 },
-                category: strideCategory,
+                category: strideCategoryAdvanced,
                 copyOnWrite: false)
                 .AddInput(nameof(SceneInstanceRenderer.SceneInstance), x => x.SceneInstance, (x, v) => x.SceneInstance = v)
                 .AddInput(nameof(SceneInstanceRenderer.GraphicsCompositor), x => x.GraphicsCompositor, (x, v) => x.GraphicsCompositor = v);
@@ -81,7 +82,6 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(CameraComponent.FarClipPlane), x => x.FarClipPlane, (x, v) => x.FarClipPlane = v)
                 .AddInput(nameof(CameraComponent.UseCustomProjectionMatrix), x => x.UseCustomProjectionMatrix, (x, v) => x.UseCustomProjectionMatrix = v)
                 .AddInput(nameof(CameraComponent.ProjectionMatrix), x => x.ProjectionMatrix, (x, v) => x.ProjectionMatrix = v)
-                .AddOutput(nameof(CameraComponent.Frustum), x => x.Frustum)
                 .WithEnabledPin();
 
             // Model components

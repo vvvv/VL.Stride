@@ -6,7 +6,7 @@ namespace VL.Stride.Rendering
 {
     public class TextureFXEffect : ImageEffectShader
     {
-        private TimeSpan lastExceptionTime;
+        private TimeSpan? lastExceptionTime;
         private TimeSpan retryTime = TimeSpan.FromSeconds(3);
 
         public TextureFXEffect(string effectName = null, bool delaySetRenderTargets = false)
@@ -14,23 +14,21 @@ namespace VL.Stride.Rendering
         { 
         }
 
-        public bool IsInputAssigned => InputCount > 0 && GetInput(0) != null;
-
         public bool IsOutputAssigned => OutputCount > 0 && GetOutput(0) != null;
 
         protected override void PreDrawCore(RenderDrawContext context)
         {
-            if (IsInputAssigned && IsOutputAssigned)
+            if (IsOutputAssigned)
                 base.PreDrawCore(context);
         }
 
         protected override void DrawCore(RenderDrawContext context)
         {
             var time = context.RenderContext.Time;
-            if (time != null && (time.Total - lastExceptionTime) < retryTime)
+            if (time != null && lastExceptionTime.HasValue && (time.Total - lastExceptionTime) < retryTime)
                 return;
 
-            if (IsInputAssigned && IsOutputAssigned)
+            if (IsOutputAssigned)
             {
                 try
                 {
@@ -47,7 +45,7 @@ namespace VL.Stride.Rendering
 
         protected override void PostDrawCore(RenderDrawContext context)
         {
-            if (IsInputAssigned && IsOutputAssigned)
+            if (IsOutputAssigned)
                 base.PostDrawCore(context);
         }
     }

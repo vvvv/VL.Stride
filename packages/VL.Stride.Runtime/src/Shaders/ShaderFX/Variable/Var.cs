@@ -7,6 +7,12 @@ using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
+    /// <summary>
+    /// Defines a variable and assigns a value to it. Can also re-assign an existing Var.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <seealso cref="VL.Stride.Shaders.ShaderFX.ComputeNode{T}" />
+    /// <seealso cref="VL.Stride.Shaders.ShaderFX.IComputeVoid" />
     public class Var<T> : ComputeNode<T>, IComputeVoid
     {
         static ulong VarIDCounter;
@@ -19,17 +25,18 @@ namespace VL.Stride.Shaders.ShaderFX
             : this(value, var, "Var")
         { }
 
-        public Var(IComputeValue<T> value, Var<T> var = null, string varName = "Var", bool appendID = true)
+        public Var(IComputeValue<T> value, Var<T> var = null, string varName = "Var", string semanticName = null, bool appendID = true)
         {
             if (var != null) //re-assign existing var
             {
                 VarName = var.VarName;
-                Parent = var;
+                SemanticName = var.SemanticName;
             }
             else
             {
                 createVar = true;
                 VarName = appendID ? varName + "_" + (++VarIDCounter) : varName;
+                SemanticName = semanticName;
             }
 
             Value = value;
@@ -39,11 +46,10 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public string VarName { get; }
 
-        bool createVar;
-        Var<T> Parent;
-        ShaderClassSource ShaderClassSource;
-         
+        public string SemanticName { get; }
 
+        bool createVar;
+         
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
             return ReturnIfNotNull(Value);
@@ -51,8 +57,9 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var shaderSource = GetShaderSourceForType<T>("AssignVar", VarName);
-            ShaderClassSource = shaderSource;
+            var shaderSource = SemanticName != null ? 
+                GetShaderSourceForType<T>("AssignSemantic", VarName, SemanticName) 
+                : GetShaderSourceForType<T>("AssignVar", VarName);
 
             var mixin = shaderSource.CreateMixin();
 

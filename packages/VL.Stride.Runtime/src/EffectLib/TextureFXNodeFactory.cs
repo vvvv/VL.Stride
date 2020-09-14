@@ -1,4 +1,5 @@
-﻿using Stride.Core.Extensions;
+﻿using Stride.Core;
+using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.Serialization.Contents;
 using Stride.Graphics;
@@ -216,6 +217,7 @@ namespace VL.Stride.EffectLib
                         }
 
                         IVLPinDescription _outputTextureInput, _enabledInput;
+
                         _inputs.Add(_outputTextureInput = new PinDescription<Texture>("Output Texture"));
                         _inputs.Add(_enabledInput = new PinDescription<bool>("Enabled", defaultValue: true));
 
@@ -292,55 +294,103 @@ namespace VL.Stride.EffectLib
                     fragmented: true,
                     init: self =>
                     {
+                        const int defaultSize = 512;
+                        const PixelFormat defaultFormat = PixelFormat.R8G8B8A8_UNorm;
+
+                        var _inputs = shaderDescription.Inputs.ToList();
+                        var hasTextureInput = _inputs.Any(p => p.Type == typeof(Texture) && p.Name != "Output Texture");
+                        if (!hasTextureInput)
+                        {
+                            _inputs.Insert(0, new PinDescription<int>("Width", defaultSize));
+                            _inputs.Insert(1, new PinDescription<int>("Height", defaultSize));
+                            _inputs.Insert(2, new PinDescription<PixelFormat>("Format", defaultFormat));
+                        }
                         return (
-                            inputs: shaderDescription.Inputs,
+                            inputs: _inputs,
                             outputs: new[] { new PinDescription<Texture>("Output") },
                             messages: shaderDescription.Messages.ToList(),
                             createInstance: nodeContext =>
                             {
                                 var node = shaderDescription.CreateInstance(nodeContext);
+                                var inputs = node.Inputs.ToList();
                                 var textureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == "Texture"));
                                 var outputTextureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == "Output Texture"));
+
+                                DelegatePin<int> outputWidth = default, outputHeight = default;
+                                DelegatePin<PixelFormat> outputFormat = default;
+                                if (!hasTextureInput)
+                                {
+                                    inputs.Insert(0, outputWidth = new DelegatePin<int>(value: defaultSize));
+                                    inputs.Insert(1, outputHeight = new DelegatePin<int>(value: defaultSize));
+                                    inputs.Insert(2, outputFormat = new DelegatePin<PixelFormat>(value: defaultFormat));
+                                }
+
                                 var gameHandle = nodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
+                                var scheduler = game.Services.GetService<SchedulerSystem>();
                                 var graphicsDevice = game.GraphicsDevice;
-                                var current = default((TextureDescription inputDesc, Texture outputTexture));
+                                var output1 = default(((int width, int height, PixelFormat format) desc, Texture texture));
+                                var output2 = default(((int width, int height, PixelFormat format) desc, Texture texture));
                                 var mainOutput = new DelegatePin<Texture>(getter: () =>
                                 {
                                     var inputTexture = textureInput?.Value as Texture;
                                     var outputTexture = outputTextureInput.Value as Texture;
-                                    if (inputTexture != null && outputTexture is null)
+                                    if (outputTexture is null)
                                     {
-                                        var desc = inputTexture.Description;
-                                        if (desc != current.inputDesc)
+                                        // No output texture is provided, generate on
+                                        const TextureFlags textureFlags = TextureFlags.ShaderResource | TextureFlags.RenderTarget;
+                                        var desc = default((int width, int height, PixelFormat format));
+                                        if (inputTexture != null)
                                         {
-                                            current.outputTexture?.Dispose();
-                                            current.inputDesc = desc;
-                                            current.outputTexture = Texture.New2D(graphicsDevice, desc.Width, desc.Height, desc.Format, TextureFlags.ShaderResource | TextureFlags.RenderTarget);
-                                        }
-                                        outputTexture = current.outputTexture;
-                                    }
+                                            // Based on the input texture
+                                            desc = (inputTexture.Width, inputTexture.Height, inputTexture.Format);
 
-                                    // Set the final output texture
-                                    outputTextureInput.Value = outputTexture;
+                                            // Watch out for feedback loops
+                                            if (inputTexture == output1.texture)
+                                            {
+                                                Utilities.Swap(ref output1, ref output2);
+                                            }
+                                        }
+                                        else if (!hasTextureInput)
+                                        {
+                                            // Based on the given parameters
+                                            desc = (
+                                                Math.Max(1, outputWidth.Value), 
+                                                Math.Max(1, outputHeight.Value), 
+                                                outputFormat.Value != PixelFormat.None ? outputFormat.Value : defaultFormat);
+                                        }
+
+                                        // Ensure we have an output of proper size
+                                        if (desc != output1.desc)
+                                        {
+                                            output1.texture?.Dispose();
+                                            output1.desc = desc;
+                                            output1.texture = Texture.New2D(graphicsDevice, desc.width, desc.height, desc.format, textureFlags);
+                                        }
+
+                                        // Select it
+                                        outputTexture = output1.texture;
+                                    }
 
                                     var effect = node.Outputs[0].Value as TextureFXEffect;
-                                    var scheduler = game.Services.GetService<SchedulerSystem>();
-                                    if (scheduler != null && effect != null && effect.IsInputAssigned && effect.IsOutputAssigned)
+                                    if (scheduler != null && effect != null && outputTexture != null)
                                     {
+                                        effect.SetOutput(outputTexture);
                                         scheduler.Schedule(effect);
+                                        return outputTexture;
                                     }
 
-                                    return outputTexture;
+                                    return null;
                                 });
                                 return new DelegateNode(
                                     nodeContext: nodeContext,
                                     nodeDescription: self,
-                                    inputs: node.Inputs,
+                                    inputs: inputs.ToArray(),
                                     outputs: new[] { mainOutput },
                                     dispose: () =>
                                     {
-                                        current.outputTexture?.Dispose();
+                                        output1.texture?.Dispose();
+                                        output2.texture?.Dispose();
                                         gameHandle.Dispose();
                                         node.Dispose();
                                     });
@@ -474,10 +524,11 @@ namespace VL.Stride.EffectLib
             readonly Action<T> setter;
             T value;
 
-            public DelegatePin(Func<T> getter = default, Action<T> setter = default)
+            public DelegatePin(Func<T> getter = default, Action<T> setter = default, T value = default)
             {
                 this.getter = getter;
                 this.setter = setter;
+                this.value = value;
             }
 
             public T Value 
