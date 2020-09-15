@@ -74,11 +74,13 @@ namespace VL.Stride.EffectLib
         public EffectSystem EffectSystem { get; private set; }
 
         // Would be needed if shaders could be added or deleted
-        public IObservable<IVLNodeDescriptionFactory> Invalidated => Observable.Empty<IVLNodeDescriptionFactory>();
+        public IObservable<object> Invalidated => Observable.Empty<object>();
 
         public readonly object SyncRoot = new object();
 
         public IVLNodeDescriptionFactory ForPath(string path) => null;
+
+        public void Export(ExportContext exportContext) { }
 
         public CompilerResults GetCompilerResults(string effectName)
         {

@@ -147,7 +147,7 @@ namespace VL.Stride
 
         public string Remarks => typeof(TInstance).GetRemarks();
 
-        public IObservable<IVLNodeDescription> Invalidated => Observable.Empty<IVLNodeDescription>();
+        public IObservable<object> Invalidated => Observable.Empty<object>();
 
         public IVLNode CreateInstance(NodeContext context)
         {

@@ -40,7 +40,7 @@ namespace VL.Stride.EffectLib
 
         public static readonly PinDescription<bool> ComputeEnabledInput = new PinDescription<bool>("Enabled", true);
 
-        readonly Subject<IVLNodeDescription> invalidated = new Subject<IVLNodeDescription>();
+        readonly Subject<object> invalidated = new Subject<object>();
         EffectPinDescription[] inputs, outputs;
         bool? isCompute;
         CompilerResults compilerResults;
@@ -141,7 +141,7 @@ namespace VL.Stride.EffectLib
         IVLNodeDescriptionFactory IVLNodeDescription.Factory => Factory;
         IReadOnlyList<IVLPinDescription> IVLNodeDescription.Inputs => Inputs;
         IReadOnlyList<IVLPinDescription> IVLNodeDescription.Outputs => Outputs;
-        IObservable<IVLNodeDescription> IVLNodeDescription.Invalidated => invalidated;
+        IObservable<object> IVLNodeDescription.Invalidated => invalidated;
 
         bool GetIsCompute()
         {

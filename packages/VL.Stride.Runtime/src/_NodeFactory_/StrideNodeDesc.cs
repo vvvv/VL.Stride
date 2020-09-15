@@ -124,7 +124,7 @@ namespace VL.Stride
 
         public IEnumerable<Message> Messages => Enumerable.Empty<Message>();
 
-        public IObservable<IVLNodeDescription> Invalidated => Observable.Empty<IVLNodeDescription>();
+        public IObservable<object> Invalidated => Observable.Empty<object>();
 
         public string Summary => typeof(TMaterial).GetSummary();
 

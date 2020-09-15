@@ -54,7 +54,7 @@ namespace VL.Stride.Core
 
                 nodes.AddRange(GraphicsNodes.GetNodeDescriptions(nodeFactory));
 
-                return nodes.ToImmutable();
+                return NodeBuilding.NewFactoryImpl(nodes.ToImmutable());
             });
 
             services.RegisterNodeFactory("VL.Stride.Rendering.Nodes", nodeFactory =>
@@ -66,7 +66,7 @@ namespace VL.Stride.Core
                 nodes.AddRange(CompositingNodes.GetNodeDescriptions(nodeFactory));
                 nodes.AddRange(RenderingNodes.GetNodeDescriptions(nodeFactory));
 
-                return nodes.ToImmutable();
+                return NodeBuilding.NewFactoryImpl(nodes.ToImmutable());
             });
 
             services.RegisterNodeFactory("VL.Stride.Engine.Nodes", nodeFactory =>
@@ -76,7 +76,7 @@ namespace VL.Stride.Core
                 nodes.AddRange(EngineNodes.GetNodeDescriptions(nodeFactory));
                 nodes.AddRange(PhysicsNodes.GetNodeDescriptions(nodeFactory));
 
-                return nodes.ToImmutable();
+                return NodeBuilding.NewFactoryImpl(nodes.ToImmutable());
             });
 
             services.RegisterNodeFactory(effectFactory ?? (effectFactory = new EffectNodeFactory()));

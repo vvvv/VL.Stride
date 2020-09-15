@@ -35,29 +35,28 @@ namespace VL.Stride.EffectLib
             services.RegisterNodeFactory("VL.Stride.TextureFXNodeFactory",
                 init: factory =>
                 {
-                    var nodes = GetNodeDescriptions(factory);
-                    return nodes.ToImmutableArray();
-                },
-                forPath: (path, factory) =>
-                {
-                    // In case "shaders" directory gets modified invalidate the whole factory
-                    var invalidated = NodeBuilding.WatchDir(path)
-                        .Where(e => e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
+                    var nodes = GetNodeDescriptions(factory).ToImmutableArray();
+                    return NodeBuilding.NewFactoryImpl(nodes, forPath: path => factory =>
+                    {
+                        // In case "shaders" directory gets modified invalidate the whole factory
+                        var invalidated = NodeBuilding.WatchDir(path)
+                            .Where(e => e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
 
-                    // File provider crashes if directory doesn't exist :/
-                    var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
-                    if (Directory.Exists(shadersPath))
-                    {
-                        var nodes = GetNodeDescriptions(factory, path, shadersPath);
-                        // Additionaly watch out for new/deleted/renamed files
-                        invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
-                            .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed));
-                        return (nodes.ToImmutableArray(), invalidated);
-                    }
-                    else
-                    {
-                        return (ImmutableArray<IVLNodeDescription>.Empty, invalidated);
-                    }
+                        // File provider crashes if directory doesn't exist :/
+                        var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
+                        if (Directory.Exists(shadersPath))
+                        {
+                            var nodes = GetNodeDescriptions(factory, path, shadersPath);
+                            // Additionaly watch out for new/deleted/renamed files
+                            invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
+                                .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed));
+                            return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated);
+                        }
+                        else
+                        {
+                            return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
+                        }
+                    });
                 });
         }
 
