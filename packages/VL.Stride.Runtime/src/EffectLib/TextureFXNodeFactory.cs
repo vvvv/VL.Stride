@@ -566,9 +566,9 @@ namespace VL.Stride.EffectLib
                 EffectInstance.Initialize(serviceRegistry);
                 EffectInstance.UpdateEffect(graphicsDevice);
 
-                perFrameParams = parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
-                perViewParams = parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
-                perDrawParams = parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
+                perFrameParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
+                perViewParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
+                perDrawParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
             }
 
             public ParameterCollection Parameters => EffectInstance.Parameters;
