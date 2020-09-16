@@ -701,7 +701,7 @@
     ************************ Scaler ************************
 
 -->
-      <Node Name="Scaler" Bounds="317,316" Id="Li6gfGufSlmNeHmTBlBMLo">
+      <Node Name="Scaler" Bounds="305,316" Id="Li6gfGufSlmNeHmTBlBMLo">
         <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
           <Choice Kind="ContainerDefinition" Name="Process" />
         </p:NodeReference>
@@ -823,7 +823,7 @@
     ************************ BrightFilter ************************
 
 -->
-      <Node Name="BrightFilter" Bounds="314,402" Id="SyC0ttqN1GhO68TijLHR9v">
+      <Node Name="BrightFilter" Bounds="305,402" Id="SyC0ttqN1GhO68TijLHR9v">
         <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
           <Choice Kind="ContainerDefinition" Name="Process" />
         </p:NodeReference>
@@ -937,7 +937,7 @@
     ************************ FXAA ************************
 
 -->
-      <Node Name="FXAA" Bounds="322,472" Id="Ixfa3cyD8lZOcISszgpbhw">
+      <Node Name="FXAA" Bounds="305,472" Id="Ixfa3cyD8lZOcISszgpbhw">
         <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
           <Choice Kind="ContainerDefinition" Name="Process" />
         </p:NodeReference>
@@ -1190,6 +1190,89 @@
           </Patch>
         </Patch>
       </Node>
+      <!--
+
+    ************************ BoxBlur ************************
+
+-->
+      <Node Name="BoxBlur" Bounds="305,540" Id="EA7vXxaqIC9M7tD6EUAJbg">
+        <p:NodeReference>
+          <Choice Kind="ContainerDefinition" Name="Process" />
+          <FullNameCategoryReference ID="Primitive" />
+        </p:NodeReference>
+        <Patch Id="Hiqli1vIhG5LmnaSEiUkyo">
+          <Canvas Id="Vr5qcIiMAzrMzMFnTvqhI7" CanvasType="Group">
+            <Node Bounds="332,336,85,19" Id="LSuUXgqPTZJNDXMBNvNcg1">
+              <p:NodeReference LastCategoryFullName="Stride.TextureFX" LastSymbolSource="VL.Stride.Runtime.dll">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="ProcessNode" Name="BoxBlur (HorizontalPass)" />
+              </p:NodeReference>
+              <Pin Id="C0ShDNu0egtNUGBZQ6geD3" Name="Texture" Kind="InputPin" />
+              <Pin Id="DJ7dza2YnAFQKLu9fJkQOi" Name="Kernel Size" Kind="InputPin" />
+              <Pin Id="PRcF0riA4RCNZiBR0wYAHe" Name="Blur Strength" Kind="InputPin" />
+              <Pin Id="UYIHN8Umt62LVzGCXXre21" Name="Linear Sampler" Kind="InputPin" />
+              <Pin Id="C7GhwOrXPqtLImdEtgbF9h" Name="Output Texture" Kind="InputPin" />
+              <Pin Id="MmMn55tjejDL29IwjdDUcz" Name="Enabled" Kind="InputPin" />
+              <Pin Id="MLaXDlFegPePWMLw4fqaPI" Name="Output" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="426,411,105,19" Id="KblL9HRsY7NPOJnjSFJBsZ">
+              <p:NodeReference LastCategoryFullName="Stride.TextureFX" LastSymbolSource="VL.Stride.Runtime.dll">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="ProcessNode" Name="BoxBlur (VerticalPass)" />
+              </p:NodeReference>
+              <Pin Id="ASidSU65MwiPxpW8qGfe5A" Name="Texture" Kind="InputPin" />
+              <Pin Id="PkshmQpTikPNApWyFI4wK7" Name="Kernel Size" Kind="InputPin" />
+              <Pin Id="CzXysW4PQ0mLyBmoZ2O4or" Name="Blur Strength" Kind="InputPin" />
+              <Pin Id="FqAGXZUFZZbQBE4bUfaIf6" Name="Linear Sampler" Kind="InputPin" />
+              <Pin Id="JN2TXLKRqG2PHrwSzUnlKa" Name="Output Texture" Kind="InputPin" />
+              <Pin Id="BhozvBOQtlYPFIFnsZi20l" Name="Enabled" Kind="InputPin" />
+              <Pin Id="MLBYf2rn3D7LZZ2YsFw28g" Name="Output" Kind="OutputPin" />
+            </Node>
+            <ControlPoint Id="VVQEFX3cznYPEEmwkK7fpk" Bounds="429,468" />
+            <Node Bounds="658,320,185,19" Id="Ld6Gi0yMiIIQJowLKnh24B">
+              <p:NodeReference LastCategoryFullName="Stride.API.Graphics" LastSymbolSource="VL.Stride.Runtime.dll">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="ProcessNode" Name="SamplerState" />
+              </p:NodeReference>
+              <Pin Id="VUaTZB84V3FOLeeNU1uWsO" Name="Filter" Kind="InputPin" />
+              <Pin Id="VTJnybnHK7AO9z8hbnuZzU" Name="Address U" Kind="InputPin" />
+              <Pin Id="K5OOKCdJqT7PAMFmAUJV4h" Name="Address V" Kind="InputPin" />
+              <Pin Id="RSwwfSWdJh0MgyD2Q8nEy7" Name="Address W" Kind="InputPin" />
+              <Pin Id="OlNGhAEwRQnMHY66WFxYZ6" Name="Border Color" Kind="InputPin" />
+              <Pin Id="SEfCXmjpKAwN9hojIenPS3" Name="Max Anisotropy" Kind="InputPin" />
+              <Pin Id="LqXCjedor1xNsvvIJRPd5g" Name="Min Mip Level" Kind="InputPin" />
+              <Pin Id="Tkvq1FT2mrqM1J6O18euEh" Name="Max Mip Level" Kind="InputPin" />
+              <Pin Id="BrWw0H1qzidNjteLr0iykW" Name="Mip Map Level Of Detail Bias" Kind="InputPin" />
+              <Pin Id="Ei6HFxfAKbKPx0AeHWv7Dx" Name="Compare Function" Kind="InputPin" />
+              <Pin Id="IsFFH6bu5lpQFvc9kU6BiN" Name="Output" Kind="OutputPin" />
+            </Node>
+            <ControlPoint Id="D4Zbk7BSk17MJJNnundfRX" Bounds="491,247" />
+            <ControlPoint Id="RQwDWgWUbddNoozq7aiJLn" Bounds="333,246" />
+            <ControlPoint Id="RT103nH5F0YOawibAAfwuT" Bounds="405,245" />
+          </Canvas>
+          <Patch Id="PKvJuyBsiiZL1GwSeQGQ4x" Name="Create" />
+          <Patch Id="KcOH332VjTIN2sGhExRBDv" Name="Update">
+            <Pin Id="UolcZhCJ27xQHjJDr5XwOl" Name="Output" Kind="OutputPin" Bounds="428,497" />
+            <Pin Id="DyYS6qETzCYOeAFU8QZ2wi" Name="Blur Strength" Kind="InputPin" Bounds="505,250" />
+            <Pin Id="RDJOL6dB8xuQFSXPnHKR2n" Name="Texture" Kind="InputPin" Bounds="333,251" />
+            <Pin Id="SzHUTRHqESWPOq6lUUZans" Name="Kernel Size" Kind="InputPin" Bounds="410,253" />
+          </Patch>
+          <ProcessDefinition Id="SQuJpnyAIyPODTsEVVKwJP">
+            <Fragment Id="Nc6yYogQSSqNKpMcUT4ZPa" Patch="PKvJuyBsiiZL1GwSeQGQ4x" Enabled="true" />
+            <Fragment Id="RTK8QH02OaVP83Epqoojfz" Patch="KcOH332VjTIN2sGhExRBDv" Enabled="true" />
+          </ProcessDefinition>
+          <Link Id="HEucyA02WLuLuARvrVlYHw" Ids="MLaXDlFegPePWMLw4fqaPI,ASidSU65MwiPxpW8qGfe5A" />
+          <Link Id="RV6D4MiF97KPiOQH488HS1" Ids="MLBYf2rn3D7LZZ2YsFw28g,VVQEFX3cznYPEEmwkK7fpk" />
+          <Link Id="IZQTGbFabDBN1jF4wkOA5M" Ids="VVQEFX3cznYPEEmwkK7fpk,UolcZhCJ27xQHjJDr5XwOl" IsHidden="true" />
+          <Link Id="SBOH9IlseZNOxy24M6aA98" Ids="D4Zbk7BSk17MJJNnundfRX,PRcF0riA4RCNZiBR0wYAHe" />
+          <Link Id="QH9NtAK57PcMqPJbh7kHjG" Ids="DyYS6qETzCYOeAFU8QZ2wi,D4Zbk7BSk17MJJNnundfRX" IsHidden="true" />
+          <Link Id="Ks4sPaOqk0XPVQzNfcGjOH" Ids="D4Zbk7BSk17MJJNnundfRX,CzXysW4PQ0mLyBmoZ2O4or" />
+          <Link Id="GXyLcXpGyjLOWMJxqlXklM" Ids="RQwDWgWUbddNoozq7aiJLn,C0ShDNu0egtNUGBZQ6geD3" />
+          <Link Id="NSbCkaY9DxMM4MDvbafFCj" Ids="RDJOL6dB8xuQFSXPnHKR2n,RQwDWgWUbddNoozq7aiJLn" IsHidden="true" />
+          <Link Id="EzXfSkuDEYYLU1iS2xxYCE" Ids="RT103nH5F0YOawibAAfwuT,PkshmQpTikPNApWyFI4wK7" />
+          <Link Id="NzuVc4WjNNtP9j9ggdiYtj" Ids="SzHUTRHqESWPOq6lUUZans,RT103nH5F0YOawibAAfwuT" IsHidden="true" />
+        </Patch>
+      </Node>
     </Canvas>
     <!--
 
@@ -1212,7 +1295,7 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="K08TNIU8XTsLzsNUwzw82F" Location="VL.Skia" Version="2020.2.0-0217-g78b13ed816" />
+  <NugetDependency Id="K08TNIU8XTsLzsNUwzw82F" Location="VL.Skia" Version="2020.2.0-0231-gb13917208e" />
   <DocumentDependency Id="GU8U88sinjEPCVYLD2ricj" Location="./VL.Stride.Core.vl" />
   <DocumentDependency Id="Msnm4D4Er8bLmlwC1L1XQc" Location="./VL.Stride.Graphics.vl" />
   <DocumentDependency Id="M6gCO22oHy1LhLzIK6RyS2" Location="./VL.Stride.Rendering.vl" />

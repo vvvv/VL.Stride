@@ -1,24 +1,32 @@
-﻿shader BoxBlur_TextureFX : TextureFX
+﻿// By Daniel Ilett implementation at:
+// https://danielilett.com/2019-05-08-tut1-3-smo-blur/
+
+shader BoxBlur_TextureFX : TextureFX
 {
-    int KernelSize;
+    int KernelSize = 3;
+    float blurStrength = 1;
+
+    abstract float2 GetSampleOffset(float2 texelSize, float i);
 
     stage override float4 Shading()
     {
         float3 sum = float3(0.0, 0.0, 0.0);
 
-        int upper = ((KernelSize - 1) / 2);
+        int kSize = clamp(KernelSize, 3, 30);
+        int upper = floor((kSize - 1) / 2);
         int lower = -upper;
 
-        for (int x = lower; x <= upper; ++x)
+        // Original implementation does not consider stretching texel size
+        // However I couldn't get any visible blur results when the kernel used 
+        float2 texelSize = Texture0TexelSize * blurStrength;
+
+        for (int i = lower; i <= upper; ++i)
         {
-            for (int y = lower; y <= upper; ++y)
-            {
-                float2 offset = float2(Texture0TexelSize.x * x, Texture0TexelSize.y * y);
-		        sum += Texture0.SampleLevel(Sampler0, streams.TexCoord + offset, 0);
-            }
+            float2 offset = GetSampleOffset(texelSize,i);
+		    sum += Texture0.SampleLevel(LinearSampler, streams.TexCoord + offset, 0);
         }
 
-        sum /= (KernelSize * KernelSize);
+        sum /= kSize;
         return float4(sum, 1.0);
     }
 };

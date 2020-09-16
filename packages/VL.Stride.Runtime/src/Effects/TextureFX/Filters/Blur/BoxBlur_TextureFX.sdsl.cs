@@ -18,6 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class BoxBlur_TextureFXKeys
     {
-        public static readonly ValueParameterKey<int> KernelSize = ParameterKeys.NewValue<int>();
+        public static readonly ValueParameterKey<int> KernelSize = ParameterKeys.NewValue<int>(3);
     }
 }
