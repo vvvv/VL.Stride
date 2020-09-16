@@ -60,13 +60,10 @@ namespace VL.Stride.EffectLib
 
         public static IEnumerable<T> GetWellKnownParameters<T>(this ParameterCollection parameters, Dictionary<string, T> map)
         {
-            if (parameters != null)
+            foreach (var p in parameters.Layout.LayoutParameterKeyInfos)
             {
-                foreach (var p in parameters.Layout.LayoutParameterKeyInfos)
-                {
-                    if (map.TryGetValue(p.Key.Name, out T entry))
-                        yield return entry;
-                }
+                if (map.TryGetValue(p.Key.Name, out T entry))
+                    yield return entry;
             }
         }
 
