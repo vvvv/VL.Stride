@@ -6,6 +6,9 @@ using Stride.Games;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Shaders.Compiler;
+using System;
+using VL.Stride.Core.IO;
+using VL.Stride.Rendering;
 
 namespace VL.Stride
 {
@@ -34,9 +37,9 @@ namespace VL.Stride
             var fileProviderService = new DatabaseFileProviderService(fileProvider);
             services.AddService<IDatabaseFileProviderService>(fileProviderService);
 
-            var Content = new ContentManager(services);
-            services.AddService<IContentManager>(Content);
-            services.AddService(Content);
+            var content = new ContentManager(services);
+            services.AddService<IContentManager>(content);
+            services.AddService(content);
 
             var graphicsDevice = GraphicsDevice.New();
             var graphicsDeviceService = new GraphicsDeviceServiceLocal(services, graphicsDevice);
@@ -46,7 +49,7 @@ namespace VL.Stride
             services.AddService(graphicsContext);
 
             var effectSystem = new EffectSystem(services);
-            effectSystem.Compiler = EffectCompilerFactory.CreateEffectCompiler(Content.FileProvider, effectSystem);
+            effectSystem.InstallEffectCompilerWithCustomPaths();
 
             services.AddService(effectSystem);
             effectSystem.Initialize();

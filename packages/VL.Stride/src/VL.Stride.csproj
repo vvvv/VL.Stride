@@ -34,7 +34,8 @@
   
   <ItemGroup>
     <None Include="..\*.vl" Pack="true" PackagePath=" " />
-    <None Include="..\help\**\*.vl" Pack="true" PackagePath="help\%(RecursiveDir)%(Filename)%(Extension)" />
+    <!-- Setting AutoGen metadata is a hack to avoid getting picked up by asset compiler -->
+    <None Include="..\help\**\*" Pack="true" AutoGen="false" PackagePath="help\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- The following propertie and targets are only active if we're building outside of our main solution -->

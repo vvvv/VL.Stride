@@ -11,7 +11,7 @@ namespace VL.Stride.Rendering.Materials
 {
     static class MaterialNodes
     {
-        public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(StrideNodeFactory nodeFactory)
+        public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory nodeFactory)
         {
             string materialCategory = "Stride.Materials";
             string geometryCategory = $"{materialCategory}.{nameof(GeometryAttributes)}";

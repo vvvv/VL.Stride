@@ -1,6 +1,9 @@
 using Stride.Engine;
 using Stride.Engine.Design;
+using Stride.Shaders.Compiler;
+using VL.Stride.Core.IO;
 using VL.Stride.Engine;
+using VL.Stride.Rendering;
 
 namespace VL.Stride.Games
 {
@@ -34,6 +37,9 @@ namespace VL.Stride.Games
             base.Initialize();
 
             GameSystems.Add(SchedulerSystem);
+
+            // Setup the effect compiler with our file provider so we can attach shader lookup paths per document
+            EffectSystem.InstallEffectCompilerWithCustomPaths();
         }
     }
 }

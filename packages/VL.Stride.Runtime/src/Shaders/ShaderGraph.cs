@@ -51,6 +51,9 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public static IComputeVoid BuildFinalShaderGraph(IComputeNode root, IEnumerable<IComputeNode> excludes = null)
         {
+            if (root is null)
+                return new ComputeOrder();
+
             var tree = root is IComputeVoid ? new[] { root } : root.GetChildren();
 
             var visited = excludes != null ? new HashSet<IComputeNode>(excludes) : new HashSet<IComputeNode>();

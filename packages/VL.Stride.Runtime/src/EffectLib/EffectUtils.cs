@@ -60,13 +60,10 @@ namespace VL.Stride.EffectLib
 
         public static IEnumerable<T> GetWellKnownParameters<T>(this ParameterCollection parameters, Dictionary<string, T> map)
         {
-            if (parameters != null)
+            foreach (var p in parameters.Layout.LayoutParameterKeyInfos)
             {
-                foreach (var p in parameters.Layout.LayoutParameterKeyInfos)
-                {
-                    if (map.TryGetValue(p.Key.Name, out T entry))
-                        yield return entry;
-                }
+                if (map.TryGetValue(p.Key.Name, out T entry))
+                    yield return entry;
             }
         }
 
@@ -80,7 +77,7 @@ namespace VL.Stride.EffectLib
                 switch (perDraw)
                 {
                     case PerDrawParameters.World:
-                        // Already handled
+                        // Already handled. DON'T write it again or we introduce a feedback between render calls!
                         break;
                     case PerDrawParameters.WorldInverse:
                         parameters.Set(TransformationKeys.WorldInverse, ref worldInverse);
@@ -95,7 +92,7 @@ namespace VL.Stride.EffectLib
                         break;
                     case PerDrawParameters.WorldViewInverse:
                         var worldViewInverse = worldView;
-                        worldInverse.Invert();
+                        worldViewInverse.Invert();
                         parameters.Set(TransformationKeys.WorldViewInverse, ref worldViewInverse);
                         break;
                     case PerDrawParameters.WorldViewProjection:
