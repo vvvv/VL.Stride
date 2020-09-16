@@ -15,14 +15,17 @@ namespace VL.Stride.Shaders.ShaderFX
     public class SampleTexture<T> : ComputeValue<T>
     {
 
-        public SampleTexture(DeclTexture texture, DeclSampler sampler, IComputeValue<Vector2> texCoord, bool isRW = false)
+        public SampleTexture(DeclTexture texture, DeclSampler sampler, IComputeValue<Vector2> texCoord, IComputeValue<float> lod, bool isRW = false, bool isSampleLevel = false)
         {
             TextureDecl = texture;
             SamplerDecl = sampler;
             TexCd = texCoord;
+            LOD = lod;
             IsRW = isRW;
+            IsSampleLevel = isSampleLevel;
 
-            ShaderName = IsRW ? "SampleTextureRW" : "SampleTexture";
+            ShaderName = isSampleLevel ? "SampleLevelTexture" : "SampleTexture";
+            ShaderName = IsRW ? ShaderName + "RW" : ShaderName;
         }
 
         public DeclTexture TextureDecl { get; }
@@ -31,7 +34,11 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public IComputeValue<Vector2> TexCd { get; }
 
+        public IComputeValue<float> LOD { get; }
+
         public bool IsRW { get; }
+
+        public bool IsSampleLevel { get; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
@@ -47,6 +54,10 @@ namespace VL.Stride.Shaders.ShaderFX
             {
                 var mixin = shaderClassSource.CreateMixin();
                 mixin.AddComposition(TexCd, "TexCd", context, baseKeys);
+
+                if (IsSampleLevel && LOD != null)
+                    mixin.AddComposition(LOD, "LOD", context, baseKeys);
+
                 return mixin;
             }
             else
@@ -55,7 +66,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
-            return ReturnIfNotNull(TextureDecl, TexCd);
+            return ReturnIfNotNull(TextureDecl, SamplerDecl, TexCd, LOD);
         }
     }
 }

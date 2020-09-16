@@ -101,7 +101,7 @@ namespace VL.Stride.Shaders.ShaderFX
             throw new NotImplementedException("No name defined for type: " + t.Name);
         }
 
-        public static ShaderMixinSource CreateMixin(this ShaderClassSource shaderClassSource)
+        public static ShaderMixinSource CreateMixin(this ShaderClassCode shaderClassSource)
         {
             var mixin = new ShaderMixinSource();
             mixin.Mixins.Add(shaderClassSource);

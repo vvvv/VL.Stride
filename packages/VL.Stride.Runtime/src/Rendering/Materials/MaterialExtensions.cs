@@ -84,10 +84,14 @@ namespace VL.Stride.Rendering
                     var reference = AttachedReferenceManager.GetAttachedReference(value);
                     if (reference is null)
                         continue;
-                    var c = content.Load(key.PropertyType, reference.Url, ContentManagerLoaderSettings.StreamingDisabled);
-                    if (c is null)
-                        continue;
-                    pass.Parameters.SetObject(key, c);
+
+                    if (content.Exists(reference.Url))
+                    {
+                        var c = content.Load(key.PropertyType, reference.Url, ContentManagerLoaderSettings.StreamingDisabled);
+                        if (c is null)
+                            continue;
+                        pass.Parameters.SetObject(key, c); 
+                    }
                 }
             }
             return m;
