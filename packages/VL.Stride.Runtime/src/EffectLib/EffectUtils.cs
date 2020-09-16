@@ -77,7 +77,7 @@ namespace VL.Stride.EffectLib
                 switch (perDraw)
                 {
                     case PerDrawParameters.World:
-                        parameters.Set(TransformationKeys.World, ref world);
+                        // Already handled. DON'T write it again or we introduce a feedback between render calls!
                         break;
                     case PerDrawParameters.WorldInverse:
                         parameters.Set(TransformationKeys.WorldInverse, ref worldInverse);
