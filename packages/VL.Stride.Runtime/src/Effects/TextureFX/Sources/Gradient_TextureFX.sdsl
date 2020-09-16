@@ -1,0 +1,15 @@
+﻿shader Gradient_TextureFX : TextureFX
+{
+    [Color] float4 From = float4(0,0,0,1);
+    [Color] float4 To = float4(1,1,1,1);
+    bool isHorizontal;
+
+    // TODO: Extend with a radial and directional gradient
+
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord;
+        float4 c = lerp(From, To, isHorizontal ? uv.x : uv.y);
+        return c;
+    }
+};
