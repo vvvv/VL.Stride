@@ -1,6 +1,7 @@
 ﻿using Stride.Core;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
+using Stride.Core.Mathematics;
 using Stride.Core.Serialization.Contents;
 using Stride.Graphics;
 using Stride.Rendering;
@@ -32,7 +33,7 @@ namespace VL.Stride.EffectLib
     {
         public static void Register(IVLFactory services)
         {
-            services.RegisterNodeFactory("VL.Stride.TextureFXNodeFactory",
+            services.RegisterNodeFactory("VL.Stride.Rendering.EffectShaderNodes",
                 init: factory =>
                 {
                     var nodes = GetNodeDescriptions(factory).ToImmutableArray();
@@ -86,7 +87,8 @@ namespace VL.Stride.EffectLib
             var compiler = effectSystem.Compiler;
 
             const string sdslFileFilter = "*.sdsl";
-            const string suffix = "_TextureFX";
+            const string nodeSuffix = "_VLNode";
+            const string textureFXSuffix = "_TextureFX";
 
             // Traverse either the "shaders" folder in the database or in the given path (if present)
             IVirtualFileProvider fileProvider = default;
@@ -98,9 +100,14 @@ namespace VL.Stride.EffectLib
             foreach (var file in fileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.TopDirectoryOnly))
             {
                 var effectName = Path.GetFileNameWithoutExtension(file);
-                if (effectName.EndsWith(suffix))
+                if (effectName.EndsWith(nodeSuffix))
                 {
-                    var name = GetNodeName(effectName);
+                    var name = GetNodeName(effectName, nodeSuffix);
+                    yield return NewEffectShaderNode(name, effectName);
+                }
+                else if (effectName.EndsWith(textureFXSuffix))
+                {
+                    var name = GetNodeName(effectName, textureFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
 
                     IVLNodeDescription shaderNodeDescription;
@@ -109,7 +116,7 @@ namespace VL.Stride.EffectLib
                 }
             }
 
-            static NameAndVersion GetNodeName(string effectName)
+            static NameAndVersion GetNodeName(string effectName, string suffix)
             {
                 // Levels_ClampBoth_TextureFX
                 var name = effectName.Substring(0, effectName.Length - suffix.Length);
@@ -142,6 +149,172 @@ namespace VL.Stride.EffectLib
                 return null;
             }
 
+            bool OpenEditor(string effectName)
+            {
+                var path = GetPathOfSdslShader(effectName);
+                try
+                {
+                    Process.Start(path);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            (DynamicEffectInstance effect, ImmutableArray<Message> messages, IObservable<object> invalidated) CreateEffectInstance(string effectName, ParameterCollection parameters = null)
+            {
+                var messages = ImmutableArray<Message>.Empty;
+
+                var effect = new DynamicEffectInstance(effectName, parameters);
+                IObservable<object> invalidated = modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName);
+                try
+                {
+                    effect.Initialize(serviceRegistry);
+                    effect.UpdateEffect(graphicsDevice);
+                }
+                catch (InvalidOperationException)
+                {
+                    // Setup our own watcher as Stride doesn't track shaders with errors
+                    if (path != null)
+                    {
+                        invalidated = NodeBuilding.WatchDir(shadersPath)
+                            .Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName)
+                            .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { effectName }));
+                    }
+
+                    try
+                    {
+                        // Compile manually to get detailed errors
+                        var compilerResult = compiler.Compile(
+                            shaderSource: new ShaderClassSource(effectName),
+                            compilerParameters: new CompilerParameters() { EffectParameters = effect.EffectCompilerParameters });
+                        messages = compilerResult.Messages.Select(m => m.ToMessage()).ToImmutableArray();
+                    }
+                    catch (Exception e)
+                    {
+                        messages = messages.Add(new Message(MessageType.Error, $"Shader compiler crashed: {e}"));
+                    }
+                }
+
+                return (effect, messages, invalidated);
+            }
+
+            IEnumerable<ParameterKeyInfo> GetParameters(DynamicEffectInstance effectInstance)
+            {
+                var byteCode = effectInstance.Effect?.Bytecode;
+                if (byteCode is null)
+                    yield break;
+
+                var layoutNames = byteCode.Reflection.ResourceBindings.Select(x => x.ResourceGroup ?? "Globals").Distinct().ToList();
+                var parameters = effectInstance.Parameters;
+                foreach (var parameter in parameters.Layout.LayoutParameterKeyInfos)
+                {
+                    var key = parameter.Key;
+                    var name = key.Name;
+
+                    // Skip constant buffers
+                    if (layoutNames.Contains(name))
+                        continue;
+
+                    // Skip compiler injected paddings
+                    if (name.Contains("_padding_"))
+                        continue;
+
+                    // Skip well known parameters
+                    if (WellKnownParameters.PerFrameMap.ContainsKey(name) || WellKnownParameters.PerViewMap.ContainsKey(name))
+                        continue;
+
+                    yield return parameter;
+                }
+            }
+
+            IVLNodeDescription NewEffectShaderNode(NameAndVersion name, string effectName)
+            {
+                return factory.NewNodeDescription(
+                    name: name,
+                    category: "Stride.Rendering.EffectLib",
+                    fragmented: true,
+                    init: buildContext =>
+                    {
+                        var (_effect, _messages, _invalidated) = CreateEffectInstance(effectName);
+
+                        var _inputs = new List<IVLPinDescription>();
+                        var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(IEffect)) };
+
+                        var _parameterSetterInput = new PinDescription<Action<ParameterCollection, RenderView, RenderDrawContext>>("Parameter Setter");
+
+                        var usedNames = new HashSet<string>() { _parameterSetterInput.Name };
+                        var needsWorld = false;
+                        foreach (var parameter in GetParameters(_effect))
+                        {
+                            var key = parameter.Key;
+                            var name = key.Name;
+
+                            // Skip well known parameters
+                            if (WellKnownParameters.PerFrameMap.ContainsKey(name) || WellKnownParameters.PerViewMap.ContainsKey(name))
+                                continue;
+
+                            if (WellKnownParameters.PerDrawMap.ContainsKey(name))
+                            {
+                                // Expose World only - all other world dependent parameters we can compute on our own
+                                needsWorld = true;
+                                continue;
+                            }
+
+                            _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count));
+                        }
+
+                        if (needsWorld)
+                            _inputs.Add(new ParameterPinDescription(usedNames, TransformationKeys.World));
+
+                        _inputs.Add(_parameterSetterInput);
+
+                        return buildContext.Implementation(
+                            inputs: _inputs,
+                            outputs: _outputs,
+                            messages: _messages,
+                            newNode: nodeBuildContext =>
+                            {
+                                var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
+                                var game = gameHandle.Resource;
+                                // Ensure the path to the shader is visible to the effect system
+                                if (path != null)
+                                {
+                                    var effectSystem = gameHandle.Resource.EffectSystem;
+                                    effectSystem.EnsurePathIsVisible(path);
+                                }
+
+                                var effect = new CustomEffect(effectName, game.Services, game.GraphicsDevice);
+
+                                var inputs = new List<IVLPin>();
+                                foreach (var _input in _inputs)
+                                {
+                                    // Handle the predefined pins first
+                                    if (_input == _parameterSetterInput)
+                                        inputs.Add(nodeBuildContext.Input<Action<ParameterCollection, RenderView, RenderDrawContext>>(v => effect.ParameterSetter = v));
+                                    else if (_input is ParameterPinDescription parameterPinDescription)
+                                        inputs.Add(parameterPinDescription.CreatePin(game.GraphicsDevice, effect.Parameters));
+                                }
+
+                                var effectOutput = nodeBuildContext.Output<IEffect>(() => effect);
+                                return nodeBuildContext.Node(
+                                    inputs: inputs,
+                                    outputs: new[] { effectOutput },
+                                    update: default,
+                                    dispose: () =>
+                                    {
+                                        effect.Dispose();
+                                        gameHandle.Dispose();
+                                    });
+                            },
+                            invalidated: _invalidated,
+                            openEditor: () => OpenEditor(effectName)
+                        );
+                    });
+            }
+
             // name = LevelsShader (ClampBoth)
             // effectName = Levels_ClampBoth_TextureFX
             // effectMainName = Levels
@@ -153,84 +326,39 @@ namespace VL.Stride.EffectLib
                     fragmented: true,
                     init: buildContext =>
                     {
+                        var (_effect, _messages, _invalidated) = CreateEffectInstance(effectName);
+
                         var _inputs = new List<IVLPinDescription>();
                         var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(ImageEffectShader)) };
-                        var _messages = ImmutableArray<Message>.Empty;
 
-                        using var _effect = new DynamicEffectInstance(effectName);
-                        IObservable<object> invalidated = modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName);
-                        try
+                        var usedNames = new HashSet<string>()
                         {
-                            _effect.Initialize(serviceRegistry);
-                            _effect.UpdateEffect(graphicsDevice);
-                        }
-                        catch (InvalidOperationException)
+                            "Output Texture",
+                            "Enabled"
+                        };
+
+                        var _textureCount = 0;
+                        foreach (var parameter in GetParameters(_effect).OrderBy(p => p.Key.Name.Contains("Texture") ? 0 : 1))
                         {
-                            // Setup our own watcher as Stride doesn't track shaders with errors
-                            if (path != null)
+                            var key = parameter.Key;
+                            var name = key.Name;
+
+                            // Skip texel size - gets set by ImageEffectShader
+                            if (name.EndsWith("TexelSize"))
+                                continue;
+
+                            // Skip the matrix transform - we're drawing fullscreen using a triangle
+                            if (key == SpriteBaseKeys.MatrixTransform)
+                                continue;
+
+                            if (key.PropertyType == typeof(Texture))
                             {
-                                invalidated = NodeBuilding.WatchDir(shadersPath)
-                                    .Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName)
-                                    .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { effectName }));
+                                var pinName = ++_textureCount == 1 ? "Texture" : $"Texture {_textureCount}";
+                                usedNames.Add(pinName);
+                                _inputs.Add(new PinDescription<Texture>(pinName));
                             }
-
-                            try
-                            {
-                                // Compile manually to get detailed errors
-                                var compilerResult = compiler.Compile(
-                                    shaderSource: new ShaderClassSource(effectName),
-                                    compilerParameters: new CompilerParameters() { EffectParameters = _effect.EffectCompilerParameters });
-                                _messages = compilerResult.Messages.Select(m => m.ToMessage()).ToImmutableArray();
-                            }
-                            catch (Exception e)
-                            {
-                                _messages = _messages.Add(new Message(MessageType.Error, $"Shader compiler crashed: {e}"));
-                            }
-                        }
-
-                        var byteCode = _effect.Effect?.Bytecode;
-                        if (byteCode != null)
-                        {
-                            var layoutNames = byteCode.Reflection.ResourceBindings.Select(x => x.ResourceGroup ?? "Globals").Distinct().ToList();
-
-                            var usedNames = new HashSet<string>()
-                            {
-                                "Output Texture",
-                                "Enabled"
-                            };
-
-                            var _textureCount = 0;
-                            var parameters = _effect.Parameters;
-                            foreach (var parameter in parameters.Layout.LayoutParameterKeyInfos.OrderBy(p => p.Key.Name.Contains("Texture") ? 0 : 1))
-                            {
-                                var key = parameter.Key;
-                                var name = key.Name;
-
-                                // Skip constant buffers
-                                if (layoutNames.Contains(name))
-                                    continue;
-
-                                // Skip compiler injected paddings
-                                if (name.Contains("_padding_"))
-                                    continue;
-
-                                // Skip well known parameters
-                                if (WellKnownParameters.PerFrameMap.ContainsKey(name) || WellKnownParameters.PerViewMap.ContainsKey(name))
-                                    continue;
-
-                                // Skip unbound parameters
-                                if (parameter.BindingSlot < 0 && !name.StartsWith(effectMainName))
-                                    continue;
-
-                                if (key.PropertyType == typeof(Texture))
-                                {
-                                    var pinName = ++_textureCount == 1 ? "Texture" : $"Texture {_textureCount}";
-                                    usedNames.Add(pinName);
-                                    _inputs.Add(new PinDescription<Texture>(pinName));
-                                }
-                                else
-                                    _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count));
-                            }
+                            else
+                                _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count));
                         }
 
                         IVLPinDescription _outputTextureInput, _enabledInput;
@@ -295,20 +423,8 @@ namespace VL.Stride.EffectLib
                                         gameHandle.Dispose();
                                     });
                             },
-                            invalidated: invalidated,
-                            openEditor: () =>
-                            {
-                                var path = GetPathOfSdslShader(effectName);
-                                try
-                                {
-                                    Process.Start(path);
-                                    return true;
-                                }
-                                catch
-                                {
-                                    return false;
-                                }
-                            }
+                            invalidated: _invalidated,
+                            openEditor: () => OpenEditor(effectName)
                         );
                     });
             }
@@ -435,6 +551,66 @@ namespace VL.Stride.EffectLib
                 getter();
                 return value;
             });
+        }
+
+        class CustomEffect : IEffect, IDisposable
+        {
+            public readonly DynamicEffectInstance EffectInstance;
+            readonly PerFrameParameters[] perFrameParams;
+            readonly PerViewParameters[] perViewParams;
+            readonly PerDrawParameters[] perDrawParams;
+
+            public CustomEffect(string effectName, IServiceRegistry serviceRegistry, GraphicsDevice graphicsDevice, ParameterCollection parameters = default)
+            {
+                EffectInstance = new DynamicEffectInstance(effectName, parameters);
+                EffectInstance.Initialize(serviceRegistry);
+                EffectInstance.UpdateEffect(graphicsDevice);
+
+                perFrameParams = parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
+                perViewParams = parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
+                perDrawParams = parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
+            }
+
+            public ParameterCollection Parameters => EffectInstance.Parameters;
+
+            public Action<ParameterCollection, RenderView, RenderDrawContext> ParameterSetter { get; set; }
+
+            public void Dispose()
+            {
+                EffectInstance.Dispose();
+            }
+
+            public EffectInstance SetParameters(RenderView renderView, RenderDrawContext renderDrawContext)
+            {
+                var parameters = EffectInstance.Parameters;
+                try
+                {
+                    // TODO1: PerFrame could be done in Update if we'd have access to frame time
+                    // TODO2: This code can be optimized by using parameter accessors and not parameter keys
+                    parameters.SetPerFrameParameters(perFrameParams, renderDrawContext.RenderContext);
+
+                    var parentTransformation = renderDrawContext.RenderContext.Tags.Get(EntityRendererRenderFeature.CurrentParentTransformation);
+                    if (parameters.ContainsKey(TransformationKeys.World))
+                    {
+                        var world = parameters.Get(TransformationKeys.World);
+                        Matrix.Multiply(ref world, ref parentTransformation, out var result);
+                        parameters.SetPerDrawParameters(perDrawParams, renderView, ref result);
+                    }
+                    else
+                    {
+                        parameters.SetPerDrawParameters(perDrawParams, renderView, ref parentTransformation);
+                    }
+
+                    parameters.SetPerViewParameters(perViewParams, renderView);
+
+                    ParameterSetter?.Invoke(parameters, renderView, renderDrawContext);
+                }
+                catch (Exception e)
+                {
+                    RuntimeGraph.ReportException(e);
+                }
+                return EffectInstance;
+            }
         }
     }
 }

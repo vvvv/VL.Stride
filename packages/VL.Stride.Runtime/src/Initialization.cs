@@ -79,10 +79,10 @@ namespace VL.Stride.Core
                 return NodeBuilding.NewFactoryImpl(nodes.ToImmutable());
             });
 
-            services.RegisterNodeFactory(effectFactory ?? (effectFactory = new EffectNodeFactory()));
+            //services.RegisterNodeFactory(effectFactory ?? (effectFactory = new EffectNodeFactory()));
             TextureFXNodeFactory.Register(services);
         }
 
-        static IVLNodeDescriptionFactory effectFactory;
+        //static IVLNodeDescriptionFactory effectFactory;
     }
 }

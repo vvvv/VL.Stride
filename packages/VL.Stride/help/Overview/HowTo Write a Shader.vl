@@ -15,8 +15,8 @@
       </p:NodeReference>
       <Patch Id="NH6UZFnsyLrLa6X0bJiMsA">
         <Canvas Id="I53NLBvYanWM8FEkze7Ubg" CanvasType="Group">
-          <Node Bounds="330,303,185,19" Id="Gx4I6kUiMH3NlkZjZgL171">
-            <p:NodeReference LastCategoryFullName="Stride.TextureFX" LastSymbolSource="VL.Stride.TextureFXNodeFactory">
+          <Node Bounds="304,562,185,19" Id="Gx4I6kUiMH3NlkZjZgL171">
+            <p:NodeReference LastCategoryFullName="Stride.TextureFX" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessNode" Name="MyNoise" />
             </p:NodeReference>
@@ -56,6 +56,7 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="AmRzPYlAK37Oi3rHMjD5lF" Name="Matrix Transform" Kind="InputPin" />
             <Pin Id="GTxnmDqDV07PpyuE3Vf72d" Name="Output Texture" Kind="InputPin" />
             <Pin Id="O4s3U5hsRlBOkolVh7eQAy" Name="Enabled" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
@@ -64,12 +65,12 @@
             </Pin>
             <Pin Id="CrtUbyFt599MUOpzlfUWEi" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="266,417,205,19" Id="Kop4hIXaLmKLtv9a74BKq9">
+          <Node Bounds="240,668,205,19" Id="Kop4hIXaLmKLtv9a74BKq9">
             <p:NodeReference LastCategoryFullName="Stride.Windowing" LastSymbolSource="VL.Stride.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
             </p:NodeReference>
-            <Pin Id="O3IK07VCkDWPni02rErsI5" Name="Bounds" Kind="InputPin" DefaultValue="1023, 81.5, 786, 432">
+            <Pin Id="O3IK07VCkDWPni02rErsI5" Name="Bounds" Kind="InputPin" DefaultValue="1023, 81, 786, 432">
               <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Rectangle" />
               </p:TypeAnnotation>
@@ -93,7 +94,7 @@
             <Pin Id="IgFd4PlJjtnOMxawg8MN2x" Name="Back Buffer" Kind="OutputPin" />
             <Pin Id="CExo45al2txL1UzqC4cA5w" Name="Depth Buffer" Kind="OutputPin" />
           </Node>
-          <Node Bounds="451,256,45,19" Id="OjPHmYO7kPOMNA5aqoH9D3">
+          <Node Bounds="424,532,45,19" Id="OjPHmYO7kPOMNA5aqoH9D3">
             <p:NodeReference LastCategoryFullName="Animation" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="LFO" />
@@ -105,7 +106,7 @@
             <Pin Id="LEKXY9xFsDONzwwn7N5Pzt" Name="On New Cycle" Kind="OutputPin" />
             <Pin Id="IXXK9dBRyV7OfGYamUsdPh" Name="Cycles" Kind="OutputPin" />
           </Node>
-          <Pad Id="QpW0ZxugkbyQFsGYputSsF" Bounds="211,128,535,57" ShowValueBox="true" isIOBox="true" Value="1) Create a folder called &quot;shaders&quot; beside your document&#xD;&#xA;2) Create a new *.sdsl file">
+          <Pad Id="QpW0ZxugkbyQFsGYputSsF" Bounds="211,128,580,56" ShowValueBox="true" isIOBox="true" Value="1) Create a folder called &quot;shaders&quot; beside your document&#xD;&#xA;2) Create a new *.sdsl file suffixed with either _VLNode or _TextureFX">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -114,16 +115,7 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="LOsU3lmusSnN9uUJ4R3vTg" Bounds="228,194,400,49" ShowValueBox="true" isIOBox="true" Value="Currently only files with the suffix _TextureFX will get picked up.&#xD;&#xA;This restriction will get removed soon!">
-            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="TypeFlag" Name="String" />
-            </p:TypeAnnotation>
-            <p:ValueBoxSettings>
-              <p:fontsize p:Type="Int32">9</p:fontsize>
-              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
-            </p:ValueBoxSettings>
-          </Pad>
-          <Node Bounds="306,359,127,19" Id="NkfQGEbAm1qQVR7G5eAwNc">
+          <Node Bounds="280,618,127,19" Id="NkfQGEbAm1qQVR7G5eAwNc">
             <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.ShaderFX.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="FullscreenQuadRenderer" />
@@ -136,7 +128,87 @@
             <Pin Id="IoyXLnOJVYnLcmochqExOS" Name="Enable Depth Buffer Write" Kind="InputPin" />
             <Pin Id="Vqt6gwacu5JPplwUnXiug6" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="JwpzRiilPjZP2T4NMH3LSz" Bounds="517,302,335,41" ShowValueBox="true" isIOBox="true" Value="If you have a text editor associated with the file extension *.sdsl a right click will open this shader">
+          <Pad Id="JwpzRiilPjZP2T4NMH3LSz" Bounds="237,226,335,41" ShowValueBox="true" isIOBox="true" Value="If you have a text editor associated with the file extension *.sdsl a right click will open this shader">
+            <p:TypeAnnotation>
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Node Bounds="286,268,54,19" Id="CJNwjkVEIkBPOM9ochxaHN">
+            <p:NodeReference LastCategoryFullName="Stride.Rendering.EffectLib" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
+              <Choice Kind="ProcessNode" Name="MyColor" />
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+            </p:NodeReference>
+            <Pin Id="JWLKsQbxw3LL7t3XfidE4A" Name="Color" Kind="InputPin" />
+            <Pin Id="ModO8OVj7YTOKjQOxVc4r5" Name="World" Kind="InputPin" />
+            <Pin Id="A4ddjI7MhAxNsZI1KTwg7u" Name="Parameter Setter" Kind="InputPin" />
+            <Pin Id="VgZrBPxqjErLVOHtbpufM3" Name="Output" Kind="OutputPin" />
+          </Node>
+          <Node Bounds="286,316,265,19" Id="P6ExAEc0b0cPgJp6XUhqWY">
+            <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="MeshRenderer" />
+            </p:NodeReference>
+            <Pin Id="QOWP0jkyIBhPjmFWxe1xls" Name="Effect Instance" Kind="InputPin" />
+            <Pin Id="MM7FKwdmOKJNSUkVy63sOi" Name="Cull Mode" Kind="InputPin" />
+            <Pin Id="E2EmoOT4pxULxPbFYruHxU" Name="Fill Mode" Kind="InputPin" />
+            <Pin Id="NDOdpASBGihOkihUd06ogO" Name="Alpha Blend" Kind="InputPin" />
+            <Pin Id="P1L903UZaLfMCDgnEfBSLO" Name="Multisample Anti Alias Line" Kind="InputPin" />
+            <Pin Id="JJuVaxnSSNbMjZ0PQ9Ikfz" Name="Multisample Count" Kind="InputPin" />
+            <Pin Id="GQTSx3nBMBTMWqsfTCVd02" Name="Mesh" Kind="InputPin" />
+            <Pin Id="RRGAIOirWkrNOaVZbJbTnx" Name="Instance Count" Kind="InputPin" />
+            <Pin Id="EJdGp55cEWNQRn45x0TZ4H" Name="Enable Depth Buffer" Kind="InputPin" />
+            <Pin Id="MaczsCXSknpPOZlfGoOZKa" Name="Enable Depth Buffer Write" Kind="InputPin" />
+            <Pin Id="LuD2kN34KAKPKjkNc362FU" Name="Depth Buffer Function" Kind="InputPin" />
+            <Pin Id="SB1S67HLsBnOVlB4FoTnKR" Name="Enable Stencil" Kind="InputPin" />
+            <Pin Id="DYFsbT1JliPM2XhKZTM0QG" Name="Topology" Kind="InputPin" />
+            <Pin Id="KTdSUgeVoB1QPKUMq8mgzc" Name="Profiling Name" Kind="InputPin" />
+            <Pin Id="V4LQgy6FPcEMJPIciDsVjk" Name="Output" Kind="StateOutputPin" />
+          </Node>
+          <Node Bounds="245,374,205,19" Id="DNH1byhjmbyLRM58uYPIdQ">
+            <p:NodeReference LastCategoryFullName="Stride.Windowing" LastSymbolSource="VL.Stride.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
+            </p:NodeReference>
+            <Pin Id="PPtf1x2Zr3KOfLkPIzT1P7" Name="Bounds" Kind="InputPin" DefaultValue="1021, 550, 786, 432">
+              <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Rectangle" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="RydRlAJS6bUNZe4q7n4c8H" Name="Bound to Document" Kind="InputPin" />
+            <Pin Id="HcqzkpI6pW9LlHs27YX3GZ" Name="Input" Kind="InputPin" />
+            <Pin Id="VdyvvKUBqirNgTao5nqLeZ" Name="Render View" Kind="InputPin" />
+            <Pin Id="RFK4310ecvBPeTM9mf83pA" Name="Title" Kind="InputPin" />
+            <Pin Id="VzBNNymDwkALAjFcuUrjvi" Name="Clear Color" Kind="InputPin" />
+            <Pin Id="HMT6GyJoyciL4bmRR8ud30" Name="Clear" Kind="InputPin" />
+            <Pin Id="OdKI3ZSji2FM4ndZSZLYeu" Name="EditMode" Kind="InputPin" />
+            <Pin Id="LizcUdsJ9nKNJTYfmb4wNb" Name="Enable Keyboard Shortcuts" Kind="InputPin" />
+            <Pin Id="Sb43ugABBuoNvYsimFgBgu" Name="Enabled" Kind="InputPin" />
+            <Pin Id="TYjvQKST2wNMiwzMI3eMlP" Name="Present Interval" Kind="InputPin" />
+            <Pin Id="Dj9QZ4qZTkpOXgFhMtRNIr" Name="Output" Kind="OutputPin" />
+            <Pin Id="KRc4rokWBMEO8zjhJNYGNn" Name="Input Source" Kind="OutputPin" />
+            <Pin Id="JVP4cXWcfqBLrMLfH6MRHL" Name="Back Buffer" Kind="OutputPin" />
+            <Pin Id="BYOhbsRwJokP06RMTo2FQg" Name="Depth Buffer" Kind="OutputPin" />
+          </Node>
+          <Node Bounds="406,267,145,19" Id="Dr2QTPVUqESMaCrf6XRgln">
+            <p:NodeReference LastCategoryFullName="Stride.Models.Meshes" LastSymbolSource="VL.Stride.Rendering.Nodes">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessNode" Name="PlaneMesh" />
+            </p:NodeReference>
+            <Pin Id="MxnVWpKhObNMnbJ0jFbRxw" Name="Size" Kind="InputPin" />
+            <Pin Id="NNEaZbk4sFELML0oQScX9F" Name="Tessellation" Kind="InputPin" />
+            <Pin Id="DvN0tHwmRcSLMptIM44oxG" Name="Normal" Kind="InputPin" />
+            <Pin Id="Kl9q02fL7rVOEXyuMP20tQ" Name="Generate Back Face" Kind="InputPin" />
+            <Pin Id="BrPgRED4d8eNafKMTmKtGB" Name="Scale" Kind="InputPin" />
+            <Pin Id="Jof7Rn6ta43NoEagxQ0lPL" Name="Uv Scale" Kind="InputPin" />
+            <Pin Id="Ic9ZJ8yKKxtONFa8ZJji8h" Name="Local Offset" Kind="InputPin" />
+            <Pin Id="OyBfelnalftQAyud3uFiBe" Name="Number Of Texture Coordinates" Kind="InputPin" />
+            <Pin Id="Cfdxcb2FNf9NeQMJkoGwKq" Name="Output" Kind="OutputPin" />
+          </Node>
+          <Pad Id="ToeofH26FPiL5ZglirFDsc" Bounds="241,462,388,64" ShowValueBox="true" isIOBox="true" Value="For files suffixed with _TextureFX the system will generate two nodes, one returning the image shader and the other already setup with an internal render pass">
             <p:TypeAnnotation>
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -154,9 +226,12 @@
         </ProcessDefinition>
         <Link Id="Ib7SUi03Zv5QIAWAnWOaVA" Ids="IOReW4jpI8xOO7CYCLTByO,TjCmu9dKJkHPjbiVn4x8Ho" />
         <Link Id="PeCrt09ROrhO3Cf7iBQtwv" Ids="CrtUbyFt599MUOpzlfUWEi,BImeXtJQBpfL1r91zUmDS4" />
-        <Link Id="NmxdIGctR9sNB8ZzssAnwX" Ids="Vqt6gwacu5JPplwUnXiug6,OlcjlbTmd7mL8fceb0OO73" />
+        <Link Id="At0XpPkp2XDPEH3sKlSn3a" Ids="VgZrBPxqjErLVOHtbpufM3,QOWP0jkyIBhPjmFWxe1xls" />
+        <Link Id="NuudmBasKxlPYna2zK4DL9" Ids="Vqt6gwacu5JPplwUnXiug6,OlcjlbTmd7mL8fceb0OO73" />
+        <Link Id="VTt3Y2QrZauQYMNTg1guLf" Ids="V4LQgy6FPcEMJPIciDsVjk,HcqzkpI6pW9LlHs27YX3GZ" />
+        <Link Id="Oc73HPMuBbINQHLNGoA7qA" Ids="Cfdxcb2FNf9NeQMJkoGwKq,GQTSx3nBMBTMWqsfTCVd02" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="TfwOSllm9qmPcuDkAbb332" Location="VL.Stride" Version="0.7.384-ga9e065a9ee" />
+  <NugetDependency Id="TfwOSllm9qmPcuDkAbb332" Location="VL.Stride" Version="0.7.390-g89c4fce0f1" />
 </Document>
