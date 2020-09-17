@@ -1,5 +1,6 @@
 ﻿using Stride.Core.Mathematics;
 using Stride.Engine;
+using Stride.Engine.Processors;
 using Stride.Graphics.GeometricPrimitives;
 using Stride.Rendering;
 using Stride.Rendering.Compositing;
@@ -71,16 +72,16 @@ namespace VL.Stride.Engine
             var camerasCategory = "Stride.Cameras";
 
             yield return factory.NewComponentNode<CameraComponent>(camerasCategory, cam => cam.Slot = new SceneCameraSlotId(new Guid()))
-                .AddInput(nameof(CameraComponent.UseCustomViewMatrix), x => x.UseCustomViewMatrix, (x, v) => x.UseCustomViewMatrix = v)
-                .AddInput(nameof(CameraComponent.ViewMatrix), x => x.ViewMatrix, (x, v) => x.ViewMatrix = v)
-                .AddInput(nameof(CameraComponent.Projection), x => x.Projection, (x, v) => x.Projection = v)
+                .AddInput(nameof(CameraComponent.UseCustomViewMatrix), x => x.UseCustomViewMatrix, (x, v) => x.UseCustomViewMatrix = v, defaultValue: true)
+                .AddInput(nameof(CameraComponent.ViewMatrix), x => x.ViewMatrix, (x, v) => x.ViewMatrix = v, defaultValue: Matrix.Identity)
+                .AddInput(nameof(CameraComponent.Projection), x => x.Projection, (x, v) => x.Projection = v, defaultValue: CameraProjectionMode.Perspective)
                 .AddInput(nameof(CameraComponent.VerticalFieldOfView), x => (double)x.VerticalFieldOfView / 360, (x, v) => x.VerticalFieldOfView = (float)(v * 360), 45d / 360, summary: "Gets or sets the vertical field of view in cycles.", remarks: "The vertical field of view (in cycles)")
-                .AddInput(nameof(CameraComponent.UseCustomAspectRatio), x => x.UseCustomAspectRatio, (x, v) => x.UseCustomAspectRatio = v)
+                .AddInput(nameof(CameraComponent.UseCustomAspectRatio), x => x.UseCustomAspectRatio, (x, v) => x.UseCustomAspectRatio = v, defaultValue: false)
                 .AddInput(nameof(CameraComponent.AspectRatio), x => x.AspectRatio, (x, v) => x.AspectRatio = v, 1f)
-                .AddInput(nameof(CameraComponent.NearClipPlane), x => x.NearClipPlane, (x, v) => x.NearClipPlane = v)
-                .AddInput(nameof(CameraComponent.FarClipPlane), x => x.FarClipPlane, (x, v) => x.FarClipPlane = v)
-                .AddInput(nameof(CameraComponent.UseCustomProjectionMatrix), x => x.UseCustomProjectionMatrix, (x, v) => x.UseCustomProjectionMatrix = v)
-                .AddInput(nameof(CameraComponent.ProjectionMatrix), x => x.ProjectionMatrix, (x, v) => x.ProjectionMatrix = v)
+                .AddInput(nameof(CameraComponent.NearClipPlane), x => x.NearClipPlane, (x, v) => x.NearClipPlane = v, defaultValue: 0.05f)
+                .AddInput(nameof(CameraComponent.FarClipPlane), x => x.FarClipPlane, (x, v) => x.FarClipPlane = v, defaultValue: 100f)
+                .AddInput(nameof(CameraComponent.UseCustomProjectionMatrix), x => x.UseCustomProjectionMatrix, (x, v) => x.UseCustomProjectionMatrix = v, defaultValue: false)
+                .AddInput(nameof(CameraComponent.ProjectionMatrix), x => x.ProjectionMatrix, (x, v) => x.ProjectionMatrix = v, defaultValue: Matrix.Identity)
                 .WithEnabledPin();
 
             // The CameraRenderer needs to be here due to dependency on CameraComponent
