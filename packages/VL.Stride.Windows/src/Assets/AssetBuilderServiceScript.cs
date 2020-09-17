@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using VL.Stride.Assets;
 using Stride.Core.Assets;
 using Stride.Engine;
+using System.Linq;
 
 namespace VL.Stride.Assets
 {
@@ -39,7 +40,13 @@ namespace VL.Stride.Assets
             {
                 await Script.NextFrame();
                 if (!workQueue.IsEmpty)
-                    ContentLoader?.BuildAndReloadAssets(DequeueItems());
+                {
+                    var assetList = DequeueItems().ToList();
+                    if (assetList.Count == 0)
+                        return;
+
+                    await ContentLoader?.BuildAndReloadAssetsInternal(assetList);
+                }
             }
         }
 

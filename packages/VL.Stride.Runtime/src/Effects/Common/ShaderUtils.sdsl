@@ -35,18 +35,15 @@ shader ShaderUtils
 
      // CULLING ==============================================================
 
-    bool DotCulling(float3 pos, float CullingThreshold)
+    bool DotCulling(float3 pos, float3 eye, float3 viewDirection, float CullingThreshold)
     {
-        float3 vec = pos - Eye.xyz;
-        float dotValue = dot(normalize(vec), EyeMS.xyz);
-    
-        return dotValue > CullingThreshold;
+        return DotCullingDbg(pos, eye, viewDirection) > CullingThreshold;
     }
 
-    float DotCullingDbg(float3 pos, float CullingThreshold)
+    float DotCullingDbg(float3 pos, float3 eye, float3 viewDirection)
     {
-        float3 vec = pos - Eye.xyz;
-        float dotValue = dot(normalize(vec), EyeMS.xyz);
+        float3 vec = pos - eye;
+        float dotValue = dot(normalize(vec), viewDirection);
     
         return dotValue;
     }
