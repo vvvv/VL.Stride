@@ -1,26 +1,32 @@
 using Stride.Core;
+using Stride.Core.Serialization.Contents;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace VL.Stride.Assets
 {
+    /// <summary>
+    /// Represets a reference to a runtime asset
+    /// </summary>
     public abstract class AssetWrapperBase
     {
-        protected bool Exists;
-        protected bool Loading;
-        protected string Name;
+        protected int LoadRequests;
 
-        public void SetLoading(bool loading) => Loading = loading;
+        public bool Loading { get; internal set; }
 
-        public void SetExists(bool exists) => Exists = exists;
+        public bool Exists { get; internal set; }
 
-        public void SetName(string name) => Name = name;
+        public string Name { get; set; }
+
+        public void AddLoadRequest() => LoadRequests++;
 
         public abstract void SetAssetObject(object asset);
+
+        public abstract void ProcessLoadRequests(ContentManager contentManager, string url);
     }
 
-    public class AssetWrapper<T> : AssetWrapperBase
+    public class AssetWrapper<T> : AssetWrapperBase where T : class
     {
         T Asset;
 
@@ -48,6 +54,16 @@ namespace VL.Stride.Assets
 
             if (Asset is ComponentBase componentBase && !string.IsNullOrWhiteSpace(Name))
                 componentBase.Name = Name;
+
+        }
+
+        public override void ProcessLoadRequests(ContentManager contentManager, string url)
+        {
+            for (int i = 0; i < LoadRequests; i++)
+            {
+                contentManager.Load<T>(url);
+            }
+            LoadRequests = 0;
         }
     }
 }

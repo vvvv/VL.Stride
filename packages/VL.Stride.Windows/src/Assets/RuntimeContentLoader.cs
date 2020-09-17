@@ -109,9 +109,13 @@ namespace VL.Stride.Assets
 
             if (AllAssets.TryGetValue(url, out var assetWrapper))
             {
+                assetWrapper.Loading = false;
+                assetWrapper.Exists = true;
+                
+                //Increase ref count for pending load requests
+                assetWrapper.ProcessLoadRequests(ContentManager, url);   
+                
                 assetWrapper.SetAssetObject(obj.Item2);
-                assetWrapper.SetLoading(false);
-                assetWrapper.SetExists(true);
             }
         }
 
@@ -119,19 +123,23 @@ namespace VL.Stride.Assets
         {
             if (AllAssets.TryGetValue(url, out var assetWrapper))
             {
+                assetWrapper.Loading = false;
+                assetWrapper.Exists = false;
                 assetWrapper.SetAssetObject(null);
-                assetWrapper.SetLoading(false);
-                assetWrapper.SetExists(false);
             }
         }
 
-        public AssetWrapper<T> GetOrCreateAssetWrapper<T>(string url)
+        public AssetWrapper<T> GetOrCreateAssetWrapper<T>(string url) where T : class
         {
             if (!AllAssets.TryGetValue(url, out var assetWrapper))
             {
                 assetWrapper = new AssetWrapper<T>();
                 AllAssets[url] = assetWrapper;
             }
+            
+            // If the asset is not yet available add a pending load request
+            if (!assetWrapper.Exists)
+                assetWrapper.AddLoadRequest();
 
             return (AssetWrapper<T>)assetWrapper;
         }
@@ -236,7 +244,7 @@ namespace VL.Stride.Assets
             {
                 if (AllAssets.TryGetValue(ai.Location.FullPath, out var assetWrapper))
                 {
-                    assetWrapper.SetLoading(true);
+                    assetWrapper.Loading = true;
                 }
             }
 
@@ -518,7 +526,11 @@ namespace VL.Stride.Assets
                 logger?.Debug($"Unloading {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
 #endif
-            AssetRemoved.OnNext(url);
+            //Notify asset removed if reference count is 1 (about to be 0) or asset doesnt exist
+            ContentManager.GetReferenceCounts(url, out var exists, out var publiceRefCount, out var privateRefCount);
+            if (!exists || publiceRefCount <= 1)
+                AssetRemoved.OnNext(url);
+
             ContentManager.Unload(url);
 #if DEBUG
             if (enableReferenceLogging)
