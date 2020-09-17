@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="OKkRkA3ViSjQag6JhhryA1" LanguageVersion="2020.2.0.288" Version="0.128">
-  <NugetDependency Id="Pjvx7U3lByeP4Ex1a3ogDH" Location="VL.CoreLib" Version="2020.2.0-0288-g7f89e6c99e" />
+<Document xmlns:p="property" Id="OKkRkA3ViSjQag6JhhryA1" LanguageVersion="2020.2.0.244" Version="0.128">
+  <NugetDependency Id="Pjvx7U3lByeP4Ex1a3ogDH" Location="VL.CoreLib" Version="2020.2.0-0244-gf932bd7e3c" />
   <Patch Id="RQ2SqooQlVYNkdgiwokBCj">
     <Canvas Id="GRXPKQ1bEkEMuITycgAX4J" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="AKUFSwsgVmBOaGdPtN3ts9" Name="Internal" Position="329,231">
@@ -1057,6 +1057,7 @@
                 <Pin Id="U2ZYzLmHzQOM1oGuOeg8Yx" Name="Bounds" Kind="InputPin" />
                 <Pin Id="HitXEB46RtULm3hOJIgw1f" Name="Back Buffer Format" Kind="InputPin" />
                 <Pin Id="Qm4WjdeIO3ALDUOgh7gh6g" Name="Depth Buffer Format" Kind="InputPin" />
+                <Pin Id="B0vilO3T2ZNMCrph6IZUh9" Name="Graphics Profile" Kind="InputPin" />
                 <Pin Id="OdI7PCp78jqO2JhHrxgC7q" Name="Present Interval" Kind="InputPin" />
                 <Pin Id="OH9Xx7D4j9kLhCAfGtumi4" Name="Output" Kind="OutputPin" />
                 <Pin Id="AnF79W6PFtmL09EEM1UDaO" Name="Window" Kind="OutputPin" />
@@ -1154,7 +1155,7 @@
               <Overlay Id="DbSOgZxx3hGLBWK1LEPCfm" Name="Window" Bounds="635,-237,1501,1325" />
               <Overlay Id="M9uplkE9L7zOFp0swiZcOg" Name="Helpers" Bounds="-73,-240,665,298" />
               <Node Bounds="304,397,89,19" Id="NHNLPWelzFJMMBHAUJq9tz">
-                <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Runtime.dll">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.Nodes">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                   <CategoryReference Kind="Category" Name="Rendering" NeedsToBeDirectParent="true">
                     <p:OuterCategoryReference Kind="Category" Name="Stride" NeedsToBeDirectParent="true" />
@@ -1298,11 +1299,13 @@
                   <CategoryReference Kind="Category" Name="Primitive" />
                 </p:NodeReference>
                 <Pin Id="Vnger0vrm1JLJnQppiDXz3" Name="Condition" Kind="InputPin" />
+                <ControlPoint Id="FJkoFWqUMKsM1MGSf3mSfA" Bounds="221,551" Alignment="Top" />
+                <ControlPoint Id="DC737Bf9vaeORDDcnLFoab" Bounds="221,607" Alignment="Bottom" />
                 <Patch Id="KfLxDeBXRyULD7nPhKOayF" ManuallySortedPins="true">
                   <Patch Id="NtUvXdYpFSHPVViHFFW7kn" Name="Create" ManuallySortedPins="true" />
                   <Patch Id="P7i8fQf1nffNDObkI6p99U" Name="Then" ManuallySortedPins="true" />
                   <Node Bounds="219,569,126,19" Id="LotuCyiDyFIMQZcpbrrAOD">
-                    <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Runtime.dll">
+                    <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.Nodes">
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                       <CategoryReference Kind="Category" Name="Rendering" NeedsToBeDirectParent="true">
                         <p:OuterCategoryReference Kind="Category" Name="Stride" NeedsToBeDirectParent="true" />
@@ -1314,8 +1317,6 @@
                     <Pin Id="KUJfNyWSriPPbg1fiq1xNH" Name="Output" Kind="OutputPin" />
                   </Node>
                 </Patch>
-                <ControlPoint Id="FJkoFWqUMKsM1MGSf3mSfA" Bounds="221,551" Alignment="Top" />
-                <ControlPoint Id="DC737Bf9vaeORDDcnLFoab" Bounds="221,607" Alignment="Bottom" />
               </Node>
               <Pad Id="E9MZmrBrDgjOd8L0M2fY0z" SlotId="UgoVPPrGOqLO4XXwN8Ug78" Bounds="132,479" />
               <Node Bounds="131,501,64,26" Id="H7yHTLBP5gwNkWQSgMBNQ8">
@@ -1666,21 +1667,17 @@
                   <Pin Id="OFpQ4xPsIDAOTlUCZwPPea" Name="Initial Yaw" Kind="InputPin" />
                   <Pin Id="RwyfXBXk11oMuo3oBXeSap" Name="Initial Pitch" Kind="InputPin" />
                   <Pin Id="E7OCwq6Mf0vPyXmKxXpAyg" Name="Initial Distance" Kind="InputPin" />
-                  <Pin Id="QKeKDBwCXuzLocj4ammGoa" Name="Initial FOV" Kind="InputPin">
-                    <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                      <Choice Kind="TypeFlag" Name="Float32" />
-                    </p:TypeAnnotation>
-                  </Pin>
-                  <Pin Id="I5uib845CV2OLycjn3S2lT" Name="Near Plane" Kind="InputPin" />
-                  <Pin Id="VtoxJAEuGK2LSWy6qAeWoA" Name="Far Plane" Kind="InputPin" />
+                  <Pin Id="EZoG8osx6uAOpqdDMb2Eef" Name="Initial Vertical Field Of View" Kind="InputPin" />
+                  <Pin Id="TQ2wmTolALrPKCUppWYCSy" Name="Near Clip Plane" Kind="InputPin" />
+                  <Pin Id="QVKl1QSn8bfMDQHm8jtquB" Name="Far Clip Plane" Kind="InputPin" />
                   <Pin Id="Ty31fUoQ7v0MYo6ToN1xAj" Name="Auto Fetch Input Source" Kind="InputPin" />
+                  <Pin Id="P1bxCfrSA6CNL4y6gobqFb" Name="Aspect Ratio" Kind="InputPin" />
+                  <Pin Id="CXL7pUjvRQoMccX5hCaxwt" Name="Use Custom Aspect Ratio" Kind="InputPin" />
                   <Pin Id="UwgswkXR3Y6Mvli3PQK5HW" Name="Show Helper" Kind="InputPin" DefaultValue="False">
                     <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                       <Choice Kind="TypeFlag" Name="Boolean" />
                     </p:TypeAnnotation>
                   </Pin>
-                  <Pin Id="P1bxCfrSA6CNL4y6gobqFb" Name="Aspect Ratio" Kind="InputPin" />
-                  <Pin Id="CXL7pUjvRQoMccX5hCaxwt" Name="Use Custom Aspect Ratio" Kind="InputPin" />
                   <Pin Id="AqUS5uKpokVMgyTSKEowll" Name="Enabled" Kind="InputPin" />
                   <Pin Id="AbgMvTTQGVILL10oSz9LE9" Name="Output" Kind="OutputPin" />
                   <Pin Id="SdtDkIWEfpYMBdjihdhFAU" Name="Position" Kind="OutputPin" />
@@ -1864,10 +1861,10 @@
   <PlatformDependency Id="Jr3OfX7eGjVNYnl8beWbat" Location="./src/bin/Debug/net472/Stride.Rendering.dll" />
   <PlatformDependency Id="C3CWxgfcGw6N26ms1qaSET" Location="./src/bin/Debug/net472/VL.Stride.Runtime.dll" />
   <PlatformDependency Id="GFbBTnLBobXPJtF4TwmB6S" Location="./src/bin/Debug/net472/Stride.Graphics.dll" />
-  <NugetDependency Id="QIiReSnZJLRNq4bIUb0c0J" Location="VL.Lang" Version="2020.2.0-0288-g7f89e6c99e" />
-  <NugetDependency Id="L4T6ZlQ8XdeLlACIH7reFi" Location="VL.UI.Core" Version="2020.2.0-0288-g7f89e6c99e" />
+  <NugetDependency Id="QIiReSnZJLRNq4bIUb0c0J" Location="VL.Lang" Version="2020.2.0-0244-gf932bd7e3c" />
+  <NugetDependency Id="L4T6ZlQ8XdeLlACIH7reFi" Location="VL.UI.Core" Version="2020.2.0-0244-gf932bd7e3c" />
   <PlatformDependency Id="DkNgn2lBRDHNJz26dbi97L" Location="./src/bin/Debug/net472/Stride.Core.Mathematics.dll" />
   <PlatformDependency Id="JWyiDaVMXKOMKV3AXWFfiH" Location="System" />
-  <NugetDependency Id="AI9yRrFEuCJQSmOSbAgvFy" Location="VL.Stride.Runtime" IsForward="true" Version="0.7.371-g517c1ba85a" />
-  <NugetDependency Id="TaH4M7RLF1ENr1pCUev3DZ" Location="VL.Stride.Windows" IsForward="true" Version="0.7.371-g517c1ba85a" />
+  <NugetDependency Id="AI9yRrFEuCJQSmOSbAgvFy" Location="VL.Stride.Runtime" IsForward="true" Version="0.7.406-g2f6c33ccd7" />
+  <NugetDependency Id="TaH4M7RLF1ENr1pCUev3DZ" Location="VL.Stride.Windows" IsForward="true" Version="0.7.406-g2f6c33ccd7" />
 </Document>
