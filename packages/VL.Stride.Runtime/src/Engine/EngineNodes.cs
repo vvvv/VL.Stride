@@ -104,6 +104,15 @@ namespace VL.Stride.Engine
                 .AddListInput(nameof(ModelComponent.Materials), x => x.Materials)
                 .WithEnabledPin();
 
+            // Texture components
+            var texturesCategory = "Stride.Textures";
+
+            yield return factory.NewComponentNode<BackgroundComponent>(texturesCategory)
+                .AddInput(nameof(BackgroundComponent.Texture), x => x.Texture, (x, v) => x.Texture = v)
+                .AddInput(nameof(BackgroundComponent.Intensity), x => x.Intensity, (x, v) => x.Intensity = v)
+                .AddInput(nameof(BackgroundComponent.Is2D), x => x.Is2D, (x, v) => x.Is2D = v)
+                .AddInput(nameof(BackgroundComponent.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v)
+                .WithEnabledPin();
 
             // Input components
             var inputCategory = "Stride.Input";
