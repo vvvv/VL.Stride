@@ -1,6 +1,9 @@
 using Stride.Graphics;
 using Stride.Input;
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using VL.Core;
 using VL.Core.CompilerServices;
 using VL.Lib.Basics.Resources;
@@ -48,41 +51,44 @@ namespace VL.Stride.Core
 
         void RegisterNodeFactories(IVLFactory services)
         {
-            services.RegisterNodeFactory("VL.Stride.Graphics.Nodes", nodeFactory =>
+            // Cache the factories in a static field - their node definitions will never change.
+            // Not doing so can cause the hotswap to exchange nodes thereby causing weired crashes when for example
+            // one of those nodes being re-created is the graphics compositor.
+
+            RegisterStaticNodeFactory(ref graphicsNodes, services, "VL.Stride.Graphics.Nodes", nodeFactory =>
             {
-                var nodes = ImmutableArray.CreateBuilder<IVLNodeDescription>();
-
-                nodes.AddRange(GraphicsNodes.GetNodeDescriptions(nodeFactory));
-
-                return NodeBuilding.NewFactoryImpl(nodes.ToImmutable());
+                return GraphicsNodes.GetNodeDescriptions(nodeFactory);
             });
 
-            services.RegisterNodeFactory("VL.Stride.Rendering.Nodes", nodeFactory =>
+            RegisterStaticNodeFactory(ref renderingNodes, services, "VL.Stride.Rendering.Nodes", nodeFactory =>
             {
-                var nodes = ImmutableArray.CreateBuilder<IVLNodeDescription>();
-
-                nodes.AddRange(MaterialNodes.GetNodeDescriptions(nodeFactory));
-                nodes.AddRange(LightNodes.GetNodeDescriptions(nodeFactory));
-                nodes.AddRange(CompositingNodes.GetNodeDescriptions(nodeFactory));
-                nodes.AddRange(RenderingNodes.GetNodeDescriptions(nodeFactory));
-
-                return NodeBuilding.NewFactoryImpl(nodes.ToImmutable());
+                return MaterialNodes.GetNodeDescriptions(nodeFactory)
+                    .Concat(LightNodes.GetNodeDescriptions(nodeFactory))
+                    .Concat(CompositingNodes.GetNodeDescriptions(nodeFactory))
+                    .Concat(RenderingNodes.GetNodeDescriptions(nodeFactory));
             });
 
-            services.RegisterNodeFactory("VL.Stride.Engine.Nodes", nodeFactory =>
+            RegisterStaticNodeFactory(ref engineNode, services, "VL.Stride.Engine.Nodes", nodeFactory =>
             {
-                var nodes = ImmutableArray.CreateBuilder<IVLNodeDescription>();
-
-                nodes.AddRange(EngineNodes.GetNodeDescriptions(nodeFactory));
-                nodes.AddRange(PhysicsNodes.GetNodeDescriptions(nodeFactory));
-
-                return NodeBuilding.NewFactoryImpl(nodes.ToImmutable());
+                return EngineNodes.GetNodeDescriptions(nodeFactory)
+                    .Concat(PhysicsNodes.GetNodeDescriptions(nodeFactory));
             });
 
-            //services.RegisterNodeFactory(effectFactory ?? (effectFactory = new EffectNodeFactory()));
             TextureFXNodeFactory.Register(services);
         }
 
-        //static IVLNodeDescriptionFactory effectFactory;
+        void RegisterStaticNodeFactory(ref IVLNodeDescriptionFactory location, IVLFactory services, string name, Func<IVLNodeDescriptionFactory, IEnumerable<IVLNodeDescription>> factory)
+        {
+            services.RegisterNodeFactory(location ?? (location = NodeBuilding.NewNodeFactory(services, name, nodeFactory =>
+            {
+                var nodes = ImmutableArray.CreateBuilder<IVLNodeDescription>();
+
+                nodes.AddRange(factory(nodeFactory));
+
+                return NodeBuilding.NewFactoryImpl(nodes.ToImmutable());
+            })));
+        }
+
+        static IVLNodeDescriptionFactory graphicsNodes, renderingNodes, engineNode;
     }
 }
