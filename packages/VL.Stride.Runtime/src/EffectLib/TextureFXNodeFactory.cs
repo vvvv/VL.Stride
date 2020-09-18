@@ -13,21 +13,18 @@ using Stride.Shaders.Parser;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Model;
 using VL.Stride.Core;
-using VL.Stride.Core.IO;
 using VL.Stride.Engine;
 using VL.Stride.Rendering;
+using VL.Stride.Rendering.ComputeEffect;
 
 namespace VL.Stride.EffectLib
 {
@@ -346,14 +343,14 @@ namespace VL.Stride.EffectLib
                         _parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, effectName);
                         var (_effect, _messages, _invalidated) = CreateEffectInstance("ComputeEffectShader", _parameters, watchName: effectName);
 
-                        var _threadGroupCountGlobalInput = new PinDescription<Int3>("Dispatch Count", Int3.One);
+                        var _dispatcherInput = new PinDescription<IComputeEffectDispatcher>("Dispatcher");
                         var _threadNumbersInput = new PinDescription<Int3>("Thread Count", Int3.One);
                         var _inputs = new List<IVLPinDescription>()
                         {
-                            _threadGroupCountGlobalInput,
+                            _dispatcherInput,
                             _threadNumbersInput
                         };
-                        var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(ComputeEffectShader)) };
+                        var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(IGraphicsRendererBase)) };
 
                         var usedNames = new HashSet<string>()
                         {
@@ -387,14 +384,14 @@ namespace VL.Stride.EffectLib
                                 }
 
                                 var renderContext = RenderContext.GetShared(gameHandle.Resource.Services);
-                                var shader = new ComputeEffectShader(renderContext) { ShaderSourceName = effectName };
+                                var shader = new ComputeEffectShader2(renderContext) { ShaderSourceName = effectName };
                                 var inputs = new List<IVLPin>();
                                 var enabledInput = default(IVLPin);
                                 foreach (var _input in _inputs)
                                 {
                                     // Handle the predefined pins first
-                                    if (_input == _threadGroupCountGlobalInput)
-                                        inputs.Add(nodeBuildContext.Input<Int3>(setter: v => shader.ThreadGroupCounts = v));
+                                    if (_input == _dispatcherInput)
+                                        inputs.Add(nodeBuildContext.Input<IComputeEffectDispatcher>(setter: v => shader.Dispatcher = v));
                                     else if (_input == _threadNumbersInput)
                                         inputs.Add(nodeBuildContext.Input<Int3>(setter: v => shader.ThreadNumbers = v));
                                     else if (_input == _enabledInput)
