@@ -15,20 +15,20 @@ namespace VL.Stride.Utils
         {
             if (cameraComponent == null)
             {
-                throw new ArgumentNullException(nameof(cameraComponent));
+                return new Ray();
             }
 
-            Matrix inverseViewProjection = Matrix.Invert(cameraComponent.ViewProjectionMatrix);
+            Matrix.Invert(ref cameraComponent.ViewProjectionMatrix, out var inverseViewProjection);
 
             Vector3 clipSpace;
             clipSpace.X = position.X * 2f - 1f;
             clipSpace.Y = 1f - position.Y * 2f;
 
             clipSpace.Z = 0f;
-            var near = Vector3.TransformCoordinate(clipSpace, inverseViewProjection);
+            Vector3.TransformCoordinate(ref clipSpace, ref inverseViewProjection, out var near);
 
             clipSpace.Z = 1f;
-            var far = Vector3.TransformCoordinate(clipSpace, inverseViewProjection);
+            Vector3.TransformCoordinate(ref clipSpace, ref inverseViewProjection, out var far);
 
             return new Ray(near, Vector3.Normalize(far - near));
         }
