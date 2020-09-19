@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Reactive.Disposables;
 using VL.Core;
+using VL.Lang.Symbols;
 using VL.Lib.Basics.Resources;
+using VL.Stride.Rendering.ComputeEffect;
 
 namespace VL.Stride.Rendering
 {
@@ -36,6 +38,21 @@ namespace VL.Stride.Rendering
                 .AddInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v)
                 .AddOutput(nameof(GetWindowInputSource.InputSource), x => x.InputSource)
             ;
+
+            // Compute effect dispatchers
+            var dispatchersCategory = $"{renderingAdvancedCategory}.ComputeEffect";
+            yield return factory.NewNode<DirectComputeEffectDispatcher>(name: "DirectDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)
+                .AddInput(nameof(DirectComputeEffectDispatcher.ThreadGroupCounts), x => x.ThreadGroupCounts, (x, v) => x.ThreadGroupCounts = v, Int3.One)
+                .AddOutput<IComputeEffectDispatcher>("Output", x => x);
+
+            yield return factory.NewNode<IndirectComputeEffectDispatcher>(name: "IndirectDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)
+                .AddInput(nameof(IndirectComputeEffectDispatcher.ArgumentBuffer), x => x.ArgumentBuffer, (x, v) => x.ArgumentBuffer = v)
+                .AddInput(nameof(IndirectComputeEffectDispatcher.OffsetInBytes), x => x.OffsetInBytes, (x, v) => x.OffsetInBytes = v)
+                .AddOutput<IComputeEffectDispatcher>("Output", x => x);
+
+            yield return factory.NewNode<CustomComputeEffectDispatcher>(name: "CustomDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)
+                .AddInput(nameof(CustomComputeEffectDispatcher.ThreadGroupCountsSelector), x => x.ThreadGroupCountsSelector, (x, v) => x.ThreadGroupCountsSelector = v)
+                .AddOutput<IComputeEffectDispatcher>("Output", x => x);
 
             //yield return factory.NewNode<RenderView>(name: "RenderView", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true)
             //    .AddInput(nameof(RenderView.View), x => x.View, (x, v) => x.View = v)
@@ -102,8 +119,7 @@ namespace VL.Stride.Rendering
             where TInputRenderBase : RendererBase, new()
         {
             return factory.NewNode<TInputRenderBase>(name: name, category: category, copyOnWrite: false, fragmented: true)
-                .AddInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v)
-                ;
+                .AddInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v);
         }
 
         static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey)
