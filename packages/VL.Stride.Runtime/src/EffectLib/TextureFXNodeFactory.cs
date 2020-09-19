@@ -5,27 +5,26 @@ using Stride.Core.Mathematics;
 using Stride.Core.Serialization.Contents;
 using Stride.Graphics;
 using Stride.Rendering;
+using Stride.Rendering.ComputeEffect;
 using Stride.Rendering.Images;
 using Stride.Shaders;
 using Stride.Shaders.Compiler;
+using Stride.Shaders.Parser;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Model;
 using VL.Stride.Core;
-using VL.Stride.Core.IO;
 using VL.Stride.Engine;
 using VL.Stride.Rendering;
+using VL.Stride.Rendering.ComputeEffect;
 
 namespace VL.Stride.EffectLib
 {
@@ -88,6 +87,7 @@ namespace VL.Stride.EffectLib
 
             const string sdslFileFilter = "*.sdsl";
             const string nodeSuffix = "_VLNode";
+            const string computeFXSuffix = "_ComputeFX";
             const string textureFXSuffix = "_TextureFX";
 
             // Traverse either the "shaders" folder in the database or in the given path (if present)
@@ -111,8 +111,16 @@ namespace VL.Stride.EffectLib
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
 
                     IVLNodeDescription shaderNodeDescription;
-                    yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName, name.NamePart);
+                    yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName);
                     yield return NewImageEffectNode(shaderNodeDescription, name);
+                }
+                else if (effectName.EndsWith(computeFXSuffix))
+                {
+                    // Shader only for now
+                    var name = GetNodeName(effectName, computeFXSuffix);
+                    var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
+
+                    yield return NewComputeEffectShaderNode(shaderNodeName, effectName);
                 }
             }
 
@@ -163,12 +171,14 @@ namespace VL.Stride.EffectLib
                 }
             }
 
-            (DynamicEffectInstance effect, ImmutableArray<Message> messages, IObservable<object> invalidated) CreateEffectInstance(string effectName, ParameterCollection parameters = null)
+            (DynamicEffectInstance effect, ImmutableArray<Message> messages, IObservable<object> invalidated) CreateEffectInstance(string effectName, ParameterCollection parameters = null, string watchName = null)
             {
                 var messages = ImmutableArray<Message>.Empty;
+                if (watchName is null)
+                    watchName = effectName;
 
                 var effect = new DynamicEffectInstance(effectName, parameters);
-                IObservable<object> invalidated = modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName);
+                IObservable<object> invalidated = modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName);
                 try
                 {
                     effect.Initialize(serviceRegistry);
@@ -180,16 +190,20 @@ namespace VL.Stride.EffectLib
                     if (path != null)
                     {
                         invalidated = NodeBuilding.WatchDir(shadersPath)
-                            .Where(e => Path.GetFileNameWithoutExtension(e.Name) == effectName)
-                            .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { effectName }));
+                            .Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName)
+                            .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { watchName }));
                     }
 
                     try
                     {
                         // Compile manually to get detailed errors
+                        var compilerParameters = new CompilerParameters() { EffectParameters = effect.EffectCompilerParameters };
+                        foreach (var effectParameterKey in parameters.ParameterKeyInfos)
+                            if (effectParameterKey.Key.Type == ParameterKeyType.Permutation)
+                                compilerParameters.SetObject(effectParameterKey.Key, parameters.ObjectValues[effectParameterKey.BindingSlot]);
                         var compilerResult = compiler.Compile(
-                            shaderSource: new ShaderClassSource(effectName),
-                            compilerParameters: new CompilerParameters() { EffectParameters = effect.EffectCompilerParameters });
+                            shaderSource: GetShaderSource(effectName),
+                            compilerParameters: compilerParameters);
                         messages = compilerResult.Messages.Select(m => m.ToMessage()).ToImmutableArray();
                     }
                     catch (Exception e)
@@ -315,10 +329,98 @@ namespace VL.Stride.EffectLib
                     });
             }
 
+            IVLNodeDescription NewComputeEffectShaderNode(NameAndVersion name, string effectName)
+            {
+                return factory.NewNodeDescription(
+                    name: name,
+                    category: "Stride.ComputeShaders",
+                    fragmented: true,
+                    init: buildContext =>
+                    {
+                        var _parameters = new ParameterCollection();
+                        _parameters.Set(ComputeShaderBaseKeys.ThreadGroupCountGlobal, Int3.One);
+                        _parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, Int3.One);
+                        _parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, effectName);
+                        var (_effect, _messages, _invalidated) = CreateEffectInstance("ComputeEffectShader", _parameters, watchName: effectName);
+
+                        var _dispatcherInput = new PinDescription<IComputeEffectDispatcher>("Dispatcher");
+                        var _threadNumbersInput = new PinDescription<Int3>("Thread Count", Int3.One);
+                        var _inputs = new List<IVLPinDescription>()
+                        {
+                            _dispatcherInput,
+                            _threadNumbersInput
+                        };
+                        var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(IGraphicsRendererBase)) };
+
+                        var usedNames = new HashSet<string>()
+                        {
+                            "Enabled"
+                        };
+
+                        foreach (var parameter in GetParameters(_effect))
+                        {
+                            var key = parameter.Key;
+                            var name = key.Name;
+
+                            _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count));
+                        }
+
+                        IVLPinDescription _enabledInput;
+
+                        _inputs.Add(_enabledInput = new PinDescription<bool>("Enabled", defaultValue: true));
+
+                        return buildContext.Implementation(
+                            inputs: _inputs,
+                            outputs: _outputs,
+                            messages: _messages,
+                            newNode: nodeBuildContext =>
+                            {
+                                var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
+                                // Ensure the path to the shader is visible to the effect system
+                                if (path != null)
+                                {
+                                    var effectSystem = gameHandle.Resource.EffectSystem;
+                                    effectSystem.EnsurePathIsVisible(path);
+                                }
+
+                                var renderContext = RenderContext.GetShared(gameHandle.Resource.Services);
+                                var shader = new ComputeEffectShader2(renderContext) { ShaderSourceName = effectName };
+                                var inputs = new List<IVLPin>();
+                                var enabledInput = default(IVLPin);
+                                foreach (var _input in _inputs)
+                                {
+                                    // Handle the predefined pins first
+                                    if (_input == _dispatcherInput)
+                                        inputs.Add(nodeBuildContext.Input<IComputeEffectDispatcher>(setter: v => shader.Dispatcher = v));
+                                    else if (_input == _threadNumbersInput)
+                                        inputs.Add(nodeBuildContext.Input<Int3>(setter: v => shader.ThreadNumbers = v));
+                                    else if (_input == _enabledInput)
+                                        inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => shader.Enabled = v));
+                                    else if (_input is ParameterPinDescription parameterPinDescription)
+                                        inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, shader.Parameters));
+                                }
+
+                                var effectOutput = nodeBuildContext.Output(() => shader);
+                                return nodeBuildContext.Node(
+                                    inputs: inputs,
+                                    outputs: new[] { effectOutput },
+                                    update: default,
+                                    dispose: () =>
+                                    {
+                                        shader.Dispose();
+                                        gameHandle.Dispose();
+                                    });
+                            },
+                            invalidated: _invalidated,
+                            openEditor: () => OpenEditor(effectName)
+                        );
+                    });
+            }
+
             // name = LevelsShader (ClampBoth)
             // effectName = Levels_ClampBoth_TextureFX
             // effectMainName = Levels
-            IVLNodeDescription NewImageEffectShaderNode(NameAndVersion name, string effectName, string effectMainName)
+            IVLNodeDescription NewImageEffectShaderNode(NameAndVersion name, string effectName)
             {
                 return factory.NewNodeDescription(
                     name: name,
@@ -551,6 +653,29 @@ namespace VL.Stride.EffectLib
                 getter();
                 return value;
             });
+        }
+
+        static ShaderSource GetShaderSource(string effectName)
+        {
+            var isMixin = ShaderMixinManager.Contains(effectName);
+            if (isMixin)
+                return new ShaderMixinGeneratorSource(effectName);
+            return new ShaderClassSource(effectName);
+        }
+
+        // Not used yet
+        static Dictionary<string, Dictionary<string, ParameterKey>> GetCompilerParameters(string filePath, string sdfxEffectName)
+        {
+            // In .sdfx, shader has been renamed to effect, in order to avoid ambiguities with HLSL and .sdsl
+            var macros = new[]
+            {
+                    new global::Stride.Core.Shaders.Parser.ShaderMacro("shader", "effect")
+                };
+
+            // Parse and collect
+            var shader = StrideShaderParser.PreProcessAndParse(filePath, macros);
+            var builder = new RuntimeShaderMixinBuilder(shader);
+            return builder.CollectParameters();
         }
 
         class CustomEffect : IEffect, IDisposable

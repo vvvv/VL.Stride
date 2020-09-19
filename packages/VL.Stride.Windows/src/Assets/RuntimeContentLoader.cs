@@ -3,37 +3,29 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Analysis;
-using Stride.Core.Assets.Compiler;
 using Stride.Core;
 using Stride.Core.Diagnostics;
-using Stride.Core.Extensions;
 using Stride.Core.MicroThreading;
 using Stride.Core.Serialization.Contents;
 using Stride.Core.Storage;
 using Stride.Assets;
-using Stride.Assets.Entities;
-using Stride.Assets.Materials;
-using Stride.Assets.Navigation;
-using Stride.Assets.Textures;
 using Stride.Graphics;
 using Stride.Navigation;
 using Stride.Engine;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
-using System.Reactive;
 using Stride.Core.IO;
 using Stride.Core.BuildEngine;
-using Stride.Assets.Rendering;
+using System.Collections.Concurrent;
 
 namespace VL.Stride.Assets
-{ 
+{
     /// <summary>
     /// A class that handles loading/unloading referenced resources for a game used in an editor.
     /// </summary>
@@ -42,6 +34,7 @@ namespace VL.Stride.Assets
         private Subject<ReloadingAsset> AssetBuilt = new Subject<ReloadingAsset>();
         private Subject<string> AssetRemoved = new Subject<string>();
         public IObservable<Tuple<ReloadingAsset, object>> OnAssetBuilt { get; }
+        private ConcurrentDictionary<string, AssetWrapperBase> AllAssets = new ConcurrentDictionary<string, AssetWrapperBase>();
         public IObservable<string> OnAssetRemoved => AssetRemoved;
         private readonly ILogger logger;
         private readonly IRuntimeDatabase database;
@@ -104,7 +97,51 @@ namespace VL.Stride.Assets
             game.Services.AddService(MicrothreadLocalDatabases.ProviderService);
             ContentManager = new ContentManager(Game.Services);
 
-            OnAssetBuilt = AssetBuilt.SelectMany(SelectAssetEvent);
+            OnAssetBuilt = AssetBuilt.SelectMany(SelectAssetEvent).ObserveOn(SynchronizationContext.Current);
+            OnAssetBuilt.Subscribe(HandleNewAsset);
+            OnAssetRemoved.ObserveOn(SynchronizationContext.Current).Subscribe(HandleAssetRemoved);
+
+        }
+
+        private void HandleNewAsset(Tuple<ReloadingAsset, object> obj)
+        {
+            var url = obj.Item1.AssetItem.Location.FullPath;
+
+            if (AllAssets.TryGetValue(url, out var assetWrapper))
+            {
+                assetWrapper.Loading = false;
+                assetWrapper.Exists = true;
+                
+                //Increase ref count for pending load requests
+                assetWrapper.ProcessLoadRequests(ContentManager, url);   
+                
+                assetWrapper.SetAssetObject(obj.Item2);
+            }
+        }
+
+        private void HandleAssetRemoved(string url)
+        {
+            if (AllAssets.TryGetValue(url, out var assetWrapper))
+            {
+                assetWrapper.Loading = false;
+                assetWrapper.Exists = false;
+                assetWrapper.SetAssetObject(null);
+            }
+        }
+
+        public AssetWrapper<T> GetOrCreateAssetWrapper<T>(string url) where T : class
+        {
+            if (!AllAssets.TryGetValue(url, out var assetWrapper))
+            {
+                assetWrapper = new AssetWrapper<T>();
+                AllAssets[url] = assetWrapper;
+            }
+            
+            // If the asset is not yet available add a pending load request
+            if (!assetWrapper.Exists)
+                assetWrapper.AddLoadRequest();
+
+            return (AssetWrapper<T>)assetWrapper;
         }
 
         public void ResetDependencyCompiler()
@@ -202,6 +239,15 @@ namespace VL.Stride.Assets
         public async Task<Dictionary<AssetItem, object>> BuildAndReloadAssetsInternal(List<AssetItem> assetList)
         {
             logger?.Debug($"Starting BuildAndReloadAssets for assets {string.Join(", ", assetList.Select(x => x.Location))}");
+
+            foreach (var ai in assetList)
+            {
+                if (AllAssets.TryGetValue(ai.Location.FullPath, out var assetWrapper))
+                {
+                    assetWrapper.Loading = true;
+                }
+            }
+
             var value = Interlocked.Increment(ref loadingAssetCount);
             AssetLoading?.Invoke(this, new ContentLoadEventArgs(value));
             try
@@ -480,8 +526,12 @@ namespace VL.Stride.Assets
                 logger?.Debug($"Unloading {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
 #endif
+            //Notify asset removed if reference count is 1 (about to be 0) or asset doesnt exist
+            ContentManager.GetReferenceCounts(url, out var exists, out var publiceRefCount, out var privateRefCount);
+            if (!exists || publiceRefCount <= 1)
+                AssetRemoved.OnNext(url);
+
             ContentManager.Unload(url);
-            AssetRemoved.OnNext(url);
 #if DEBUG
             if (enableReferenceLogging)
             {

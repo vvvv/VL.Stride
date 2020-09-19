@@ -1,15 +1,16 @@
 shader MyColor_VLNode : VS_PS_Base
 {
-	[Color]
-	float4 Color = float4(1, 0, 0, 1);
+    [Color]
+    float4 Color = float4(1, 0, 0, 1);
 
     override stage void VSMain()
     {
         streams.ShadingPosition = mul(streams.Position, WorldViewProjection);
     }
 
-	override stage void PSMain() 
+    override stage void PSMain() 
     {
+        streams.Depth = 1;
         streams.ColorTarget = Color;
     }
 };
