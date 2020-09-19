@@ -1,0 +1,25 @@
+﻿shader ColorRamp_TextureFX : TextureFX
+{
+    stage float2 FromXY = float2(0,0);
+    stage float2 ToXY = float2(1,1);
+
+    stage float4 Ramp(Texture2D tex, float2 fromXY, float2 toXY, float4 c)
+    {
+        return float4(
+            tex.Sample(Sampler, lerp(fromXY, toXY, c.r)).r,
+            tex.Sample(Sampler, lerp(fromXY, toXY, c.g)).g,
+            tex.Sample(Sampler, lerp(fromXY, toXY, c.b)).b,
+            tex.Sample(Sampler, lerp(fromXY, toXY, c.a)).a
+        );
+    }
+
+    stage override float4 Shading()
+    {
+        float4 c = InTex();
+        float pa = c.a;
+        c = Ramp(Texture1, FromXY, ToXY, c);
+        c.a *= pa;
+        return c;
+    }
+};
+
