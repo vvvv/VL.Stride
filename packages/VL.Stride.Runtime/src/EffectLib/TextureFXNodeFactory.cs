@@ -178,6 +178,9 @@ namespace VL.Stride.EffectLib
                     watchName = effectName;
 
                 var effect = new DynamicEffectInstance(effectName, parameters);
+                if (parameters is null)
+                    parameters = effect.Parameters;
+
                 IObservable<object> invalidated = modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName);
                 try
                 {
