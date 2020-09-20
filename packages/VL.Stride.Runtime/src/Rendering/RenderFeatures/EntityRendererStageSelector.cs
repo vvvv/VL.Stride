@@ -12,6 +12,9 @@ namespace VL.Stride.Rendering
         public RenderStage InSceneOpaque { get; set; }
         public RenderStage InSceneTransparent { get; set; }
         public RenderStage AfterScene { get; set; }
+        public RenderStage ShadowCaster { get; set; }
+        public RenderStage ShadowCasterParaboloid { get; set; }
+        public RenderStage ShadowCasterCubeMap { get; set; }
 
         public override void Process(RenderObject renderObject)
         {
@@ -38,6 +41,12 @@ namespace VL.Stride.Rendering
                     return InSceneTransparent;
                 case DrawerRenderStage.AfterScene:
                     return AfterScene;
+                case DrawerRenderStage.ShadowCaster:
+                    return ShadowCaster;
+                case DrawerRenderStage.ShadowCasterParaboloid:
+                    return ShadowCasterParaboloid;
+                case DrawerRenderStage.ShadowCasterCubeMap:
+                    return ShadowCasterCubeMap;
                 default:
                     return InSceneOpaque;
             }

@@ -78,7 +78,11 @@ namespace VL.Stride.Rendering.Compositing
                 .AddInput(nameof(EntityRendererStageSelector.BeforeScene), x => x.BeforeScene, (x, v) => x.BeforeScene = v)
                 .AddInput(nameof(EntityRendererStageSelector.InSceneOpaque), x => x.InSceneOpaque, (x, v) => x.InSceneOpaque = v)
                 .AddInput(nameof(EntityRendererStageSelector.InSceneTransparent), x => x.InSceneTransparent, (x, v) => x.InSceneTransparent = v)
-                .AddInput(nameof(EntityRendererStageSelector.AfterScene), x => x.AfterScene, (x, v) => x.AfterScene = v);
+                .AddInput(nameof(EntityRendererStageSelector.AfterScene), x => x.AfterScene, (x, v) => x.AfterScene = v)
+                .AddInput(nameof(EntityRendererStageSelector.ShadowCaster), x => x.ShadowCaster, (x, v) => x.ShadowCaster = v)
+                .AddInput(nameof(EntityRendererStageSelector.ShadowCasterParaboloid), x => x.ShadowCasterParaboloid, (x, v) => x.ShadowCasterParaboloid = v)
+                .AddInput(nameof(EntityRendererStageSelector.ShadowCasterCubeMap), x => x.ShadowCasterCubeMap, (x, v) => x.ShadowCasterCubeMap = v)
+                ;
 
             // Renderers
             yield return nodeFactory.NewGraphicsRendererNode<ClearRenderer>(category: compositionCategory)
