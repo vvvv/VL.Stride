@@ -115,7 +115,7 @@ namespace VL.Stride.Engine
                 .WithEnabledPin();
 
             // Input components
-            var inputCategory = "Stride.Experimental.Input";
+            var inputCategory = "Stride.Experimental.Input.Advanced";
 
             yield return factory.NewComponentNode<InputSourceComponent>(inputCategory)
                 .AddInput(nameof(InputSourceComponent.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true)
