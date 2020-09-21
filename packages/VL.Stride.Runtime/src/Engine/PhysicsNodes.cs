@@ -13,7 +13,7 @@ namespace VL.Stride.Engine
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {
 
-            var physicsCategory = "Stride.Physics";
+            var physicsCategory = "Stride.Experimental.Physics";
             var physicsColliderShapesCategory = $"{physicsCategory}.ColliderShapes";
 
             yield return NewPhysicsComponentNode<StaticColliderComponent>(factory, physicsCategory)
