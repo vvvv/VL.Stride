@@ -130,7 +130,7 @@ namespace VL.Stride.Engine
 
             
             // Patchable script
-            yield return factory.NewComponentNode<InterfaceSyncScript>(strideCategory, name: "PatchScriptComponent")
+            yield return factory.NewComponentNode<InterfaceSyncScript>(strideCategoryAdvanced, name: "PatchScriptComponent")
                 .AddInput(nameof(InterfaceSyncScript.PatchScript), x => x.PatchScript, (x, v) => x.PatchScript = v)
                 ;
 
