@@ -38,9 +38,9 @@ namespace VL.Stride.EffectLib
                     var nodes = GetNodeDescriptions(factory).ToImmutableArray();
                     return NodeBuilding.NewFactoryImpl(nodes, forPath: path => factory =>
                     {
-                        // In case "shaders" directory gets modified invalidate the whole factory
+                        // In case "shaders" directory gets added or deleted invalidate the whole factory
                         var invalidated = NodeBuilding.WatchDir(path)
-                            .Where(e => e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
+                            .Where(e => (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted) && e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
 
                         // File provider crashes if directory doesn't exist :/
                         var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
@@ -49,7 +49,9 @@ namespace VL.Stride.EffectLib
                             var nodes = GetNodeDescriptions(factory, path, shadersPath);
                             // Additionaly watch out for new/deleted/renamed files
                             invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
-                                .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed));
+                                .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted)
+                                // Check for shader files only. Editor (like VS) create lot's of other temporary files.
+                                .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
                             return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated);
                         }
                         else
