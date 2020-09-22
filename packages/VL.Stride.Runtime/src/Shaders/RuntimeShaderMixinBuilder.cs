@@ -9,10 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace VL.Stride.EffectLib
+namespace VL.Stride.Shaders
 {
     /// <summary>
     /// Builds a shader mixin at runtime based on the shader AST.

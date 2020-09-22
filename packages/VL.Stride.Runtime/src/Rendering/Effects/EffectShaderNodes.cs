@@ -23,12 +23,12 @@ using VL.Core.Diagnostics;
 using VL.Model;
 using VL.Stride.Core;
 using VL.Stride.Engine;
-using VL.Stride.Rendering;
 using VL.Stride.Rendering.ComputeEffect;
+using VL.Stride.Shaders;
 
-namespace VL.Stride.EffectLib
+namespace VL.Stride.Rendering
 {
-    static class TextureFXNodeFactory
+    static class EffectShaderNodes
     {
         public static void Register(IVLFactory services)
         {

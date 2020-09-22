@@ -6,9 +6,9 @@ using Stride.Rendering;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 
-namespace VL.Stride.EffectLib
+namespace VL.Stride.Rendering
 {
-    public abstract class EffectPinDescription : IVLPinDescription
+    abstract class EffectPinDescription : IVLPinDescription
     {
         public abstract string Name { get; }
         public abstract Type Type { get; }
@@ -19,7 +19,7 @@ namespace VL.Stride.EffectLib
         public abstract IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters);
     }
 
-    public class PinDescription<T> : EffectPinDescription
+    class PinDescription<T> : EffectPinDescription
     {
         public PinDescription(string name, T defaultValue = default(T))
         {
@@ -35,7 +35,7 @@ namespace VL.Stride.EffectLib
         public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => new Pin<T>(Name, DefaultValue);
     }
 
-    public class ParameterPinDescription : EffectPinDescription
+    class ParameterPinDescription : EffectPinDescription
     {
         public readonly ParameterKey Key;
         public readonly int Count;
