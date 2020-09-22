@@ -16,7 +16,7 @@ namespace VL.Stride
     static class FactoryExtensions
     {
         public static CustomNodeDesc<T> NewNode<T>(this IVLNodeDescriptionFactory factory,
-           Func<T> ctor,
+           Func<NodeContext, T> ctor,
            string name = default,
            string category = default,
            bool copyOnWrite = true,
@@ -26,7 +26,7 @@ namespace VL.Stride
             return new CustomNodeDesc<T>(factory,
                 ctor: ctx =>
                 {
-                    var instance = ctor();
+                    var instance = ctor(ctx);
                     return (instance, default);
                 },
                 name: name,

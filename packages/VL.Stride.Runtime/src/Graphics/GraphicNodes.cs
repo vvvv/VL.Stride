@@ -62,7 +62,7 @@ namespace VL.Stride.Graphics
                 .AddInput(nameof(RenderOutputDescription.MultisampleCount), x => x.MultisampleCount, (x, v) => x.MultisampleCount = v)
                 .AddInput(nameof(RenderOutputDescription.ScissorTestEnable), x => x.ScissorTestEnable, (x, v) => x.ScissorTestEnable = v);
 
-            yield return factory.NewNode(name: "SamplerState", category: graphicsCategory, copyOnWrite: false, hasStateOutput: false, fragmented: true, ctor: () => new StructRef<SamplerStateDescription>(SamplerStateDescription.Default))
+            yield return factory.NewNode(name: "SamplerState", category: graphicsCategory, copyOnWrite: false, hasStateOutput: false, fragmented: true, ctor: _ => new StructRef<SamplerStateDescription>(SamplerStateDescription.Default))
                 .AddInput(nameof(SamplerStateDescription.Filter), x => x.v.Filter, (x, v) => x.v.Filter = v, TextureFilter.Linear)
                 .AddInput(nameof(SamplerStateDescription.AddressU), x => x.v.AddressU, (x, v) => x.v.AddressU = v, TextureAddressMode.Clamp)
                 .AddInput(nameof(SamplerStateDescription.AddressV), x => x.v.AddressV, (x, v) => x.v.AddressV = v, TextureAddressMode.Clamp)

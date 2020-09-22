@@ -1,11 +1,14 @@
 ﻿using Stride.Core.Mathematics;
+using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
+using System;
 using System.Collections.Generic;
 using VL.Core;
+using VL.Lib.Basics.Resources;
 
 namespace VL.Stride.Rendering.Materials
 {
@@ -91,15 +94,17 @@ namespace VL.Stride.Rendering.Materials
             yield return NewMaterialNode<MaterialOverrides>(nodeFactory, "LayerOverrides", layersCategory);
 
             // Top level
-            yield return nodeFactory.NewNode<GroupedMaterialAttributes>(name: "MaterialAttributes", category: materialCategory, hasStateOutput: false, fragmented: true)
-                .AddInput(nameof(GroupedMaterialAttributes.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
-                .AddInput(nameof(GroupedMaterialAttributes.Shading), x => x.Shading, (x, v) => x.Shading = v)
-                .AddInput(nameof(GroupedMaterialAttributes.Misc), x => x.Misc, (x, v) => x.Misc = v)
-                .AddCachedOutput("Output", x => x.ToMaterialAttributes());
-
-            yield return nodeFactory.NewNode<MaterialDescriptor>(nameof(MaterialDescriptor), materialCategory, fragmented: true)
-                .AddInput(nameof(MaterialDescriptor.Attributes), x => x.Attributes, (x, v) => x.Attributes = v)
-                .AddListInput(nameof(MaterialDescriptor.Layers), x => x.Layers);
+            yield return nodeFactory.NewNode(
+                name: "Material", 
+                category: materialCategory,
+                ctor: ctx => new MaterialBuilder(ctx),
+                hasStateOutput: false, 
+                fragmented: true)
+                .AddInput(nameof(MaterialBuilder.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
+                .AddInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
+                .AddInput(nameof(MaterialBuilder.Misc), x => x.Misc, (x, v) => x.Misc = v)
+                .AddListInput(nameof(MaterialBuilder.Layers), x => x.Layers)
+                .AddCachedOutput("Output", x => x.ToMaterial());
 
             // Not so sure about these - they work for now
             yield return nodeFactory.NewNode<LiveComputeColor>(
@@ -218,11 +223,22 @@ namespace VL.Stride.Rendering.Materials
     }
 
     /// <summary>
-    /// Material attributes define the core characteristics of a material, such as its diffuse color, diffuse shading model, and so on. Attributes are organized into geometry, shading, and misc.
+    /// A material defines the appearance of a 3D model surface and how it reacts to light.
     /// </summary>
-    internal class GroupedMaterialAttributes
+    internal class MaterialBuilder : IDisposable
     {
         readonly MaterialAttributes @default = new MaterialAttributes();
+        readonly IResourceHandle<Game> gameHandle;
+
+        public MaterialBuilder(NodeContext nodeContext)
+        {
+            gameHandle = nodeContext.GetGameHandle();
+        }
+
+        public void Dispose()
+        {
+            gameHandle.Dispose();
+        }
 
         /// <summary>
         /// The shape of the material.
@@ -235,9 +251,14 @@ namespace VL.Stride.Rendering.Materials
         public ShadingAttributes Shading { get; set; }
 
         /// <summary>
-        /// Occlusion, transparency and material layers.
+        /// Occlusion, transparency and clear coat shading.
         /// </summary>
         public MiscAttributes Misc { get; set; }
+
+        /// <summary>
+        /// The material layers to build more complex materials.
+        /// </summary>
+        public MaterialBlendLayers Layers { get; set; } = new MaterialBlendLayers();
 
         public MaterialAttributes ToMaterialAttributes()
         {
@@ -259,6 +280,17 @@ namespace VL.Stride.Rendering.Materials
                 CullMode = Misc?.CullMode ?? @default.CullMode,
                 ClearCoat = Misc?.ClearCoat
             };
+        }
+
+        public Material ToMaterial()
+        {
+            var descriptor = new MaterialDescriptor()
+            {
+                Attributes = ToMaterialAttributes(),
+                Layers = Layers
+            };
+            var game = gameHandle.Resource;
+            return MaterialExtensions.New(game.GraphicsDevice, descriptor, game.Content);
         }
     }
 
