@@ -426,13 +426,13 @@ namespace VL.Stride.Rendering.Compositing
         }
 
         internal static CustomNodeDesc<TRenderer> NewGraphicsRendererNode<TRenderer>(this IVLNodeDescriptionFactory factory, string category, string name = null)
-            where TRenderer : IGraphicsRenderer, new()
+            where TRenderer : class, IGraphicsRenderer, new()
         {
             return factory.NewNode<TRenderer>(name: name, category: category, copyOnWrite: false, fragmented: true);
         }
 
         internal static CustomNodeDesc<TRenderer> AddEnabledPin<TRenderer>(this CustomNodeDesc<TRenderer> node)
-            where TRenderer : IGraphicsRenderer
+            where TRenderer : class, IGraphicsRenderer
         {
             return node.AddInput(nameof(IGraphicsRenderer.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, defaultValue: true);
         }

@@ -22,6 +22,7 @@ namespace VL.Stride
            bool copyOnWrite = true,
            bool hasStateOutput = true,
            bool fragmented = false)
+            where T : class
         {
             return new CustomNodeDesc<T>(factory,
                 ctor: ctx =>
@@ -43,7 +44,7 @@ namespace VL.Stride
             Action<T> init = default,
             bool hasStateOutput = true,
             bool fragmented = false) 
-            where T : new()
+            where T : class, new()
         {
             return new CustomNodeDesc<T>(factory, 
                 ctor: ctx =>
@@ -103,6 +104,7 @@ namespace VL.Stride
     }
 
     class CustomNodeDesc<TInstance> : IVLNodeDescription, IInfo
+        where TInstance : class
     {
         readonly List<CustomPinDesc> inputs = new List<CustomPinDesc>();
         readonly List<CustomPinDesc> outputs = new List<CustomPinDesc>();

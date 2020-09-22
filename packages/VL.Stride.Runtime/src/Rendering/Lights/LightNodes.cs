@@ -83,20 +83,20 @@ namespace VL.Stride.Rendering.Lights
         }
 
         static CustomNodeDesc<TLight> NewEnvironmentLightNode<TLight>(IVLNodeDescriptionFactory factory, string category)
-            where TLight : IEnvironmentLight, new()
+            where TLight : class, IEnvironmentLight, new()
         {
             return factory.NewNode<TLight>(category: category, copyOnWrite: false, fragmented: true);
         }
 
         static CustomNodeDesc<TLight> NewColorLightNode<TLight>(IVLNodeDescriptionFactory factory, string category)
-            where TLight : IColorLight, new()
+            where TLight : class, IColorLight, new()
         {
             return factory.NewNode<TLight>(category: category, copyOnWrite: false, fragmented: true)
                 .AddInput(nameof(IColorLight.Color), x => new Color4(x.Color.ComputeColor()), (x, v) => ((ColorRgbProvider)x.Color).Value = v.ToColor3(), Color4.White);
         }
 
         static CustomNodeDesc<TLight> NewDirectLightNode<TLight>(IVLNodeDescriptionFactory factory, string category)
-            where TLight : IColorLight, IDirectLight, new()
+            where TLight : class, IColorLight, IDirectLight, new()
         {
             return NewColorLightNode<TLight>(factory, category)
                 .AddInput(
