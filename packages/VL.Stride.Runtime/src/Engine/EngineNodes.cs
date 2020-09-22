@@ -50,7 +50,7 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(SceneInstanceRenderer.GraphicsCompositor), x => x.GraphicsCompositor, (x, v) => x.GraphicsCompositor = v);
 
             // Light components
-            var lightsCategory = "Stride.Lights";
+            var lightsCategory = "Stride.Lights.Advanced";
 
             yield return factory.NewComponentNode<LightComponent>(lightsCategory)
                 .AddInput(nameof(LightComponent.Type), x => x.Type, (x, v) => x.Type = v)

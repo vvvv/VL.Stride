@@ -10,7 +10,7 @@ namespace VL.Stride.Rendering.Lights
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {
-            var baseCategory = "Stride.Lights";
+            var baseCategory = "Stride.Lights.Advanced";
             var lightTypesCategory = $"{baseCategory}.LightTypes";
             var shadowMapsCategory = $"{baseCategory}.ShadowMaps";
 
