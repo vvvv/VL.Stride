@@ -16,11 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class ColorRamp_TextureFXKeys
+    public static partial class Blood_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Vector2> FromXY = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<Vector2> ToXY = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<float> Grayscale = ParameterKeys.NewValue<float>();
-        public static readonly ObjectParameterKey<Texture> GradientTexture = ParameterKeys.NewObject<Texture>();
+        public static readonly ValueParameterKey<float> Fader = ParameterKeys.NewValue<float>(0.5f);
+        public static readonly ValueParameterKey<float> Seed = ParameterKeys.NewValue<float>(0.5f);
     }
 }

@@ -1,0 +1,17 @@
+﻿shader UVMaskOffset_TextureFX : TextureFX
+{
+    float2 maxOffsets;
+
+    stage override float4 Shading()
+    {
+        float4 mask = InTex2();
+        float2 uv = streams.TexCoord;
+        float offX = -maxOffsets.x + mask.r * 2 * maxOffsets.x; 
+        float offY = -maxOffsets.y + mask.r * 2 * maxOffsets.y; 
+        float2 off = float2(uv.x + offX/10.0, uv.y + offY/10.0);
+        float4 col = Texture0.SampleLevel(Sampler0,off,0);
+        return col;
+    }
+};
+
+

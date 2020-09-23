@@ -16,9 +16,11 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class ColorRamp_Luma_TextureFXKeys
+    public static partial class Stripes_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Vector2> FromXY = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<Vector2> ToXY = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<int> Tiling = ParameterKeys.NewValue<int>(1);
+        public static readonly ValueParameterKey<bool> HorizontalStripes = ParameterKeys.NewValue<bool>(false);
+        public static readonly ValueParameterKey<float> Offset = ParameterKeys.NewValue<float>(0);
+        public static readonly ValueParameterKey<float> Seed = ParameterKeys.NewValue<float>(0);
     }
 }

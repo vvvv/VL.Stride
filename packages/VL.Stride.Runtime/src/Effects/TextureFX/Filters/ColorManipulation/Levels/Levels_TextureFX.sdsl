@@ -1,20 +1,11 @@
 ﻿shader Levels_TextureFX : TextureFX
 {
-    [Color]
-    float4 fromBlack;
-
-    [Color]
-    float4 fromWhite;
-
-    [Color]
-    float4 toBlack;
-
-    [Color]
-    float4 toWhite;
+    [Color] float4 fromBlack = float4(0,0,0,0);
+    [Color] float4 fromWhite = float4(0,0,1,1);
+    [Color] float4 toBlack = float4(0,0,0,1);
+    [Color] float4 toWhite = float4(0,0,1,1);
 
     float Gamma = 1.0f;
-
-    // TODO: prepare a general Levels node with clamping enum selection pin
 
     stage float4 Clamp(float4 col)
     {
@@ -24,12 +15,10 @@
     stage override float4 Shading()
     {
         float4 c = InTex();
-
         c = (c - fromBlack)/(fromWhite - fromBlack);
         c = sign(c) * pow(abs(c), Gamma);
         c = Clamp(c);
 	    c = c * (toWhite - toBlack) + toBlack;
-
         return c;
     }
 };
