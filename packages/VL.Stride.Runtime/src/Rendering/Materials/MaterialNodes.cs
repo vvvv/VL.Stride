@@ -34,9 +34,9 @@ namespace VL.Stride.Rendering.Materials
 
             yield return NewMaterialNode<MaterialTessellationFlatFeature>(nodeFactory, "FlatTesselation", geometryCategory);
             yield return NewMaterialNode<MaterialTessellationPNFeature>(nodeFactory, "PointNormalTessellation", geometryCategory);
-            yield return NewMaterialNode<MaterialDisplacementMapFeature>(nodeFactory, "DisplacementMap", geometryCategory);
-            yield return NewMaterialNode<MaterialNormalMapFeature>(nodeFactory, "NormalMap", geometryCategory);
-            yield return NewMaterialNode<MaterialGlossinessMapFeature>(nodeFactory, "GlossMap", geometryCategory);
+            yield return NewMaterialNode<MaterialDisplacementMapFeature>(nodeFactory, "Displacement", geometryCategory);
+            yield return NewMaterialNode<MaterialNormalMapFeature>(nodeFactory, "Normal", geometryCategory);
+            yield return NewMaterialNode<MaterialGlossinessMapFeature>(nodeFactory, "Glossiness", geometryCategory);
 
             // Shading
             yield return nodeFactory.NewNode<ShadingAttributes>(category: materialCategory, fragmented: true)
@@ -47,14 +47,14 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(nameof(ShadingAttributes.Emissive), x => x.Emissive, (x, v) => x.Emissive = v)
                 .AddInput(nameof(ShadingAttributes.SubsurfaceScattering), x => x.SubsurfaceScattering, (x, v) => x.SubsurfaceScattering = v);
 
-            yield return NewMaterialNode<MaterialDiffuseMapFeature>(nodeFactory, "DiffuseMap", shadingCategory);
+            yield return NewMaterialNode<MaterialDiffuseMapFeature>(nodeFactory, "Diffuse", shadingCategory);
 
             yield return NewMaterialNode<MaterialDiffuseCelShadingModelFeature>(nodeFactory, "CelShading", diffuseModelCategory);
             yield return NewMaterialNode<MaterialDiffuseHairModelFeature>(nodeFactory, "Hair", diffuseModelCategory);
             yield return NewMaterialNode<MaterialDiffuseLambertModelFeature>(nodeFactory, "Lambert", diffuseModelCategory);
 
-            yield return NewMaterialNode<MaterialMetalnessMapFeature>(nodeFactory, "MetalnessMap", shadingCategory);
-            yield return NewMaterialNode<MaterialSpecularMapFeature>(nodeFactory, "SpecularMap", shadingCategory);
+            yield return NewMaterialNode<MaterialMetalnessMapFeature>(nodeFactory, "Metalness", shadingCategory);
+            yield return NewMaterialNode<MaterialSpecularMapFeature>(nodeFactory, "Specular", shadingCategory);
 
             yield return nodeFactory.NewNode<MaterialSpecularCelShadingModelFeature>("CelShading", specularModelCategory, fragmented: true)
                 .AddInputs()
@@ -73,7 +73,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInputs()
                 .AddInput(nameof(MaterialSpecularThinGlassModelFeature.RefractiveIndex), x => x.RefractiveIndex, (x, v) => x.RefractiveIndex = v, defaultGlass.RefractiveIndex);
 
-            yield return NewMaterialNode<MaterialEmissiveMapFeature>(nodeFactory, "EmissiveMap", shadingCategory);
+            yield return NewMaterialNode<MaterialEmissiveMapFeature>(nodeFactory, "Emissive", shadingCategory);
             yield return NewMaterialNode<MaterialSubsurfaceScatteringFeature>(nodeFactory, "SubsurfaceScattering", shadingCategory);
 
             // Misc
@@ -83,7 +83,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(nameof(MiscAttributes.Overrides), x => x.Overrides, (x, v) => x.Overrides = v)
                 .AddInput(nameof(MiscAttributes.CullMode), x => x.CullMode, (x, v) => x.CullMode = v, CullMode.Back)
                 .AddInput(nameof(MiscAttributes.ClearCoat), x => x.ClearCoat, (x, v) => x.ClearCoat = v);
-            yield return NewMaterialNode<MaterialOcclusionMapFeature>(nodeFactory, "OcclusionMap", miscCategory);
+            yield return NewMaterialNode<MaterialOcclusionMapFeature>(nodeFactory, "Occlusion", miscCategory);
             yield return NewMaterialNode<MaterialTransparencyAdditiveFeature>(nodeFactory, "Additive", transparencyCategory);
             yield return NewMaterialNode<MaterialTransparencyBlendFeature>(nodeFactory, "Blend", transparencyCategory);
             yield return NewMaterialNode<MaterialTransparencyCutoffFeature>(nodeFactory, "Cutoff", transparencyCategory);
