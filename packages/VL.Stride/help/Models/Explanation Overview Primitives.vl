@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="CUIzzMtXbMXL1PSyxhqGoY" LanguageVersion="2020.2.0.232" Version="0.128">
-  <NugetDependency Id="Rq1hxtGm4prLgcbPnzpr1q" Location="VL.CoreLib" Version="2020.2.0-0229-g52056e19ba" />
+<Document xmlns:p="property" Id="CUIzzMtXbMXL1PSyxhqGoY" LanguageVersion="2020.3.0.10" Version="0.128">
+  <NugetDependency Id="Rq1hxtGm4prLgcbPnzpr1q" Location="VL.CoreLib" Version="2020.2.0-0299-g69e2ac598b" />
   <Patch Id="EflKC5Ddi2BN1mZWLv60qK">
     <Canvas Id="NBB3K3ClmntMsyQxzUGU5L" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -74,7 +74,8 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="OrGSzvu00NwMPctSB8ZC58" Name="Transformation" Kind="InputPin" />
+            <Pin Id="VDLARwgyklULoHkihjfS9V" Name="Shadow" Kind="InputPin" />
+            <Pin Id="I9kyzNLCX2fMu8vzpbvCyq" Name="Enable Default Shadow" Kind="InputPin" />
             <Pin Id="RSxV3iMVsSmOGd4HrrxlMt" Name="Component" Kind="InputPin" />
             <Pin Id="RNWy5Icp2PaQA023enlvmx" Name="Children" Kind="InputPin" />
             <Pin Id="TavwODDS44ROF98ppwbOB0" Name="Name" Kind="InputPin" />
@@ -122,6 +123,7 @@
             <Pin Id="GTbdUVggmcMPN7DejIxkxw" Name="Input" Kind="InputPin" />
             <Pin Id="AB3zbtGsSifNg8bcL9NRS7" Name="Render Stage" Kind="InputPin" />
             <Pin Id="CcxDgEEA16gQADsL0onvS0" Name="Single Call Per Frame" Kind="InputPin" />
+            <Pin Id="HmB8nES3r1hNJFd8ykM8gk" Name="Render Group" Kind="InputPin" />
             <Pin Id="DuqJ7shfsPkLdywskGjo2w" Name="Children" Kind="InputPin" />
             <Pin Id="BCmW7D4goDKOlCkMycarxS" Name="Name" Kind="InputPin" />
             <Pin Id="Ggj8dhj3QzSOfKOJOc3cZ6" Name="Enabled" Kind="InputPin">
@@ -138,7 +140,7 @@
             </p:NodeReference>
             <Pin Id="SU01Q7b2ovgNYi8xxdfjYI" Name="Transformation" Kind="InputPin" />
             <Pin Id="PcQwCRpHgpnOu6lNdEm440" Name="Color" Kind="InputPin" />
-            <Pin Id="Sn0rgrUSd10Mf3AwJGlaCK" Name="Layer" Kind="OutputPin" />
+            <Pin Id="CT6fk8OtJTVOOuYixqKCFW" Name="Output" Kind="OutputPin" />
           </Node>
           <Node Bounds="1544,404,67,19" Id="UYopXdAq4MtOxY9Jwj98EP">
             <p:NodeReference LastCategoryFullName="3D.Matrix" LastSymbolSource="CoreLibBasics.vl">
@@ -402,13 +404,17 @@
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="OnqomBcMtX8LwnaaZKDkSx" Name="Input" Kind="InputPin" />
-            <Pin Id="KoRkxbHfkWTQPZdSdMilV1" Name="Enable Keyboard Shortcuts" Kind="InputPin" />
-            <Pin Id="Ded61OvisVhQPDmQn6cGGw" Name="Enable Default Camera Interaction" Kind="InputPin" />
             <Pin Id="G1zMzjvDqq1PXoLIjjcwR4" Name="Camera" Kind="InputPin" />
-            <Pin Id="JPzyu3vfK37O6Uj3ddENpE" Name="Post Effects" Kind="InputPin" />
+            <Pin Id="Hs8CscMZLO4OOr1gOJqML3" Name="Enable Default Camera" Kind="InputPin" />
             <Pin Id="AC86hfuwdZBM0feZGboJ6S" Name="Title" Kind="InputPin" />
+            <Pin Id="HVEDo8HKOUQLZVvpUVlrUm" Name="Clear Color" Kind="InputPin" />
+            <Pin Id="J8cO1MMNXgQLuwl3hJDGAL" Name="Clear" Kind="InputPin" />
+            <Pin Id="JPzyu3vfK37O6Uj3ddENpE" Name="Post Effects" Kind="InputPin" />
+            <Pin Id="JqrKQRikCFtL7T4jWlnOwq" Name="Enable Default Post Effects" Kind="InputPin" />
+            <Pin Id="KoRkxbHfkWTQPZdSdMilV1" Name="Enable Keyboard Shortcuts" Kind="InputPin" />
             <Pin Id="BxuEePOro31Pp93g7x72NO" Name="Enabled" Kind="InputPin" />
             <Pin Id="VZPL9gfkceKQWuVPotk6Wh" Name="Output" Kind="OutputPin" />
+            <Pin Id="CmHZOpSuemKPiVRTI4mFNZ" Name="Client Bounds" Kind="OutputPin" />
             <Pin Id="Hpx6IC2VmVfPB9Gw1mPOuQ" Name="Input Source" Kind="OutputPin" />
             <Pin Id="AlUukdwBlq2NuSftiNsL0f" Name="Back Buffer" Kind="OutputPin" />
             <Pin Id="PV0AihaRYF6NjohYEX2BqG" Name="Depth Buffer" Kind="OutputPin" />
@@ -425,7 +431,6 @@
         <Link Id="QGAVBTOB5hyNKNvGQjjjXc" Ids="M6S7Ysg5pejQUTUTr3K4F6,MullgpvnhbhM2df0RZOJbC" />
         <Link Id="BwAz0Sya1DiM3x7EkJIbwO" Ids="BGv1oRF0CuLPhrABkBUyZA,OfWV58cr50qOMQGHQl2r7Z" />
         <Link Id="RYD6HkQ0bZ1OpKRyhrMDUi" Ids="HuksEKkrQabOuQPT9n63Md,PNHcfdcbm0LOGJoy6SoTYC" />
-        <Link Id="SkNUTcbqhl1PHsULqO80BH" Ids="Sn0rgrUSd10Mf3AwJGlaCK,GTbdUVggmcMPN7DejIxkxw" />
         <Link Id="J6ASPJsszjCOO1r36d5Noz" Ids="Aqe0QkNKXUYPt8uypGFtKI,FCeK6Zm3UH5LBBMmBBUngD" />
         <Link Id="JgRpdPAprIWMvCdllRRynA" Ids="C1HeWLzbaOAQEJ7mCaLyNF,CDyZUoQKHtWNfgn02nSbkm" />
         <Link Id="RAkubPvZmbiOfRMf2zYFWE" Ids="UiJxaWkT5SfLJlgeJENp29,LoD0iVLufjyMvIVAO4tTkO" />
@@ -454,8 +459,9 @@
         <Link Id="JpzCuRzZaAQL0fXwB2NioD" Ids="PHMfjxvHeUiLKScTvMreOq,R7xsLrSa1XsQMYrZ079C7H" />
         <Link Id="FbY1QCaJh2aNwQ6biplaNX" Ids="Q4WYG533RtEL8GucrgOTg3,PL7GxR2CKfoQFPNLD4CLTj" />
         <Link Id="ITSrQ4qttkpOAGjfhXXkTp" Ids="C4rSd0sYo1QP4lHmwX2WpM,OnqomBcMtX8LwnaaZKDkSx" />
+        <Link Id="H8OqO17xccMQM4eJ1Lx5p4" Ids="CT6fk8OtJTVOOuYixqKCFW,GTbdUVggmcMPN7DejIxkxw" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.7.275-g87fc5c77c7" />
+  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.7.449-g243f32a902" />
 </Document>
