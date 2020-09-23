@@ -1,0 +1,12 @@
+﻿shader Tunnels_Cylinder_TextureFX : Tunnels_TextureFX
+{
+	stage override float3 Tunnel(float2 p)
+	{
+		float2 uv;
+		float a = atan2(p.y,p.x);
+		float r = sqrt(dot(p,p))*(1-Dist);
+		uv.x = .5*time+.5/r;
+		uv.y = (a/(3.1416))+Rotate;
+		return float3(uv, r);
+	}
+};

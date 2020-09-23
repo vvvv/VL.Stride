@@ -1,0 +1,29 @@
+﻿shader Tunnels_TextureFX : TextureFX
+{
+	float time;
+	float Rotate = 0.0;
+	float Dist = 0.5;
+	float Offset = 0.0;
+	float FogDistance = 0.5;
+	[Color] float4 FogColor = float4(0,0,0,1);
+
+	float2 r2d(float2 x,float a)
+	{	
+		a*=acos(-1)*2;
+
+		return float2(
+			cos(a)*x.x+sin(a)*x.y,
+			cos(a)*x.y-sin(a)*x.x);
+	}
+
+	stage abstract float3 Tunnel(float2 p);
+
+	stage override float4 Shading()
+	{
+		float2 p = -1.0 + 2.0 * streams.TexCoord;
+		float3 tunnel = Tunnel(p);	
+		float4 col = Tex2D(Texture0, tunnel.xy);
+		float fog = 1/(1+(FogDistance*10.0) * pow(tunnel.z/Dist, 2));
+		return lerp(col, FogColor, fog);
+	}
+};
