@@ -16,10 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Noise_TextureFXKeys
+    public static partial class ColorRamp_Hue_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Scale = ParameterKeys.NewValue<float>();
-        public static readonly ValueParameterKey<Vector2> Offset = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<int> NoiseType = ParameterKeys.NewValue<int>();
+        public static readonly ValueParameterKey<Vector2> FromXY = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<Vector2> ToXY = ParameterKeys.NewValue<Vector2>();
     }
 }
