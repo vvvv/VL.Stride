@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reactive.Disposables;
 using VL.Core;
+using VL.Lib.Basics.Resources;
 
 namespace VL.Stride.Graphics
 {
@@ -18,7 +19,7 @@ namespace VL.Stride.Graphics
                 ctor: nodeContext =>
                 {
                     var deviceHandle = nodeContext.GetDeviceHandle();
-                    return (new MutablePipelineState(deviceHandle.Resource), () => deviceHandle.Dispose());
+                    return (CreateInitialPipelineState(deviceHandle), () => deviceHandle.Dispose());
                 },
                 name: "PipelineState",
                 category: graphicsCategory,
@@ -136,8 +137,8 @@ namespace VL.Stride.Graphics
                 .AddInput(nameof(RasterizerStateDescription.DepthClipEnable), x => x.v.DepthClipEnable, (x, v) => x.v.DepthClipEnable = v, true)
                 .AddInput(nameof(RasterizerStateDescription.FrontFaceCounterClockwise), x => x.v.FrontFaceCounterClockwise, (x, v) => x.v.FrontFaceCounterClockwise = v, false)
                 .AddInput(nameof(RasterizerStateDescription.ScissorTestEnable), x => x.v.ScissorTestEnable, (x, v) => x.v.ScissorTestEnable = v, false)
-                .AddInput(nameof(RasterizerStateDescription.MultisampleCount), x => x.v.MultisampleCount, (x, v) => x.v.MultisampleCount = v, MultisampleCount.None)
-                .AddInput(nameof(RasterizerStateDescription.MultisampleAntiAliasLine), x => x.v.MultisampleAntiAliasLine, (x, v) => x.v.MultisampleAntiAliasLine = v, false)
+                .AddInput(nameof(RasterizerStateDescription.MultisampleCount), x => x.v.MultisampleCount, (x, v) => x.v.MultisampleCount = v, MultisampleCount.X8)
+                .AddInput(nameof(RasterizerStateDescription.MultisampleAntiAliasLine), x => x.v.MultisampleAntiAliasLine, (x, v) => x.v.MultisampleAntiAliasLine = v, true)
                 .AddInput(nameof(RasterizerStateDescription.DepthBias), x => x.v.DepthBias, (x, v) => x.v.DepthBias = v, 0)
                 .AddInput(nameof(RasterizerStateDescription.DepthBiasClamp), x => x.v.DepthBiasClamp, (x, v) => x.v.DepthBiasClamp = v, 0f)
                 .AddInput(nameof(RasterizerStateDescription.SlopeScaleDepthBias), x => x.v.SlopeScaleDepthBias, (x, v) => x.v.SlopeScaleDepthBias = v, 0f)
@@ -167,6 +168,14 @@ namespace VL.Stride.Graphics
                 .AddInput(nameof(DepthStencilStencilOpDescription.StencilFail), x => x.v.StencilFail, (x, v) => x.v.StencilFail = v, StencilOperation.Keep)
                 .AddInput(nameof(DepthStencilStencilOpDescription.StencilDepthBufferFail), x => x.v.StencilDepthBufferFail, (x, v) => x.v.StencilDepthBufferFail = v, StencilOperation.Keep)
                 .AddStateOutput();
+        }
+
+        private static MutablePipelineState CreateInitialPipelineState(IResourceHandle<GraphicsDevice> deviceHandle)
+        {
+            var mps = new MutablePipelineState(deviceHandle.Resource);
+            mps.State.RasterizerState.MultisampleAntiAliasLine = true;
+            mps.State.RasterizerState.MultisampleCount = MultisampleCount.X8;
+            return mps;
         }
 
         static CustomNodeDesc<StructRef<T>> NewDescriptionNode<T>(this IVLNodeDescriptionFactory factory, string category, T initial, string name = default) where T : struct
