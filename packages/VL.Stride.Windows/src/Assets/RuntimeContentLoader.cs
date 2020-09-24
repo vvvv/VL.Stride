@@ -107,16 +107,22 @@ namespace VL.Stride.Assets
         {
             var url = obj.Item1.AssetItem.Location.FullPath;
 
-            if (AllAssets.TryGetValue(url, out var assetWrapper))
+            if (!AllAssets.TryGetValue(url, out var assetWrapper))
             {
-                assetWrapper.Loading = false;
-                assetWrapper.Exists = true;
-                
-                //Increase ref count for pending load requests
-                assetWrapper.ProcessLoadRequests(ContentManager, url);   
-                
-                assetWrapper.SetAssetObject(obj.Item2);
+                var awt = typeof(AssetWrapper<>);
+                Type[] typeArgs = { obj.Item2.GetType() };
+                var makeme = awt.MakeGenericType(typeArgs);
+                assetWrapper = (AssetWrapperBase)Activator.CreateInstance(makeme);
+                AllAssets[url] = assetWrapper;
             }
+
+            assetWrapper.Loading = false;
+            assetWrapper.Exists = true;
+
+            //Increase ref count for pending load requests
+            assetWrapper.ProcessLoadRequests(ContentManager, url);
+
+            assetWrapper.SetAssetObject(obj.Item2);
         }
 
         private void HandleAssetRemoved(string url)
