@@ -7,7 +7,6 @@ using System.Linq;
 using VL.Core;
 using VL.Core.CompilerServices;
 using VL.Lib.Basics.Resources;
-using VL.Stride.EffectLib;
 using VL.Stride.Engine;
 using VL.Stride.Graphics;
 using VL.Stride.Rendering;
@@ -74,7 +73,7 @@ namespace VL.Stride.Core
                     .Concat(PhysicsNodes.GetNodeDescriptions(nodeFactory));
             });
 
-            TextureFXNodeFactory.Register(services);
+            EffectShaderNodes.Register(services);
         }
 
         void RegisterStaticNodeFactory(ref IVLNodeDescriptionFactory location, IVLFactory services, string name, Func<IVLNodeDescriptionFactory, IEnumerable<IVLNodeDescription>> factory)

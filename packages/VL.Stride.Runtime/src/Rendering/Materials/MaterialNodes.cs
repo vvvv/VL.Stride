@@ -1,11 +1,14 @@
 ﻿using Stride.Core.Mathematics;
+using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
+using System;
 using System.Collections.Generic;
 using VL.Core;
+using VL.Lib.Basics.Resources;
 
 namespace VL.Stride.Rendering.Materials
 {
@@ -13,7 +16,7 @@ namespace VL.Stride.Rendering.Materials
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory nodeFactory)
         {
-            string materialCategory = "Stride.Materials";
+            string materialCategory = "Stride.Advanced.Materials";
             string geometryCategory = $"{materialCategory}.{nameof(GeometryAttributes)}";
             string shadingCategory = $"{materialCategory}.{nameof(ShadingAttributes)}";
             string miscCategory = $"{materialCategory}.{nameof(MiscAttributes)}";
@@ -31,9 +34,9 @@ namespace VL.Stride.Rendering.Materials
 
             yield return NewMaterialNode<MaterialTessellationFlatFeature>(nodeFactory, "FlatTesselation", geometryCategory);
             yield return NewMaterialNode<MaterialTessellationPNFeature>(nodeFactory, "PointNormalTessellation", geometryCategory);
-            yield return NewMaterialNode<MaterialDisplacementMapFeature>(nodeFactory, "DisplacementMap", geometryCategory);
-            yield return NewMaterialNode<MaterialNormalMapFeature>(nodeFactory, "NormalMap", geometryCategory);
-            yield return NewMaterialNode<MaterialGlossinessMapFeature>(nodeFactory, "GlossMap", geometryCategory);
+            yield return NewMaterialNode<MaterialDisplacementMapFeature>(nodeFactory, "Displacement", geometryCategory);
+            yield return NewMaterialNode<MaterialNormalMapFeature>(nodeFactory, "Normal", geometryCategory);
+            yield return NewMaterialNode<MaterialGlossinessMapFeature>(nodeFactory, "Glossiness", geometryCategory);
 
             // Shading
             yield return nodeFactory.NewNode<ShadingAttributes>(category: materialCategory, fragmented: true)
@@ -44,14 +47,14 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(nameof(ShadingAttributes.Emissive), x => x.Emissive, (x, v) => x.Emissive = v)
                 .AddInput(nameof(ShadingAttributes.SubsurfaceScattering), x => x.SubsurfaceScattering, (x, v) => x.SubsurfaceScattering = v);
 
-            yield return NewMaterialNode<MaterialDiffuseMapFeature>(nodeFactory, "DiffuseMap", shadingCategory);
+            yield return NewMaterialNode<MaterialDiffuseMapFeature>(nodeFactory, "Diffuse", shadingCategory);
 
             yield return NewMaterialNode<MaterialDiffuseCelShadingModelFeature>(nodeFactory, "CelShading", diffuseModelCategory);
             yield return NewMaterialNode<MaterialDiffuseHairModelFeature>(nodeFactory, "Hair", diffuseModelCategory);
             yield return NewMaterialNode<MaterialDiffuseLambertModelFeature>(nodeFactory, "Lambert", diffuseModelCategory);
 
-            yield return NewMaterialNode<MaterialMetalnessMapFeature>(nodeFactory, "MetalnessMap", shadingCategory);
-            yield return NewMaterialNode<MaterialSpecularMapFeature>(nodeFactory, "SpecularMap", shadingCategory);
+            yield return NewMaterialNode<MaterialMetalnessMapFeature>(nodeFactory, "Metalness", shadingCategory);
+            yield return NewMaterialNode<MaterialSpecularMapFeature>(nodeFactory, "Specular", shadingCategory);
 
             yield return nodeFactory.NewNode<MaterialSpecularCelShadingModelFeature>("CelShading", specularModelCategory, fragmented: true)
                 .AddInputs()
@@ -70,7 +73,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInputs()
                 .AddInput(nameof(MaterialSpecularThinGlassModelFeature.RefractiveIndex), x => x.RefractiveIndex, (x, v) => x.RefractiveIndex = v, defaultGlass.RefractiveIndex);
 
-            yield return NewMaterialNode<MaterialEmissiveMapFeature>(nodeFactory, "EmissiveMap", shadingCategory);
+            yield return NewMaterialNode<MaterialEmissiveMapFeature>(nodeFactory, "Emissive", shadingCategory);
             yield return NewMaterialNode<MaterialSubsurfaceScatteringFeature>(nodeFactory, "SubsurfaceScattering", shadingCategory);
 
             // Misc
@@ -80,7 +83,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(nameof(MiscAttributes.Overrides), x => x.Overrides, (x, v) => x.Overrides = v)
                 .AddInput(nameof(MiscAttributes.CullMode), x => x.CullMode, (x, v) => x.CullMode = v, CullMode.Back)
                 .AddInput(nameof(MiscAttributes.ClearCoat), x => x.ClearCoat, (x, v) => x.ClearCoat = v);
-            yield return NewMaterialNode<MaterialOcclusionMapFeature>(nodeFactory, "OcclusionMap", miscCategory);
+            yield return NewMaterialNode<MaterialOcclusionMapFeature>(nodeFactory, "Occlusion", miscCategory);
             yield return NewMaterialNode<MaterialTransparencyAdditiveFeature>(nodeFactory, "Additive", transparencyCategory);
             yield return NewMaterialNode<MaterialTransparencyBlendFeature>(nodeFactory, "Blend", transparencyCategory);
             yield return NewMaterialNode<MaterialTransparencyCutoffFeature>(nodeFactory, "Cutoff", transparencyCategory);
@@ -91,15 +94,17 @@ namespace VL.Stride.Rendering.Materials
             yield return NewMaterialNode<MaterialOverrides>(nodeFactory, "LayerOverrides", layersCategory);
 
             // Top level
-            yield return nodeFactory.NewNode<GroupedMaterialAttributes>(name: "MaterialAttributes", category: materialCategory, hasStateOutput: false, fragmented: true)
-                .AddInput(nameof(GroupedMaterialAttributes.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
-                .AddInput(nameof(GroupedMaterialAttributes.Shading), x => x.Shading, (x, v) => x.Shading = v)
-                .AddInput(nameof(GroupedMaterialAttributes.Misc), x => x.Misc, (x, v) => x.Misc = v)
-                .AddCachedOutput("Output", x => x.ToMaterialAttributes());
-
-            yield return nodeFactory.NewNode<MaterialDescriptor>(nameof(MaterialDescriptor), materialCategory, fragmented: true)
-                .AddInput(nameof(MaterialDescriptor.Attributes), x => x.Attributes, (x, v) => x.Attributes = v)
-                .AddListInput(nameof(MaterialDescriptor.Layers), x => x.Layers);
+            yield return nodeFactory.NewNode(
+                name: "Material", 
+                category: materialCategory,
+                ctor: ctx => new MaterialBuilder(ctx),
+                hasStateOutput: false, 
+                fragmented: true)
+                .AddInput(nameof(MaterialBuilder.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
+                .AddInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
+                .AddInput(nameof(MaterialBuilder.Misc), x => x.Misc, (x, v) => x.Misc = v)
+                .AddListInput(nameof(MaterialBuilder.Layers), x => x.Layers)
+                .AddCachedOutput("Output", x => x.ToMaterial());
 
             // Not so sure about these - they work for now
             yield return nodeFactory.NewNode<LiveComputeColor>(
@@ -218,11 +223,22 @@ namespace VL.Stride.Rendering.Materials
     }
 
     /// <summary>
-    /// Material attributes define the core characteristics of a material, such as its diffuse color, diffuse shading model, and so on. Attributes are organized into geometry, shading, and misc.
+    /// A material defines the appearance of a 3D model surface and how it reacts to light.
     /// </summary>
-    internal class GroupedMaterialAttributes
+    internal class MaterialBuilder : IDisposable
     {
         readonly MaterialAttributes @default = new MaterialAttributes();
+        readonly IResourceHandle<Game> gameHandle;
+
+        public MaterialBuilder(NodeContext nodeContext)
+        {
+            gameHandle = nodeContext.GetGameHandle();
+        }
+
+        public void Dispose()
+        {
+            gameHandle.Dispose();
+        }
 
         /// <summary>
         /// The shape of the material.
@@ -235,9 +251,14 @@ namespace VL.Stride.Rendering.Materials
         public ShadingAttributes Shading { get; set; }
 
         /// <summary>
-        /// Occlusion, transparency and material layers.
+        /// Occlusion, transparency and clear coat shading.
         /// </summary>
         public MiscAttributes Misc { get; set; }
+
+        /// <summary>
+        /// The material layers to build more complex materials.
+        /// </summary>
+        public MaterialBlendLayers Layers { get; set; } = new MaterialBlendLayers();
 
         public MaterialAttributes ToMaterialAttributes()
         {
@@ -259,6 +280,17 @@ namespace VL.Stride.Rendering.Materials
                 CullMode = Misc?.CullMode ?? @default.CullMode,
                 ClearCoat = Misc?.ClearCoat
             };
+        }
+
+        public Material ToMaterial()
+        {
+            var descriptor = new MaterialDescriptor()
+            {
+                Attributes = ToMaterialAttributes(),
+                Layers = Layers
+            };
+            var game = gameHandle.Resource;
+            return MaterialExtensions.New(game.GraphicsDevice, descriptor, game.Content);
         }
     }
 

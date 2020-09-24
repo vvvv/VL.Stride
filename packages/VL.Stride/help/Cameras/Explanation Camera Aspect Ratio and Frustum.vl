@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="COt0TYjoglbNpoz2vg7gQm" LanguageVersion="2020.2.0.231" Version="0.128">
-  <NugetDependency Id="Rq1hxtGm4prLgcbPnzpr1q" Location="VL.CoreLib" Version="2020.2.0-0231-gb13917208e" />
+<Document xmlns:p="property" Id="OqE9DGfsJhPMVI4Wpv21Iz" LanguageVersion="2020.3.0.2" Version="0.128">
+  <NugetDependency Id="Rq1hxtGm4prLgcbPnzpr1q" Location="VL.CoreLib" Version="2020.3.0-0002-gf2be6f87ba" />
   <Patch Id="EflKC5Ddi2BN1mZWLv60qK">
     <Canvas Id="NBB3K3ClmntMsyQxzUGU5L" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -104,6 +104,7 @@
             <Pin Id="OcsmIAmNIyOQO3c0lOgajE" Name="Clear Color" Kind="InputPin" />
             <Pin Id="QSfeZNy8vK8PvTtLMMByjJ" Name="Clear" Kind="InputPin" />
             <Pin Id="AQ5X3ugAcqkPPm8vCKw3ZW" Name="Post Effects" Kind="InputPin" />
+            <Pin Id="Fvm0YOV4BWkOc9iqjpNrv1" Name="Enable Default Post Effects" Kind="InputPin" />
             <Pin Id="Tl6PSWTOWk2PzojLEgr7v1" Name="Enable Keyboard Shortcuts" Kind="InputPin" DefaultValue="True">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
@@ -159,14 +160,9 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="ANgm1FUwTjfPBIV7Mx9iBa" Name="Initial FOV" Kind="InputPin" />
-            <Pin Id="NiXrz6xMAv8LMXKyCMXdji" Name="Near Plane" Kind="InputPin" />
-            <Pin Id="Qb89NMiUKFvPYPVnpd9Tub" Name="Far Plane" Kind="InputPin" />
-            <Pin Id="PY0XtwJ4WSJNlybKEePhcq" Name="Show Helper" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Boolean" />
-              </p:TypeAnnotation>
-            </Pin>
+            <Pin Id="TCQTOuQBpiyNCmmLuUyX0x" Name="Initial Vertical Field Of View" Kind="InputPin" />
+            <Pin Id="CdhDaFIOwEYMWuVK84ugWY" Name="Near Clip Plane" Kind="InputPin" />
+            <Pin Id="J2tq5gDm6yBMWz27HaOGeb" Name="Far Clip Plane" Kind="InputPin" />
             <Pin Id="EPmmVvgX9wNLfoap9RkCx5" Name="Aspect Ratio" Kind="InputPin" DefaultValue="0.53">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
@@ -177,11 +173,17 @@
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="PY0XtwJ4WSJNlybKEePhcq" Name="Show Helper" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="Dk9ENpfoBWZQOecdg1sBF6" Name="Enabled" Kind="InputPin" />
             <Pin Id="UBNKKtaEU0ALHrm7moEeq4" Name="Output" Kind="OutputPin" />
             <Pin Id="SiTzezMkKYSLy2WBEMFfLB" Name="Position" Kind="OutputPin" />
             <Pin Id="UVKRWnnUgP6OLnWPpnTlHD" Name="Frustum" Kind="OutputPin" />
             <Pin Id="FXBwINicOzOLLqAEhjtvvA" Name="Inverse View" Kind="OutputPin" />
+            <Pin Id="EtGtK7tVpgbL62UPyNMwTV" Name="Camera Component" Kind="OutputPin" />
           </Node>
           <Node Bounds="288,107,145,19" Id="HVZLeyR1AVQOVHzjURWhnM">
             <p:NodeReference LastCategoryFullName="Stride.Models" LastSymbolSource="VL.Stride.Engine.vl">
@@ -220,12 +222,12 @@
             <Pin Id="Pk9rrPQXOaXPukuCoUhlhC" Name="Enabled" Kind="InputPin" />
             <Pin Id="VG1RQI80Je5QR3k4ZiqDG8" Name="Entity" Kind="OutputPin" />
           </Node>
-          <Node Bounds="441,724,185,19" Id="N2Bk3GAeFRKQNeWADesMx8">
+          <Node Bounds="306,693,205,19" Id="N2Bk3GAeFRKQNeWADesMx8">
             <p:NodeReference LastCategoryFullName="Stride" LastSymbolSource="VL.Stride.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="SceneWindow" />
             </p:NodeReference>
-            <Pin Id="UAdvbeIIh1mPfvE4pdwBBv" Name="Bounds" Kind="InputPin" DefaultValue="1158, 467, 690, 515">
+            <Pin Id="UAdvbeIIh1mPfvE4pdwBBv" Name="Bounds" Kind="InputPin" DefaultValue="1138, 369, 514, 403">
               <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Rectangle" />
               </p:TypeAnnotation>
@@ -241,6 +243,7 @@
             </Pin>
             <Pin Id="JHZBWfEUc6GLfGJWFeDvOp" Name="Clear" Kind="InputPin" />
             <Pin Id="SdvT1wdhEPULfURZJuAe3E" Name="Post Effects" Kind="InputPin" />
+            <Pin Id="GQhsU8QaXd6QFpe0OW8z2e" Name="Enable Default Post Effects" Kind="InputPin" />
             <Pin Id="L03YeZTzxvjLj7iqUd9RRm" Name="Enable Keyboard Shortcuts" Kind="InputPin" />
             <Pin Id="RztjcB7xlNAM43f5SyVD0g" Name="Enabled" Kind="InputPin" />
             <Pin Id="ERnsYs5BxzdNl3PuyO8UWi" Name="Output" Kind="OutputPin" />
@@ -261,8 +264,8 @@
               <Choice Kind="TypeFlag" Name="Boolean" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="MMmBBZf1N6jLMhVHt8Xaky" Bounds="629,720,206,56" ShowValueBox="true" isIOBox="true" Value="In the Lower Window: pres [F4] to see a visualization of the Camera">
-            <p:TypeAnnotation>
+          <Pad Id="MMmBBZf1N6jLMhVHt8Xaky" Bounds="524,686,206,56" ShowValueBox="true" isIOBox="true" Value="In the Lower Window: press [F4] to see a visualization of the Camera">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
             <p:ValueBoxSettings>
@@ -270,7 +273,7 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="Bpq68Vl9Fm1QMX5zDADQi5" Bounds="432,804,346,125" ShowValueBox="true" isIOBox="true" Value="When Not Using Custom Aspect Ratio:&#xD;&#xA;Change the Size of the Upper Window and see how the Camera reacts.&#xD;&#xA;&#xD;&#xA;When Using Custom Aspect Ratio above. See how the Frustum changes when Changing the Aspect  Ratio.&#xD;&#xA;">
+          <Pad Id="Bpq68Vl9Fm1QMX5zDADQi5" Bounds="347,779,346,125" ShowValueBox="true" isIOBox="true" Value="When Not Using Custom Aspect Ratio:&#xD;&#xA;Change the Size of the Upper Window and see how the Camera reacts.&#xD;&#xA;&#xD;&#xA;When Using Custom Aspect Ratio above. See how the Frustum changes when Changing the Aspect  Ratio.&#xD;&#xA;">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -318,6 +321,6 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.7.370-g9e1021f3af" />
-  <NugetDependency Id="Mcnpcocp0SfPUs1XkgPpcD" Location="VL.Skia" Version="2020.2.0-0231-gb13917208e" />
+  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.7.418-g879fd6d6f9" />
+  <NugetDependency Id="Mcnpcocp0SfPUs1XkgPpcD" Location="VL.Skia" Version="2020.3.0-0002-gf2be6f87ba" />
 </Document>

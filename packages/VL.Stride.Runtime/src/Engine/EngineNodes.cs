@@ -50,7 +50,7 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(SceneInstanceRenderer.GraphicsCompositor), x => x.GraphicsCompositor, (x, v) => x.GraphicsCompositor = v);
 
             // Light components
-            var lightsCategory = "Stride.Lights";
+            var lightsCategory = "Stride.Lights.Advanced";
 
             yield return factory.NewComponentNode<LightComponent>(lightsCategory)
                 .AddInput(nameof(LightComponent.Type), x => x.Type, (x, v) => x.Type = v)
@@ -115,7 +115,7 @@ namespace VL.Stride.Engine
                 .WithEnabledPin();
 
             // Input components
-            var inputCategory = "Stride.Input";
+            var inputCategory = "Stride.Experimental.Input.Advanced";
 
             yield return factory.NewComponentNode<InputSourceComponent>(inputCategory)
                 .AddInput(nameof(InputSourceComponent.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true)
@@ -130,7 +130,7 @@ namespace VL.Stride.Engine
 
             
             // Patchable script
-            yield return factory.NewComponentNode<InterfaceSyncScript>(strideCategory, name: "PatchScriptComponent")
+            yield return factory.NewComponentNode<InterfaceSyncScript>(strideCategoryAdvanced, name: "PatchScriptComponent")
                 .AddInput(nameof(InterfaceSyncScript.PatchScript), x => x.PatchScript, (x, v) => x.PatchScript = v)
                 ;
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="NHwZlfaxyKZNu7BtGcqoL6" LanguageVersion="2020.2.0.229" Version="0.128">
-  <NugetDependency Id="Rq1hxtGm4prLgcbPnzpr1q" Location="VL.CoreLib" Version="2020.2.0-0229-g52056e19ba" />
+<Document xmlns:p="property" Id="NHwZlfaxyKZNu7BtGcqoL6" LanguageVersion="2020.3.0.10" Version="0.128">
+  <NugetDependency Id="Rq1hxtGm4prLgcbPnzpr1q" Location="VL.CoreLib" Version="2020.2.0-0299-g69e2ac598b" />
   <Patch Id="EflKC5Ddi2BN1mZWLv60qK">
     <Canvas Id="NBB3K3ClmntMsyQxzUGU5L" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -21,15 +21,17 @@
               <Choice Kind="ProcessAppFlag" Name="RenderTexture" />
             </p:NodeReference>
             <Pin Id="IwozVMCX4weM6ienygTYW2" Name="Input" Kind="InputPin" />
+            <Pin Id="KVsZjUQC8n0LWo2wHzikbm" Name="Render View" Kind="InputPin" />
             <Pin Id="PcYFVXHvYQ3PTlxgfzRtUF" Name="Width" Kind="InputPin" />
             <Pin Id="QvYVfqnHebIOMSAmIDy1wW" Name="Height" Kind="InputPin" />
-            <Pin Id="KVsZjUQC8n0LWo2wHzikbm" Name="Render View" Kind="InputPin" />
             <Pin Id="FKINpmTjk8QPA6vN5i9BMU" Name="Format" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Stride.API.Graphics" LastSymbolSource="VL.Stride.Graphics.vl">
                 <Choice Kind="TypeFlag" Name="PixelFormat" />
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="AkaElNhtW0OMvpaOP5X00b" Name="Depth Format" Kind="InputPin" />
+            <Pin Id="CvFPGF7pPFHMAmUGCYwoWc" Name="Clear Color" Kind="InputPin" />
+            <Pin Id="HxglRJfL0NcNfQHiDI9wSN" Name="Clear" Kind="InputPin" />
             <Pin Id="JijBXQsm8rjMArVcIeWHRv" Name="Auto Render" Kind="InputPin" />
             <Pin Id="U90Un1tkrDLMoL9k3njMTG" Name="Color" Kind="OutputPin" />
             <Pin Id="VB9hYPrOEiiPpOKZRkwpFG" Name="Depth" Kind="OutputPin" />
@@ -156,6 +158,7 @@
             </Pin>
             <Pin Id="RqMoEfSxQNwNVFeUimqLKG" Name="Tessellation" Kind="InputPin" />
             <Pin Id="P3AFLrY8SOWQLQ3l7WXe6w" Name="Material" Kind="InputPin" />
+            <Pin Id="FUV4j1CioWgMrjQcSDsuE6" Name="Is Shadow Caster" Kind="InputPin" />
             <Pin Id="RMAIMsj3Ay6LiPjPcEWo01" Name="Children" Kind="InputPin" />
             <Pin Id="FWYjsJcOKOPL74NI3bVbft" Name="Name" Kind="InputPin" />
             <Pin Id="KGQrvimAvAtMMq9dTEMWL1" Name="Enabled" Kind="InputPin" />
@@ -189,7 +192,8 @@
             </Pin>
             <Pin Id="N4kI4WHiKKOMnJxWOzLw8S" Name="Color" Kind="InputPin" />
             <Pin Id="LJxXUvrbDoOOwFKSXKCeBF" Name="Intensity" Kind="InputPin" />
-            <Pin Id="OJhImPRD405MvmEVFrTlbd" Name="Transformation" Kind="InputPin" />
+            <Pin Id="HO4jAspE1UxNQLcnN54zm0" Name="Shadow" Kind="InputPin" />
+            <Pin Id="SKFQB1uF7lLPGMB2i6aQWg" Name="Enable Default Shadow" Kind="InputPin" />
             <Pin Id="BpGw06C5EEvMaqoaxZnMxG" Name="Component" Kind="InputPin" />
             <Pin Id="Tflgv1KSGEJLeQ4IAmcpJB" Name="Children" Kind="InputPin" />
             <Pin Id="AFLM8pQJZ67NfESIDQUIhV" Name="Name" Kind="InputPin" />
@@ -210,7 +214,10 @@
             </Pin>
             <Pin Id="AexoQPQkgTnMSsCuJBWuPk" Name="Screen Space" Kind="InputPin" />
             <Pin Id="OPPc5EbyJNdLJ89enC1AH6" Name="Keep Aspect" Kind="InputPin" />
-            <Pin Id="GGnqAYInBQdL10tHZ6Dq2K" Name="Layer" Kind="OutputPin" />
+            <Pin Id="SvaFVDrs0LdNLmfdj25mv0" Name="Blend State" Kind="InputPin" />
+            <Pin Id="SyzeEwYk592NF6Wrjs8EDL" Name="Rasterizer State" Kind="InputPin" />
+            <Pin Id="BcllcdPIG0INhlvZnSFxkb" Name="Depth Stencil State" Kind="InputPin" />
+            <Pin Id="M6uqCkN6kC8PDyT3KhzkTs" Name="Output" Kind="OutputPin" />
           </Node>
           <Pad Id="GdoBtWYxWYqNKxiyZICxeq" Comment="Screen Space" Bounds="398,574,35,35" ShowValueBox="true" isIOBox="true" Value="True">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
@@ -224,14 +231,15 @@
             </p:NodeReference>
             <Pin Id="PY700LXla95NgxOg1ASSHg" Name="Transformation" Kind="InputPin" />
             <Pin Id="Jf04j3ht9seNd6YV9p1PcF" Name="Size" Kind="InputPin" />
-            <Pin Id="Kpjd5Z73cmSQDFCoxyF6oP" Name="Tesselation" Kind="InputPin" />
-            <Pin Id="TNZmEEoC5SXLP6G5ZLjzko" Name="Normal Direction" Kind="InputPin" />
+            <Pin Id="Q0rlTnginFkOhPPXMOjrsO" Name="Tessellation" Kind="InputPin" />
+            <Pin Id="Fa5ZDqoS9WOPfFnUlauaUE" Name="Normal" Kind="InputPin" />
             <Pin Id="APUx6LV1dKcM3TC6urQGIk" Name="Generate Back Face" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
             <Pin Id="OH1cvhBSa0kLEuNa7cgJMy" Name="Material" Kind="InputPin" />
+            <Pin Id="OLzsjZp3I0QOi636e2N5sv" Name="Is Shadow Caster" Kind="InputPin" />
             <Pin Id="Kd9lKkeMm8rMGKD0DRFROh" Name="Children" Kind="InputPin" />
             <Pin Id="CcJ3WL6RwgTM3iYeiH8qKO" Name="Name" Kind="InputPin" />
             <Pin Id="KsV0noRN1QkPxFWWM4BpLF" Name="Enabled" Kind="InputPin" />
@@ -246,7 +254,8 @@
             <Pin Id="L6WGkWiUQuoMVkw9jnYVp2" Name="Target" Kind="InputPin" />
             <Pin Id="Fj28hWfYRqhNid0G6fgoKi" Name="Color" Kind="InputPin" />
             <Pin Id="QGDNpO3JnrdO8Tx9V9Muj1" Name="Intensity" Kind="InputPin" />
-            <Pin Id="Cz040EMFboUPxwrekKrGa4" Name="Transformation" Kind="InputPin" />
+            <Pin Id="VuK6CbohyH8MgVE2tk45NX" Name="Shadow" Kind="InputPin" />
+            <Pin Id="KX4iIgV9zlgPBrt1XG3rYp" Name="Enable Default Shadow" Kind="InputPin" />
             <Pin Id="JPv9tYgcrsPO3oKRlfshX3" Name="Component" Kind="InputPin" />
             <Pin Id="JsVGqXTrRS2P9iI71MZDGr" Name="Children" Kind="InputPin" />
             <Pin Id="IZuMF58Luc4MWqrIiHIPxX" Name="Name" Kind="InputPin" />
@@ -269,24 +278,28 @@
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="DAdPoRaQtZCMs4dpYgdjz7" Name="Back Buffer Format" Kind="InputPin" />
+            <Pin Id="E5lwiCPNZAaO7aAtQ4PcS1" Name="Depth Buffer Format" Kind="InputPin" />
             <Pin Id="LbJGyJiA9w3MwMjhz8ym8h" Name="Input" Kind="InputPin" />
-            <Pin Id="Tl6PSWTOWk2PzojLEgr7v1" Name="Enable Keyboard Shortcuts" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Boolean" />
-              </p:TypeAnnotation>
-            </Pin>
-            <Pin Id="UNEVAIMCuFrMpcMJztX8tE" Name="Enable Default Camera Interaction" Kind="InputPin" />
             <Pin Id="GM765U1ea4wPvpMnfonV5r" Name="Camera" Kind="InputPin" />
-            <Pin Id="AQ5X3ugAcqkPPm8vCKw3ZW" Name="Post Effects" Kind="InputPin" />
+            <Pin Id="H3rxDmW7xKWLhOrW5KLW5H" Name="Enable Default Camera" Kind="InputPin" />
             <Pin Id="ClpOptEelXxMU29p4Yhm85" Name="Title" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="String" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="DAdPoRaQtZCMs4dpYgdjz7" Name="Back Buffer Format" Kind="InputPin" />
-            <Pin Id="E5lwiCPNZAaO7aAtQ4PcS1" Name="Depth Buffer Format" Kind="InputPin" />
+            <Pin Id="B5EeKgr141IPqDXdB4aDUO" Name="Clear Color" Kind="InputPin" />
+            <Pin Id="LE7N1mS2XvhN48c4iW7Kia" Name="Clear" Kind="InputPin" />
+            <Pin Id="AQ5X3ugAcqkPPm8vCKw3ZW" Name="Post Effects" Kind="InputPin" />
+            <Pin Id="MfQuSePASWDQT635Pe01np" Name="Enable Default Post Effects" Kind="InputPin" />
+            <Pin Id="Tl6PSWTOWk2PzojLEgr7v1" Name="Enable Keyboard Shortcuts" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="KwRZL4IaPpsPzo4JxCWaB4" Name="Enabled" Kind="InputPin" />
             <Pin Id="NlCwxKBXDtFPwne09eCJVs" Name="Output" Kind="OutputPin" />
+            <Pin Id="ChroziYIUd5MTO0tMLF4F3" Name="Client Bounds" Kind="OutputPin" />
             <Pin Id="MbEPweqcVetObwhTJL9Ehi" Name="Input Source" Kind="OutputPin" />
             <Pin Id="J8fSSzTEMxGLcfxxdmUJ6P" Name="Back Buffer" Kind="OutputPin" />
             <Pin Id="I2TXfCzUMfAOyItTK6yZKY" Name="Depth Buffer" Kind="OutputPin" />
@@ -345,12 +358,14 @@
             <Pin Id="L7F8kCJky3ALSry7LUv4jq" Name="Width" Kind="InputPin" />
             <Pin Id="QhaTQxQOAmqML5b3hPm74J" Name="Height" Kind="InputPin" />
             <Pin Id="Q0G078Y7IqNMJQEATuAsLt" Name="Camera" Kind="InputPin" />
+            <Pin Id="TRywu69JJJvMv26rKBBgJD" Name="Clear Color" Kind="InputPin" />
+            <Pin Id="NoS7767TtKMOhsqcgwUFfb" Name="Clear" Kind="InputPin" />
             <Pin Id="B2bOGPeRdolPLdoQR3iHi4" Name="Post Effects" Kind="InputPin" />
+            <Pin Id="C93P2F4qh2aP11HepkZEfb" Name="Enable Default Post Effects" Kind="InputPin" />
             <Pin Id="MxtpkCa3X87NxXq1tWU71u" Name="Format" Kind="InputPin" />
             <Pin Id="J6Xj2nJBd6nNyHQI2B3BEy" Name="Depth Format" Kind="InputPin" />
             <Pin Id="HsTNBlNIm1sM61l5Q4Asnz" Name="VR Settings" Kind="InputPin" />
-            <Pin Id="NoS7767TtKMOhsqcgwUFfb" Name="Clear" Kind="InputPin" />
-            <Pin Id="TRywu69JJJvMv26rKBBgJD" Name="Clear Color" Kind="InputPin" />
+            <Pin Id="UmRUC5WaaUYQWMtiJHTSVG" Name="Enabled" Kind="InputPin" />
             <Pin Id="RjZNF1GNQtEO4rzrMneZ2j" Name="Output" Kind="OutputPin" />
             <Pin Id="UdHIqsofqx9K9WeZ1Vvxc3" Name="Depth" Kind="OutputPin" />
           </Node>
@@ -375,14 +390,18 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="LCJgOXGbsGDNtwsGvLwdF5" Name="Initial FOV" Kind="InputPin" />
-            <Pin Id="D8MekNPBbz1MQwHejGN9E7" Name="Near Plane" Kind="InputPin" />
-            <Pin Id="JbngnUHFPKfPlrQ4ybNjac" Name="Far Plane" Kind="InputPin" />
+            <Pin Id="HccAZzKFOTYQIwb5TKSoLA" Name="Initial Vertical Field Of View" Kind="InputPin" />
+            <Pin Id="LhKSQqeU1eoNxrowuF3STX" Name="Near Clip Plane" Kind="InputPin" />
+            <Pin Id="GoNWi9dBAPCOtEEMRh5OQA" Name="Far Clip Plane" Kind="InputPin" />
+            <Pin Id="DiqsMupAONVNCYcDFjq2N1" Name="Aspect Ratio" Kind="InputPin" />
+            <Pin Id="R5osSkuTea4PObG0GQqjK2" Name="Use Custom Aspect Ratio" Kind="InputPin" />
+            <Pin Id="VXQlL7EdeO4LN8OQH6d6vg" Name="Show Helper" Kind="InputPin" />
             <Pin Id="GihpwQ3eg43MSimuAQybUx" Name="Enabled" Kind="InputPin" />
             <Pin Id="NkPfPxBcHooPxoRUdH6ekQ" Name="Output" Kind="OutputPin" />
-            <Pin Id="DBC0E77fAYhOedmeQcmAY2" Name="Frustum" Kind="OutputPin" />
             <Pin Id="TI4i6jZChhhOtapmQEc5GC" Name="Position" Kind="OutputPin" />
+            <Pin Id="DBC0E77fAYhOedmeQcmAY2" Name="Frustum" Kind="OutputPin" />
             <Pin Id="FEHAi2DAvbUNeihjmOOU7n" Name="Inverse View" Kind="OutputPin" />
+            <Pin Id="TMgvmp2vCzhPH2QZj4mHON" Name="Camera Component" Kind="OutputPin" />
           </Node>
           <Node Bounds="355,285,62,19" Id="TxwKhKCJe5qPxLbYWjM0p9">
             <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.vl">
@@ -393,9 +412,8 @@
               </CategoryReference>
             </p:NodeReference>
             <Pin Id="RHSHuOVxdLiP4R6xPscLde" Name="Input" Kind="InputPin" />
-            <Pin Id="Jo8Uq7F35CqM0isyWtTyrs" Name="Clear Color" Kind="InputPin" />
-            <Pin Id="L7m4LyNurb5PHkGHtATEbN" Name="Clear" Kind="InputPin" />
-            <Pin Id="PP2DnO01MxfNv4BQQj6QO3" Name="Clear Depth" Kind="InputPin" />
+            <Pin Id="KEllptrAo1AOG1s8KY5fO3" Name="Color" Kind="InputPin" />
+            <Pin Id="V8T7AcWFLkkPZBKQgh7kjA" Name="Enabled" Kind="InputPin" />
             <Pin Id="M50xmXtikT8MQc4igHQg4e" Name="Output" Kind="StateOutputPin" />
           </Node>
         </Canvas>
@@ -423,15 +441,15 @@
         <Link Id="ON5h3q442XbPyukScmZMXA" Ids="RjZNF1GNQtEO4rzrMneZ2j,U3lU3DpAjgMOZtVDMMALvX" />
         <Link Id="Ommw2c3o92POCTjMHfFct7" Ids="RmOL4fjtPK4LIVO048j4ZA,S6IFkdGIjC4MOMJCbwY70k" />
         <Link Id="Lakn5KeJ1vAPCMSY32OVFl" Ids="NkPfPxBcHooPxoRUdH6ekQ,Q0G078Y7IqNMJQEATuAsLt" />
-        <Link Id="LZl9FYukSWmMbO5bv815VZ" Ids="GGnqAYInBQdL10tHZ6Dq2K,RHSHuOVxdLiP4R6xPscLde" />
         <Link Id="Uc2DeYQK60bQZgyKldWhdZ" Ids="M50xmXtikT8MQc4igHQg4e,IwozVMCX4weM6ienygTYW2" />
         <Link Id="H0WcI0gxKAsPp1HJCFzzQZ" Ids="RXnzUMKE4YYNj49fyDN3d5,ARMPumrjFJsLmHmaTorkgp" />
         <Link Id="LSR3Yewts6sNQFNa5V98rF" Ids="PKDYGrWFdnGNJRl7RQ8WMb,DCwdjyrchguNOS9twwaMdC" />
         <Link Id="CgtVF61E38wMyBixSan0nq" Ids="SmFVEcWeSGhNM20Jo3ixjl,RmP69LQaAdzOMVfO9fxkdw" />
         <Link Id="AH75amwzHnOLJHAOIKQrKu" Ids="RXJyKlXbWORQYTCG1OPxMX,C5RlQnL1CCbOrd8Drvm3UG" />
+        <Link Id="BN14oxAKGv3OIkB8Nv0pTo" Ids="M6uqCkN6kC8PDyT3KhzkTs,RHSHuOVxdLiP4R6xPscLde" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.7.268-g98cc4acb0e" />
-  <NugetDependency Id="Mcnpcocp0SfPUs1XkgPpcD" Location="VL.Skia" Version="2020.2.0-0229-g52056e19ba" />
+  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.7.449-g243f32a902" />
+  <NugetDependency Id="Mcnpcocp0SfPUs1XkgPpcD" Location="VL.Skia" Version="2020.2.0-0299-g69e2ac598b" />
 </Document>

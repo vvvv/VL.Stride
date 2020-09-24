@@ -16,17 +16,18 @@ namespace VL.Stride
     static class FactoryExtensions
     {
         public static CustomNodeDesc<T> NewNode<T>(this IVLNodeDescriptionFactory factory,
-           Func<T> ctor,
+           Func<NodeContext, T> ctor,
            string name = default,
            string category = default,
            bool copyOnWrite = true,
            bool hasStateOutput = true,
            bool fragmented = false)
+            where T : class
         {
             return new CustomNodeDesc<T>(factory,
                 ctor: ctx =>
                 {
-                    var instance = ctor();
+                    var instance = ctor(ctx);
                     return (instance, default);
                 },
                 name: name,
@@ -43,7 +44,7 @@ namespace VL.Stride
             Action<T> init = default,
             bool hasStateOutput = true,
             bool fragmented = false) 
-            where T : new()
+            where T : class, new()
         {
             return new CustomNodeDesc<T>(factory, 
                 ctor: ctx =>
@@ -103,6 +104,7 @@ namespace VL.Stride
     }
 
     class CustomNodeDesc<TInstance> : IVLNodeDescription, IInfo
+        where TInstance : class
     {
         readonly List<CustomPinDesc> inputs = new List<CustomPinDesc>();
         readonly List<CustomPinDesc> outputs = new List<CustomPinDesc>();

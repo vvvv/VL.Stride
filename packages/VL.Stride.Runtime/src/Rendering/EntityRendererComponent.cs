@@ -11,7 +11,10 @@ namespace VL.Stride.Rendering
         BeforeScene,
         Opaque,
         Transparent,
-        AfterScene
+        AfterScene,
+        ShadowCaster,
+        ShadowCasterParaboloid,
+        ShadowCasterCubeMap
     }
 
     /// <summary>

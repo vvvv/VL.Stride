@@ -80,12 +80,34 @@ namespace VL.Stride.Rendering
                     }
                 }
 
-                // Call renderers which want to get invoked only once per frame first
-                var currentFrameNr = context.RenderContext.Time.FrameCount;
-                if (lastFrameNr != currentFrameNr)
+                if (singleCallRenderers.Count == 0 && renderers.Count == 0)
+                    return;
+
+                using (context.RenderContext.PushRenderViewAndRestore(renderView))
                 {
-                    lastFrameNr = currentFrameNr;
-                    foreach (var renderer in singleCallRenderers)
+                    // Call renderers which want to get invoked only once per frame first
+                    var currentFrameNr = context.RenderContext.Time.FrameCount;
+                    if (lastFrameNr != currentFrameNr)
+                    {
+                        lastFrameNr = currentFrameNr;
+                        foreach (var renderer in singleCallRenderers)
+                        {
+                            try
+                            {
+                                using (context.RenderContext.PushTagAndRestore(CurrentParentTransformation, renderer.ParentTransformation))
+                                {
+                                    renderer.Renderer?.Draw(context);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                RuntimeGraph.ReportException(e);
+                            }
+                        }
+                    }
+
+                    // Call renderers which can get invoked twice per frame (for each eye)
+                    foreach (var renderer in renderers)
                     {
                         try
                         {
@@ -98,23 +120,7 @@ namespace VL.Stride.Rendering
                         {
                             RuntimeGraph.ReportException(e);
                         }
-                    }
-                }
-
-                // Call renderers which can get invoked twice per frame (for each eye)
-                foreach (var renderer in renderers)
-                {
-                    try
-                    {
-                        using (context.RenderContext.PushTagAndRestore(CurrentParentTransformation, renderer.ParentTransformation))
-                        {
-                            renderer.Renderer?.Draw(context);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        RuntimeGraph.ReportException(e);
-                    }
+                    } 
                 }
             }
         }

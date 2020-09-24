@@ -8,7 +8,7 @@ using VL.Stride.Shaders.ShaderFX;
 
 namespace VL.Stride.Input
 {
-    [DefaultEntityComponentProcessorAttribute(typeof(InputSourceProcessor), ExecutionMode = ExecutionMode.All)]
+    [DefaultEntityComponentProcessor(typeof(InputSourceProcessor), ExecutionMode = ExecutionMode.All)]
     public class InputSourceComponent : ActivableEntityComponent
     {
         public IInputSource InputSource { get; set; }

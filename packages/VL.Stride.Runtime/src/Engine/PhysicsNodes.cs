@@ -13,7 +13,7 @@ namespace VL.Stride.Engine
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory)
         {
 
-            var physicsCategory = "Stride.Physics";
+            var physicsCategory = "Stride.Experimental.Physics";
             var physicsColliderShapesCategory = $"{physicsCategory}.ColliderShapes";
 
             yield return NewPhysicsComponentNode<StaticColliderComponent>(factory, physicsCategory)
@@ -95,7 +95,7 @@ namespace VL.Stride.Engine
         }
 
         static CustomNodeDesc<TColliderShape> NewColliderShapeNode<TColliderShape>(IVLNodeDescriptionFactory factory, string category, string name = null)
-            where TColliderShape : IInlineColliderShapeDesc, new()
+            where TColliderShape : class, IInlineColliderShapeDesc, new()
         {
             return factory.NewNode<TColliderShape>(name: name, category: category, copyOnWrite: true, hasStateOutput: true, fragmented: true)
                 //.AddCachedOutput("Output", x => Spread.Create<IInlineColliderShapeDesc>(x))
