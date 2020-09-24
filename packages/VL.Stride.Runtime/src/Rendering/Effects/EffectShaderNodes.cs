@@ -617,7 +617,10 @@ namespace VL.Stride.Rendering
                                         {
                                             output1.texture?.Dispose();
                                             output1.desc = desc;
-                                            output1.texture = Texture.New2D(graphicsDevice, desc.width, desc.height, desc.format, textureFlags);
+                                            if (desc != default)
+                                                output1.texture = Texture.New2D(graphicsDevice, desc.width, desc.height, desc.format, textureFlags);
+                                            else
+                                                output1.texture = null;
                                         }
 
                                         // Select it
