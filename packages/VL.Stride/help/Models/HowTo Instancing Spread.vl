@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="J1Q1Ch7zQtoNUiQBvPU2QP" LanguageVersion="2020.2.0.266" Version="0.128">
-  <NugetDependency Id="TwGk0oqYRM9LNChgwzEPFV" Location="VL.CoreLib" Version="2020.2.0-0241-g1bd7669e3e" />
+<Document xmlns:p="property" Id="J1Q1Ch7zQtoNUiQBvPU2QP" LanguageVersion="2020.3.0.16" Version="0.128">
+  <NugetDependency Id="TwGk0oqYRM9LNChgwzEPFV" Location="VL.CoreLib" Version="2020.2.0-0299-g69e2ac598b" />
   <Patch Id="EZnIqZ0z0epNn1cF1kNIqy">
     <Canvas Id="OjqUphNS7lHNHXGqmkgtXs" DefaultCategory="Main" CanvasType="FullCategory">
       <!--
@@ -257,7 +257,7 @@
               <Pin Id="AAIhWvQFIqAMBGVZl2Bhy6" Name="Output" Kind="OutputPin" />
             </Node>
             <Node Bounds="494,397,131,19" Id="LSyusppwjgIQa3afr2cPY3">
-              <p:NodeReference LastCategoryFullName="Stride.Physics.ColliderShapes" LastSymbolSource="VL.Stride.Runtime.dll">
+              <p:NodeReference LastCategoryFullName="Stride.Physics.ColliderShapes" LastSymbolSource="VL.Stride.Engine.Nodes">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="ProcessNode" Name="SphereColliderShapeDesc" />
               </p:NodeReference>
@@ -328,26 +328,26 @@
       </p:NodeReference>
       <Patch Id="PfVqWprw842PxGv9YZwzKZ">
         <Canvas Id="SnecRzN0V1MMBAkcocz2Xe" CanvasType="Group">
-          <Node Bounds="409,438,69,19" Id="B7VQ6o2zezoNtPgb25JQ99">
+          <Node Bounds="409,465,145,19" Id="B7VQ6o2zezoNtPgb25JQ99">
             <p:NodeReference LastCategoryFullName="Stride.Materials" LastSymbolSource="VL.Stride.Rendering.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="PBRMaterial" />
             </p:NodeReference>
-            <Pin Id="QEAE5WU69SIQMYmZiqsZ2w" Name="Color" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="RGBA" />
-              </p:TypeAnnotation>
-            </Pin>
-            <Pin Id="VE1zprZCREzOMrizvwlM7H" Name="Metalness" Kind="InputPin" DefaultValue="0.69">
+            <Pin Id="ACSOQOiGY8wQK5krcD9q3A" Name="Diffuse Texture" Kind="InputPin" />
+            <Pin Id="M462WYu1t1NPgnEFSrP9qU" Name="Diffuse Fallback Color" Kind="InputPin" />
+            <Pin Id="S8URcNGTbVcLCysUYk9cEs" Name="Metalness Texture" Kind="InputPin" />
+            <Pin Id="Jlu0WCHFjdsQZvt1KekZ3P" Name="Metalness Fallback Value" Kind="InputPin" DefaultValue="0.69">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="UIxSV1JfMDfPXeRM0TZr7Z" Name="Glossiness" Kind="InputPin" DefaultValue="0.88">
+            <Pin Id="Ux9N6aE87qJLlApUgS8DL2" Name="Roughness Texture" Kind="InputPin" />
+            <Pin Id="NsMInDR1pw5NV38oSwvXYA" Name="Roughness Fallback Value" Kind="InputPin" DefaultValue="0.12">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="PNRhPCFTBOgLOqgS108vMU" Name="Transparency" Kind="InputPin" />
             <Pin Id="NVWGu9o9ZJ4NzRmUwYxINW" Name="Cull Mode" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Stride.Graphics" LastSymbolSource="Stride.Graphics.dll">
                 <Choice Kind="TypeFlag" Name="CullMode" />
@@ -394,7 +394,6 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="ApQYsLnvnEaL2ZfGuPFRfQ" Name="Transformation" Kind="InputPin" />
             <Pin Id="Mmes8KJvjYYL6cetUnhN5F" Name="Component" Kind="InputPin" />
             <Pin Id="Q951Im5dg7aPsgGOcYTwLw" Name="Children" Kind="InputPin" />
             <Pin Id="FHb0joGiYw1PLD6lwAdK0s" Name="Name" Kind="InputPin" />
@@ -405,7 +404,7 @@
             </Pin>
             <Pin Id="VodrPNTV2Z4P0yDRBJ4Msj" Name="Entity" Kind="OutputPin" />
           </Node>
-          <Node Bounds="308,704,245,19" Id="BnFJQUEaMwKLZl7duUebZj">
+          <Node Bounds="318,692,245,19" Id="BnFJQUEaMwKLZl7duUebZj">
             <p:NodeReference>
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="SceneWindow" />
@@ -423,25 +422,28 @@
             </Pin>
             <Pin Id="RpbqxXgN5KALK29webQUZ1" Name="Input" Kind="InputPin" />
             <Pin Id="EeiOQpcKvVqMC68j0ErLRu" Name="Camera" Kind="InputPin" />
-            <Pin Id="TjvbvzE1kqTQaGzWY1G2Sn" Name="Post Effects" Kind="InputPin" />
+            <Pin Id="JFqlVip8ML7M5souGsbbSu" Name="Enable Default Camera" Kind="InputPin" />
             <Pin Id="MN00KL9F88AOzDnrOdBg0n" Name="Title" Kind="InputPin" />
-            <Pin Id="H7mzL1AyDhsOkCt4LulHW9" Name="Enabled" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Boolean" />
-              </p:TypeAnnotation>
-            </Pin>
-            <Pin Id="KHsH9NQzhuUMdTYN8woOC3" Name="Clear" Kind="InputPin" />
             <Pin Id="KbVhi1Iv99sOdAG5cEnX8J" Name="Clear Color" Kind="InputPin" DefaultValue="0.6, 0.6, 0.6, 1">
               <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="RGBA" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="KHsH9NQzhuUMdTYN8woOC3" Name="Clear" Kind="InputPin" />
+            <Pin Id="TjvbvzE1kqTQaGzWY1G2Sn" Name="Post Effects" Kind="InputPin" />
+            <Pin Id="UpSwdBkCYfRLfoaDXvXiyx" Name="Enable Default Post Effects" Kind="InputPin" />
             <Pin Id="AQoL0c7a8zkLZSupLo0JiX" Name="Enable Keyboard Shortcuts" Kind="InputPin">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="H7mzL1AyDhsOkCt4LulHW9" Name="Enabled" Kind="InputPin">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="EkjYBYq5PMSNq4Nc5WzutD" Name="Output" Kind="OutputPin" />
+            <Pin Id="TUyYcf0PAehNA439QQI1gw" Name="Client Bounds" Kind="OutputPin" />
             <Pin Id="PHI3yJzlrfvOT5mTJctj08" Name="Input Source" Kind="OutputPin" />
             <Pin Id="GVIzbGS7j5jLslQevPiiNd" Name="Back Buffer" Kind="OutputPin" />
             <Pin Id="DueZHDgMt6EMa6uS4ZQ9EJ" Name="Depth Buffer" Kind="OutputPin" />
@@ -492,7 +494,7 @@
             <Pin Id="CzTL2cEaxCfOilkkf1A5ky" Name="Enabled" Kind="InputPin" />
             <Pin Id="NcT3oTKKcFzP2A32RbYxz9" Name="Entity" Kind="OutputPin" />
           </Node>
-          <Node Bounds="531,436,140,19" Id="C7GDuf2VHuyOLJL3M6YKju">
+          <Node Bounds="531,414,147,19" Id="C7GDuf2VHuyOLJL3M6YKju">
             <p:NodeReference LastCategoryFullName="Stride.Models" LastSymbolSource="VL.Stride.Engine.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="InstancingSpreadComponent" />
@@ -604,7 +606,7 @@
               <Choice Kind="TypeFlag" Name="Float32" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="BKWNlX0QaqPNIdhsKpJ24J" Comment="Clear Color" Bounds="523,681,136,15" ShowValueBox="true" isIOBox="true" Value="0.2300002, 0.2300002, 0.2300002, 1">
+          <Pad Id="BKWNlX0QaqPNIdhsKpJ24J" Comment="Clear Color" Bounds="533,669,136,15" ShowValueBox="true" isIOBox="true" Value="0.2300002, 0.2300002, 0.2300002, 1">
             <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="RGBA" />
             </p:TypeAnnotation>
@@ -698,5 +700,5 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Q6thn2Y7IMaPIwMZVU2Sfj" Location="VL.Stride" Version="0.7.328-g0ff6561f7d" />
+  <NugetDependency Id="Q6thn2Y7IMaPIwMZVU2Sfj" Location="VL.Stride" Version="0.7.465-g062a6e746d" />
 </Document>
