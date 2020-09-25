@@ -170,7 +170,7 @@ namespace VL.Stride.Rendering.Compositing
                 .AddInput(nameof(Vignetting.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true);
             yield return new StrideNodeDesc<Dither>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
 
-            yield return nodeFactory.NewNode<ToneMap>(category: colorTransformsCategory, copyOnWrite: false)
+            yield return nodeFactory.NewNode<ToneMap>(category: colorTransformsCategory, copyOnWrite: true)
                 .AddInput(nameof(ToneMap.Operator), x => x.Operator, (x, v) =>
                 {
                     if (v != null && v != x.Operator && x.Group != null)
