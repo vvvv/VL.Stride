@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="HWRqGEFJG2aNE9pYb5Pg0w" LanguageVersion="2020.3.0.5" Version="0.128">
-  <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="2020.2.0-0299-g69e2ac598b" />
+<Document xmlns:p="property" Id="HWRqGEFJG2aNE9pYb5Pg0w" LanguageVersion="2020.3.0.20" Version="0.128">
+  <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="2020.3.0-0019-g801e878cb9" />
   <Patch Id="AXcrkz7wtuiLTLQMfXYFvQ">
     <Canvas Id="UNxfqzqFZ0sNZX8LT3rUat" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="Gm9tVfCpHi3L7REFrV4eaZ" Name="Input" Position="264,329">
@@ -930,6 +930,156 @@
             </Patch>
           </Node>
         </Canvas>
+        <!--
+
+    ************************ KeyBang ************************
+
+-->
+        <Node Name="KeyBang" Bounds="385,335" Id="HvQ4sLUWcfrLsOkEP8xEvH">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="SOhvq4v8uztMaiAfEYCCct">
+            <Canvas Id="Mw9mW1Ng143NU1JssiaPqe" CanvasType="Group">
+              <Node Bounds="378,293" Id="Qz0AtTUfHMbMG80HkhOVl3">
+                <p:NodeReference LastCategoryFullName="Stride.API.Input.IKeyboardDevice" LastSymbolSource="VL.Stride.Input.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="OperationCallFlag" Name="IsKeyDown" />
+                  <CategoryReference Kind="MutableInterfaceType" Name="IKeyboardDevice" NeedsToBeDirectParent="true" />
+                </p:NodeReference>
+                <Pin Id="V4hEUyfJbm7OGxnNuySjh8" Name="Input" Kind="StateInputPin" />
+                <Pin Id="TSkCcYmHcPRLkQcN6Orfp9" Name="Key" Kind="InputPin" />
+                <Pin Id="IFL5KtoFNzBPMWUGcApDHP" Name="Output" Kind="StateOutputPin" />
+                <Pin Id="TvPcrBPKMgZO6FPeF4YRnU" Name="Result" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="IRWkPcduPiqOVjbgnND9s7" Bounds="346,249" />
+              <ControlPoint Id="NPgDomUnhcsOoKSwTTtjOs" Bounds="485,248" />
+              <ControlPoint Id="EYcCcgfWD1gLiwxjTvhwnF" Bounds="450,339" />
+            </Canvas>
+            <Patch Id="CpWEWs9qLGuQWTkzzf50CC" Name="Create" />
+            <Patch Id="HKolLACYb2lNJCegIlOpwk" Name="Update">
+              <Pin Id="KHjbEIJosoVOUUR4ZNYGAh" Name="Keyboard Device" Kind="InputPin" Bounds="375,273" />
+              <Pin Id="OqKsjmb0XYRLB4DLbWcSAQ" Name="Key" Kind="InputPin" Bounds="457,273" />
+              <Pin Id="JKuDHBG8HSvP0HOxsSosZI" Name="Result" Kind="OutputPin" Bounds="450,339" />
+            </Patch>
+            <ProcessDefinition Id="DFv3jC3AvVIOx7x1Q8aX8C">
+              <Fragment Id="Dw4WebzUAz7NdWVVoeLBtl" Patch="CpWEWs9qLGuQWTkzzf50CC" Enabled="true" />
+              <Fragment Id="QJneKLsxkaON3SISoq9bVG" Patch="HKolLACYb2lNJCegIlOpwk" Enabled="true" />
+            </ProcessDefinition>
+            <Link Id="LSiRy8sK9BlN4cAVCV2vYU" Ids="IRWkPcduPiqOVjbgnND9s7,V4hEUyfJbm7OGxnNuySjh8" />
+            <Link Id="KZxjBk49vf0PTXOCDQnAiR" Ids="KHjbEIJosoVOUUR4ZNYGAh,IRWkPcduPiqOVjbgnND9s7" IsHidden="true" />
+            <Link Id="Cy39zpAMGacLTgq9DStQDM" Ids="NPgDomUnhcsOoKSwTTtjOs,TSkCcYmHcPRLkQcN6Orfp9" />
+            <Link Id="RVHxB178X1gMm0rvjWET1d" Ids="OqKsjmb0XYRLB4DLbWcSAQ,NPgDomUnhcsOoKSwTTtjOs" IsHidden="true" />
+            <Link Id="QdG4JUEmyCsQAlC0wvkzeR" Ids="TvPcrBPKMgZO6FPeF4YRnU,EYcCcgfWD1gLiwxjTvhwnF" />
+            <Link Id="HQeb2vHA1gkL0JF4QlynV4" Ids="EYcCcgfWD1gLiwxjTvhwnF,JKuDHBG8HSvP0HOxsSosZI" IsHidden="true" />
+          </Patch>
+        </Node>
+        <!--
+
+    ************************ KeyPressed ************************
+
+-->
+        <Node Name="KeyPressed" Bounds="385,381" Id="IGGDD41iqdbOHuyng62FmZ">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="St1sKS5NC5ELHVsDBQppWF">
+            <Canvas Id="PRchnqElrjFMcRK9hCm93N" CanvasType="Group">
+              <Node Bounds="378,293" Id="UtLt3mIsl6KPRYzaS5uadl">
+                <p:NodeReference LastCategoryFullName="Stride.API.Input.IKeyboardDevice" LastSymbolSource="VL.Stride.Input.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="OperationCallFlag" Name="IsKeyPressed" />
+                  <CategoryReference Kind="MutableInterfaceType" Name="IKeyboardDevice" NeedsToBeDirectParent="true" />
+                </p:NodeReference>
+                <Pin Id="URQMzhgVUg4PDsntHUslYH" Name="Input" Kind="StateInputPin" />
+                <Pin Id="G9Dpkw8fEo4MgkiKOvrHbu" Name="Key" Kind="InputPin" />
+                <Pin Id="O7L07RfVJBFNNu2ibLZjzq" Name="Output" Kind="StateOutputPin" />
+                <Pin Id="OxrnTTwt5MILFGUX5IGIqE" Name="Result" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="IsxyIZx9rCYMJswqMtQwHV" Bounds="346,249" />
+              <ControlPoint Id="Udr26ZbKAWvMydb5uG2EXe" Bounds="485,248" />
+              <ControlPoint Id="BgcGo6rFExLMAbjby2SWCj" Bounds="450,339" />
+            </Canvas>
+            <Patch Id="JJPUrXbTo8mLcy5meAG8XM" Name="Create" />
+            <Patch Id="OGPHvZfzKjoLmPCTCwF8BT" Name="Update">
+              <Pin Id="EfINr80exKLOiCzrTZBLRQ" Name="Keyboard Device" Kind="InputPin" Bounds="375,273" />
+              <Pin Id="M2d7VFOnqswPEBGZcQfxu5" Name="Key" Kind="InputPin" Bounds="457,273" />
+              <Pin Id="UzlRBcgoXUVOFzMbOl3nou" Name="Result" Kind="OutputPin" Bounds="450,339" />
+            </Patch>
+            <ProcessDefinition Id="PHkLeiWCu78MpDSHGx2eJ3">
+              <Fragment Id="ORmANVYHS2DLXmf1fXc5hz" Patch="JJPUrXbTo8mLcy5meAG8XM" Enabled="true" />
+              <Fragment Id="OLQ1putTknIMD2D209z2lw" Patch="OGPHvZfzKjoLmPCTCwF8BT" Enabled="true" />
+            </ProcessDefinition>
+            <Link Id="O5GHoVqRePyMxicCUkp8Ir" Ids="IsxyIZx9rCYMJswqMtQwHV,URQMzhgVUg4PDsntHUslYH" />
+            <Link Id="JuzOgjSpWvZNxan0ylzqpr" Ids="EfINr80exKLOiCzrTZBLRQ,IsxyIZx9rCYMJswqMtQwHV" IsHidden="true" />
+            <Link Id="G6vFqyHtdpXMbQWqTQQUTE" Ids="Udr26ZbKAWvMydb5uG2EXe,G9Dpkw8fEo4MgkiKOvrHbu" />
+            <Link Id="EyJc5Vpey6vM4j6GEkCQFh" Ids="M2d7VFOnqswPEBGZcQfxu5,Udr26ZbKAWvMydb5uG2EXe" IsHidden="true" />
+            <Link Id="HiwW2PX3uA7NyNzl36EzYL" Ids="OxrnTTwt5MILFGUX5IGIqE,BgcGo6rFExLMAbjby2SWCj" />
+            <Link Id="GFdj0ogW8vlQN5hVSOmtu6" Ids="BgcGo6rFExLMAbjby2SWCj,UzlRBcgoXUVOFzMbOl3nou" IsHidden="true" />
+          </Patch>
+        </Node>
+        <!--
+
+    ************************ KeyToggle ************************
+
+-->
+        <Node Name="KeyToggle" Bounds="385,427" Id="JkzRzMr3jENLs38Eavdj3I">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="EFgJGogEYACMu21YAXTaEq">
+            <Canvas Id="SPNe8TwfFbCQTODngrYLMH" CanvasType="Group">
+              <Node Bounds="378,293" Id="CsvVC2YJkqMNrH73yYjJcM">
+                <p:NodeReference LastCategoryFullName="Stride.API.Input.IKeyboardDevice" LastSymbolSource="VL.Stride.Input.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="OperationCallFlag" Name="IsKeyDown" />
+                  <CategoryReference Kind="MutableInterfaceType" Name="IKeyboardDevice" NeedsToBeDirectParent="true" />
+                </p:NodeReference>
+                <Pin Id="AJGzCfk5e2rLKUTRDxpeUX" Name="Input" Kind="StateInputPin" />
+                <Pin Id="PlmHJgbjEcYN0yXJ6tGrdh" Name="Key" Kind="InputPin" />
+                <Pin Id="CiQ6ttnSJv8NNnBpbBTVCR" Name="Output" Kind="StateOutputPin" />
+                <Pin Id="QVq4yD9R2hDOK2P84qoN18" Name="Result" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="Ev2zvM4kyOCOrg1BaoPIGN" Bounds="346,249" />
+              <ControlPoint Id="KHuqopGbpmEOcm4e8WfoAQ" Bounds="485,248" />
+              <ControlPoint Id="S6TPMJzd0LsMxk3YqYW5Hd" Bounds="450,399" />
+              <Node Bounds="449,351" Id="KDdFuPfI6KrM1y3gTzPO4d">
+                <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="Toggle" />
+                </p:NodeReference>
+                <Pin Id="CsXjnoTHLYRMZPnjyVrqMJ" Name="Flip" Kind="ApplyPin" />
+                <Pin Id="QJOel8VCW9wPIvqlZu1JUq" Name="Reset" Kind="ApplyPin" />
+                <Pin Id="FgwzgzHkE9JP4aMwvObaZy" Name="Value" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="Efs1pEgGDuPQZljOChnbJV" Bounds="525,312" />
+            </Canvas>
+            <Patch Id="Hz1OJdFD8OXOSg8EMoe1b7" Name="Create" />
+            <Patch Id="OntnYYjKvl6OzfMlzqhIJX" Name="Update">
+              <Pin Id="I5ziaFstSsnMMGdy8186co" Name="Keyboard Device" Kind="InputPin" Bounds="375,273" />
+              <Pin Id="TBvdrcsoii8PGM4nl31Soi" Name="Key" Kind="InputPin" Bounds="457,273" />
+              <Pin Id="DXIGfdr3fPXLmVi6Wj5Y8y" Name="Result" Kind="OutputPin" Bounds="450,339" />
+              <Pin Id="RXrVrlBbVIwNQts8EqSk3E" Name="Reset Toggle" Kind="InputPin" Bounds="1085,193" DefaultValue="False">
+                <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="TypeFlag" Name="Boolean" />
+                </p:TypeAnnotation>
+              </Pin>
+            </Patch>
+            <ProcessDefinition Id="DBAgupWBUmNP7zyB8UkX03">
+              <Fragment Id="H3tiUK2CMlRPRsYR2AvTaM" Patch="Hz1OJdFD8OXOSg8EMoe1b7" Enabled="true" />
+              <Fragment Id="HvqXa8rEljpPTIQ94CCj89" Patch="OntnYYjKvl6OzfMlzqhIJX" Enabled="true" />
+            </ProcessDefinition>
+            <Link Id="FMWOcKUHgtXOwpbJFy81im" Ids="Ev2zvM4kyOCOrg1BaoPIGN,AJGzCfk5e2rLKUTRDxpeUX" />
+            <Link Id="EmWEWk07iu0Nck78dxXXEo" Ids="I5ziaFstSsnMMGdy8186co,Ev2zvM4kyOCOrg1BaoPIGN" IsHidden="true" />
+            <Link Id="PL1lF4VDNIwMtUoaNmbbWI" Ids="KHuqopGbpmEOcm4e8WfoAQ,PlmHJgbjEcYN0yXJ6tGrdh" />
+            <Link Id="BO5r0MYNcLcLBiVVBlWlLy" Ids="TBvdrcsoii8PGM4nl31Soi,KHuqopGbpmEOcm4e8WfoAQ" IsHidden="true" />
+            <Link Id="VbWgptLnkKyLPh061eMWT1" Ids="QVq4yD9R2hDOK2P84qoN18,CsXjnoTHLYRMZPnjyVrqMJ" />
+            <Link Id="BqLTBMrSeWgMdosVHjDGIg" Ids="S6TPMJzd0LsMxk3YqYW5Hd,DXIGfdr3fPXLmVi6Wj5Y8y" IsHidden="true" />
+            <Link Id="RmaluozkAd5P29EwNJU9ZX" Ids="FgwzgzHkE9JP4aMwvObaZy,S6TPMJzd0LsMxk3YqYW5Hd" />
+            <Link Id="LGPNqK2LetkOZqDAqhSSzw" Ids="RXrVrlBbVIwNQts8EqSk3E,Efs1pEgGDuPQZljOChnbJV" IsHidden="true" />
+            <Link Id="QujhKOBsCmiPlbvmsdyZMS" Ids="Efs1pEgGDuPQZljOChnbJV,QJOel8VCW9wPIvqlZu1JUq" />
+          </Patch>
+        </Node>
       </Canvas>
       <Canvas Id="KNqCGPCYPIfP6LBrBCbnrO" Name="API" Position="267,177">
         <Canvas Id="S3ZFQFWIioTLzvIq8bHdES" Name="Advanced" Position="285,264">
@@ -1795,7 +1945,7 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="JnPskjfgPGKL2mkHfNrEdv" Location="VL.EditingFramework" Version="2020.2.0-0299-g69e2ac598b" />
+  <NugetDependency Id="JnPskjfgPGKL2mkHfNrEdv" Location="VL.EditingFramework" Version="2020.3.0-0019-g801e878cb9" />
   <DocumentDependency Id="AlvCAPtKN3hMlngBaQQ934" Location="./VL.Stride.Core.vl" />
   <DocumentDependency Id="T4mTnkLAdBgQR6A7iSp6wb" Location="./VL.Stride.Games.vl" />
   <PlatformDependency Id="LKafet4R7MdPHJQ13R8Qz5" Location="VL.Stride.Runtime.dll" />
