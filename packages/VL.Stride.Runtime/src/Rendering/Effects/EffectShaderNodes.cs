@@ -298,13 +298,6 @@ namespace VL.Stride.Rendering
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
-                                // Ensure the path to the shader is visible to the effect system
-                                if (path != null)
-                                {
-                                    var effectSystem = gameHandle.Resource.EffectSystem;
-                                    effectSystem.EnsurePathIsVisible(path);
-                                }
-
                                 var effect = new CustomEffect(effectName, game.Services, game.GraphicsDevice);
 
                                 var inputs = new List<IVLPin>();
@@ -381,13 +374,6 @@ namespace VL.Stride.Rendering
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
-                                // Ensure the path to the shader is visible to the effect system
-                                if (path != null)
-                                {
-                                    var effectSystem = gameHandle.Resource.EffectSystem;
-                                    effectSystem.EnsurePathIsVisible(path);
-                                }
-
                                 var renderContext = RenderContext.GetShared(gameHandle.Resource.Services);
                                 var shader = new ComputeEffectShader2(renderContext) { ShaderSourceName = effectName };
                                 var inputs = new List<IVLPin>();
@@ -480,13 +466,6 @@ namespace VL.Stride.Rendering
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
-                                // Ensure the path to the shader is visible to the effect system
-                                if (path != null)
-                                {
-                                    var effectSystem = gameHandle.Resource.EffectSystem;
-                                    effectSystem.EnsurePathIsVisible(path);
-                                }
-
                                 var effect = new TextureFXEffect(effectName);
                                 var inputs = new List<IVLPin>();
                                 var enabledInput = default(IVLPin);
