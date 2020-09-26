@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="OKkRkA3ViSjQag6JhhryA1" LanguageVersion="2020.3.0.19" Version="0.128">
-  <NugetDependency Id="Pjvx7U3lByeP4Ex1a3ogDH" Location="VL.CoreLib" Version="2020.2.0-0299-g69e2ac598b" />
+<Document xmlns:p="property" Id="OKkRkA3ViSjQag6JhhryA1" LanguageVersion="2020.3.0.21" Version="0.128">
+  <NugetDependency Id="Pjvx7U3lByeP4Ex1a3ogDH" Location="VL.CoreLib" Version="2020.3.0-0019-g801e878cb9" />
   <Patch Id="RQ2SqooQlVYNkdgiwokBCj">
     <Canvas Id="GRXPKQ1bEkEMuITycgAX4J" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="AKUFSwsgVmBOaGdPtN3ts9" Name="Internal" Position="329,231">
@@ -1352,12 +1352,15 @@
                   </CategoryReference>
                 </p:NodeReference>
                 <Pin Id="C40gcPsygatLEOvgvvKdGU" Name="Input" Kind="InputPin" />
-                <Pin Id="POtom0IrGdGMiTnefFJYyr" Name="Color" Kind="InputPin" />
+                <Pin Id="IqAhJZQNSkQOdUArz6ECms" Name="Clear Flags" Kind="InputPin" />
+                <Pin Id="POtom0IrGdGMiTnefFJYyr" Name="Clear Color" Kind="InputPin" />
+                <Pin Id="EQvVmVRRHZzK9XW8X3ExbE" Name="Clear Depth" Kind="InputPin" />
+                <Pin Id="Tma9GglWGCVMHg9urP5hlH" Name="Clear Stencil" Kind="InputPin" />
                 <Pin Id="Cwx35PyTv6fMsNhcSwxEOb" Name="Enabled" Kind="InputPin" />
                 <Pin Id="TSngiZSkEP7ONrJOJ96PaK" Name="Output" Kind="OutputPin" />
               </Node>
-              <ControlPoint Id="PQvgNzLdaqELjIPPOotZtz" Bounds="345,435" />
-              <ControlPoint Id="KI8bIcIuFZPMzwIztgDuSb" Bounds="405,449" />
+              <ControlPoint Id="PQvgNzLdaqELjIPPOotZtz" Bounds="444,401" />
+              <ControlPoint Id="KI8bIcIuFZPMzwIztgDuSb" Bounds="490,439" />
               <!--
 
     ************************ GetBoundsRight (Internal) ************************
@@ -1427,6 +1430,9 @@
                 <Pin Id="O2VkAbG2dvoNHyYBD14lzH" Name="Bounds In DIP" Kind="InputPin" />
                 <Pin Id="IHBBR6cntOvN0WkwoJCvpe" Name="Bounds In Pixels" Kind="OutputPin" />
               </Node>
+              <ControlPoint Id="PC5WQ7TzefUQA2yraZsX50" Bounds="425,391" />
+              <ControlPoint Id="J7MwemyyJkbLoXapj5e3kU" Bounds="464,413" />
+              <ControlPoint Id="BimeTqI3qWDPcx27oiPfpY" Bounds="478,425" />
             </Canvas>
             <Patch Id="PyCdCDp4kyxQMNVZLYcMLv" Name="Create" ParticipatingElements="Lyyuh8XC5mRQcpaSyHaucd,GCvioipwEOLNn7givL5t3D,IYwqaHamfkIPV9yT8YoFN1,E8zqKs1gKofLeHIzeQUQzH" ManuallySortedPins="true">
               <Pin Id="N3fjp50klIGNboj63MYZyF" Name="Node Context" Kind="InputPin" Bounds="374,309" Visibility="Optional" />
@@ -1451,7 +1457,11 @@
                   <Choice Kind="TypeFlag" Name="PixelFormat" />
                 </p:TypeAnnotation>
               </Pin>
-              <Pin Id="L9c7ct9wnSgPfVEU3SAoNm" Name="Depth Buffer Format" Kind="InputPin" Visibility="Optional" />
+              <Pin Id="L9c7ct9wnSgPfVEU3SAoNm" Name="Depth Buffer Format" Kind="InputPin" DefaultValue="None" Visibility="Optional">
+                <p:TypeAnnotation LastCategoryFullName="Stride.API.Graphics" LastSymbolSource="VL.Stride.Graphics.vl">
+                  <Choice Kind="TypeFlag" Name="PixelFormat" />
+                </p:TypeAnnotation>
+              </Pin>
             </Patch>
             <Patch Id="Bar6DS9YVFzLYHn53J7OL1" Name="Update" ParticipatingElements="Bk0SxCLtlajQbOKtxiM4Bj" ManuallySortedPins="true">
               <Pin Id="G2zYsnakedoQXsLGTBQaRZ" Name="Input" Kind="InputPin" Bounds="667,-18" />
@@ -1461,7 +1471,10 @@
                   <Choice Kind="TypeFlag" Name="String" />
                 </p:TypeAnnotation>
               </Pin>
+              <Pin Id="OxvwinGsjdUPhiQwjDZeni" Name="Clear Flags" Kind="InputPin" Bounds="326,425" Visibility="Optional" />
               <Pin Id="Sae32ZfItlLNrirGmn0vux" Name="Clear Color" Kind="InputPin" Bounds="268,564" />
+              <Pin Id="BryTstimgUfLHug8acI3yQ" Name="Clear Depth" Kind="InputPin" Bounds="365,447" Visibility="Optional" />
+              <Pin Id="UsSzH9o9QgMM858WMHkoC9" Name="Clear Stencil" Kind="InputPin" Bounds="478,425" Visibility="Optional" />
               <Pin Id="EbIsHm9glMCLoUABsTOAxf" Name="Clear" Kind="InputPin" Bounds="355,563" />
               <Pin Id="HnOSSTqFr1wPeJYRpxVv1w" Name="Edit Mode" Kind="InputPin" />
               <Pin Id="EJ2U43bCh5yLSVDaE2Yosl" Name="Enable Keyboard Shortcuts" Kind="InputPin" Bounds="642,1" />
@@ -1624,6 +1637,12 @@
             <Link Id="JZIVSQpk85ePvSbe8WAVMI" Ids="DrINsYEAtomQc9ty5NvM2T,O2VkAbG2dvoNHyYBD14lzH" />
             <Link Id="SP02ZBGOUYYPBaEB0YAmko" Ids="IHBBR6cntOvN0WkwoJCvpe,CxEJqgvOv6GPQLQ7VeHy1F" />
             <Link Id="L2cQtADmTDGO7vv3w08LEw" Ids="DR5pMSRjOcJMx8dLCopNqk,T5xdenJFaeSOobC5d3IIXw" />
+            <Link Id="Ce8lUs4yVUtOnDyf84F73Q" Ids="PC5WQ7TzefUQA2yraZsX50,IqAhJZQNSkQOdUArz6ECms" />
+            <Link Id="TV1uLgVV6D6PCwd58A2TMP" Ids="OxvwinGsjdUPhiQwjDZeni,PC5WQ7TzefUQA2yraZsX50" IsHidden="true" />
+            <Link Id="V4VqMojGHp2OzJMC4Jj5a2" Ids="J7MwemyyJkbLoXapj5e3kU,EQvVmVRRHZzK9XW8X3ExbE" />
+            <Link Id="U6PFgyUC4YhOUT6XjQ3HSA" Ids="BryTstimgUfLHug8acI3yQ,J7MwemyyJkbLoXapj5e3kU" IsHidden="true" />
+            <Link Id="Ddbz9FAU15lMkdYggY0k8D" Ids="BimeTqI3qWDPcx27oiPfpY,Tma9GglWGCVMHg9urP5hlH" />
+            <Link Id="MfR2bFDUiZINJp6XYNSFtM" Ids="UsSzH9o9QgMM858WMHkoC9,BimeTqI3qWDPcx27oiPfpY" IsHidden="true" />
           </Patch>
         </Node>
       </Canvas>
@@ -1658,7 +1677,10 @@
               <Pin Id="PIjPSsPDtJNOA8iZzo2cNC" Name="Input" Kind="InputPin" />
               <Pin Id="Rinamj9FJmjM3kbFphAbEA" Name="Render View" Kind="InputPin" />
               <Pin Id="J9YDaPucjGqOB1bXfKSj1M" Name="Title" Kind="InputPin" />
+              <Pin Id="Ghx6gdPjmGEMCB9ifcYsYM" Name="Clear Flags" Kind="InputPin" />
               <Pin Id="AJDjcAXWziCPJnD09gcbYb" Name="Clear Color" Kind="InputPin" />
+              <Pin Id="I2nubWsU7JRLJqebvevwad" Name="Clear Depth" Kind="InputPin" />
+              <Pin Id="Dz1u0m6qqlcPVB8TUpOQ78" Name="Clear Stencil" Kind="InputPin" />
               <Pin Id="TsxSukMQLgcMcgTUVMeqjj" Name="Clear" Kind="InputPin" DefaultValue="False">
                 <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                   <Choice Kind="TypeFlag" Name="Boolean" />
@@ -1864,7 +1886,11 @@
             <Pin Id="KTNkaN6UI26MWuXphyJV1P" Name="Dialog If Document Changed" Kind="InputPin" Bounds="446,764" Visibility="Optional" />
             <Pin Id="VDtR2d7NlEWN7MMfYdpDTn" Name="Save Bounds" Kind="InputPin" Visibility="Optional" />
             <Pin Id="S6xtpPRlkQIMV7wVTEPgcH" Name="Back Buffer Format" Kind="InputPin" Visibility="Optional" />
-            <Pin Id="SFCawWwavhlLSJVoAeAr7o" Name="Depth Buffer Format" Kind="InputPin" Visibility="Optional" />
+            <Pin Id="SFCawWwavhlLSJVoAeAr7o" Name="Depth Buffer Format" Kind="InputPin" DefaultValue="D24_UNorm_S8_UInt" Visibility="Optional">
+              <p:TypeAnnotation LastCategoryFullName="Stride.API.Graphics" LastSymbolSource="VL.Stride.Graphics.vl">
+                <Choice Kind="TypeFlag" Name="PixelFormat" />
+              </p:TypeAnnotation>
+            </Pin>
           </Patch>
           <Patch Id="I8JaPAsZ6wPPpgSKlGy4BL" Name="Update" ManuallySortedPins="true">
             <Pin Id="A1c4RdCPd8AMGiofM92N7a" Name="Input" Kind="InputPin" Bounds="251,226" />
@@ -2006,11 +2032,11 @@
   <PlatformDependency Id="Jr3OfX7eGjVNYnl8beWbat" Location="./src/bin/Debug/net472/Stride.Rendering.dll" />
   <PlatformDependency Id="C3CWxgfcGw6N26ms1qaSET" Location="./src/bin/Debug/net472/VL.Stride.Runtime.dll" />
   <PlatformDependency Id="GFbBTnLBobXPJtF4TwmB6S" Location="./src/bin/Debug/net472/Stride.Graphics.dll" />
-  <NugetDependency Id="QIiReSnZJLRNq4bIUb0c0J" Location="VL.Lang" Version="2020.2.0-0299-g69e2ac598b" />
-  <NugetDependency Id="L4T6ZlQ8XdeLlACIH7reFi" Location="VL.UI.Core" Version="2020.2.0-0299-g69e2ac598b" />
+  <NugetDependency Id="QIiReSnZJLRNq4bIUb0c0J" Location="VL.Lang" Version="2020.3.0-0019-g801e878cb9" />
+  <NugetDependency Id="L4T6ZlQ8XdeLlACIH7reFi" Location="VL.UI.Core" Version="2020.3.0-0019-g801e878cb9" />
   <PlatformDependency Id="DkNgn2lBRDHNJz26dbi97L" Location="./src/bin/Debug/net472/Stride.Core.Mathematics.dll" />
   <PlatformDependency Id="JWyiDaVMXKOMKV3AXWFfiH" Location="System" />
-  <NugetDependency Id="AI9yRrFEuCJQSmOSbAgvFy" Location="VL.Stride.Runtime" IsForward="true" Version="0.7.481-ga1d976a698" />
-  <NugetDependency Id="TaH4M7RLF1ENr1pCUev3DZ" Location="VL.Stride.Windows" IsForward="true" Version="0.7.481-ga1d976a698" />
-  <NugetDependency Id="UBU8pbn4mheLAg4sUDcbKs" Location="VL.CoreLib.Windows" Version="2020.2.0-0299-g69e2ac598b" />
+  <NugetDependency Id="AI9yRrFEuCJQSmOSbAgvFy" Location="VL.Stride.Runtime" IsForward="true" Version="0.7.484-g68fb667566" />
+  <NugetDependency Id="TaH4M7RLF1ENr1pCUev3DZ" Location="VL.Stride.Windows" IsForward="true" Version="0.7.484-g68fb667566" />
+  <NugetDependency Id="UBU8pbn4mheLAg4sUDcbKs" Location="VL.CoreLib.Windows" Version="2020.3.0-0019-g801e878cb9" />
 </Document>
