@@ -1,4 +1,5 @@
-﻿using Stride.Core;
+﻿using Microsoft.Build.Construction;
+using Stride.Core;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
@@ -46,18 +47,36 @@ namespace VL.Stride.Rendering
                         var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
                         if (Directory.Exists(shadersPath))
                         {
-                            var nodes = GetNodeDescriptions(factory, path, shadersPath);
-                            // Additionaly watch out for new/deleted/renamed files
-                            invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
-                                .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted)
-                                // Check for shader files only. Editor (like VS) create lot's of other temporary files.
-                                .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
-                            return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated);
+                            try
+                            {
+                                var nodes = GetNodeDescriptions(factory, path, shadersPath);
+                                // Additionaly watch out for new/deleted/renamed files
+                                invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
+                                    .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted)
+                                    // Check for shader files only. Editor (like VS) create lot's of other temporary files.
+                                    .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
+                                return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
+                                    export: c =>
+                                    {
+                                        var project = c.ProjectRootElement as ProjectRootElement;
+                                        // Copy all shaders to the project directory
+                                        var assetsFolder = Path.Combine(project.DirectoryPath, "Assets");
+                                        Directory.CreateDirectory(assetsFolder);
+                                        foreach (var f in Directory.EnumerateFiles(shadersPath))
+                                        {
+                                            if (string.Equals(Path.GetExtension(f), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(f), ".sdfx", StringComparison.OrdinalIgnoreCase))
+                                                File.Copy(f, Path.Combine(assetsFolder, Path.GetFileName(f)), overwrite: true);
+                                        }
+                                    });
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                // When deleting a folder we can run into this one
+                            }
                         }
-                        else
-                        {
-                            return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
-                        }
+
+                        // Just watch for changes
+                        return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
                     });
                 });
         }

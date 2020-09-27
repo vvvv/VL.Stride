@@ -138,11 +138,15 @@ namespace VL.Stride.Windows
 
             public SharedSurface GetSharedSurface(Texture colorTexture, Texture depthTexture)
             {
-                if (SharpDXInterop.GetNativeResource(colorTexture) is Texture2D dxColor && SharpDXInterop.GetNativeResource(depthTexture) is Texture2D dxDepth)
+                var dxColor = SharpDXInterop.GetNativeResource(colorTexture) as Texture2D;
+                if (dxColor != null)
                 {
                     lock (surfaces)
                     {
-                        var key = (dxColor.NativePointer, dxDepth.NativePointer);
+                        var dxDepth = default(Texture2D);
+                        if (depthTexture != null)
+                            dxDepth = SharpDXInterop.GetNativeResource(depthTexture) as Texture2D;
+                        var key = (dxColor.NativePointer, dxDepth?.NativePointer ?? IntPtr.Zero);
                         if (!surfaces.TryGetValue(key, out var surface))
                             surfaces.Add(key, surface = Create());
                         return surface;
@@ -157,15 +161,15 @@ namespace VL.Stride.Windows
                         return null;
 
                     var interopDepth = InteropContext.GetInteropTexture(depthTexture);
-                    if (interopDepth is null)
+                    if (interopDepth is null && depthTexture != null)
                         return null;
 
                     var surface = SharedSurface.New(this, interopColor, interopDepth);
                     if (surface is null)
                     {
                         // Failed to create skia surface, get rid of the WGL interop handles
-                        interopColor.Dispose();
-                        interopDepth.Dispose();
+                        interopColor?.Dispose();
+                        interopDepth?.Dispose();
                         return null;
                     }
 
@@ -179,7 +183,7 @@ namespace VL.Stride.Windows
             {
                 lock (surfaces)
                 {
-                    surfaces.Remove((sharedSurface.Color.DxTexture, sharedSurface.Depth.DxTexture));
+                    surfaces.Remove((sharedSurface.Color.DxTexture, sharedSurface.Depth?.DxTexture ?? IntPtr.Zero));
                 }
             }
         }
@@ -192,8 +196,11 @@ namespace VL.Stride.Windows
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, framebuffer);
 
                 GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, RenderbufferTarget.Renderbuffer, color.Name);
-                GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depth.Name);
-                GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.StencilAttachment, RenderbufferTarget.Renderbuffer, depth.Name);
+                if (depth != null)
+                {
+                    GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depth.Name);
+                    GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.StencilAttachment, RenderbufferTarget.Renderbuffer, depth.Name);
+                }
 
                 var pixelFormat = color.Texture.Format;
                 var pixelConfig = GetPixelConfig(pixelFormat);
@@ -224,12 +231,15 @@ namespace VL.Stride.Windows
             SharedSurface(SkiaContext skiaContext, InteropTexture color, InteropTexture depth, uint framebuffer, SKSurface skiaSurface)
             {
                 SkiaContext = skiaContext;
-                Textures = new InteropTexture[] { color, depth };
+                if (depth != null)
+                    Textures = new InteropTexture[] { color, depth };
+                else
+                    Textures = new InteropTexture[] { color };
                 Framebuffer = framebuffer;
                 Surface = skiaSurface;
 
-                color.Texture.Destroyed += Texture_Destroyed;
-                depth.Texture.Destroyed += Texture_Destroyed;
+                foreach (var t in Textures)
+                    t.Texture.Destroyed += Texture_Destroyed;
             }
 
             private void Texture_Destroyed(object sender, EventArgs e)
@@ -246,7 +256,7 @@ namespace VL.Stride.Windows
 
             public InteropTexture Color => Textures[0];
 
-            public InteropTexture Depth => Textures[1];
+            public InteropTexture Depth => Textures.ElementAtOrDefault(1);
 
             public SKSurface Surface { get; }
 
@@ -266,8 +276,8 @@ namespace VL.Stride.Windows
                 {
                     Disposed = true;
 
-                    Color.Texture.Destroyed -= Texture_Destroyed;
-                    Depth.Texture.Destroyed -= Texture_Destroyed;
+                    foreach (var t in Textures)
+                        t.Texture.Destroyed -= Texture_Destroyed;
 
                     SkiaContext.MakeCurrent();
                     SkiaContext.Remove(this);
