@@ -2,13 +2,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    
-    <!-- The runtime identifier causes the build system to copy needed native libraries to the output folder -->
-    <PlatformTarget>x64</PlatformTarget>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
 
     <PackageId>$(AssemblyName)</PackageId>
     <Description>Allows to use Stride as library in VL.</Description>
+  </PropertyGroup>
+
+  <!-- When building from within the public repo target the vvvv installation directly. This is a workaround as long as we can't handle Stride as a standalone package.  -->
+  <PropertyGroup Condition="'$(Configuration)' != 'Packages' AND !$(InPrivateRepo)">
+    <!-- Build directly into the vvvv installation -->
+    <OutputPath>$(VVVV_BinPath)lib\</OutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- Triggers stride asset compiler -->
+    <StrideIsExecutable>true</StrideIsExecutable>
+    <!-- The runtime identifier causes the build system to copy needed native libraries to the output folder -->
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   
   <ItemGroup>
@@ -37,28 +46,4 @@
     <!-- Setting AutoGen metadata is a hack to avoid getting picked up by asset compiler -->
     <None Include="..\help\**\*" Pack="true" AutoGen="false" PackagePath="help\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
-
-  <!-- The following propertie and targets are only active if we're building outside of our main solution -->
-  <PropertyGroup Condition="'$(InPrivateRepo)' != 'true'">
-    <!-- We need to pass the folder containing the native libraries to Stride (NativeLibrary.PreloadLib) - they're normally beside the exe  -->
-    <__OutputPath__>$(MsBuildThisFileDirectory)bin\$(Configuration)\$(TargetFramework)</__OutputPath__>
-    <NativeLibraryPath>$(__OutputPath__)\x64</NativeLibraryPath>
-    <WorkingDirectory>$(__OutputPath__)</WorkingDirectory>
-
-    <!-- Triggers stride asset compiler -->
-    <StrideIsExecutable>true</StrideIsExecutable>
-    <!-- Stride looks for asset database below the exe -->
-    <StrideCompileAssetOutputPath>$(VVVV_BinPath)lib\data</StrideCompileAssetOutputPath>
-  </PropertyGroup>
-
-  <!-- As long as VL doesn't understand package restore put whole build output into the package -->
-  <Target Name="CollectRuntimeOutputs" BeforeTargets="_GetPackageFiles" Condition="'$(InPrivateRepo)' != 'true'">
-    <!-- Collect these items inside a target that runs after build but before packaging. -->
-    <ItemGroup>
-      <Content Include="$(OutputPath)\*.dll">
-        <Pack>true</Pack>
-        <PackagePath>lib\$(TargetFramework)</PackagePath>
-      </Content>
-    </ItemGroup>
-  </Target>
 </Project>
