@@ -50,6 +50,8 @@ namespace VL.Stride.Windows.WglInterop
 
         public InteropTexture GetInteropTexture(Texture texture)
         {
+            if (texture is null)
+                return null;
             if (DeviceHandle == IntPtr.Zero)
                 return null;
 
