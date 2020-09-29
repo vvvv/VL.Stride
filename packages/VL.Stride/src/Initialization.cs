@@ -89,7 +89,7 @@ namespace VL.Stride.Lib
                                     }
                                     catch (Exception e)
                                     {
-                                        Trace.TraceError(e.ToString());
+                                        RuntimeGraph.ReportException(e);
                                     }
                                 });
 
