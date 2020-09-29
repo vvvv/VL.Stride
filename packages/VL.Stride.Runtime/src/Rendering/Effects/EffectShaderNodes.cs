@@ -107,7 +107,7 @@ namespace VL.Stride.Rendering
             var compiler = effectSystem.Compiler;
 
             const string sdslFileFilter = "*.sdsl";
-            const string nodeSuffix = "_VLNode";
+            const string drawFXSuffix = "_DrawFX";
             const string computeFXSuffix = "_ComputeFX";
             const string textureFXSuffix = "_TextureFX";
 
@@ -121,10 +121,14 @@ namespace VL.Stride.Rendering
             foreach (var file in fileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.TopDirectoryOnly))
             {
                 var effectName = Path.GetFileNameWithoutExtension(file);
-                if (effectName.EndsWith(nodeSuffix))
+                if (effectName.EndsWith(drawFXSuffix))
                 {
-                    var name = GetNodeName(effectName, nodeSuffix);
-                    yield return NewEffectShaderNode(name, effectName);
+                    // Shader only for now
+                    var name = GetNodeName(effectName, drawFXSuffix);
+                    var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
+
+                    yield return NewDrawEffectShaderNode(shaderNodeName, effectName);
+                    //DrawFX node
                 }
                 else if (effectName.EndsWith(textureFXSuffix))
                 {
@@ -133,7 +137,7 @@ namespace VL.Stride.Rendering
 
                     IVLNodeDescription shaderNodeDescription;
                     yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName);
-                    yield return NewImageEffectNode(shaderNodeDescription, name);
+                    yield return NewTextureFXNode(shaderNodeDescription, name);
                 }
                 else if (effectName.EndsWith(computeFXSuffix))
                 {
@@ -142,6 +146,7 @@ namespace VL.Stride.Rendering
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
 
                     yield return NewComputeEffectShaderNode(shaderNodeName, effectName);
+                    //ComputeFX node
                 }
             }
 
@@ -268,11 +273,11 @@ namespace VL.Stride.Rendering
                 }
             }
 
-            IVLNodeDescription NewEffectShaderNode(NameAndVersion name, string effectName)
+            IVLNodeDescription NewDrawEffectShaderNode(NameAndVersion name, string effectName)
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.Rendering.EffectLib",
+                    category: "Stride.Rendering.DrawShaders",
                     fragmented: true,
                     init: buildContext =>
                     {
@@ -350,7 +355,7 @@ namespace VL.Stride.Rendering
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.ComputeShaders",
+                    category: "Stride.Rendering.ComputeShaders",
                     fragmented: true,
                     init: buildContext =>
                     {
@@ -434,7 +439,7 @@ namespace VL.Stride.Rendering
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.ImageShaders",
+                    category: "Stride.Rendering.ImageShaders",
                     fragmented: true,
                     init: buildContext =>
                     {
@@ -534,11 +539,11 @@ namespace VL.Stride.Rendering
                     });
             }
 
-            IVLNodeDescription NewImageEffectNode(IVLNodeDescription shaderDescription, string name)
+            IVLNodeDescription NewTextureFXNode(IVLNodeDescription shaderDescription, string name)
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.TextureFX",
+                    category: "Stride.Textures.TextureFX",
                     fragmented: true,
                     init: buildContext =>
                     {

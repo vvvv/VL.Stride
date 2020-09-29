@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class SuppressDiagonals_VLNodeKeys
+    public static partial class SuppressDiagonals_DrawFXKeys
     {
         public static readonly ValueParameterKey<Color4> ColorInput = ParameterKeys.NewValue<Color4>();
     }
