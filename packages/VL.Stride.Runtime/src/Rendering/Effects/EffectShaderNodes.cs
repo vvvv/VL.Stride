@@ -41,7 +41,7 @@ namespace VL.Stride.Rendering
                     {
                         // In case "shaders" directory gets added or deleted invalidate the whole factory
                         var invalidated = NodeBuilding.WatchDir(path)
-                            .Where(e => (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted) && e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
+                            .Where(e => (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed) && e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
 
                         // File provider crashes if directory doesn't exist :/
                         var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
@@ -52,7 +52,7 @@ namespace VL.Stride.Rendering
                                 var nodes = GetNodeDescriptions(factory, path, shadersPath);
                                 // Additionaly watch out for new/deleted/renamed files
                                 invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
-                                    .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted)
+                                    .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed)
                                     // Check for shader files only. Editor (like VS) create lot's of other temporary files.
                                     .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
                                 return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
@@ -208,6 +208,13 @@ namespace VL.Stride.Rendering
                     parameters = effect.Parameters;
 
                 IObservable<object> invalidated = modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName);
+                // Setup our own watcher as Stride doesn't track shaders with errors
+                if (path != null)
+                {
+                    invalidated = Observable.Merge(invalidated, NodeBuilding.WatchDir(shadersPath)
+                        .Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName)
+                        .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { watchName })));
+                }
                 try
                 {
                     effect.Initialize(serviceRegistry);
@@ -215,14 +222,6 @@ namespace VL.Stride.Rendering
                 }
                 catch (InvalidOperationException)
                 {
-                    // Setup our own watcher as Stride doesn't track shaders with errors
-                    if (path != null)
-                    {
-                        invalidated = NodeBuilding.WatchDir(shadersPath)
-                            .Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName)
-                            .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { watchName }));
-                    }
-
                     try
                     {
                         // Compile manually to get detailed errors
