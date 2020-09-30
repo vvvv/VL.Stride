@@ -1,4 +1,5 @@
-﻿using Stride.Core;
+﻿using Microsoft.Build.Construction;
+using Stride.Core;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
@@ -40,24 +41,42 @@ namespace VL.Stride.Rendering
                     {
                         // In case "shaders" directory gets added or deleted invalidate the whole factory
                         var invalidated = NodeBuilding.WatchDir(path)
-                            .Where(e => (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted) && e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
+                            .Where(e => (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed) && e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
 
                         // File provider crashes if directory doesn't exist :/
                         var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
                         if (Directory.Exists(shadersPath))
                         {
-                            var nodes = GetNodeDescriptions(factory, path, shadersPath);
-                            // Additionaly watch out for new/deleted/renamed files
-                            invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
-                                .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted)
-                                // Check for shader files only. Editor (like VS) create lot's of other temporary files.
-                                .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
-                            return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated);
+                            try
+                            {
+                                var nodes = GetNodeDescriptions(factory, path, shadersPath);
+                                // Additionaly watch out for new/deleted/renamed files
+                                invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
+                                    .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed)
+                                    // Check for shader files only. Editor (like VS) create lot's of other temporary files.
+                                    .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
+                                return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
+                                    export: c =>
+                                    {
+                                        var project = c.ProjectRootElement as ProjectRootElement;
+                                        // Copy all shaders to the project directory
+                                        var assetsFolder = Path.Combine(project.DirectoryPath, "Assets");
+                                        Directory.CreateDirectory(assetsFolder);
+                                        foreach (var f in Directory.EnumerateFiles(shadersPath))
+                                        {
+                                            if (string.Equals(Path.GetExtension(f), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(f), ".sdfx", StringComparison.OrdinalIgnoreCase))
+                                                File.Copy(f, Path.Combine(assetsFolder, Path.GetFileName(f)), overwrite: true);
+                                        }
+                                    });
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                // When deleting a folder we can run into this one
+                            }
                         }
-                        else
-                        {
-                            return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
-                        }
+
+                        // Just watch for changes
+                        return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
                     });
                 });
         }
@@ -88,7 +107,7 @@ namespace VL.Stride.Rendering
             var compiler = effectSystem.Compiler;
 
             const string sdslFileFilter = "*.sdsl";
-            const string nodeSuffix = "_VLNode";
+            const string drawFXSuffix = "_DrawFX";
             const string computeFXSuffix = "_ComputeFX";
             const string textureFXSuffix = "_TextureFX";
 
@@ -102,10 +121,14 @@ namespace VL.Stride.Rendering
             foreach (var file in fileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.TopDirectoryOnly))
             {
                 var effectName = Path.GetFileNameWithoutExtension(file);
-                if (effectName.EndsWith(nodeSuffix))
+                if (effectName.EndsWith(drawFXSuffix))
                 {
-                    var name = GetNodeName(effectName, nodeSuffix);
-                    yield return NewEffectShaderNode(name, effectName);
+                    // Shader only for now
+                    var name = GetNodeName(effectName, drawFXSuffix);
+                    var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
+
+                    yield return NewDrawEffectShaderNode(shaderNodeName, effectName);
+                    //DrawFX node
                 }
                 else if (effectName.EndsWith(textureFXSuffix))
                 {
@@ -114,7 +137,7 @@ namespace VL.Stride.Rendering
 
                     IVLNodeDescription shaderNodeDescription;
                     yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName);
-                    yield return NewImageEffectNode(shaderNodeDescription, name);
+                    yield return NewTextureFXNode(shaderNodeDescription, name);
                 }
                 else if (effectName.EndsWith(computeFXSuffix))
                 {
@@ -123,6 +146,7 @@ namespace VL.Stride.Rendering
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
 
                     yield return NewComputeEffectShaderNode(shaderNodeName, effectName);
+                    //ComputeFX node
                 }
             }
 
@@ -184,6 +208,13 @@ namespace VL.Stride.Rendering
                     parameters = effect.Parameters;
 
                 IObservable<object> invalidated = modifications.Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName);
+                // Setup our own watcher as Stride doesn't track shaders with errors
+                if (path != null)
+                {
+                    invalidated = Observable.Merge(invalidated, NodeBuilding.WatchDir(shadersPath)
+                        .Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName)
+                        .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { watchName })));
+                }
                 try
                 {
                     effect.Initialize(serviceRegistry);
@@ -191,14 +222,6 @@ namespace VL.Stride.Rendering
                 }
                 catch (InvalidOperationException)
                 {
-                    // Setup our own watcher as Stride doesn't track shaders with errors
-                    if (path != null)
-                    {
-                        invalidated = NodeBuilding.WatchDir(shadersPath)
-                            .Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName)
-                            .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { watchName }));
-                    }
-
                     try
                     {
                         // Compile manually to get detailed errors
@@ -249,11 +272,11 @@ namespace VL.Stride.Rendering
                 }
             }
 
-            IVLNodeDescription NewEffectShaderNode(NameAndVersion name, string effectName)
+            IVLNodeDescription NewDrawEffectShaderNode(NameAndVersion name, string effectName)
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.Rendering.EffectLib",
+                    category: "Stride.Rendering.DrawShaders",
                     fragmented: true,
                     init: buildContext =>
                     {
@@ -298,13 +321,6 @@ namespace VL.Stride.Rendering
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
-                                // Ensure the path to the shader is visible to the effect system
-                                if (path != null)
-                                {
-                                    var effectSystem = gameHandle.Resource.EffectSystem;
-                                    effectSystem.EnsurePathIsVisible(path);
-                                }
-
                                 var effect = new CustomEffect(effectName, game.Services, game.GraphicsDevice);
 
                                 var inputs = new List<IVLPin>();
@@ -338,7 +354,7 @@ namespace VL.Stride.Rendering
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.ComputeShaders",
+                    category: "Stride.Rendering.ComputeShaders",
                     fragmented: true,
                     init: buildContext =>
                     {
@@ -381,13 +397,6 @@ namespace VL.Stride.Rendering
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
-                                // Ensure the path to the shader is visible to the effect system
-                                if (path != null)
-                                {
-                                    var effectSystem = gameHandle.Resource.EffectSystem;
-                                    effectSystem.EnsurePathIsVisible(path);
-                                }
-
                                 var renderContext = RenderContext.GetShared(gameHandle.Resource.Services);
                                 var shader = new ComputeEffectShader2(renderContext) { ShaderSourceName = effectName };
                                 var inputs = new List<IVLPin>();
@@ -429,7 +438,7 @@ namespace VL.Stride.Rendering
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.ImageShaders",
+                    category: "Stride.Rendering.ImageShaders",
                     fragmented: true,
                     init: buildContext =>
                     {
@@ -480,13 +489,6 @@ namespace VL.Stride.Rendering
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
-                                // Ensure the path to the shader is visible to the effect system
-                                if (path != null)
-                                {
-                                    var effectSystem = gameHandle.Resource.EffectSystem;
-                                    effectSystem.EnsurePathIsVisible(path);
-                                }
-
                                 var effect = new TextureFXEffect(effectName);
                                 var inputs = new List<IVLPin>();
                                 var enabledInput = default(IVLPin);
@@ -536,11 +538,11 @@ namespace VL.Stride.Rendering
                     });
             }
 
-            IVLNodeDescription NewImageEffectNode(IVLNodeDescription shaderDescription, string name)
+            IVLNodeDescription NewTextureFXNode(IVLNodeDescription shaderDescription, string name)
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.TextureFX",
+                    category: "Stride.Textures.TextureFX",
                     fragmented: true,
                     init: buildContext =>
                     {

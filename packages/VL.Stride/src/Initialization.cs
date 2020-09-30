@@ -50,6 +50,7 @@ namespace VL.Stride.Lib
 
                                 var assetBuildService = new AssetBuilderServiceScript();
                                 game.Services.AddService(assetBuildService);
+                                game.Services.AddService(nodeContext.Factory);
 
                                 var gameStartedHandler = default(EventHandler);
                                 gameStartedHandler = (s, e) =>
@@ -88,7 +89,7 @@ namespace VL.Stride.Lib
                                     }
                                     catch (Exception e)
                                     {
-                                        Trace.TraceError(e.ToString());
+                                        RuntimeGraph.ReportException(e);
                                     }
                                 });
 

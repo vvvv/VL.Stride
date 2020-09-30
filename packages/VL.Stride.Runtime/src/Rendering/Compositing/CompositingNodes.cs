@@ -118,7 +118,7 @@ namespace VL.Stride.Rendering.Compositing
                 .AddEnabledPin();
 
             var defaultResolver = new MSAAResolver();
-            yield return nodeFactory.NewGraphicsRendererNode<ForwardRenderer>(category: compositionCategory)
+            yield return nodeFactory.NewGraphicsRendererNode<ForwardRenderer>(category: compositionCategory, copyOnWrite: true)
                 .AddInput(nameof(ForwardRenderer.Clear), x => x.Clear, (x, v) => x.Clear = v, defaultValue: null /* We want null as default */)
                 .AddInput(nameof(ForwardRenderer.OpaqueRenderStage), x => x.OpaqueRenderStage, (x, v) => x.OpaqueRenderStage = v)
                 .AddInput(nameof(ForwardRenderer.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v)
@@ -170,7 +170,7 @@ namespace VL.Stride.Rendering.Compositing
                 .AddInput(nameof(Vignetting.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true);
             yield return new StrideNodeDesc<Dither>(nodeFactory, category: colorTransformsCategory) { CopyOnWrite = false };
 
-            yield return nodeFactory.NewNode<ToneMap>(category: colorTransformsCategory, copyOnWrite: false)
+            yield return nodeFactory.NewNode<ToneMap>(category: colorTransformsCategory, copyOnWrite: true)
                 .AddInput(nameof(ToneMap.Operator), x => x.Operator, (x, v) =>
                 {
                     if (v != null && v != x.Operator && x.Group != null)
@@ -425,10 +425,10 @@ namespace VL.Stride.Rendering.Compositing
             }
         }
 
-        internal static CustomNodeDesc<TRenderer> NewGraphicsRendererNode<TRenderer>(this IVLNodeDescriptionFactory factory, string category, string name = null)
+        internal static CustomNodeDesc<TRenderer> NewGraphicsRendererNode<TRenderer>(this IVLNodeDescriptionFactory factory, string category, string name = null, bool copyOnWrite = false)
             where TRenderer : class, IGraphicsRenderer, new()
         {
-            return factory.NewNode<TRenderer>(name: name, category: category, copyOnWrite: false, fragmented: true);
+            return factory.NewNode<TRenderer>(name: name, category: category, copyOnWrite: copyOnWrite, fragmented: true);
         }
 
         internal static CustomNodeDesc<TRenderer> AddEnabledPin<TRenderer>(this CustomNodeDesc<TRenderer> node)

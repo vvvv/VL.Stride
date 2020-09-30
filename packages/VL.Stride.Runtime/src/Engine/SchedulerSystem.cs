@@ -4,8 +4,10 @@ using Stride.Core.Diagnostics;
 using Stride.Games;
 using Stride.Graphics;
 using Stride.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using VL.Core;
 
 namespace VL.Stride.Engine
 {
@@ -127,8 +129,18 @@ namespace VL.Stride.Engine
                     using (renderContext.PushRenderViewAndRestore(renderView))
                     using (renderDrawContext.PushRenderTargetsAndRestore())
                     {
+                        // Report the exceptions but continue drawing the next layers. Otherwise one failing renderer can cause the whole app to fail.
                         foreach (var layer in Layers)
-                            layer?.Draw(renderDrawContext);
+                        {
+                            try
+                            {
+                                layer?.Draw(renderDrawContext);
+                            }
+                            catch (Exception e)
+                            {
+                                RuntimeGraph.ReportException(e);
+                            }
+                        }
                     }
                 }
                 finally

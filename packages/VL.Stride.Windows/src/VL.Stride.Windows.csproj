@@ -12,7 +12,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="3.2.0" />
-    <PackageReference Include="Stride.Assets" Version="$(StrideVersion)" />
+    <PackageReference Include="Stride.Assets" Version="$(StrideVersion)">
+      <!-- Exclude ffmpeg.exe as it is already in our repo and we don't want to package it multiple times -->
+      <!-- Why is it even in our repo? Does the package reference not copy it to the output? Maybe Stride.Assets need an update and add the PackageCopyToOutput=true? -->
+      <ExcludeAssets>contentFiles</ExcludeAssets>
+    </PackageReference>
     <PackageReference Include="Stride.Assets.Models" Version="$(StrideVersion)" />
     <!-- A pure package dependency so on install all VL packages come in -->
     <PackageReference Include="Stride.TextureConverter" Version="$(StrideVersion)" />

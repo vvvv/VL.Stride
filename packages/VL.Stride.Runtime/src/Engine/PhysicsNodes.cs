@@ -67,7 +67,7 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(CylinderColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
                 ;
 
-            yield return NewColliderShapeNode<BoxColliderShapeDesc>(factory, physicsColliderShapesCategory, "CubeColliderShapeDesc")
+            yield return NewColliderShapeNode<BoxColliderShapeDesc>(factory, physicsColliderShapesCategory)
                 .AddInput(nameof(BoxColliderShapeDesc.Size), x => x.Size, (x, v) => x.Size = v, Vector3.One)
                 .AddInput(nameof(BoxColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
                 .AddInput(nameof(BoxColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)

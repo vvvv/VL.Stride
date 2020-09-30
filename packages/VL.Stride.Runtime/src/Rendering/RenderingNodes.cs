@@ -75,7 +75,7 @@ namespace VL.Stride.Rendering
                 .AddInput(nameof(ConeProceduralModel.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((CubeProceduralModel x) => x.Size)
+            yield return factory.NewMeshNode((CubeProceduralModel x) => x.Size, name: "BoxMesh")
                 .AddInput(nameof(CubeProceduralModel.Size), x => x.Size, (x, v) => x.Size = v, Vector3.One)
                 .AddDefaultPins();
 
@@ -122,11 +122,11 @@ namespace VL.Stride.Rendering
                 .AddInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v);
         }
 
-        static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey)
+        static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey, string name = null)
            where TProceduralModel : PrimitiveProceduralModelBase, new()
         {
             return new CustomNodeDesc<TProceduralModel>(factory,
-                name: typeof(TProceduralModel).Name.Replace("ProceduralModel", "Mesh"),
+                name: name ?? typeof(TProceduralModel).Name.Replace("ProceduralModel", "Mesh"),
                 category: "Stride.Models.Meshes",
                 copyOnWrite: false,
                 hasStateOutput: false,
