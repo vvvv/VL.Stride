@@ -158,6 +158,19 @@ namespace VL.Stride.Windows
 
         static WinFormsKeys ToWinFormsKeys(Keys keys)
         {
+            // The original Skia renderer doesn't differentiate between left and right keys
+            switch (keys)
+            {
+                case Keys.LeftShift:
+                case Keys.RightShift:
+                    return WinFormsKeys.ShiftKey;
+                case Keys.LeftCtrl:
+                case Keys.RightCtrl:
+                    return WinFormsKeys.ControlKey;
+                case Keys.LeftAlt:
+                case Keys.RightAlt:
+                    return WinFormsKeys.Menu;
+            }
             if (WinKeys.ReverseMapKeys.TryGetValue(keys, out var value))
                 return value;
             else
