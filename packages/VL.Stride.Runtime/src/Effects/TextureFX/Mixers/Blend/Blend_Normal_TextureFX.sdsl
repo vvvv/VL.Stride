@@ -1,0 +1,13 @@
+﻿shader Blend_Normal_TextureFX : Blend_TextureFX
+{
+    stage float4 GetOp(float4 c0, float4 c1)
+    {
+        return c1;
+    };
+
+    stage override float4 Filtering(float4 c0)
+    {
+        float4 c1 = InTex2() * float4(1,1,1,Opacity);
+        return blend(GetOp(c0,c1),c1,c0);
+    }
+};
