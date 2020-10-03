@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Blend_TextureFXKeys
+    public static partial class BlendKeys
     {
         public static readonly ValueParameterKey<float> Opacity = ParameterKeys.NewValue<float>(1);
     }
