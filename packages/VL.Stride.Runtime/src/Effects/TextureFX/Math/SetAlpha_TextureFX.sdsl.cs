@@ -16,8 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class UVMaskOffset_TextureFXKeys
+    public static partial class SetAlpha_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Vector2> maxOffsets = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<int> AlphaChannel = ParameterKeys.NewValue<int>(0);
+        public static readonly ValueParameterKey<float> Opacity = ParameterKeys.NewValue<float>(0.5f);
     }
 }
