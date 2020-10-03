@@ -16,8 +16,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class UVMaskOffset_TextureFXKeys
+    public static partial class Color_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Vector2> maxOffsets = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
     }
 }

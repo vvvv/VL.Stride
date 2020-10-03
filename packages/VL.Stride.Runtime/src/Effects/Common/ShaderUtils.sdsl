@@ -155,15 +155,17 @@ shader ShaderUtils
 
     // ROTATION ==============================================================
 
-    float r2d(float2 pt, float2 o, float a)
+    float2 r2d(float2 pt, float2 o, float a)
     {
         float x = cos(a) * (pt.x - o.x) + sin(a) * (pt.y - o.y) + o.x;
         float y = cos(a) * (pt.y - o.y) - sin(a) * (pt.x - o.x) + o.y;
+        return float2(x,y);
     }
 
-    float r2d(float2 pt, float a)
+    float2 r2d(float2 pt, float a)
     {
         float x = cos(a) * pt.x + sin(a) * pt.y;
         float y = cos(a) * pt.y - sin(a) * pt.x;
+        return float2(x,y);
     }
 };
