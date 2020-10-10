@@ -1,7 +1,11 @@
-﻿using Stride.Core.Annotations;
+﻿using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
 using Stride.Shaders.Compiler;
 using System;
@@ -10,8 +14,68 @@ using System.Text;
 
 namespace VL.Stride.Rendering.Materials
 {
-    public class FallBackEffect
+    public class FallbackEffect
     {
+        Game game;
+
+        //[DataMember]
+        public Game Game
+        {
+            get => game;
+            set
+            {
+                game = value;
+                //if (game != null)
+                //    Initialize(game);
+            }
+        }
+
+        public void Initialize(Game game, MeshRenderFeature meshRenderFeature)
+        {
+            // Create fallback effect to use when material is still loading
+            fallbackColorMaterial ??= Material.New(game.GraphicsDevice, new MaterialDescriptor
+            {
+                Attributes =
+                {
+                    Diffuse = new MaterialDiffuseMapFeature(new ComputeColor(new Color4(1f, 1f, 1f))),
+                    DiffuseModel = new MaterialDiffuseLambertModelFeature()
+                }
+            });
+
+            fallbackTextureMaterial ??= Material.New(game.GraphicsDevice, new MaterialDescriptor
+            {
+                Attributes =
+                {
+                    Diffuse = new MaterialDiffuseMapFeature(new ComputeTextureColor { FallbackValue = null }), // Do not use fallback value, we want a DiffuseMap
+                    DiffuseModel = new MaterialDiffuseLambertModelFeature()
+                }
+            });
+
+            effectSystem = game.EffectSystem;
+
+            if (meshRenderFeature != null)
+                meshRenderFeature.ComputeFallbackEffect += ComputeMeshFallbackEffect;
+        }
+
+        MeshRenderFeature meshRenderFeature;
+
+        //[DataMember]
+
+        public MeshRenderFeature MeshRenderFeature
+        {
+            get => meshRenderFeature;
+            set 
+            {
+                if (meshRenderFeature != null)
+                    meshRenderFeature.ComputeFallbackEffect -= ComputeMeshFallbackEffect;
+
+                meshRenderFeature = value;
+
+                if (meshRenderFeature != null)
+                    meshRenderFeature.ComputeFallbackEffect += ComputeMeshFallbackEffect;
+            }           
+        }
+
         EffectSystem effectSystem;
         Material fallbackTextureMaterial;
         Material fallbackColorMaterial;
@@ -39,6 +103,8 @@ namespace VL.Stride.Rendering.Materials
 
                     compilerParameters.Set(MaterialKeys.SkinningMaxBones, 56);
                 }
+
+                compilerParameters.Set(StrideEffectBaseKeys.HasInstancing, renderMesh.InstanceCount > 0);
 
                 // Set material permutations
                 compilerParameters.Set(MaterialKeys.PixelStageSurfaceShaders, fallbackMaterial.Passes[0].Parameters.Get(MaterialKeys.PixelStageSurfaceShaders));

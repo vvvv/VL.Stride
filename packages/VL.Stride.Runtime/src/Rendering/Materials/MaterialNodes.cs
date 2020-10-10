@@ -24,6 +24,7 @@ namespace VL.Stride.Rendering.Materials
             string layersCategory = $"{materialCategory}.Layers";
             string diffuseModelCategory = $"{shadingCategory}.DiffuseModel";
             string specularModelCategory = $"{shadingCategory}.SpecularModel";
+            string subsurfaceScatteringCategory = $"{shadingCategory}.SubsurfaceScattering";
 
             // Geometry
             yield return nodeFactory.NewNode<GeometryAttributes>(category: materialCategory, fragmented: true)
@@ -75,6 +76,10 @@ namespace VL.Stride.Rendering.Materials
 
             yield return NewMaterialNode<MaterialEmissiveMapFeature>(nodeFactory, "Emissive", shadingCategory);
             yield return NewMaterialNode<MaterialSubsurfaceScatteringFeature>(nodeFactory, "SubsurfaceScattering", shadingCategory);
+            yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringKernelSkin>(nodeFactory, "SkinKernel", subsurfaceScatteringCategory, isFragmented: true);
+            yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileSkin>(nodeFactory, "SkinProfile", subsurfaceScatteringCategory, isFragmented: true);
+            yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileCustom>(nodeFactory, "CustomProfile", subsurfaceScatteringCategory, isFragmented: true);
+            yield return new StrideNodeDesc<FallbackEffect>(nodeFactory, category: materialCategory, isFragmented: true);
 
             // Misc
             yield return nodeFactory.NewNode<MiscAttributes>(category: materialCategory, fragmented: true)
@@ -135,6 +140,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddOutput<ComputeFloat>("Output", x => x);
 
             yield return NewMaterialNode<ComputeTextureColor>(nodeFactory, nameof(ComputeTextureColor), materialCategory);
+
             yield return NewMaterialNode<ComputeTextureScalar>(nodeFactory, nameof(ComputeTextureScalar), materialCategory);
         }
 

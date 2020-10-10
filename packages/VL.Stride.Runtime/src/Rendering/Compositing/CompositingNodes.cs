@@ -210,7 +210,7 @@ namespace VL.Stride.Rendering.Compositing
             yield return new StrideNodeDesc<ToneMapReinhardOperator>(nodeFactory, "Reinhard", category: operatorsCategory) { CopyOnWrite = false };
 
             // Root render features
-            yield return nodeFactory.NewNode<MeshRenderFeature>(category: renderingCategoryAdvanced)
+            yield return nodeFactory.NewNode<MeshRenderFeature>(category: renderingCategoryAdvanced, fragmented: true)
                 .AddListInput(nameof(MeshRenderFeature.RenderFeatures), x => x.RenderFeatures)
                 .AddListInput(nameof(MeshRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors)
                 .AddListInput(nameof(MeshRenderFeature.PipelineProcessors), x => x.PipelineProcessors);
@@ -233,6 +233,7 @@ namespace VL.Stride.Rendering.Compositing
             yield return new StrideNodeDesc<MaterialRenderFeature>(nodeFactory, category: renderFeaturesCategory);
             yield return new StrideNodeDesc<ShadowCasterRenderFeature>(nodeFactory, category: renderFeaturesCategory);
             yield return new StrideNodeDesc<InstancingRenderFeature>(nodeFactory, category: renderFeaturesCategory);
+            yield return new StrideNodeDesc<SubsurfaceScatteringRenderFeature>(nodeFactory, category: renderFeaturesCategory);
 
             yield return nodeFactory.NewNode<ForwardLightingRenderFeature>(category: renderFeaturesCategory)
                 .AddListInput(nameof(ForwardLightingRenderFeature.LightRenderers), x => x.LightRenderers)
