@@ -37,6 +37,8 @@ namespace VL.Stride.Games
             Settings.EffectCompilation = EffectCompilationMode.Local;
             Settings.RecordUsedEffects = false;
 
+            IsUserManagingTime = true;
+
             base.Initialize();
 
             GameSystems.Add(SchedulerSystem);

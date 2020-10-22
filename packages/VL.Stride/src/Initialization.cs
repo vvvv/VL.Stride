@@ -85,6 +85,7 @@ namespace VL.Stride.Lib
                                 {
                                     try
                                     {
+                                        game.ElapsedUserTime = ffm.LastInterval;
                                         gameContext.RunCallback();
                                     }
                                     catch (Exception e)
