@@ -569,6 +569,7 @@ namespace VL.Stride.Rendering
                                 var inputs = node.Inputs.ToList();
                                 var textureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == "Texture"));
                                 var outputTextureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == "Output Texture"));
+                                var enabledInput = (IVLPin<bool>)node.Inputs.ElementAt(shaderDescription.Inputs.IndexOf(p => p.Name == "Enabled"));
 
                                 IVLPin<int> outputWidth = default, outputHeight = default;
                                 IVLPin<PixelFormat> outputFormat = default;
@@ -588,6 +589,9 @@ namespace VL.Stride.Rendering
                                 var mainOutput = nodeBuildContext.Output<Texture>(getter: () =>
                                 {
                                     var inputTexture = textureInput?.Value as Texture;
+                                    if (!enabledInput.Value)
+                                        return inputTexture;
+
                                     var outputTexture = outputTextureInput.Value as Texture;
                                     if (outputTexture is null)
                                     {
