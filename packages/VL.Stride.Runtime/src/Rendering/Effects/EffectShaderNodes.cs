@@ -409,7 +409,7 @@ namespace VL.Stride.Rendering
                                     else if (_input == _threadNumbersInput)
                                         inputs.Add(nodeBuildContext.Input<Int3>(setter: v => shader.ThreadNumbers = v));
                                     else if (_input == _enabledInput)
-                                        inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => shader.Enabled = v));
+                                        inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => shader.Enabled = v, shader.Enabled));
                                     else if (_input is ParameterPinDescription parameterPinDescription)
                                         inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, shader.Parameters));
                                 }
@@ -505,7 +505,7 @@ namespace VL.Stride.Rendering
                                         }));
                                     }
                                     else if (_input == _enabledInput)
-                                        inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => effect.Enabled = v));
+                                        inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => effect.Enabled = v, effect.Enabled));
                                     else if (_input is ParameterPinDescription parameterPinDescription)
                                         inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, effect.Parameters));
                                     else if (_input is PinDescription<Texture> textureInput)
