@@ -8,7 +8,7 @@ namespace VL.Stride.Shaders.ShaderFX
 {
 
     //TODO: have one counter per context
-    static class ContextKeyMap<T>
+    public static class ContextKeyMap<T>
     {
         static ulong ObjectKeyIDCounter;
 
@@ -47,7 +47,7 @@ namespace VL.Stride.Shaders.ShaderFX
             return KeyValuesPerContext.Remove(context);
         }
     }
-    static class ContextValueKeyMap<T> where T : struct
+    public static class ContextValueKeyMap<T> where T : struct
     {
         static ulong ValueKeyIDCounter;
 
@@ -87,7 +87,7 @@ namespace VL.Stride.Shaders.ShaderFX
         }
     }
 
-    static class ContextValueKeyMap2<T> where T : struct
+    public static class ContextValueKeyMap2<T> where T : struct
     {
         static ulong ValueKeyIDCounter;
 
@@ -101,10 +101,10 @@ namespace VL.Stride.Shaders.ShaderFX
                 return key;
             }
 
-            var newObjectKey = ParameterKeys.NewValue<T>(default, "Value" + GetNameForType<T>() + "_fx" + (++ValueKeyIDCounter));
-            KeyValuesPerReference[uniqueReference] = newObjectKey;
+            var newValueKey = ParameterKeys.NewValue<T>(default, "Value" + GetNameForType<T>() + "_fx" + (++ValueKeyIDCounter));
+            KeyValuesPerReference[uniqueReference] = newValueKey;
 
-            return newObjectKey;
+            return newValueKey;
         }
 
         public static bool RemoveContext(object uniqueReference)
