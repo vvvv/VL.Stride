@@ -18,6 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class SuppressDiagonals_DrawFXKeys
     {
-        public static readonly ValueParameterKey<Color4> ColorInput = ParameterKeys.NewValue<Color4>();
+        public static readonly ValueParameterKey<Color4> ColorInput = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
     }
 }
