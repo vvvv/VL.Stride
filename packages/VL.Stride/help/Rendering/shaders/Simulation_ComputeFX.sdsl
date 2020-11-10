@@ -1,4 +1,4 @@
-﻿shader Simulation: ComputeShaderBase, Global, ParticleStructPos4Vel4
+﻿shader Simulation_ComputeFX : ComputeShaderBase, Global, ParticleStructPos4Vel4
 {   
 
    // SETTINGS ---------------------------------------------------------------------
@@ -14,8 +14,8 @@
 
     // RESOURCES ---------------------------------------------------------------------
 
-    stage RWStructuredBuffer<ParticlePos4Vel4> ParticlesBuffer;
-    stage Buffer<float4> RandomValues;
+    RWStructuredBuffer<ParticlePos4Vel4> ParticlesBuffer;
+    Buffer<float4> RandomValues;
 
     // =====================================================================
     // CS ==================================================================
@@ -61,7 +61,7 @@
 
 
         // Target
-        Force += ((TargetPos + Rnd) - Pos) * TargetStrength;
+        Force += ((TargetPos + Rnd.xyz) - Pos) * TargetStrength;
 
         Vel += Force;
 

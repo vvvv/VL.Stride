@@ -398,7 +398,7 @@ namespace VL.Stride.Rendering
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
                                 var renderContext = RenderContext.GetShared(gameHandle.Resource.Services);
-                                var shader = new ComputeEffectShader2(renderContext) { ShaderSourceName = effectName };
+                                var shader = new ComputeEffectShader2(renderContext, effectName);
                                 var inputs = new List<IVLPin>();
                                 var enabledInput = default(IVLPin);
                                 foreach (var _input in _inputs)
