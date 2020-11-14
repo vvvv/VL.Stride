@@ -42,7 +42,7 @@ namespace VL.Stride.Rendering
             // Compute effect dispatchers
             var dispatchersCategory = $"{renderingAdvancedCategory}.ComputeEffect";
             yield return factory.NewNode<DirectComputeEffectDispatcher>(name: "DirectDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)
-                .AddInput(nameof(DirectComputeEffectDispatcher.ThreadGroupCounts), x => x.ThreadGroupCounts, (x, v) => x.ThreadGroupCounts = v, Int3.One)
+                .AddInput(nameof(DirectComputeEffectDispatcher.ThreadGroupCount), x => x.ThreadGroupCount, (x, v) => x.ThreadGroupCount = v, Int3.One)
                 .AddOutput<IComputeEffectDispatcher>("Output", x => x);
 
             yield return factory.NewNode<IndirectComputeEffectDispatcher>(name: "IndirectDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)

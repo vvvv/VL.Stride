@@ -5,12 +5,12 @@ using Buffer = Stride.Graphics.Buffer;
 namespace VL.Stride.Rendering.ComputeEffect
 {
     /// <summary>
-    /// A compute effect dispatcher doing an indirect dispatch using the given argument buffer containing the thread group counts at the given byte offset.
+    /// A compute effect dispatcher doing an indirect dispatch using the given argument buffer containing the thread group count at the given byte offset.
     /// </summary>
     class IndirectComputeEffectDispatcher : IComputeEffectDispatcher
     {
         /// <summary>
-        /// The argument buffer containing the thread group counts the shader should be dispatched to.
+        /// The argument buffer containing the thread group count the shader should be dispatched to.
         /// </summary>
         public Buffer ArgumentBuffer { get; set; }
 
@@ -19,7 +19,7 @@ namespace VL.Stride.Rendering.ComputeEffect
         /// </summary>
         public int OffsetInBytes { get; set; }
 
-        public void UpdateParameters(ParameterCollection parameters, Int3 threadNumbers)
+        public void UpdateParameters(ParameterCollection parameters, Int3 threadGroupSize)
         {
         }
 

@@ -365,7 +365,7 @@ namespace VL.Stride.Rendering
                         var (_effect, _messages, _invalidated) = CreateEffectInstance("ComputeEffectShader", _parameters, watchName: effectName);
 
                         var _dispatcherInput = new PinDescription<IComputeEffectDispatcher>("Dispatcher");
-                        var _threadNumbersInput = new PinDescription<Int3>("Thread Count", Int3.One);
+                        var _threadNumbersInput = new PinDescription<Int3>("Thread Group Size", Int3.One);
                         var _inputs = new List<IVLPinDescription>()
                         {
                             _dispatcherInput,
@@ -407,7 +407,7 @@ namespace VL.Stride.Rendering
                                     if (_input == _dispatcherInput)
                                         inputs.Add(nodeBuildContext.Input<IComputeEffectDispatcher>(setter: v => shader.Dispatcher = v));
                                     else if (_input == _threadNumbersInput)
-                                        inputs.Add(nodeBuildContext.Input<Int3>(setter: v => shader.ThreadNumbers = v));
+                                        inputs.Add(nodeBuildContext.Input<Int3>(setter: v => shader.ThreadGroupSize = v));
                                     else if (_input == _enabledInput)
                                         inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => shader.Enabled = v, shader.Enabled));
                                     else if (_input is ParameterPinDescription parameterPinDescription)
