@@ -4072,11 +4072,6 @@
                     <Choice Kind="TypeFlag" Name="RGBA" />
                   </p:TypeAnnotation>
                 </Pin>
-                <Pin Id="R4VBuVdMgIAMOaOmv4JgMz" Name="Screen Space" Kind="InputPin" DefaultValue="True">
-                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                    <Choice Kind="TypeFlag" Name="Boolean" />
-                  </p:TypeAnnotation>
-                </Pin>
                 <Pin Id="Fp4KrXD3F1EPdB8rRerooI" Name="Keep Aspect" Kind="InputPin" />
                 <Pin Id="HAZYWPmavidNvYQYrVJP3M" Name="Blend State" Kind="InputPin" />
                 <Pin Id="O2aOhxwUyxbMgPbrH1L26P" Name="Rasterizer State" Kind="InputPin" />
@@ -4150,11 +4145,6 @@
                   <Choice Kind="ProcessAppFlag" Name="LineRenderer" />
                 </p:NodeReference>
                 <Pin Id="Arq565EPfNEMY1Worz0R7e" Name="Transformation" Kind="InputPin" />
-                <Pin Id="HpKAE83GVJDPzpuMkPAJlD" Name="ScreenSpace" Kind="InputPin" DefaultValue="True">
-                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                    <Choice Kind="TypeFlag" Name="Boolean" />
-                  </p:TypeAnnotation>
-                </Pin>
                 <Pin Id="BB8S8IIv0etP9gzMmMNmct" Name="Vertices" Kind="InputPin" />
                 <Pin Id="BAH8rVWpeCZK9vfe9WOZol" Name="Colors" Kind="InputPin" />
                 <Pin Id="BTvWaI9XwUbLsf0IriqMAv" Name="Output" Kind="OutputPin" />
@@ -4269,7 +4259,7 @@
               </Node>
               <Pad Id="NPLNU4Nea3tOxZAgeCUxzq" Bounds="292,418" />
               <ControlPoint Id="BGQzBQLhEYCOEEtAcXwaWa" Bounds="559,468" />
-              <ControlPoint Id="MdIQZxMvrycOPF9lMApJhs" Bounds="564,963" />
+              <ControlPoint Id="MdIQZxMvrycOPF9lMApJhs" Bounds="564,1042" />
               <Node Bounds="669,783,67,19" Id="TkKTn6NuajFO26dT1MXE26">
                 <p:NodeReference LastCategoryFullName="Stride.API.Graphics.BlendStateDescription" LastSymbolSource="VL.Stride.Graphics.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -4404,6 +4394,20 @@
                 <Pin Id="CvnhFdoyb47NpqrgiEF7ks" Name="Position" Kind="OutputPin" />
                 <Pin Id="GtdC6F7pvRiNowbJzWYijR" Name="Velocity" Kind="OutputPin" />
               </Node>
+              <Node Bounds="562,972,142,19" Id="JFodW0iMBYsNVzXsZdF29D">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.Nodes">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessNode" Name="WithinCommonScreenSpace" />
+                </p:NodeReference>
+                <Pin Id="FPNoB5X4OA5NX3uI5Ni0Za" Name="Input" Kind="InputPin" />
+                <Pin Id="FK7LR2AHmgkO4yWV1AA8VT" Name="Common Screen Space" Kind="InputPin" DefaultValue="PixelTopLeft">
+                  <p:TypeAnnotation LastCategoryFullName="VL.Stride.Rendering" LastSymbolSource="VL.Stride.Runtime.dll">
+                    <Choice Kind="TypeFlag" Name="CommonScreenSpace" />
+                  </p:TypeAnnotation>
+                </Pin>
+                <Pin Id="LdnOCf2mr0zLWRyta5h4u9" Name="Set View To Identity" Kind="InputPin" />
+                <Pin Id="NRXppCElIncLz43NrTlZUV" Name="Output" Kind="OutputPin" />
+              </Node>
             </Canvas>
             <Patch Id="E3kk0tG2SQINKHI4qM0rGV" Name="Create" ParticipatingElements="PEBq8fjJwnOLFFs36TV9HJ,BzcqwZyk4jVMs9eQ5aTEYC,NqoBaMN46wyLKuSKuhSyqJ,BE0nbrYACDjN2vqc3ciNc6,Bmar80SEEFJQZmO8pNUewD" />
             <Patch Id="LOPqOcbBDCTP5AnCtYqsaw" Name="Update">
@@ -4485,7 +4489,7 @@
             <Link Id="KXSeSXVpEjRNTjToSrhkE4" Ids="EU1Ib1VPBZ8QO4WxfLDLMg,S0RTnvSYwwkLsP10dNBOvU" />
             <Link Id="B8Hx4eb8ldhQTVfW0e77ej" Ids="NPLNU4Nea3tOxZAgeCUxzq,Lb3wnIh3yFqLV66yMiIQAA" />
             <Link Id="G9YLEQ5AjPFQOnhPkNpuMX" Ids="MdIQZxMvrycOPF9lMApJhs,GTrP4H6Mtj7PKhGSlAFjql" IsHidden="true" />
-            <Link Id="V3XFrWtTgtwNpXjEnoY7XC" Ids="JlTjLmvxLZtQE1YUybpQuK,MdIQZxMvrycOPF9lMApJhs" />
+            <Link Id="V3XFrWtTgtwNpXjEnoY7XC" Ids="JlTjLmvxLZtQE1YUybpQuK,FPNoB5X4OA5NX3uI5Ni0Za" />
             <Link Id="HsoYM2LErPwLRTk3L0RgCK" Ids="QXhpDVLrbcZQT9X1GAMP9l,HAZYWPmavidNvYQYrVJP3M" />
             <Link Id="AyHcAT02UHQOPzRBN3vQjC" Ids="OJGRvkFfePTLWhMUvwh6eI,TAVhPbvWiXQPE2uXugGiTJ" />
             <Link Id="JDlj611eHKHNkUsLnZTLW5" Ids="BGQzBQLhEYCOEEtAcXwaWa,RsNEdhVoP5JOjN4Nbpv4WJ" />
@@ -4501,6 +4505,7 @@
             <Link Id="VyMepb62ngfMi1FcdF5hBi" Ids="CvnhFdoyb47NpqrgiEF7ks,KLfqPt0btlVNNp3hMU4E9d" />
             <Link Id="HQX1IefZfDiLXt8BFJAaqC" Ids="BKhazlWHW8dOJwLA2nGe1E,Ueivi503aCCL0V5jXN7I75" />
             <Link Id="T7ufoYAHwyqOXi2ZZxJvYF" Ids="Ebb7WI4zuLDPQEP43mbLuz,KdMjIJIjwXvPOd5i7Z4Fjt" />
+            <Link Id="EIagslTYJBWPhcBCkWSuNZ" Ids="NRXppCElIncLz43NrTlZUV,MdIQZxMvrycOPF9lMApJhs" />
           </Patch>
         </Node>
         <!--
@@ -10485,11 +10490,11 @@
                     <Choice Kind="ProcessAppFlag" Name="CircleRenderer" />
                   </p:NodeReference>
                   <Pin Id="QsnAwFchZPsPuJiDayhTWn" Name="Transformation" Kind="InputPin" />
-                  <Pin Id="Pvlll6guvzbLyicvosgnKu" Name="ScreenSpace" Kind="InputPin" />
                   <Pin Id="LvxSGkIVnDgLwcTRfJFmmI" Name="Circle" Kind="InputPin" />
                   <Pin Id="MCSdDkWx6T1Mb0gG2OU1RW" Name="Color" Kind="InputPin" />
                   <Pin Id="SzWEseTrpa4MozRCzZq1M5" Name="Resolution" Kind="InputPin" />
                   <Pin Id="Klkp7TLLxVyO6Z3oZQ8CEL" Name="Output" Kind="OutputPin" />
+                  <Pin Id="Pvlll6guvzbLyicvosgnKu" Name="ScreenSpace" Kind="InputPin" />
                 </Node>
                 <ControlPoint Id="HrWqpFLw2XOMswHICuWxoH" Bounds="574,457" />
                 <ControlPoint Id="IS9CCaKicc8LKSRttvTMlW" Bounds="797,471" />
@@ -10571,10 +10576,10 @@
                     <Choice Kind="ProcessAppFlag" Name="RectangleRenderer" />
                   </p:NodeReference>
                   <Pin Id="JTdhY9z9vJ1NfGkBaDyiWW" Name="Transformation" Kind="InputPin" />
-                  <Pin Id="DhqvOd4cMIgN4yd1q2AFNU" Name="ScreenSpace" Kind="InputPin" />
                   <Pin Id="VGCUXD1LqqfN9kipjfrDIl" Name="Color" Kind="InputPin" />
                   <Pin Id="EsR2N66UHp2N0IAJ2lJS1E" Name="Rectangle" Kind="InputPin" />
                   <Pin Id="VlUnFQR77WWNEWQe8SU4Zj" Name="Output" Kind="OutputPin" />
+                  <Pin Id="DhqvOd4cMIgN4yd1q2AFNU" Name="ScreenSpace" Kind="InputPin" />
                 </Node>
                 <ControlPoint Id="O41i26OdlOSMpjz8IJPTF4" Bounds="616,480" />
                 <ControlPoint Id="VORbhCu1oURQA78TDdVaAo" Bounds="983,469" />
@@ -10668,12 +10673,12 @@
                   <Pin Id="BxFGhum7xB7POuHtMC911C" Name="Transformation" Kind="InputPin" />
                   <Pin Id="IqhTqIJCnRGOXZzgUrQ65B" Name="Texture" Kind="InputPin" />
                   <Pin Id="JFwVP9AI6YrLwHv044z9Mr" Name="Color" Kind="InputPin" />
-                  <Pin Id="CK6q1bkmRY9OKYTxniqFMf" Name="Screen Space" Kind="InputPin" />
                   <Pin Id="GPBnxKalFh9NSe3yLEhOP3" Name="Keep Aspect" Kind="InputPin" />
                   <Pin Id="DUr4Uzbl9uCLfoe0ubODiU" Name="Blend State" Kind="InputPin" />
                   <Pin Id="UvvxatQE2uHM6vHUMdV3G7" Name="Rasterizer State" Kind="InputPin" />
                   <Pin Id="LnBdWs3Qy12QDQreuUhAkc" Name="Depth Stencil State" Kind="InputPin" />
                   <Pin Id="TcqSvFyaL4ULWyhOxLOfyA" Name="Output" Kind="OutputPin" />
+                  <Pin Id="CK6q1bkmRY9OKYTxniqFMf" Name="Screen Space" Kind="InputPin" />
                 </Node>
                 <ControlPoint Id="A73E6UerlROOz5c3hWeOFW" Bounds="698,696" />
               </Canvas>
@@ -10769,10 +10774,10 @@
                     <Choice Kind="ProcessAppFlag" Name="LineRenderer" />
                   </p:NodeReference>
                   <Pin Id="Lq3s97DluwMOVOMSrjotKq" Name="Transformation" Kind="InputPin" />
-                  <Pin Id="C9V01lr9LsGQCqFzIrUoNw" Name="ScreenSpace" Kind="InputPin" />
                   <Pin Id="IKDsoHfU5lDLNCrgPTfQ1n" Name="Vertices" Kind="InputPin" />
                   <Pin Id="CWIxAMx9IcxMJeTe6HH7LL" Name="Colors" Kind="InputPin" />
                   <Pin Id="NbrGhopOX78Lpp0pBGKpdc" Name="Output" Kind="OutputPin" />
+                  <Pin Id="C9V01lr9LsGQCqFzIrUoNw" Name="ScreenSpace" Kind="InputPin" />
                 </Node>
                 <ControlPoint Id="GWtHyFbzF8zPzvAUkmF2p4" Bounds="807,297" />
                 <ControlPoint Id="QI6OmGrfdiZLT7aIbsnHBS" Bounds="900,322" />
@@ -11601,16 +11606,6 @@
               <Pin Id="O5Kza99VfZ0NvNjZCOo5ch" Name="Intensity" Kind="InputPin" />
             </Patch>
             <Link Id="Ru29muPMs02O8kNNBXEm7P" Ids="G2YR1y0ouETMq5N1DqPYav,CAQGuGiupZpPkfIy8haAq9" IsHidden="true" />
-            <ProcessDefinition Id="EVeDQRqg9iVMvLGJPO3LIg">
-              <Fragment Id="MqoFIbzgwRWNCyw7SQzbcU" Patch="EUesNGo4xiANc3zjB0gCJD" Enabled="true" />
-              <Fragment Id="R1cacQWEhveNKA8sbGf82c" Patch="TR0PkijNrGYMoS4BSogSVy" Enabled="true" />
-              <Fragment Id="AI61GtHxVwGMurYcSec1RK" Patch="ViY2YjjrRjPLGzHmHnig7y" Enabled="true" />
-              <Fragment Id="EUHvLXggUfdQczCSKqdlSA" Patch="NeXpea3mk0lN7WuLX8ATBh" Enabled="true" />
-              <Fragment Id="SZ1YSft1gpXLEESAZEqCkV" Patch="ILQyPyDKOn3M48nxWUdaW2" Enabled="true" />
-              <Fragment Id="S0lM8rFE5S5LztuApR5jYu" Patch="Tt8plqTo493NhTAFGnWGoO" Enabled="true" />
-              <Fragment Id="KlmdhjMuWqTL1BLWwaqqAz" Patch="LjObazfwGVFNpOEtwE2A0t" Enabled="true" />
-              <Fragment Id="BMOPi81q6YQPHA0GhZAnt1" Patch="JT8Yxt3fsCLOoA0VC5oEOs" />
-            </ProcessDefinition>
             <Link Id="K9L4xJisLRbNKX9zrYOCOd" Ids="Fys6L3PPcOaNgqFwBFVWuR,JLp9Z14Rse9LqlbqQDWCqh" />
             <Link Id="LoJKAn0pC6iNMYa1UxHtdR" Ids="CAQGuGiupZpPkfIy8haAq9,Fys6L3PPcOaNgqFwBFVWuR" />
             <Link Id="SPqQZckTSbJMa0eFy4yaxz" Ids="VfYCqLOtohLMg8sSi8dvZc,RZkEgnrjCKVLBwPZO3ZGkf" />
@@ -11619,6 +11614,16 @@
               <Pin Id="NxqhrfmuBMEL6RspMKol6U" Name="Shadow" Kind="InputPin" />
             </Patch>
             <Link Id="M1pJhhxby8YQRb1uFAdKsQ" Ids="USb7clnupoSMv5K8QXdHaX,A5dM5gTz93tLPjhnHZLpZH" />
+            <ProcessDefinition Id="EVeDQRqg9iVMvLGJPO3LIg">
+              <Fragment Id="MqoFIbzgwRWNCyw7SQzbcU" Patch="EUesNGo4xiANc3zjB0gCJD" Enabled="true" />
+              <Fragment Id="R1cacQWEhveNKA8sbGf82c" Patch="TR0PkijNrGYMoS4BSogSVy" Enabled="true" />
+              <Fragment Id="EUHvLXggUfdQczCSKqdlSA" Patch="NeXpea3mk0lN7WuLX8ATBh" Enabled="true" />
+              <Fragment Id="SZ1YSft1gpXLEESAZEqCkV" Patch="ILQyPyDKOn3M48nxWUdaW2" Enabled="true" />
+              <Fragment Id="S0lM8rFE5S5LztuApR5jYu" Patch="Tt8plqTo493NhTAFGnWGoO" Enabled="true" />
+              <Fragment Id="KlmdhjMuWqTL1BLWwaqqAz" Patch="LjObazfwGVFNpOEtwE2A0t" Enabled="true" />
+              <Fragment Id="BMOPi81q6YQPHA0GhZAnt1" Patch="JT8Yxt3fsCLOoA0VC5oEOs" Enabled="true" />
+              <Fragment Id="AI61GtHxVwGMurYcSec1RK" Patch="ViY2YjjrRjPLGzHmHnig7y" Enabled="true" />
+            </ProcessDefinition>
           </Patch>
         </Node>
         <!--
@@ -13013,7 +13018,6 @@
                     <Pin Id="GdWsuc3twjMNYnZyHaqzXg" Name="Transformation" Kind="InputPin" />
                     <Pin Id="QZAY6bGpgbJMfMVWmqXPMs" Name="Texture" Kind="InputPin" />
                     <Pin Id="MIAJjgn6HNtPieH47qa7wN" Name="Color" Kind="InputPin" />
-                    <Pin Id="BR7VLDIxPl7O3GH3FjhxvP" Name="Screen Space" Kind="InputPin" />
                     <Pin Id="Eq4wC7wEVxSM0SRkiqcK3J" Name="Keep Aspect" Kind="InputPin" />
                     <Pin Id="H0ofNpboS5gP8yM183aQUa" Name="Blend State" Kind="InputPin" />
                     <Pin Id="RzT2rlU0jpGLYd1bJTB5Kg" Name="Rasterizer State" Kind="InputPin" />
@@ -13834,7 +13838,6 @@
                       <Choice Kind="ProcessAppFlag" Name="CircleRenderer" />
                     </p:NodeReference>
                     <Pin Id="FzebCi3BZLONviTLrsnXhS" Name="Transformation" Kind="InputPin" />
-                    <Pin Id="U8XgN9AfJKNPaFvZObJIQA" Name="ScreenSpace" Kind="InputPin" />
                     <Pin Id="SoGLRG2X3oUNEjmjxeOSWa" Name="Circle" Kind="InputPin" />
                     <Pin Id="KuXDsNXoYDWNTzmbrXZauq" Name="Color" Kind="InputPin" />
                     <Pin Id="HKndGp9SjKyPpgqphUB3nU" Name="Resolution" Kind="InputPin" />
@@ -14024,7 +14027,6 @@
                       <Choice Kind="ProcessAppFlag" Name="CircleRenderer" />
                     </p:NodeReference>
                     <Pin Id="PzGnbypgQ7yLgz4CfbHFGb" Name="Transformation" Kind="InputPin" />
-                    <Pin Id="AzqU0eClxRzOdqisiEMXJr" Name="ScreenSpace" Kind="InputPin" />
                     <Pin Id="CX2iUk5b7IwPobzoURc6l4" Name="Circle" Kind="InputPin" />
                     <Pin Id="OvWgQxS4ricO68QZFCkdtK" Name="Color" Kind="InputPin" />
                     <Pin Id="OVlxsbXgZ7HL48MeAngcmW" Name="Resolution" Kind="InputPin" />
@@ -14066,7 +14068,6 @@
                       <Choice Kind="ProcessAppFlag" Name="CircleRenderer" />
                     </p:NodeReference>
                     <Pin Id="BUJqIttvTJOOYfbIpMIyNf" Name="Transformation" Kind="InputPin" />
-                    <Pin Id="AXqp7kJaVesOUAS4i3R4Pt" Name="ScreenSpace" Kind="InputPin" />
                     <Pin Id="DPSDybhLIofMGuAhvq5CES" Name="Circle" Kind="InputPin" />
                     <Pin Id="TA3xepRQ1QqN7mBHL5jow7" Name="Color" Kind="InputPin" />
                     <Pin Id="C3MbucVKimFQWlz6ZcDynK" Name="Resolution" Kind="InputPin" />
@@ -14078,7 +14079,6 @@
                       <Choice Kind="ProcessAppFlag" Name="CircleRenderer" />
                     </p:NodeReference>
                     <Pin Id="Tc1gaFtnUrbLcsaiIfCVoA" Name="Transformation" Kind="InputPin" />
-                    <Pin Id="IUW2VFNQnPaPlBPYPexfXm" Name="ScreenSpace" Kind="InputPin" />
                     <Pin Id="SaZll94pmiYLvrlpsmHlml" Name="Circle" Kind="InputPin" />
                     <Pin Id="IDB2jIatvXDL1rV2jvouEh" Name="Color" Kind="InputPin" />
                     <Pin Id="JFtKixuv7fNMl9olM7WZyf" Name="Resolution" Kind="InputPin" />

@@ -26,6 +26,24 @@ namespace VL.Stride.Rendering
                 .AddInput(nameof(WithRenderTargetAndViewPort.DepthBuffer), x => x.DepthBuffer, (x, v) => x.DepthBuffer = v)
                 ;
 
+            yield return NewInputRenderBaseNode<WithinCommonScreenSpace>(factory, category: renderingAdvancedCategory)
+                .AddInput(nameof(WithinCommonScreenSpace.CommonScreenSpace), x => x.CommonScreenSpace, (x, v) => x.CommonScreenSpace = v, CommonScreenSpace.Normalized)
+                .AddInput(nameof(WithinCommonScreenSpace.SetViewToIdentity), x => x.SetViewToIdentity, (x, v) => x.SetViewToIdentity = v, true)
+                ;
+
+            yield return NewInputRenderBaseNode<WithinCustomScreenSpace>(factory, category: renderingAdvancedCategory)
+                .AddInput(nameof(WithinCustomScreenSpace.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Lib.Mathematics.RectangleAnchor.Center)
+                .AddInput(nameof(WithinCustomScreenSpace.DeviceIndependantPixels), x => x.DeviceIndependantPixels, (x, v) => x.DeviceIndependantPixels = v, true)
+                .AddInput(nameof(WithinCustomScreenSpace.SetViewToIdentity), x => x.SetViewToIdentity, (x, v) => x.SetViewToIdentity = v, true)
+                ;
+
+            yield return NewInputRenderBaseNode<WithinManualScreenSpace>(factory, category: renderingAdvancedCategory)
+                .AddInput(nameof(WithinManualScreenSpace.Width), x => x.Width, (x, v) => x.Width = v, 2f)
+                .AddInput(nameof(WithinManualScreenSpace.Height), x => x.Height, (x, v) => x.Height = v, 2f)
+                .AddInput(nameof(WithinManualScreenSpace.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Lib.Mathematics.RectangleAnchor.Center)
+                .AddInput(nameof(WithinManualScreenSpace.SetViewToIdentity), x => x.SetViewToIdentity, (x, v) => x.SetViewToIdentity = v, true)
+                ;
+
             yield return NewInputRenderBaseNode<WithRenderView>(factory, category: renderingAdvancedCategory)
                 .AddInput(nameof(WithRenderView.RenderView), x => x.RenderView, (x, v) => x.RenderView = v)
                 ;
