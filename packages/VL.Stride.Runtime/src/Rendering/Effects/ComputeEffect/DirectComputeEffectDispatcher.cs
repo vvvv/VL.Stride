@@ -5,23 +5,23 @@ using Stride.Rendering.ComputeEffect;
 namespace VL.Stride.Rendering.ComputeEffect
 {
     /// <summary>
-    /// A compute effect dispatcher doing a direct dispatch with the given thread group counts.
+    /// A compute effect dispatcher doing a direct dispatch with the given thread group count.
     /// </summary>
     class DirectComputeEffectDispatcher : IComputeEffectDispatcher
     {
         /// <summary>
-        /// Gets or sets the number of group counts the shader should be dispatched to.
+        /// Gets or sets the number of thread groups to dispatch.
         /// </summary>
-        public Int3 ThreadGroupCounts { get; set; } = Int3.One;
+        public Int3 ThreadGroupCount { get; set; } = Int3.One;
 
-        public void UpdateParameters(ParameterCollection parameters, Int3 threadNumbers)
+        public void UpdateParameters(ParameterCollection parameters, Int3 threadGroupSize)
         {
-            parameters.Set(ComputeShaderBaseKeys.ThreadGroupCountGlobal, ThreadGroupCounts);
+            parameters.Set(ComputeShaderBaseKeys.ThreadGroupCountGlobal, ThreadGroupCount);
         }
 
         public void Dispatch(RenderDrawContext context)
         {
-            context.CommandList.Dispatch(ThreadGroupCounts.X, ThreadGroupCounts.Y, ThreadGroupCounts.Z);
+            context.CommandList.Dispatch(ThreadGroupCount.X, ThreadGroupCount.Y, ThreadGroupCount.Z);
         }
     }
 }

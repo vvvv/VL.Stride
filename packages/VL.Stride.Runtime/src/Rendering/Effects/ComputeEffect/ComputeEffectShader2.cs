@@ -41,9 +41,10 @@ namespace VL.Stride.Rendering.ComputeEffect
         public DynamicEffectInstance EffectInstance { get; private set; }
 
         /// <summary>
-        /// Gets or sets the number of threads desired by thread group.
+        /// Gets or sets the number of threads per thread group.
+        /// This will be set as the [numthreads(X, Y, Z)] attribute in the shader.
         /// </summary>
-        public Int3 ThreadNumbers { get; set; }
+        public Int3 ThreadGroupSize { get; set; }
 
         /// <summary>
         /// Gets or sets the dispatcher.
@@ -85,7 +86,7 @@ namespace VL.Stride.Rendering.ComputeEffect
         /// </summary>
         protected override void SetDefaultParameters()
         {
-            ThreadNumbers = new Int3(1);
+            ThreadGroupSize = new Int3(1);
         }
 
         protected override void PreDrawCore(RenderDrawContext context)
@@ -101,7 +102,7 @@ namespace VL.Stride.Rendering.ComputeEffect
         /// </summary>
         protected virtual void UpdateParameters(RenderDrawContext context)
         {
-            Parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, ThreadNumbers);
+            Parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, ThreadGroupSize);
 
             Parameters.SetPerFrameParameters(perFrameParams, context.RenderContext);
 
@@ -120,15 +121,13 @@ namespace VL.Stride.Rendering.ComputeEffect
 
             Parameters.SetPerViewParameters(perViewParams, renderView);
 
-            Dispatcher?.UpdateParameters(Parameters, ThreadNumbers);
+            Dispatcher?.UpdateParameters(Parameters, ThreadGroupSize);
         }
 
         protected override void DrawCore(RenderDrawContext context)
         {
             if (string.IsNullOrEmpty(Name) || FRefreshTime > context.RenderContext.Time.Total)
                 return;
-
-            
 
             using (Profiler.Begin(profilingKey))
             using (context.QueryManager.BeginProfile(Color.Green, profilingKey))

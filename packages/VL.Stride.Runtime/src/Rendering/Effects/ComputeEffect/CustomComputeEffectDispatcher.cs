@@ -5,21 +5,21 @@ using System;
 namespace VL.Stride.Rendering.ComputeEffect
 {
     /// <summary>
-    /// A commpute effect dispatcher using a delegate to compute the dispatch count.
+    /// A commpute effect dispatcher using a delegate to compute the thread group count.
     /// </summary>
     class CustomComputeEffectDispatcher : IComputeEffectDispatcher
     {
         readonly DirectComputeEffectDispatcher directComputeEffectDispatcher = new DirectComputeEffectDispatcher();
 
         /// <summary>
-        /// The selector function to compute the number of dispatch group counts based on the shader defined thread numbers.
+        /// The selector function to compute the thread group count based on the thread group size defined by the shader.
         /// </summary>
         public Func<Int3, Int3> ThreadGroupCountsSelector { get; set; }
 
-        public void UpdateParameters(ParameterCollection parameters, Int3 threadNumbers)
+        public void UpdateParameters(ParameterCollection parameters, Int3 threadGroupSize)
         {
-            directComputeEffectDispatcher.ThreadGroupCounts = ThreadGroupCountsSelector?.Invoke(threadNumbers) ?? Int3.Zero;
-            directComputeEffectDispatcher.UpdateParameters(parameters, threadNumbers);
+            directComputeEffectDispatcher.ThreadGroupCount = ThreadGroupCountsSelector?.Invoke(threadGroupSize) ?? Int3.Zero;
+            directComputeEffectDispatcher.UpdateParameters(parameters, threadGroupSize);
         }
 
         public void Dispatch(RenderDrawContext context)

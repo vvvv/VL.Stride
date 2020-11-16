@@ -12,8 +12,8 @@ namespace VL.Stride.Rendering.ComputeEffect
         /// Updates the parameter collection of the shader.
         /// </summary>
         /// <param name="parameters">The parameter collection of the shader.</param>
-        /// <param name="threadNumbers">The thread numbers as defined by the shader.</param>
-        void UpdateParameters(ParameterCollection parameters, Int3 threadNumbers);
+        /// <param name="threadGroupSize">The thread group size as defined by the shader in the [numthreads(X, Y, Z)] attribute.</param>
+        void UpdateParameters(ParameterCollection parameters, Int3 threadGroupSize);
 
         /// <summary>
         /// Dispatches the shader.
