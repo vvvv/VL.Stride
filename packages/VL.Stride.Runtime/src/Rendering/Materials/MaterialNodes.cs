@@ -33,7 +33,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(nameof(GeometryAttributes.Surface), x => x.Surface, (x, v) => x.Surface = v)
                 .AddInput(nameof(GeometryAttributes.MicroSurface), x => x.MicroSurface, (x, v) => x.MicroSurface = v);
 
-            yield return NewMaterialNode<MaterialTessellationFlatFeature>(nodeFactory, "FlatTesselation", geometryCategory);
+            yield return NewMaterialNode<MaterialTessellationFlatFeature>(nodeFactory, "FlatTessellation", geometryCategory);
             yield return NewMaterialNode<MaterialTessellationPNFeature>(nodeFactory, "PointNormalTessellation", geometryCategory);
             yield return NewMaterialNode<MaterialDisplacementMapFeature>(nodeFactory, "Displacement", geometryCategory);
             yield return NewMaterialNode<MaterialNormalMapFeature>(nodeFactory, "Normal", geometryCategory);
