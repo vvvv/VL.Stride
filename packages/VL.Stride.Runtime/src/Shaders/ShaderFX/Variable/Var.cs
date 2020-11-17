@@ -11,8 +11,8 @@ namespace VL.Stride.Shaders.ShaderFX
     /// Defines a variable and assigns a value to it. Can also re-assign an existing Var.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <seealso cref="VL.Stride.Shaders.ShaderFX.ComputeNode{T}" />
-    /// <seealso cref="VL.Stride.Shaders.ShaderFX.IComputeVoid" />
+    /// <seealso cref="ComputeNode{T}" />
+    /// <seealso cref="IComputeVoid" />
     public class Var<T> : ComputeNode<T>, IComputeVoid
     {
         static ulong VarIDCounter;
