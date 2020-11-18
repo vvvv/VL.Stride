@@ -18,7 +18,7 @@ namespace VL.Stride
     class StrideNode<TInstance> : StrideNode, IVLNode
         where TInstance : new()
     {
-        readonly Pin[] inputs;
+        readonly Pin<TInstance>[] inputs;
         readonly StrideNodeDesc<TInstance> nodeDescription;
         readonly StatePin output;
 
@@ -28,7 +28,7 @@ namespace VL.Stride
             Context = nodeContext;
             nodeDescription = description;
 
-            inputs = description.Inputs.OfType<PinDescription>().Select(d => d.CreatePin(this)).ToArray();
+            inputs = description.Inputs.OfType<PinDescription>().Select(d => d.CreatePin<TInstance>(this)).ToArray();
             Outputs = new IVLPin[] { output = new StatePin(this, new TInstance()) };
         }
 
@@ -70,7 +70,7 @@ namespace VL.Stride
                 disposable.Dispose();
         }
 
-        class StatePin : IVLPin
+        class StatePin : IVLPin<TInstance>
         {
             readonly StrideNode<TInstance> node;
             readonly bool isFragmented;
@@ -82,7 +82,13 @@ namespace VL.Stride
                 this.value = instance;
             }
 
-            public object Value 
+            object IVLPin.Value
+            {
+                get => ((IVLPin<TInstance>)this).Value;
+                set => ((IVLPin<TInstance>)this).Value = (TInstance)value;
+            }
+
+            TInstance IVLPin<TInstance>.Value
             { 
                 get
                 {
@@ -90,7 +96,7 @@ namespace VL.Stride
                         node.Update();
                     return value;
                 }
-                set => this.value = (TInstance)value;
+                set => this.value = value;
             }
             public TInstance value;
         }

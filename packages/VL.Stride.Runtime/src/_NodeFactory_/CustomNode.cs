@@ -408,7 +408,7 @@ namespace VL.Stride
             }
         }
 
-        abstract class Pin<T> : Pin, IVLPin
+        abstract class Pin<T> : Pin, IVLPin<T>
         {
             public Func<TInstance, T> getter;
             public Action<TInstance, T> setter;
@@ -420,7 +420,7 @@ namespace VL.Stride
             public override sealed object BoxedValue 
             { 
                 get => Value; 
-                set => Value = (T)value; 
+                set => Value = (T)value;
             }
 
             public abstract T Value { get; set; }

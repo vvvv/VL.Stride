@@ -143,7 +143,7 @@ namespace VL.Stride.Rendering
         public bool HasChanged { get; protected set; }
     }
 
-    class PermutationParameterPin<T> : PermutationParameterPin, IVLPin
+    class PermutationParameterPin<T> : PermutationParameterPin, IVLPin<T>
     {
         public readonly PermutationParameterKey<T> Key;
         readonly EqualityComparer<T> comparer = EqualityComparer<T>.Default;
@@ -171,7 +171,7 @@ namespace VL.Stride.Rendering
         }
     }
 
-    class ValueParameterPin<T> : ParameterPin, IVLPin where T : struct
+    class ValueParameterPin<T> : ParameterPin, IVLPin<T> where T : struct
     {
         public readonly ValueParameterKey<T> Key;
 
@@ -194,7 +194,7 @@ namespace VL.Stride.Rendering
         }
     }
 
-    class ColorParameterPin : ParameterPin, IVLPin
+    class ColorParameterPin : ParameterPin, IVLPin<Color4>
     {
         public readonly ValueParameterKey<Color4> Key;
         public readonly ColorSpace ColorSpace;
@@ -219,7 +219,7 @@ namespace VL.Stride.Rendering
         }
     }
 
-    class ArrayValueParameterPin<T> : ParameterPin, IVLPin where T : struct
+    class ArrayValueParameterPin<T> : ParameterPin, IVLPin<T[]> where T : struct
     {
         public readonly ValueParameterKey<T> Key;
 
@@ -247,7 +247,7 @@ namespace VL.Stride.Rendering
         }
     }
 
-    class ResourceParameterPin<T> : ParameterPin, IVLPin where T : class
+    class ResourceParameterPin<T> : ParameterPin, IVLPin<T> where T : class
     {
         public readonly ObjectParameterKey<T> Key;
 
@@ -270,29 +270,31 @@ namespace VL.Stride.Rendering
         }
     }
 
-    abstract class Pin
+    abstract class Pin : IVLPin
     {
         public Pin(string name)
         {
             Name = name;
         }
 
+        public abstract object Value { get; set; }
+
         public string Name { get; }
     }
 
-    class Pin<T> : Pin, IVLPin
+    class Pin<T> : Pin, IVLPin<T>
     {
         public Pin(string name, T initialValue) : base(name)
         {
             Value = initialValue;
         }
 
-        public T Value { get; set; }
+        T IVLPin<T>.Value { get; set; }
 
-        object IVLPin.Value
+        public sealed override object Value
         {
-            get => Value;
-            set => Value = (T)value;
+            get => ((IVLPin<T>)this).Value;
+            set => ((IVLPin<T>)this).Value = (T)value;
         }
     }
 }

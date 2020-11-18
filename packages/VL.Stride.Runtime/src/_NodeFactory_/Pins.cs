@@ -26,7 +26,7 @@ namespace VL.Stride
 
         public string Remarks => property.GetRemarks();
 
-        public abstract Pin CreatePin(StrideNode node);
+        public abstract Pin<TInstance> CreatePin<TInstance>(StrideNode node) where TInstance : new();
     }
 
     abstract class PinDescription<T> : PinDescription
@@ -60,7 +60,7 @@ namespace VL.Stride
             }
         }
 
-        public override Pin CreatePin(StrideNode node) => new ClassPin<T>(node, property, defaultValue);
+        public override Pin<TInstance> CreatePin<TInstance>(StrideNode node) => new ClassPin<TInstance, T>(node, property, defaultValue);
     }
 
     sealed class StructPinDec<T> : PinDescription<T> 
@@ -73,11 +73,11 @@ namespace VL.Stride
         // Called at compile time, value must be serializable
         public override object DefaultValue => defaultValue;
 
-        public override Pin CreatePin(StrideNode node) => new StructPin<T>(node, property, defaultValue);
+        public override Pin<TInstance> CreatePin<TInstance>(StrideNode node) => new StructPin<TInstance, T>(node, property, defaultValue);
     }
 
-    sealed class ListPinDesc<TList, TElment> : PinDescription<TList>
-        where TList : class, IList<TElment>
+    sealed class ListPinDesc<TList, TElement> : PinDescription<TList>
+        where TList : class, IList<TElement>
     {
         public ListPinDesc(MemberInfo property, string name, TList defaultValue) : base(property, name, defaultValue)
         {
@@ -85,10 +85,10 @@ namespace VL.Stride
 
         public override object DefaultValue => null;
 
-        public override Pin CreatePin(StrideNode node) => new ListPin<TList, TElment>(node, property, defaultValue);
+        public override Pin<TInstance> CreatePin<TInstance>(StrideNode node) => new ListPin<TInstance, TList, TElement>(node, property, defaultValue);
     }
 
-    abstract class Pin : IVLPin
+    abstract class Pin<TInstance> : IVLPin where TInstance : new()
     {
         protected readonly StrideNode node;
 
@@ -99,32 +99,38 @@ namespace VL.Stride
 
         public abstract object Value { get; set; }
 
-        public abstract void ApplyValue(object instance);
+        public abstract void ApplyValue(TInstance instance);
     }
 
-    abstract class Pin<T> : Pin, IVLPin<T>
+    abstract class Pin<TInstance, TValue> : Pin<TInstance>, IVLPin<TValue> where TInstance : new()
     {
-        private static readonly EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
+        private static readonly EqualityComparer<TValue> equalityComparer = EqualityComparer<TValue>.Default;
 
-        protected readonly MemberInfo member;
+        protected readonly Func<TInstance, TValue> getter;
+        protected readonly Action<TInstance, TValue> setter;
         protected readonly bool isReadOnly;
-        protected T value;
+        protected TValue value;
 
-        public Pin(StrideNode node, MemberInfo member, T value) : base(node)
+        public Pin(StrideNode node, MemberInfo member, TValue value) : base(node)
         {
-            this.member = member;
-            this.value = value;
+            getter = member.BuildGetter<TInstance, TValue>();
+
             if (member is PropertyInfo property)
-                this.isReadOnly = property.SetMethod is null || !property.SetMethod.IsPublic;
+                isReadOnly = property.SetMethod is null || !property.SetMethod.IsPublic;
+
+            if (!isReadOnly)
+                setter = member.BuildSetter<TInstance, TValue>();
+
+            this.value = value;
         }
 
         public override object Value
         {
-            get => ((IVLPin<T>)this).Value;
-            set => ((IVLPin<T>)this).Value = (T)value;
+            get => ((IVLPin<TValue>)this).Value;
+            set => ((IVLPin<TValue>)this).Value = (TValue)value;
         }
 
-        T IVLPin<T>.Value
+        TValue IVLPin<TValue>.Value
         {
             get => value;
             set
@@ -138,29 +144,29 @@ namespace VL.Stride
             }
         }
 
-        public override sealed void ApplyValue(object feature)
+        public override sealed void ApplyValue(TInstance instance)
         {
-            ApplyCore(feature, value);
+            ApplyCore(instance, value);
         }
 
-        protected virtual void ApplyCore(object feature, T value)
+        protected virtual void ApplyCore(TInstance instance, TValue value)
         {
             if (isReadOnly)
             {
-                var dst = member.GetValue(feature);
+                var dst = getter(instance);
                 CopyProperties(value, dst);
             }
             else
             {
-                member.SetValue(feature, value);
+                setter(instance, value);
             }
         }
 
-        protected virtual bool ValueEquals(T a, T b) => equalityComparer.Equals(a, b);
+        protected virtual bool ValueEquals(TValue a, TValue b) => equalityComparer.Equals(a, b);
 
         private static void CopyProperties(object src, object dst)
         {
-            foreach (var x in typeof(T).GetStrideProperties())
+            foreach (var x in typeof(TValue).GetStrideProperties())
             {
                 var p = x.Property as PropertyInfo;
                 if (p.SetMethod != null && p.SetMethod.IsPublic && p.GetMethod != null && p.GetMethod.IsPublic)
@@ -169,46 +175,46 @@ namespace VL.Stride
         }
     }
 
-    sealed class ClassPin<T> : Pin<T>
-        where T : class
+    sealed class ClassPin<TInstance, TValue> : Pin<TInstance, TValue> where TInstance : new()
+        where TValue : class
     {
-        readonly T defaultValue;
+        readonly TValue defaultValue;
 
-        public ClassPin(StrideNode node, MemberInfo property, T value) : base(node, property, value)
+        public ClassPin(StrideNode node, MemberInfo property, TValue value) : base(node, property, value)
         {
             defaultValue = value;
         }
 
-        protected override void ApplyCore(object feature, T value)
+        protected override void ApplyCore(TInstance instance, TValue value)
         {
-            base.ApplyCore(feature, value ?? defaultValue);
+            base.ApplyCore(instance, value ?? defaultValue);
         }
     }
 
-    sealed class StructPin<T> : Pin<T>
-        where T : struct
+    sealed class StructPin<TInstance, TValue> : Pin<TInstance, TValue> where TInstance : new()
+        where TValue : struct
     {
-        public StructPin(StrideNode node, MemberInfo property, T value) : base(node, property, value)
+        public StructPin(StrideNode node, MemberInfo property, TValue value) : base(node, property, value)
         {
         }
 
-        protected override void ApplyCore(object feature, T value)
+        protected override void ApplyCore(TInstance instance, TValue value)
         {
-            base.ApplyCore(feature, value);
+            base.ApplyCore(instance, value);
         }
     }
 
-    sealed class ListPin<T, TItem> : Pin<T>
-        where T : class, IList<TItem>
+    sealed class ListPin<TInstance, TList, TItem> : Pin<TInstance, TList> where TInstance : new()
+        where TList : class, IList<TItem>
     {
-        readonly T defaultValue;
+        readonly TList defaultValue;
 
-        public ListPin(StrideNode node, MemberInfo property, T value) : base(node, property, value)
+        public ListPin(StrideNode node, MemberInfo property, TList value) : base(node, property, value)
         {
             defaultValue = value;
         }
 
-        protected override bool ValueEquals(T a, T b)
+        protected override bool ValueEquals(TList a, TList b)
         {
             if (a is null)
                 return b is null;
@@ -217,19 +223,19 @@ namespace VL.Stride
             return a.SequenceEqual(b);
         }
 
-        protected override void ApplyCore(object feature, T value)
+        protected override void ApplyCore(TInstance instance, TList value)
         {
             var src = value ?? defaultValue;
             if (isReadOnly)
             {
-                var dst = member.GetValue(feature) as IList<TItem>;
+                var dst = getter(instance) as IList<TItem>;
                 dst.Clear();
                 foreach (var item in src)
                     dst.Add(item);
             }
             else
             {
-                base.ApplyCore(feature, src);
+                base.ApplyCore(instance, src);
             }
         }
     }

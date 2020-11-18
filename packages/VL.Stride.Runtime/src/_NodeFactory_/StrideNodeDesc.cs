@@ -1,8 +1,10 @@
 ﻿using Stride.Core.Annotations;
+using Stride.Rendering.Materials;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
@@ -11,8 +13,8 @@ using VL.Core.Diagnostics;
 
 namespace VL.Stride
 {
-    class StrideNodeDesc<TMaterial> : IVLNodeDescription, IEnumerable, IInfo
-        where TMaterial : new()
+    class StrideNodeDesc<TInstance> : IVLNodeDescription, IEnumerable, IInfo
+        where TInstance : new()
     {
         private List<PinDescription> inputs;
         private List<StateOutput> outputs;
@@ -21,10 +23,10 @@ namespace VL.Stride
         public StrideNodeDesc(IVLNodeDescriptionFactory factory, string name = default, string category = default, Type stateOutputType = default, bool isFragmented = false)
         {
             Factory = factory;
-            Name = name ?? typeof(TMaterial).Name;
+            Name = name ?? typeof(TInstance).Name;
             Category = category ?? string.Empty;
             Fragmented = isFragmented;
-            this.stateOutputType = stateOutputType ?? typeof(TMaterial);
+            this.stateOutputType = stateOutputType ?? typeof(TInstance);
         }
 
         public bool CopyOnWrite { get; set; } = true;
@@ -45,23 +47,35 @@ namespace VL.Stride
 
                 IEnumerable<PinDescription> Compute()
                 {
-                    var categoryOrdering = typeof(TMaterial).GetCustomAttributes<CategoryOrderAttribute>()
+                    var categoryOrdering = typeof(TInstance).GetCustomAttributes<CategoryOrderAttribute>()
                         .ToDictionary(a => a.Name, a => a.Order);
 
-                    var properties = typeof(TMaterial).GetStrideProperties()
+                    var properties = typeof(TInstance).GetStrideProperties()
                         .GroupBy(p => p.Category)
                         .OrderBy(g => g.Key != null ? categoryOrdering.ValueOrDefault(g.Key, 0) : 0)
                         .SelectMany(g => g.OrderBy(p => p.Order).ThenBy(p => p.Name));
-                    var instance = new TMaterial();
+
+                    var instance = new TInstance();
                     foreach (var p in properties)
                     {
                         var property = p.Property;
-                        var type = property.GetPropertyType();
-                        var pinType = GetPinType(type);
+                        var propertyType = property.GetPropertyType();
 
-                        var defaultValue = property.GetValue(instance);
+                        if (typeof(IComputeScalar).IsAssignableFrom(propertyType))
+                            Debug.WriteLine(property);
+                        else if (typeof(IComputeColor).IsAssignableFrom(propertyType))
+                            Debug.WriteLine(property);
+
+                        var pinDescType = GetPinDescType(propertyType);
+
+                        object defaultValue = null;
+                        if (property is PropertyInfo pi)
+                            defaultValue = pi.GetValue(instance);
+                        else if (property is FieldInfo fi)
+                            defaultValue = fi.GetValue(instance);
+
                         var defaultValueProperty = property.GetCustomAttribute<DefaultValueAttribute>();
-                        if (defaultValueProperty != null && defaultValueProperty.Value != null && defaultValueProperty.Value.GetType() == type)
+                        if (defaultValueProperty != null && defaultValueProperty.Value != null && defaultValueProperty.Value.GetType() == propertyType)
                             defaultValue = defaultValueProperty.Value;
 
                         var name = p.Name;
@@ -75,19 +89,19 @@ namespace VL.Stride
                             if (!name.StartsWith(category))
                                 name = $"{category} {name}";
                         }
-                        yield return (PinDescription)Activator.CreateInstance(pinType, property, name, defaultValue);
+                        yield return (PinDescription)Activator.CreateInstance(pinDescType, property, name, defaultValue);
                     }
                 }
             }
         }
 
-        static Type GetPinType(Type type)
+        static Type GetPinDescType(Type propertyType)
         {
-            if (type.IsValueType)
-                return typeof(StructPinDec<>).MakeGenericType(type);
-            if (TryGetElementType(type, out var elementType))
-                return typeof(ListPinDesc<,>).MakeGenericType(type, elementType);
-            return typeof(ClassPinDec<>).MakeGenericType(type);
+            if (propertyType.IsValueType)
+                return typeof(StructPinDec<>).MakeGenericType(propertyType);
+            if (TryGetElementType(propertyType, out var elementType))
+                return typeof(ListPinDesc<,>).MakeGenericType(propertyType, elementType);
+            return typeof(ClassPinDec<>).MakeGenericType(propertyType);
         }
 
         static bool TryGetElementType(Type type, out Type elementType)
@@ -126,13 +140,13 @@ namespace VL.Stride
 
         public IObservable<object> Invalidated => Observable.Empty<object>();
 
-        public string Summary => typeof(TMaterial).GetSummary();
+        public string Summary => typeof(TInstance).GetSummary();
 
-        public string Remarks => typeof(TMaterial).GetRemarks();
+        public string Remarks => typeof(TInstance).GetRemarks();
 
         public IVLNode CreateInstance(NodeContext context)
         {
-            return new StrideNode<TMaterial>(context, this);
+            return new StrideNode<TInstance>(context, this);
         }
 
         public bool OpenEditor()

@@ -3,6 +3,7 @@ using Stride.Core.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -23,25 +24,57 @@ namespace VL.Stride
             return FLowerAndUpperRegex.Replace(name, m => $"{m.Value[0]} {m.Value[1]}");
         }
 
-        public static object GetValue(this MemberInfo member, object instance)
+        public static Func<TInstance, TValue> BuildGetter<TInstance, TValue>(this MemberInfo member)
         {
             if (member is PropertyInfo p)
-                return p.GetValue(instance);
+                return BuildPropertyGetter<TInstance, TValue>(p);
             else if (member is FieldInfo f)
-                return f.GetValue(instance);
+                return BuildFieldGetter<TInstance, TValue>(f);
             else
                 throw new NotImplementedException();
         }
 
-        public static void SetValue(this MemberInfo member, object instance, object value)
+        public static Action<TInstance, TValue> BuildSetter<TInstance, TValue>(this MemberInfo member)
         {
             if (member is PropertyInfo p)
-                p.SetValue(instance, value);
+                return BuildPropertySetter<TInstance, TValue>(p);
             else if (member is FieldInfo f)
-                f.SetValue(instance, value);
+                return BuildFieldSetter<TInstance, TValue>(f);
             else
                 throw new NotImplementedException();
         }
+
+        public static Func<TInstance, TValue> BuildPropertyGetter<TInstance, TValue>(PropertyInfo member)
+        {
+            return (Func<TInstance, TValue>)member.GetGetMethod().CreateDelegate(typeof(Func<TInstance, TValue>));
+        }
+
+        public static Action<TInstance, TValue> BuildPropertySetter<TInstance, TValue>(PropertyInfo member)
+        {
+            return (Action<TInstance, TValue>)member.GetSetMethod().CreateDelegate(typeof(Action<TInstance, TValue>));
+        }
+
+        public static Func<TInstance, TValue> BuildFieldGetter<TInstance, TValue>(FieldInfo member)
+        {
+            var targetExp = Expression.Parameter(typeof(TInstance), "instance");
+
+            var fieldExp = Expression.Field(targetExp, member);
+
+            return Expression.Lambda<Func<TInstance, TValue>>(fieldExp, targetExp).Compile();
+        }
+
+        public static Action<TInstance, TValue> BuildFieldSetter<TInstance, TValue>(FieldInfo member)
+        {
+            var targetExp = Expression.Parameter(typeof(TInstance), "instance");
+            var valueExp = Expression.Parameter(typeof(TValue), "value");
+
+            var fieldExp = Expression.Field(targetExp, member);
+            var assignExp = Expression.Assign(fieldExp, valueExp);
+
+            return Expression.Lambda<Action<TInstance, TValue>>(assignExp, targetExp, valueExp).Compile();
+        }
+
+        
 
         public static Type GetPropertyType(this MemberInfo member)
         {
