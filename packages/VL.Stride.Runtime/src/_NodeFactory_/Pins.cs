@@ -102,7 +102,7 @@ namespace VL.Stride
         public abstract void ApplyValue(object instance);
     }
 
-    abstract class Pin<T> : Pin
+    abstract class Pin<T> : Pin, IVLPin<T>
     {
         private static readonly EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
 
@@ -120,10 +120,16 @@ namespace VL.Stride
 
         public override object Value
         {
+            get => ((IVLPin<T>)this).Value;
+            set => ((IVLPin<T>)this).Value = (T)value;
+        }
+
+        T IVLPin<T>.Value
+        {
             get => value;
             set
             {
-                var valueT = (T)value;
+                var valueT = value;
                 if (!ValueEquals(valueT, this.value))
                 {
                     this.value = valueT;
