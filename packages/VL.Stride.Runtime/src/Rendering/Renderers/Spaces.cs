@@ -26,10 +26,28 @@ namespace VL.Stride.Rendering
         ManualSize,
     }
 
-    public enum CommonScreenSpace
+    /// <summary>
+    /// Objects are placed inside a space. Setting a space results in setting View and Projection matrices.
+    /// </summary>
+    public enum CommonSpace
     {
         /// <summary>
-        /// Height goes from 1 Top to -1 Bottom. The origin is located in the center.
+        /// The Space objects normally are placed within. 
+        /// </summary>
+        World,
+
+        /// <summary>
+        /// Place objects relative to the camera. (downstream View Matrix get ignored)
+        /// </summary>
+        View,
+
+        /// <summary>
+        /// Place objects relative to the projection. (downstream View and Projection Matrices get ignored)
+        /// </summary>
+        Projection,
+
+        /// <summary>
+        /// Height goes from 1 Top to -1 Bottom. The origin is located in the center. 
         /// </summary>
         Normalized,
 
@@ -52,6 +70,9 @@ namespace VL.Stride.Rendering
 
     internal static class Spaces
     {
+        public const float NearDefault = -100f;
+        public const float FarDefault  = 100f;
+
         static float FDIPFactor = -1;
         public static float DIPFactor
         {
@@ -70,7 +91,7 @@ namespace VL.Stride.Rendering
         /// Further upstream you may use cameras and other transformations and thus invent your own space.
         /// </summary>
         internal static void GetWithinScreenSpaceTransformation(Rectangle viewportBounds, Sizing sizing,
-            float width, float height, RectangleAnchor origin, out Matrix transformation)
+            float width, float height, RectangleAnchor origin, float near, float far, out Matrix transformation)
         {
             transformation = Matrix.Identity;
             switch (sizing)
@@ -129,29 +150,39 @@ namespace VL.Stride.Rendering
                     transformation.M42 = 0;
                     break;
                 case RectangleAnchorVertical.Bottom:
-                    transformation.M42 = 1;
+                    transformation.M42 = -1;
                     break;
                 default:
                     break;
             }
+
+            var depth = near - far;
+            transformation.M33 = 1f / depth; // D3DXMatrixOrthoRH 
+            transformation.M43 = near / depth;
         }
 
-        internal static void GetWithinCommonSpaceTransformation(Rectangle viewportBounds, CommonScreenSpace space, out Matrix transformation)
+        internal static void GetWithinCommonSpaceTransformation(Rectangle viewportBounds, CommonSpace space, out Matrix transformation)
         {
             switch (space)
             {
-                case CommonScreenSpace.Normalized:
-                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.ManualSize, 0, 2, RectangleAnchor.Center, out transformation);
+                case CommonSpace.World:
+                case CommonSpace.View:
+                case CommonSpace.Projection:
+                    throw new NotImplementedException();
+
+                case CommonSpace.Normalized:
+                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.ManualSize, 0, 2, RectangleAnchor.Center, NearDefault, FarDefault, out transformation);
                     break;
-                case CommonScreenSpace.DIP:
-                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.DIP, 0, 2, RectangleAnchor.Center, out transformation);
+                case CommonSpace.DIP:
+                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.DIP, 0, 2, RectangleAnchor.Center, NearDefault, FarDefault, out transformation);
                     break;
-                case CommonScreenSpace.DIPTopLeft:
-                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.DIP, 0, 2, RectangleAnchor.TopLeft, out transformation);
+                case CommonSpace.DIPTopLeft:
+                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.DIP, 0, 2, RectangleAnchor.TopLeft, NearDefault, FarDefault, out transformation);
                     break;
-                case CommonScreenSpace.PixelTopLeft:
-                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.Pixels, 0, 2, RectangleAnchor.TopLeft, out transformation);
+                case CommonSpace.PixelTopLeft:
+                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.Pixels, 0, 2, RectangleAnchor.TopLeft, NearDefault, FarDefault, out transformation);
                     break;
+
                 default:
                     throw new NotImplementedException();
             }
@@ -180,74 +211,153 @@ namespace VL.Stride.Rendering
             }
         }
 
-        public static ViewAndProjectionRestore PushScreenSpace(this RenderView renderView, Matrix screenSpaceMatrix, bool setViewToIdentity)
+        public static ViewAndProjectionRestore PushScreenSpace(this RenderView renderView, 
+            ref Matrix view, ref Matrix projection, 
+            bool ignoreExistingView, bool ignoreExistingProjection)
         {
             var result = new ViewAndProjectionRestore(renderView);
-            if (setViewToIdentity)
-            {
-                renderView.View = Matrix.Identity;
-                renderView.Projection = screenSpaceMatrix;
-                renderView.ViewProjection = screenSpaceMatrix;
-            }
+
+            if (ignoreExistingView)
+                renderView.View = view;
             else
-            {
-                renderView.Projection = screenSpaceMatrix;
-                Matrix.Multiply(ref renderView.View, ref renderView.Projection, out renderView.ViewProjection);
-            }
+                Matrix.Multiply(ref renderView.View, ref view, out renderView.View);
+
+            if (ignoreExistingProjection)
+                renderView.Projection = projection;
+            else
+                Matrix.Multiply(ref renderView.Projection, ref projection, out renderView.Projection);
+                
+            Matrix.Multiply(ref renderView.View, ref renderView.Projection, out renderView.ViewProjection);
+
             return result;
         }
     }
 
 
-
-
-    public class WithinCommonScreenSpace : RendererBase
+    public abstract class AbstractSpaceNode : RendererBase
     {
-        public CommonScreenSpace CommonScreenSpace { get; set; } = CommonScreenSpace.Normalized;
-        public bool SetViewToIdentity { get; set; } = true;
+        public bool IgnoreExistingView { get; set; } = true;
+        public bool IgnoreExistingProjection { get; set; } = true;
+        protected Matrix Identity = Matrix.Identity;
+    }
+
+
+    public class WithinCommonSpace : AbstractSpaceNode
+    {
+        public CommonSpace CommonScreenSpace { get; set; } = CommonSpace.DIPTopLeft;
 
         protected override void DrawInternal(RenderDrawContext context)
         {
-            Spaces.GetWithinCommonSpaceTransformation(context.RenderContext.ViewportState.Viewport0.Bounds, CommonScreenSpace, out var m);
-            using (context.RenderContext.RenderView.PushScreenSpace(m, SetViewToIdentity))
+            switch (CommonScreenSpace)
             {
-                DrawInput(context);
+                case CommonSpace.World:
+                    DrawInput(context);
+                    break;
+                case CommonSpace.View:
+                case CommonSpace.Projection:
+                    Matrix proj;
+                    if (CommonScreenSpace == CommonSpace.View)
+                        proj = context.RenderContext.RenderView.Projection;
+                    else
+                        proj = Identity;
+
+                    using (context.RenderContext.RenderView.PushScreenSpace(
+                        ref Identity, ref proj,
+                        true, true))
+                    {
+                        DrawInput(context);
+                    }
+                    break;
+                case CommonSpace.Normalized:
+                case CommonSpace.DIP:
+                case CommonSpace.DIPTopLeft:
+                case CommonSpace.PixelTopLeft:
+                    Spaces.GetWithinCommonSpaceTransformation(context.RenderContext.ViewportState.Viewport0.Bounds,
+                        CommonScreenSpace, out var m);
+                    using (context.RenderContext.RenderView.PushScreenSpace(
+                        ref Identity, ref m,
+                        true, true))
+                    {
+                        DrawInput(context);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }
 
-    public class WithinCustomScreenSpace : RendererBase
+    public enum ScreenSpaceUnits { Pixels, DIP }
+
+    public enum AspectRatioCorrectionMode { NoCorrection, AutoWidth, AutoHeight }
+
+    public class WithinPhysicalScreenSpace : AbstractSpaceNode
     {
-        public bool DeviceIndependantPixels { get; set; } = true;
+        public ScreenSpaceUnits Units { get; set; } = ScreenSpaceUnits.DIP;
+        public float Scale { get; set; } = 1f;
         public RectangleAnchor Anchor { get; set; } = RectangleAnchor.Center;
-        public bool SetViewToIdentity { get; set; } = true;
 
         protected override void DrawInternal(RenderDrawContext context)
         {
-            var sizing = DeviceIndependantPixels ? Sizing.DIP : Sizing.Pixels;
-            Spaces.GetWithinScreenSpaceTransformation(
-                context.RenderContext.ViewportState.Viewport0.Bounds, sizing, 1f, 1f, Anchor, out var m);
+            Sizing sizing;
+            switch (Units)
+            {
+                case ScreenSpaceUnits.Pixels:
+                    sizing = Sizing.Pixels;
+                    break;
+                case ScreenSpaceUnits.DIP:
+                    sizing = Sizing.DIP;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
 
-            using (context.RenderContext.RenderView.PushScreenSpace(m, SetViewToIdentity))
+            Spaces.GetWithinScreenSpaceTransformation(
+                context.RenderContext.ViewportState.Viewport0.Bounds, sizing, 1f, 1f, Anchor, Spaces.NearDefault, Spaces.FarDefault, out var m);
+
+            m.ScaleVector *= new Vector3(Scale, Scale, 1f); 
+
+            using (context.RenderContext.RenderView.PushScreenSpace(
+                ref Identity, ref m,
+                IgnoreExistingView, IgnoreExistingProjection))
             {
                 DrawInput(context);
             }
         }
     }
 
-    public class WithinManualScreenSpace : RendererBase
+    public class WithinVirtualScreenSpace : AbstractSpaceNode
     {
         public float Width { get; set; } = 2f;
-        public float Height { get; set; } = 2f;      
+        public float Height { get; set; } = 2f;
         public RectangleAnchor Anchor { get; set; } = RectangleAnchor.Center;
-        public bool SetViewToIdentity { get; set; } = true;
+        public AspectRatioCorrectionMode AspectRatioCorrectionMode { get; set; } = AspectRatioCorrectionMode.NoCorrection;
 
         protected override void DrawInternal(RenderDrawContext context)
         {
-            Spaces.GetWithinScreenSpaceTransformation(
-                context.RenderContext.ViewportState.Viewport0.Bounds, Sizing.ManualSize, Width, Height, Anchor, out var m);
+            var width = Width;
+            var height = Height;
 
-            using (context.RenderContext.RenderView.PushScreenSpace(m, SetViewToIdentity))
+            switch (AspectRatioCorrectionMode)
+            {
+                case AspectRatioCorrectionMode.NoCorrection:
+                    break;
+                case AspectRatioCorrectionMode.AutoWidth:
+                    width = 0;
+                    break;
+                case AspectRatioCorrectionMode.AutoHeight:
+                    height = 0;
+                    break;
+                default:
+                    break;
+            }
+
+            Spaces.GetWithinScreenSpaceTransformation(
+                context.RenderContext.ViewportState.Viewport0.Bounds, Sizing.ManualSize, width, height, Anchor, Spaces.NearDefault, Spaces.FarDefault, out var m);
+
+            using (context.RenderContext.RenderView.PushScreenSpace(
+                ref Identity, ref m,
+                IgnoreExistingView, IgnoreExistingProjection))
             {
                 DrawInput(context);
             }

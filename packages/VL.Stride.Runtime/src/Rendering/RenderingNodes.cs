@@ -26,26 +26,30 @@ namespace VL.Stride.Rendering
                 .AddInput(nameof(WithRenderTargetAndViewPort.DepthBuffer), x => x.DepthBuffer, (x, v) => x.DepthBuffer = v)
                 ;
 
-            yield return NewInputRenderBaseNode<WithinCommonScreenSpace>(factory, category: renderingAdvancedCategory)
-                .AddInput(nameof(WithinCommonScreenSpace.CommonScreenSpace), x => x.CommonScreenSpace, (x, v) => x.CommonScreenSpace = v, CommonScreenSpace.Normalized)
-                .AddInput(nameof(WithinCommonScreenSpace.SetViewToIdentity), x => x.SetViewToIdentity, (x, v) => x.SetViewToIdentity = v, true)
+            yield return NewInputRenderBaseNode<WithinCommonSpace>(factory, category: renderingAdvancedCategory)
+                .AddInput(nameof(WithinCommonSpace.CommonScreenSpace), x => x.CommonScreenSpace, (x, v) => x.CommonScreenSpace = v, CommonSpace.DIPTopLeft)
                 ;
 
-            yield return NewInputRenderBaseNode<WithinCustomScreenSpace>(factory, category: renderingAdvancedCategory)
-                .AddInput(nameof(WithinCustomScreenSpace.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Lib.Mathematics.RectangleAnchor.Center)
-                .AddInput(nameof(WithinCustomScreenSpace.DeviceIndependantPixels), x => x.DeviceIndependantPixels, (x, v) => x.DeviceIndependantPixels = v, true)
-                .AddInput(nameof(WithinCustomScreenSpace.SetViewToIdentity), x => x.SetViewToIdentity, (x, v) => x.SetViewToIdentity = v, true)
+            yield return NewInputRenderBaseNode<WithinPhysicalScreenSpace>(factory, category: renderingAdvancedCategory)
+                .AddInput(nameof(WithinPhysicalScreenSpace.Units), x => x.Units, (x, v) => x.Units = v, ScreenSpaceUnits.DIP)
+                .AddInput(nameof(WithinPhysicalScreenSpace.Scale), x => x.Scale, (x, v) => x.Scale = v, 1f)
+                .AddInput(nameof(WithinPhysicalScreenSpace.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Lib.Mathematics.RectangleAnchor.Center)
+                .AddInput(nameof(WithinPhysicalScreenSpace.IgnoreExistingView), x => x.IgnoreExistingView, (x, v) => x.IgnoreExistingView = v, true)
+                .AddInput(nameof(WithinPhysicalScreenSpace.IgnoreExistingProjection), x => x.IgnoreExistingProjection, (x, v) => x.IgnoreExistingProjection = v, true)
                 ;
 
-            yield return NewInputRenderBaseNode<WithinManualScreenSpace>(factory, category: renderingAdvancedCategory)
-                .AddInput(nameof(WithinManualScreenSpace.Width), x => x.Width, (x, v) => x.Width = v, 2f)
-                .AddInput(nameof(WithinManualScreenSpace.Height), x => x.Height, (x, v) => x.Height = v, 2f)
-                .AddInput(nameof(WithinManualScreenSpace.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Lib.Mathematics.RectangleAnchor.Center)
-                .AddInput(nameof(WithinManualScreenSpace.SetViewToIdentity), x => x.SetViewToIdentity, (x, v) => x.SetViewToIdentity = v, true)
+            yield return NewInputRenderBaseNode<WithinVirtualScreenSpace>(factory, category: renderingAdvancedCategory)
+                .AddInput(nameof(WithinVirtualScreenSpace.Width), x => x.Width, (x, v) => x.Width = v, 2f)
+                .AddInput(nameof(WithinVirtualScreenSpace.Height), x => x.Height, (x, v) => x.Height = v, 2f)
+                .AddInput(nameof(WithinVirtualScreenSpace.AspectRatioCorrectionMode), x => x.AspectRatioCorrectionMode, (x, v) => x.AspectRatioCorrectionMode = v, AspectRatioCorrectionMode.NoCorrection)
+                .AddInput(nameof(WithinVirtualScreenSpace.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Lib.Mathematics.RectangleAnchor.Center)
+                .AddInput(nameof(WithinVirtualScreenSpace.IgnoreExistingView), x => x.IgnoreExistingView, (x, v) => x.IgnoreExistingView = v, true)
+                .AddInput(nameof(WithinVirtualScreenSpace.IgnoreExistingProjection), x => x.IgnoreExistingProjection, (x, v) => x.IgnoreExistingProjection = v, true)
                 ;
 
             yield return NewInputRenderBaseNode<WithRenderView>(factory, category: renderingAdvancedCategory)
                 .AddInput(nameof(WithRenderView.RenderView), x => x.RenderView, (x, v) => x.RenderView = v)
+                .AddInput(nameof(WithRenderView.AspectRatioCorrectionMode), x => x.AspectRatioCorrectionMode, (x, v) => x.AspectRatioCorrectionMode = v)
                 ;
 
             yield return NewInputRenderBaseNode<WithWindowInputSource>(factory, category: renderingAdvancedCategory)
