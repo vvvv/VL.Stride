@@ -46,13 +46,12 @@ namespace VL.Stride.Shaders.ShaderFX
         bool compiled;
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            UsedKey = Key ?? UsedKey ?? ContextValueKeyMap2<T>.GetParameterKey(this);
 
             ShaderClassSource shaderClassSource;
 
             if (Key == null)
             {
-                UsedKey = UsedKey ?? ContextValueKeyMap2<T>.GetParameterKey(this);
+                UsedKey = UsedKey ?? GetInputKey(context);
                 context.Parameters.Set(UsedKey, Input);
 
                 // remember parameters for updates from main loop 
@@ -77,6 +76,11 @@ namespace VL.Stride.Shaders.ShaderFX
             compiled = true;
             //no shader source to create here, only the key
             return shaderClassSource;
+        }
+
+        private ValueParameterKey<T> GetInputKey(ShaderGeneratorContext context)
+        {
+            return (ValueParameterKey<T>)context.GetParameterKey(Key ?? GenericValueKeys<T>.GenericValueParameter);
         }
     }
 }

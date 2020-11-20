@@ -1,6 +1,7 @@
 ﻿using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -75,9 +76,9 @@ namespace VL.Stride
                             defaultValue = defaultValueProperty.Value;
 
                         if (pinDescType == typeof(ComputeColorPinDesc))
-                            defaultValue = new Constant<Vector4>(Vector4.One);
+                            defaultValue = new Constant<Vector4>(GetDefaultColor(defaultValue));
                         else if (pinDescType == typeof(ComputeScalarPinDesc))
-                            defaultValue = new Constant<float>(0);
+                            defaultValue = new Constant<float>(GetDefaultFloat(defaultValue));
 
                         var name = p.Name;
                         // Prepend the category to the name (if not already done so)
@@ -94,6 +95,26 @@ namespace VL.Stride
                     }
                 }
             }
+        }
+
+        static float GetDefaultFloat(object defaultValue)
+        {
+            if (defaultValue is ComputeTextureScalar ts)
+                return ts.FallbackValue.Value;
+            else if (defaultValue is ComputeFloat f)
+                return f.Value;
+
+            return 0;
+        }
+
+        static Vector4 GetDefaultColor(object defaultValue)
+        {
+            if (defaultValue is ComputeTextureColor tc)
+                return tc.FallbackValue.Value;
+            else if (defaultValue is ComputeColor f)
+                return f.Value;
+
+            return Vector4.One;
         }
 
         static Type GetPinDescType(Type propertyType)
