@@ -20,7 +20,7 @@ namespace VL.Stride.Shaders.ShaderFX.Functions
             if (body != null)
             {
                 Inputs = new[]
-                       {
+                {
                     new KeyValuePair<string, IComputeNode>("Body", body)
                 }; 
             }

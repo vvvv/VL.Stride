@@ -19,7 +19,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public Var<T> Var { get; }
 
-        string VarName => Var?.VarName ?? "NoVar";
+        string VarName => Var?.VarNameWithID ?? "NoVar";
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {

@@ -24,8 +24,8 @@ namespace VL.Stride.Shaders.ShaderFX.Control
 
             var mixin = shaderClassSource.CreateMixin();
 
-            mixin.AddComposition(Value, "Value", context, baseKeys);
             mixin.AddComposition(Before, "Before", context, baseKeys);
+            mixin.AddComposition(Value, "Value", context, baseKeys);
 
             return mixin;
         }
