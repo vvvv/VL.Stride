@@ -11,7 +11,7 @@ namespace VL.Stride.Shaders.ShaderFX.Functions
 {
     public class Delegate1In1Out<TIn, TOut> : Funk1In1Out<TIn, TOut>
     {
-        public Delegate1In1Out(Var<TIn> arg, Var<TOut> result, IComputeVoid body)
+        public Delegate1In1Out(SetVar<TIn> arg, SetVar<TOut> result, IComputeVoid body)
             : base("Delegate", null)
         {
             Arg = arg;
@@ -27,12 +27,12 @@ namespace VL.Stride.Shaders.ShaderFX.Functions
         }
 
         public IEnumerable<KeyValuePair<string, IComputeNode>> Inputs { get; private set; }
-        public Var<TIn> Arg { get; }
-        public Var<TOut> Result { get; }
+        public SetVar<TIn> Arg { get; }
+        public SetVar<TOut> Result { get; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var shaderSource = GetShaderSourceFunkForType2<TIn, TOut>(ShaderName, Arg.VarName, Result.VarName);
+            var shaderSource = GetShaderSourceFunkForType2<TIn, TOut>(ShaderName, Arg.Declaration.GetNameForContext(context), Result.Declaration.GetNameForContext(context));
 
             //compose if necessary
             if (Inputs != null && Inputs.Any())

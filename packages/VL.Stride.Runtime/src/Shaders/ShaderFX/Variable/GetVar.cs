@@ -6,20 +6,25 @@ using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
-    public class GetVar<T> : ComputeValue<T>
+    public class GetVar<T> : VarBase<T>, IComputeValue<T>
     {
-
-        public GetVar(Var<T> var, bool evaluateChildren = true)
+        public GetVar(DeclVar<T> declaration)
+            : base(declaration)
         {
-            EvaluateChildren = evaluateChildren;
-            Var = var;
+            Var = null;
+            EvaluateChildren = false;
         }
 
+        public GetVar(SetVar<T> var, bool evaluateChildren = true)
+            : base(var.Declaration)
+        {
+            Var = var;
+            EvaluateChildren = evaluateChildren;
+        }
+
+        public SetVar<T> Var { get; }
+
         bool EvaluateChildren { get; }
-
-        public Var<T> Var { get; }
-
-        string VarName => Var?.VarNameWithID ?? "NoVar";
 
         public override IEnumerable<IComputeNode> GetChildren(object context = null)
         {
@@ -30,22 +35,24 @@ namespace VL.Stride.Shaders.ShaderFX
         {
             ShaderClassSource shaderSource;
 
-            if (Var is Constant<T> constant)
+            if (Declaration is DeclConstant<T> constant)
                 shaderSource = GetShaderSourceForType<T>("Constant", GetAsShaderString((dynamic)constant.ConstantValue));
-            else if (Var is Semantic<T> semantic)
-                shaderSource = GetShaderSourceForType<T>("GetSemantic", semantic.VarName, semantic.SemanticName);
+            else if (Declaration is DeclSemantic<T> semantic)
+                shaderSource = GetShaderSourceForType<T>("GetSemantic", semantic.GetNameForContext(context), semantic.SemanticName);
             else
-                shaderSource = Var != null ? GetShaderSourceForType<T>("GetVar", VarName) : GetShaderSourceForType<T>("Compute");
+                shaderSource = Declaration != null ? GetShaderSourceForType<T>("GetVar", Declaration.GetNameForContext(context)) : GetShaderSourceForType<T>("Compute");
 
             return shaderSource;
         }
 
         public override string ToString()
         {
-            if (Var is Semantic<T> semantic)
-                return string.Format("Semantic {0}", semantic.SemanticName);
+            if (Declaration is DeclConstant<T> constant)
+                return string.Format("Constant {0}", constant.VarName);
+            else if (Declaration is DeclSemantic<T> semantic)
+                return string.Format("Get Semantic {0}", semantic.SemanticName);
             else
-                return string.Format("Get {0}", VarName);
-        }
+                return string.Format("Get Var {0}", Declaration.VarName);
+        }      
     }
 }

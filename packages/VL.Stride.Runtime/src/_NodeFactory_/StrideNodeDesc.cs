@@ -76,9 +76,9 @@ namespace VL.Stride
                             defaultValue = defaultValueProperty.Value;
 
                         if (pinDescType == typeof(ComputeColorPinDesc))
-                            defaultValue = new Constant<Vector4>(GetDefaultColor(defaultValue));
+                            defaultValue = ShaderFXUtils.Constant(GetDefaultColor(defaultValue));
                         else if (pinDescType == typeof(ComputeScalarPinDesc))
-                            defaultValue = new Constant<float>(GetDefaultFloat(defaultValue));
+                            defaultValue = ShaderFXUtils.Constant(GetDefaultFloat(defaultValue));
 
                         var name = p.Name;
                         // Prepend the category to the name (if not already done so)

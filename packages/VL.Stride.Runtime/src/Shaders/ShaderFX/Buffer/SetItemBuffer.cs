@@ -28,7 +28,7 @@ namespace VL.Stride.Shaders.ShaderFX
         {
 
             if (BufferDecl == null)
-                return GetShaderSourceForType<T>("ComputeVoid");
+                return GetShaderSourceForType<T>("Compute");
 
             BufferDecl.GenerateShaderSource(context, baseKeys);
 

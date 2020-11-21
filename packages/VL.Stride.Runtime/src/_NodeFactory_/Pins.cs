@@ -93,9 +93,9 @@ namespace VL.Stride
         public override Pin<TInstance> CreatePin<TInstance>(StrideNode node) => new ListPin<TInstance, TList, TOriginal, TElement>(node, property, defaultValue);
     }
 
-    sealed class ComputeScalarPinDesc : PinDescription<Var<float>> 
+    sealed class ComputeScalarPinDesc : PinDescription<SetVar<float>>
     {
-        public ComputeScalarPinDesc(MemberInfo property, string name, Var<float> defaultValue) : base(property, name, defaultValue)
+        public ComputeScalarPinDesc(MemberInfo property, string name, SetVar<float> defaultValue) : base(property, name, defaultValue)
         {
         }
 
@@ -104,9 +104,9 @@ namespace VL.Stride
         public override Pin<TInstance> CreatePin<TInstance>(StrideNode node) => new ComputeScalarPin<TInstance>(node, property, defaultValue);
     }
 
-    sealed class ComputeColorPinDesc : PinDescription<Var<Vector4>>
+    sealed class ComputeColorPinDesc : PinDescription<SetVar<Vector4>>
     {
-        public ComputeColorPinDesc(MemberInfo property, string name, Var<Vector4> defaultValue) : base(property, name, defaultValue)
+        public ComputeColorPinDesc(MemberInfo property, string name, SetVar<Vector4> defaultValue) : base(property, name, defaultValue)
         {
         }
 
@@ -346,19 +346,19 @@ namespace VL.Stride
         }
     }
 
-    sealed class ComputeScalarPin<TInstance> : GPUValuePin<TInstance, Var<float>, IComputeScalar>
+    sealed class ComputeScalarPin<TInstance> : GPUValuePin<TInstance, SetVar<float>, IComputeScalar>
         where TInstance : new()
     {
-        public ComputeScalarPin(StrideNode node, MemberInfo property, Var<float> value) : base(node, property, value)
+        public ComputeScalarPin(StrideNode node, MemberInfo property, SetVar<float> value) : base(node, property, value)
         {
         }
 
-        protected override Func<Var<float>, IComputeScalar> GetValueToOriginal()
+        protected override Func<SetVar<float>, IComputeScalar> GetValueToOriginal()
         {
             return v =>
             {
-                var input = v ?? new Constant<float>(0);
-                var getter = new GetVar<float>(input);
+                var input = v ?? ShaderFXUtils.Constant<float>(0);
+                var getter = ShaderFXUtils.GetVarValue(input);
                 var graph = ShaderGraph.BuildFinalShaderGraph(getter);
                 var finalVar = new Do<float>(graph, getter);
                 return new FloatToComputeFloat(finalVar);
@@ -366,19 +366,19 @@ namespace VL.Stride
         }
     }
 
-    sealed class ComputeColorPin<TInstance> : GPUValuePin<TInstance, Var<Vector4>, IComputeColor>
+    sealed class ComputeColorPin<TInstance> : GPUValuePin<TInstance, SetVar<Vector4>, IComputeColor>
         where TInstance : new()
     {
-        public ComputeColorPin(StrideNode node, MemberInfo property, Var<Vector4> value) : base(node, property, value)
+        public ComputeColorPin(StrideNode node, MemberInfo property, SetVar<Vector4> value) : base(node, property, value)
         {
         }
 
-        protected override Func<Var<Vector4>, IComputeColor> GetValueToOriginal()
+        protected override Func<SetVar<Vector4>, IComputeColor> GetValueToOriginal()
         {
             return v =>
             {
-                var input = v ?? new Constant<Vector4>(Vector4.One);
-                var getter = new GetVar<Vector4>(input);
+                var input = v ?? ShaderFXUtils.Constant(Vector4.One);
+                var getter = ShaderFXUtils.GetVarValue(input);
                 var graph = ShaderGraph.BuildFinalShaderGraph(getter);
                 var finalVar = new Do<Vector4>(graph, getter);
                 return new Float4ToComputeColor(finalVar);

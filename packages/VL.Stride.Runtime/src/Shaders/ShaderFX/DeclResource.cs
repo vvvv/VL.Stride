@@ -64,7 +64,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public override string ToString()
         {
-            return $"{typeof(T).Name} {Key.Name}";
+            return $"{typeof(T).Name} {Key?.Name}";
         }
     }
 }
