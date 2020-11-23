@@ -39,7 +39,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            Key = ContextKeyMap<T>.GetParameterKey(context, this);
+            Key = context.GetKeyForContext(this, Key);
 
             context.Parameters.Set(Key, Resource);
 

@@ -13,41 +13,11 @@ namespace VL.Stride.Shaders.ShaderFX
     /// </summary>
     public class DeclVar<T>
     {
-        static readonly PropertyKey<HashSet<object>> VisitedVarsKey = new PropertyKey<HashSet<object>>("Var.Visited", typeof(HashSet<object>), DefaultValueMetadata.Static<HashSet<object>>(null, keepDefaultValue: true));
-        static readonly PropertyKey<int> VarIDCounterKey = new PropertyKey<int>("Var.VarIDCounter", typeof(int), DefaultValueMetadata.Static(0, keepDefaultValue: true));
-        private readonly string varName;
         private string varNameWithID;
-
-        static int GetAndIncIDCount(ShaderGeneratorContext context)
-        {
-            var result = context.Tags.Get(VarIDCounterKey);
-            context.Tags.Set(VarIDCounterKey, result + 1);
-            return result;
-        }
-
-        bool Visited(ShaderGeneratorContext context)
-        {
-            var visitedVars = context.Tags.Get(VisitedVarsKey);
-
-            if (visitedVars is null)
-            {
-                visitedVars = new HashSet<object>();
-                visitedVars.Add(this);
-                context.Tags.Set(VisitedVarsKey, visitedVars);
-                return false;
-            }
-
-            if (visitedVars.Contains(this))
-                return true;
-
-            visitedVars.Add(this);
-
-            return false;
-        }
 
         public DeclVar(string varName, bool appendID = true)
         {
-            this.varName = varName;
+            VarName = varName;
             AppendID = appendID;
         }
 
@@ -55,8 +25,7 @@ namespace VL.Stride.Shaders.ShaderFX
         {
             if (AppendID)
             {
-                if (!Visited(context))
-                    varNameWithID = VarName + "_" + GetAndIncIDCount(context);
+                varNameWithID = context.GetNameForContext(this, varNameWithID, VarName);
             }
             else
             {
@@ -68,7 +37,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public IComputeValue<T> Value { get; }
 
-        public string VarName => varName;
+        public string VarName { get; }
 
         public bool AppendID { get; }
 

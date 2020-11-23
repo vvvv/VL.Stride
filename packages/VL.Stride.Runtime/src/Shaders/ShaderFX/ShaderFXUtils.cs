@@ -8,6 +8,8 @@ using System.Globalization;
 using Stride.Graphics;
 using Buffer = Stride.Graphics.Buffer;
 using System.Linq;
+using Stride.Core;
+using Stride.Rendering;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
@@ -264,6 +266,56 @@ namespace VL.Stride.Shaders.ShaderFX
                 return (ShaderMixinSource)shaderSource;
 
             return null;
+        }
+
+        static readonly PropertyKey<HashSet<object>> VisitedVarsKey = new PropertyKey<HashSet<object>>("Var.Visited", typeof(HashSet<object>), DefaultValueMetadata.Static<HashSet<object>>(null, keepDefaultValue: true));
+        static readonly PropertyKey<int> VarIDCounterKey = new PropertyKey<int>("Var.VarIDCounter", typeof(int), DefaultValueMetadata.Static(0, keepDefaultValue: true));
+
+        public static string GetNameForContext(this ShaderGeneratorContext context, object uniqueReference, string varNameWithId, string varName)
+        {
+            if (!context.Visited(uniqueReference))
+                varNameWithId = varName + "_" + context.GetAndIncIDCount();
+
+            return varNameWithId;
+        }
+
+        public static ObjectParameterKey<T> GetKeyForContext<T>(this ShaderGeneratorContext context, object uniqueReference, ObjectParameterKey<T> currentKey)
+        {
+            if (!context.Visited(uniqueReference))
+            {
+                var keyName = "Object" + GetNameForType<T>() + "_fx" + context.GetAndIncIDCount();
+                if (!(currentKey?.Name == keyName))
+                    currentKey = ParameterKeys.NewObject<T>(default, keyName);
+            }
+
+            return currentKey;
+        }
+
+        internal static int GetAndIncIDCount(this ShaderGeneratorContext context)
+        {
+            var result = context.Tags.Get(VarIDCounterKey);
+            context.Tags.Set(VarIDCounterKey, result + 1);
+            return result;
+        }
+
+        public static bool Visited(this ShaderGeneratorContext context, object uniqueReference)
+        {
+            var visitedVars = context.Tags.Get(VisitedVarsKey);
+
+            if (visitedVars is null)
+            {
+                visitedVars = new HashSet<object>();
+                visitedVars.Add(uniqueReference);
+                context.Tags.Set(VisitedVarsKey, visitedVars);
+                return false;
+            }
+
+            if (visitedVars.Contains(uniqueReference))
+                return true;
+
+            visitedVars.Add(uniqueReference);
+
+            return false;
         }
     }
 }
