@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class TunnelsKeys
+    public static partial class TunnelsBaseKeys
     {
         public static readonly ValueParameterKey<float> time = ParameterKeys.NewValue<float>();
         public static readonly ValueParameterKey<float> Rotate = ParameterKeys.NewValue<float>(0);
