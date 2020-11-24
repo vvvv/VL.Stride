@@ -479,7 +479,12 @@ namespace VL.Stride.Rendering
 
                         IVLPinDescription _outputTextureInput, _enabledInput;
 
-                        _inputs.Add(_outputTextureInput = new PinDescription<Texture>("Output Texture"));
+                        _inputs.Add(
+                            _outputTextureInput = new PinDescription<Texture>("Output Texture") 
+                            { 
+                                Summary = "The texture to render to. If not set the node creates its own output texture based on the input texture.",
+                                Remarks = "The provided texture must be a render target."
+                            });
                         _inputs.Add(_enabledInput = new PinDescription<bool>("Enabled", defaultValue: true));
 
                         return buildContext.Implementation(
