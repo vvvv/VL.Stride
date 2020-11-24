@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class ColorRamp_TextureFXKeys
+    public static partial class ColorRampBaseKeys
     {
         public static readonly ValueParameterKey<Vector2> FromXY = ParameterKeys.NewValue<Vector2>(new Vector2(0,0));
         public static readonly ValueParameterKey<Vector2> ToXY = ParameterKeys.NewValue<Vector2>(new Vector2(1,1));
