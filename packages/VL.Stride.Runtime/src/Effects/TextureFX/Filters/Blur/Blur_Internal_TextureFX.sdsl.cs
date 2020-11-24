@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Blur_TextureFXKeys
+    public static partial class Blur_Internal_TextureFXKeys
     {
         public static readonly ValueParameterKey<float> Width = ParameterKeys.NewValue<float>();
         public static readonly ValueParameterKey<Vector2> R = ParameterKeys.NewValue<Vector2>();
