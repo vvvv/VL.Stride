@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Levels_TextureFXKeys
+    public static partial class LevelsBaseKeys
     {
         public static readonly ValueParameterKey<Color4> fromBlack = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,0));
         public static readonly ValueParameterKey<Color4> fromWhite = ParameterKeys.NewValue<Color4>(new Color4(0,0,1,1));
