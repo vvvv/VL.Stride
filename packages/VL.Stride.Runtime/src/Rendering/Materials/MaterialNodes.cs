@@ -109,39 +109,7 @@ namespace VL.Stride.Rendering.Materials
                 .AddInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
                 .AddInput(nameof(MaterialBuilder.Misc), x => x.Misc, (x, v) => x.Misc = v)
                 .AddListInput(nameof(MaterialBuilder.Layers), x => x.Layers)
-                .AddCachedOutput("Output", x => x.ToMaterial());
-
-            // Not so sure about these - they work for now
-            yield return nodeFactory.NewNode<LiveComputeColor>(
-                name: nameof(ComputeColor), 
-                category: materialCategory, 
-                copyOnWrite: false,
-                hasStateOutput: false,
-                fragmented: true)
-                .AddInput(
-                    name: nameof(ComputeColor.Value),
-                    getter: x => x.Value,
-                    setter: (x, v) => x.SetValue(v),
-                    defaultValue: Color4.White)
-                .AddInput(nameof(ComputeColor.PremultiplyAlpha), x => x.PremultiplyAlpha, (x, v) => x.PremultiplyAlpha = v, true)
-                .AddOutput<ComputeColor>("Output", x => x);
-
-            yield return nodeFactory.NewNode<LiveComputeFloat>(
-                name: nameof(ComputeFloat), 
-                category: materialCategory, 
-                copyOnWrite: false,
-                hasStateOutput: false,
-                fragmented: true)
-                .AddInput(
-                    name: nameof(ComputeFloat.Value),
-                    getter: x => x.Value,
-                    setter: (x, v) => x.SetValue(v),
-                    defaultValue: 1f)
-                .AddOutput<ComputeFloat>("Output", x => x);
-
-            yield return NewMaterialNode<ComputeTextureColor>(nodeFactory, nameof(ComputeTextureColor), materialCategory);
-
-            yield return NewMaterialNode<ComputeTextureScalar>(nodeFactory, nameof(ComputeTextureScalar), materialCategory);
+                .AddCachedOutput("Output", x => x.ToMaterial());        
         }
 
         static StrideNodeDesc<T> NewMaterialNode<T>(this IVLNodeDescriptionFactory nodeFactory, string name, string category)
