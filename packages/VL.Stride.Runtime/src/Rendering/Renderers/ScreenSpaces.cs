@@ -284,27 +284,24 @@ namespace VL.Stride.Rendering
     {
         public ScreenSpaceUnits Units { get; set; } = ScreenSpaceUnits.DIP;
         public float Scale { get; set; } = 1f;
+        public Vector2 Offset { get; set; }
         public RectangleAnchor Anchor { get; set; } = RectangleAnchor.Center;
 
         protected override void DrawInternal(RenderDrawContext context)
         {
-            Sizing sizing;
-            switch (Units)
-            {
-                case ScreenSpaceUnits.Pixels:
-                    sizing = Sizing.Pixels;
-                    break;
-                case ScreenSpaceUnits.DIP:
-                    sizing = Sizing.DIP;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+            var position = -Offset;
+            var scaling = Scale;
+            if (Units == ScreenSpaceUnits.DIP)
+                scaling *= ScreenSpaces.DIPFactor;   
+            var viewPort = context.RenderContext.ViewportState.Viewport0;
+            var viewPortSize = new Vector2(viewPort.Size.X * 0.01f, viewPort.Size.Y * 0.01f);
+            var size = viewPortSize / scaling;
+            var anchor = ScreenSpaces.FlipAnchorForStride(Anchor);
 
-            ScreenSpaces.GetWithinScreenSpaceTransformation(
-                context.RenderContext.ViewportState.Viewport0.Bounds, sizing, Anchor, ScreenSpaces.NearDefault, ScreenSpaces.FarDefault, out var m);
+            RectangleNodes.Join(ref position, ref size, anchor, out var bounds);
 
-            m.ScaleVector *= new Vector3(Scale, Scale, 1f); 
+            ScreenSpaces.GetWithinVirtualScreenSpaceTransformation(
+                bounds, ScreenSpaces.NearDefault, ScreenSpaces.FarDefault, out var m);
 
             using (context.RenderContext.RenderView.PushScreenSpace(
                 ref Identity, ref m,
