@@ -8,6 +8,7 @@ using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lang.Symbols;
 using VL.Lib.Basics.Resources;
+using VL.Lib.Mathematics;
 using VL.Stride.Rendering.ComputeEffect;
 
 namespace VL.Stride.Rendering
@@ -32,16 +33,17 @@ namespace VL.Stride.Rendering
 
             yield return NewInputRenderBaseNode<WithinPhysicalScreenSpace>(factory, category: renderingAdvancedCategory)
                 .AddInput(nameof(WithinPhysicalScreenSpace.Units), x => x.Units, (x, v) => x.Units = v, ScreenSpaceUnits.DIP)
-                .AddInput(nameof(WithinPhysicalScreenSpace.Scale), x => x.Scale, (x, v) => x.Scale = v, 1f)
                 .AddInput(nameof(WithinPhysicalScreenSpace.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Lib.Mathematics.RectangleAnchor.Center)
+                .AddInput(nameof(WithinPhysicalScreenSpace.Offset), x => x.Offset, (x, v) => x.Offset = v)
+                .AddInput(nameof(WithinPhysicalScreenSpace.Scale), x => x.Scale, (x, v) => x.Scale = v, 1f)
                 .AddInput(nameof(WithinPhysicalScreenSpace.IgnoreExistingView), x => x.IgnoreExistingView, (x, v) => x.IgnoreExistingView = v, true)
                 .AddInput(nameof(WithinPhysicalScreenSpace.IgnoreExistingProjection), x => x.IgnoreExistingProjection, (x, v) => x.IgnoreExistingProjection = v, true)
                 ;
 
+
             yield return NewInputRenderBaseNode<WithinVirtualScreenSpace>(factory, category: renderingAdvancedCategory)
-                .AddInput(nameof(WithinVirtualScreenSpace.Width), x => x.Width, (x, v) => x.Width = v, 2f)
-                .AddInput(nameof(WithinVirtualScreenSpace.Height), x => x.Height, (x, v) => x.Height = v, 2f)
-                .AddInput(nameof(WithinVirtualScreenSpace.AspectRatioCorrectionMode), x => x.AspectRatioCorrectionMode, (x, v) => x.AspectRatioCorrectionMode = v, AspectRatioCorrectionMode.NoCorrection)
+                .AddInput(nameof(WithinVirtualScreenSpace.Bounds), x => x.Bounds, (x, v) => x.Bounds = v, new RectangleF(-0.5f, -0.5f, 1, 1))
+                .AddInput(nameof(WithinVirtualScreenSpace.AspectRatioCorrectionMode), x => x.AspectRatioCorrectionMode, (x, v) => x.AspectRatioCorrectionMode = v, SizeMode.FitOut)
                 .AddInput(nameof(WithinVirtualScreenSpace.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Lib.Mathematics.RectangleAnchor.Center)
                 .AddInput(nameof(WithinVirtualScreenSpace.IgnoreExistingView), x => x.IgnoreExistingView, (x, v) => x.IgnoreExistingView = v, true)
                 .AddInput(nameof(WithinVirtualScreenSpace.IgnoreExistingProjection), x => x.IgnoreExistingProjection, (x, v) => x.IgnoreExistingProjection = v, true)
