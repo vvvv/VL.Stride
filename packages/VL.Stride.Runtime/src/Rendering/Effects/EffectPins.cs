@@ -8,11 +8,14 @@ using Stride.Graphics;
 
 namespace VL.Stride.Rendering
 {
-    abstract class EffectPinDescription : IVLPinDescription
+    abstract class EffectPinDescription : IVLPinDescription, IInfo
     {
         public abstract string Name { get; }
         public abstract Type Type { get; }
         public abstract object DefaultValueBoxed { get; }
+
+        public string Summary { get; set; }
+        public string Remarks { get; set; }
 
         object IVLPinDescription.DefaultValue => DefaultValueBoxed;
 
