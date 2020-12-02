@@ -8,11 +8,47 @@ using System.Globalization;
 using Stride.Graphics;
 using Buffer = Stride.Graphics.Buffer;
 using System.Linq;
+using Stride.Core;
+using Stride.Rendering;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
     public static class ShaderFXUtils
     {
+        public static GetVar<T> GetConstant<T>(T value)
+            => new GetConstant<T>(value);
+
+        public static GetVar<T> GetConstant<T>(DeclConstant<T> declConstant)
+            => new GetVar<T>(declConstant);
+
+        public static GetVar<T> GetSemantic<T>(string semantic, string name = "SemanticValue")
+            => new GetSemantic<T>(semantic, name);
+
+        public static GetVar<T> GetSemantic<T>(DeclSemantic<T> declSemantic)
+            => new GetVar<T>(declSemantic);
+
+        public static SetVar<T> Constant<T>(T value)
+            => new SetVar<T>(null, new DeclConstant<T>(value));
+
+        public static SetVar<T> Semantic<T>(string semantic, string name = "SemanticValue")
+            => new SetVar<T>(null, new DeclSemantic<T>(semantic, name));
+
+        public static SetVar<T> SetSemantic<T>(IComputeValue<T> value, string semantic, string name = "SemanticValue")
+            => new SetVar<T>(value, new DeclSemantic<T>(semantic, name));
+
+        /// <summary>
+        /// Declare a shader variable with name "Var" and initialize it with a value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="valueGetter"></param>
+        /// <returns></returns>
+        public static SetVar<T> DeclAndSetVar<T>(IComputeValue<T> valueGetter)
+        {
+            if (valueGetter is GetVar<T> getVar)
+                return new SetVar<T>(valueGetter, getVar.Declaration);
+            return DeclAndSetVar("Var", valueGetter);
+        }
+
         /// <summary>
         /// Declare a shader variable with a give name and initialize it with a value.
         /// </summary>
@@ -20,8 +56,8 @@ namespace VL.Stride.Shaders.ShaderFX
         /// <param name="varName"></param>
         /// <param name="valueGetter"></param>
         /// <returns></returns>
-        public static Var<T> DeclAndInitVar<T>(string varName, IComputeValue<T> valueGetter)
-            => new Var<T>(valueGetter, varName);
+        public static SetVar<T> DeclAndSetVar<T>(string varName, IComputeValue<T> valueGetter)
+            => new SetVar<T>(valueGetter, new DeclVar<T>(varName));
 
         /// <summary>
         /// Assigns a new value to an existing shader variable.
@@ -30,8 +66,8 @@ namespace VL.Stride.Shaders.ShaderFX
         /// <param name="existingVar"></param>
         /// <param name="valueGetter"></param>
         /// <returns></returns>
-        public static Var<T> AssignVar<T>(this Var<T> existingVar, IComputeValue<T> valueGetter)
-            => new Var<T>(valueGetter, existingVar);
+        public static SetVar<T> SetVar<T>(this SetVar<T> existingVar, IComputeValue<T> valueGetter)
+            => new SetVar<T>(valueGetter, existingVar.Declaration);
 
         /// <summary>
         /// Retrieves the current value of an existing shader variable.
@@ -39,8 +75,10 @@ namespace VL.Stride.Shaders.ShaderFX
         /// <typeparam name="T"></typeparam>
         /// <param name="existingVar"></param>
         /// <returns></returns>
-        public static IComputeValue<T> GetVarValue<T>(this Var<T> existingVar)
-            => new GetVar<T>(existingVar);
+        public static IComputeValue<T> GetVarValue<T>(this SetVar<T> existingVar)
+        {
+            return new GetVar<T>(existingVar);
+        }
 
         public static ShaderClassSource GetShaderSourceForType<T>(string shaderName, params object[] genericArguments)
         {
@@ -193,7 +231,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public static string GetAsShaderString(float f)
         {
-            return string.Format(CultureInfo.InvariantCulture, "float4({0}, {0}, {0}, {0})", f);
+            return string.Format(CultureInfo.InvariantCulture, "{0}", f);
         }
 
         public static string GetAsShaderString(int f)
@@ -228,6 +266,56 @@ namespace VL.Stride.Shaders.ShaderFX
                 return (ShaderMixinSource)shaderSource;
 
             return null;
+        }
+
+        static readonly PropertyKey<HashSet<object>> VisitedVarsKey = new PropertyKey<HashSet<object>>("Var.Visited", typeof(HashSet<object>), DefaultValueMetadata.Static<HashSet<object>>(null, keepDefaultValue: true));
+        static readonly PropertyKey<int> VarIDCounterKey = new PropertyKey<int>("Var.VarIDCounter", typeof(int), DefaultValueMetadata.Static(0, keepDefaultValue: true));
+
+        public static string GetNameForContext(this ShaderGeneratorContext context, object uniqueReference, string varNameWithId, string varName)
+        {
+            if (!context.Visited(uniqueReference))
+                varNameWithId = varName + "_" + context.GetAndIncIDCount();
+
+            return varNameWithId;
+        }
+
+        public static ObjectParameterKey<T> GetKeyForContext<T>(this ShaderGeneratorContext context, object uniqueReference, ObjectParameterKey<T> currentKey)
+        {
+            if (!context.Visited(uniqueReference))
+            {
+                var keyName = "Object" + GetNameForType<T>() + "_fx" + context.GetAndIncIDCount();
+                if (!(currentKey?.Name == keyName))
+                    currentKey = ParameterKeys.NewObject<T>(default, keyName);
+            }
+
+            return currentKey;
+        }
+
+        internal static int GetAndIncIDCount(this ShaderGeneratorContext context)
+        {
+            var result = context.Tags.Get(VarIDCounterKey);
+            context.Tags.Set(VarIDCounterKey, result + 1);
+            return result;
+        }
+
+        public static bool Visited(this ShaderGeneratorContext context, object uniqueReference)
+        {
+            var visitedVars = context.Tags.Get(VisitedVarsKey);
+
+            if (visitedVars is null)
+            {
+                visitedVars = new HashSet<object>();
+                visitedVars.Add(uniqueReference);
+                context.Tags.Set(VisitedVarsKey, visitedVars);
+                return false;
+            }
+
+            if (visitedVars.Contains(uniqueReference))
+                return true;
+
+            visitedVars.Add(uniqueReference);
+
+            return false;
         }
     }
 }

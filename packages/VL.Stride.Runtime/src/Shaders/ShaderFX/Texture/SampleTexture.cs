@@ -48,14 +48,17 @@ namespace VL.Stride.Shaders.ShaderFX
             TextureDecl.GenerateShaderSource(context, baseKeys);
             SamplerDecl.GenerateShaderSource(context, baseKeys);
 
-            var shaderClassSource = GetShaderSourceForType<T>(ShaderName, TextureDecl.Key, TextureDecl.GetResourceGroupName(context), SamplerDecl.Key, SamplerDecl.GetResourceGroupName(context));
+            var isSampleLevel = IsSampleLevel || context.IsNotPixelStage;
+            var shaderName = isSampleLevel ? "SampleLevelTexture" : "SampleTexture";
+            shaderName = IsRW ? shaderName + "RW" : shaderName;
+            var shaderClassSource = GetShaderSourceForType<T>(shaderName, TextureDecl.Key, TextureDecl.GetResourceGroupName(context), SamplerDecl.Key, SamplerDecl.GetResourceGroupName(context));
 
             if (TexCd != null)
             {
                 var mixin = shaderClassSource.CreateMixin();
                 mixin.AddComposition(TexCd, "TexCd", context, baseKeys);
 
-                if (IsSampleLevel && LOD != null)
+                if (isSampleLevel && LOD != null)
                     mixin.AddComposition(LOD, "LOD", context, baseKeys);
 
                 return mixin;

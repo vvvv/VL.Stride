@@ -1,5 +1,7 @@
 ﻿using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
 using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ using System.Reactive.Linq;
 using System.Reflection;
 using VL.Core;
 using VL.Core.Diagnostics;
+using VL.Stride.Shaders.ShaderFX;
 
 namespace VL.Stride
 {
@@ -60,12 +63,6 @@ namespace VL.Stride
                     {
                         var property = p.Property;
                         var propertyType = property.GetPropertyType();
-
-                        if (typeof(IComputeScalar).IsAssignableFrom(propertyType))
-                            Debug.WriteLine(property);
-                        else if (typeof(IComputeColor).IsAssignableFrom(propertyType))
-                            Debug.WriteLine(property);
-
                         var pinDescType = GetPinDescType(propertyType);
 
                         object defaultValue = null;
@@ -77,6 +74,11 @@ namespace VL.Stride
                         var defaultValueProperty = property.GetCustomAttribute<DefaultValueAttribute>();
                         if (defaultValueProperty != null && defaultValueProperty.Value != null && defaultValueProperty.Value.GetType() == propertyType)
                             defaultValue = defaultValueProperty.Value;
+
+                        if (pinDescType == typeof(ComputeColorPinDesc))
+                            defaultValue = ShaderFXUtils.Constant(GetDefaultColor(defaultValue));
+                        else if (pinDescType == typeof(ComputeScalarPinDesc))
+                            defaultValue = ShaderFXUtils.Constant(GetDefaultFloat(defaultValue));
 
                         var name = p.Name;
                         // Prepend the category to the name (if not already done so)
@@ -95,12 +97,36 @@ namespace VL.Stride
             }
         }
 
+        static float GetDefaultFloat(object defaultValue)
+        {
+            if (defaultValue is ComputeTextureScalar ts)
+                return ts.FallbackValue.Value;
+            else if (defaultValue is ComputeFloat f)
+                return f.Value;
+
+            return 0;
+        }
+
+        static Vector4 GetDefaultColor(object defaultValue)
+        {
+            if (defaultValue is ComputeTextureColor tc)
+                return tc.FallbackValue.Value;
+            else if (defaultValue is ComputeColor f)
+                return f.Value;
+
+            return Vector4.One;
+        }
+
         static Type GetPinDescType(Type propertyType)
         {
             if (propertyType.IsValueType)
                 return typeof(StructPinDec<>).MakeGenericType(propertyType);
             if (TryGetElementType(propertyType, out var elementType))
-                return typeof(ListPinDesc<,>).MakeGenericType(propertyType, elementType);
+                return typeof(ListPinDesc<,,>).MakeGenericType(propertyType, propertyType, elementType);
+            if (typeof(IComputeScalar).IsAssignableFrom(propertyType))
+                return typeof(ComputeScalarPinDesc);
+            if (typeof(IComputeColor).IsAssignableFrom(propertyType))
+                return typeof(ComputeColorPinDesc);
             return typeof(ClassPinDec<>).MakeGenericType(propertyType);
         }
 

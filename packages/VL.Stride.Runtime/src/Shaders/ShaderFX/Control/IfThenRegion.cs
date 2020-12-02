@@ -16,25 +16,25 @@ namespace VL.Stride.Shaders.ShaderFX.Control
             var linksToInputPins = new List<IComputeNode>();
 
             //init accum1
-            var accum1InitValue = new Constant<float>(-1);
+            var accum1InitValue = ShaderFXUtils.Constant<float>(-1);
 
-            var getAccum1InitValue = accum1InitValue.GetVarValue();
-            var accum1 = DeclAndInitVar("Accum", getAccum1InitValue);
+            var getAccum1InitValue = ShaderFXUtils.GetVarValue(accum1InitValue);
+            var accum1 = DeclAndSetVar("Accum", getAccum1InitValue);
 
             //body patch begin ----
 
-            var bodyConstant1 = new Constant<float>(1);
-            var bodyConstant2 = new Constant<float>(2);
+            var bodyConstant1 = ShaderFXUtils.Constant<float>(1);
+            var bodyConstant2 = ShaderFXUtils.Constant<float>(2);
 
             //plus node
-            var getPlusIn1 = bodyConstant1.GetVarValue();
-            var getPlusIn2 = bodyConstant2.GetVarValue();
+            var getPlusIn1 = ShaderFXUtils.GetVarValue(bodyConstant1);
+            var getPlusIn2 = ShaderFXUtils.GetVarValue(bodyConstant2);
             var plusExpression = new BinaryOperation<float>("Plus", getPlusIn1, getPlusIn2);
-            var plusResult = DeclAndInitVar("PlusResult", plusExpression);
+            var plusResult = DeclAndSetVar("PlusResult", plusExpression);
 
             //re-assign accumulator 1
-            var getPlusResult = plusResult.GetVarValue();
-            var accum1ReAssign = accum1.AssignVar(getPlusResult);
+            var getPlusResult = ShaderFXUtils.GetVarValue(plusResult);
+            var accum1ReAssign = accum1.SetVar(getPlusResult);
 
             //body patch end ----
 
@@ -43,9 +43,9 @@ namespace VL.Stride.Shaders.ShaderFX.Control
 
             //actual if expression
             //condition
-            var conditionValue = new Constant<bool>(true);
+            var conditionValue = new GetConstant<bool>(true);
 
-            var getConditionValue = conditionValue.GetVarValue();
+            var getConditionValue = conditionValue;
             var ifThenRegion = new IfThenRegion(bodyStatements, getConditionValue, GenerateShaderSource, GetChildren);
 
             //make sure accums are initialized before the region is called

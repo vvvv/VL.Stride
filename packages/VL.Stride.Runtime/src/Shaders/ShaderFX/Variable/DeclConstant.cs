@@ -10,19 +10,19 @@ using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
-    public class Constant<T> : Var<T>
+    public class DeclConstant<T> : DeclVar<T>
     {
         public readonly T ConstantValue;
 
-        public Constant(T value)
-            : base(null, "Constant")
+        public DeclConstant(T value)
+            : base("Constant")
         {
             ConstantValue = value;
         }
 
-        public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        public override string ToString()
         {
-            return new ShaderClassSource("ComputeVoid");
+            return string.Format("Decl Constant {0}", GetAsShaderString(ConstantValue));
         }
     }
 }
