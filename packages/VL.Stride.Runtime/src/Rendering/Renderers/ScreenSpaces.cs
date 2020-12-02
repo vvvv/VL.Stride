@@ -5,25 +5,11 @@ using VL.Lib.Mathematics;
 
 namespace VL.Stride.Rendering
 {
-    /// <summary>
-    /// Allows to adjust the units of the coordinate space 
-    /// </summary>
     internal enum Sizing
     {
-        /// <summary>
-        /// Pixel space. One unit equals 100 acutal pixels.  
-        /// </summary>
         Pixels,
-        /// <summary>
-        /// Device Independant Pixels are like pixels, but respect the scaling factor of the display. One unit equals 100 actual DIP.
-        /// </summary>
         DIP,
-        /// <summary>
-        /// Adjust with and height manually. 
-        /// Setting either width or height to 0 results in computing width depending on height or vice versa, 
-        /// while respecting the aspect ratio of the renderer or viewport.
-        /// </summary>
-        ManualSize,
+        Normalized,
     }
 
     /// <summary>
@@ -67,11 +53,10 @@ namespace VL.Stride.Rendering
         PixelTopLeft,
     };
 
-
-    internal static class Spaces
+    public static class ScreenSpaces
     {
-        public const float NearDefault = -100f;
-        public const float FarDefault  = 100f;
+        internal const float NearDefault = -100f;
+        internal const float FarDefault  = 100f;
 
         static float FDIPFactor = -1;
         public static float DIPFactor
@@ -85,34 +70,14 @@ namespace VL.Stride.Rendering
             }
         }
 
-
-        /// <summary>
-        /// Applies the space by resetting the Transformation.
-        /// Further upstream you may use cameras and other transformations and thus invent your own space.
-        /// </summary>
         internal static void GetWithinScreenSpaceTransformation(Rectangle viewportBounds, Sizing sizing,
-            float width, float height, RectangleAnchor origin, float near, float far, out Matrix transformation)
+            RectangleAnchor origin, float near, float far, out Matrix transformation)
         {
             transformation = Matrix.Identity;
             switch (sizing)
             {
-                case Sizing.ManualSize:
-                    if (width == 0)
-                    {
-                        if (height == 0)
-                        {
-                            width = 1f;
-                            height = 1f;
-                        }
-                        else
-                            width = height * ((float)viewportBounds.Width / viewportBounds.Height);
-                    }
-                    else
-                    if (height == 0)
-                        height = width * ((float)viewportBounds.Height / viewportBounds.Width);
-
-                    transformation.M11 = 2f / width;
-                    transformation.M22 = 2f / height;
+                case Sizing.Normalized:
+                    transformation.M11 = (float)viewportBounds.Height / viewportBounds.Width;
                     break;
                 case Sizing.Pixels:
                     transformation.M11 = 200f / viewportBounds.Width;
@@ -161,6 +126,21 @@ namespace VL.Stride.Rendering
             transformation.M43 = near / depth;
         }
 
+        internal static void GetWithinVirtualScreenSpaceTransformation(RectangleF userBounds,
+            float near, float far, out Matrix transformation)
+        {
+            transformation = Matrix.Identity;
+            transformation.M11 = 2f / userBounds.Width;
+            transformation.M22 = 2f / userBounds.Height;
+
+            transformation.M41 = -userBounds.Center.X * transformation.M11;
+            transformation.M42 = -userBounds.Center.Y * transformation.M22;
+
+            var depth = near - far;
+            transformation.M33 = 1f / depth; // D3DXMatrixOrthoRH 
+            transformation.M43 = near / depth;
+        }
+
         internal static void GetWithinCommonSpaceTransformation(Rectangle viewportBounds, CommonSpace space, out Matrix transformation)
         {
             switch (space)
@@ -171,16 +151,16 @@ namespace VL.Stride.Rendering
                     throw new NotImplementedException();
 
                 case CommonSpace.Normalized:
-                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.ManualSize, 0, 2, RectangleAnchor.Center, NearDefault, FarDefault, out transformation);
+                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.Normalized, RectangleAnchor.Center, NearDefault, FarDefault, out transformation);
                     break;
                 case CommonSpace.DIP:
-                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.DIP, 0, 2, RectangleAnchor.Center, NearDefault, FarDefault, out transformation);
+                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.DIP, RectangleAnchor.Center, NearDefault, FarDefault, out transformation);
                     break;
                 case CommonSpace.DIPTopLeft:
-                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.DIP, 0, 2, RectangleAnchor.TopLeft, NearDefault, FarDefault, out transformation);
+                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.DIP, RectangleAnchor.TopLeft, NearDefault, FarDefault, out transformation);
                     break;
                 case CommonSpace.PixelTopLeft:
-                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.Pixels, 0, 2, RectangleAnchor.TopLeft, NearDefault, FarDefault, out transformation);
+                    GetWithinScreenSpaceTransformation(viewportBounds, Sizing.Pixels, RectangleAnchor.TopLeft, NearDefault, FarDefault, out transformation);
                     break;
 
                 default:
@@ -211,7 +191,7 @@ namespace VL.Stride.Rendering
             }
         }
 
-        public static ViewAndProjectionRestore PushScreenSpace(this RenderView renderView, 
+        internal static ViewAndProjectionRestore PushScreenSpace(this RenderView renderView, 
             ref Matrix view, ref Matrix projection, 
             bool ignoreExistingView, bool ignoreExistingProjection)
         {
@@ -230,6 +210,17 @@ namespace VL.Stride.Rendering
             Matrix.Multiply(ref renderView.View, ref renderView.Projection, out renderView.ViewProjection);
 
             return result;
+        }
+
+
+        public static RectangleAnchor FlipAnchorForStride(RectangleAnchor anchor)
+        {
+            if (((int)anchor & (int)RectangleAnchorVertical.Top) > 0)
+                anchor = (RectangleAnchor)((int)anchor - (int)RectangleAnchorVertical.Top + RectangleAnchorVertical.Bottom);
+            else
+            if (((int)anchor & (int)RectangleAnchorVertical.Bottom) > 0)
+                anchor = (RectangleAnchor)((int)anchor - (int)RectangleAnchorVertical.Bottom + RectangleAnchorVertical.Top);
+            return anchor;
         }
     }
 
@@ -272,7 +263,7 @@ namespace VL.Stride.Rendering
                 case CommonSpace.DIP:
                 case CommonSpace.DIPTopLeft:
                 case CommonSpace.PixelTopLeft:
-                    Spaces.GetWithinCommonSpaceTransformation(context.RenderContext.ViewportState.Viewport0.Bounds,
+                    ScreenSpaces.GetWithinCommonSpaceTransformation(context.RenderContext.ViewportState.Viewport0.Bounds,
                         CommonScreenSpace, out var m);
                     using (context.RenderContext.RenderView.PushScreenSpace(
                         ref Identity, ref m,
@@ -288,8 +279,6 @@ namespace VL.Stride.Rendering
     }
 
     public enum ScreenSpaceUnits { Pixels, DIP }
-
-    public enum AspectRatioCorrectionMode { NoCorrection, AutoWidth, AutoHeight }
 
     public class WithinPhysicalScreenSpace : AbstractSpaceNode
     {
@@ -312,8 +301,8 @@ namespace VL.Stride.Rendering
                     throw new NotImplementedException();
             }
 
-            Spaces.GetWithinScreenSpaceTransformation(
-                context.RenderContext.ViewportState.Viewport0.Bounds, sizing, 1f, 1f, Anchor, Spaces.NearDefault, Spaces.FarDefault, out var m);
+            ScreenSpaces.GetWithinScreenSpaceTransformation(
+                context.RenderContext.ViewportState.Viewport0.Bounds, sizing, Anchor, ScreenSpaces.NearDefault, ScreenSpaces.FarDefault, out var m);
 
             m.ScaleVector *= new Vector3(Scale, Scale, 1f); 
 
@@ -328,32 +317,26 @@ namespace VL.Stride.Rendering
 
     public class WithinVirtualScreenSpace : AbstractSpaceNode
     {
-        public float Width { get; set; } = 2f;
-        public float Height { get; set; } = 2f;
+        public RectangleF Bounds { get; set; } = new RectangleF(-0.5f, -0.5f, 1, 1);
+        public SizeMode AspectRatioCorrectionMode { get; set; } = SizeMode.FitOut;
         public RectangleAnchor Anchor { get; set; } = RectangleAnchor.Center;
-        public AspectRatioCorrectionMode AspectRatioCorrectionMode { get; set; } = AspectRatioCorrectionMode.NoCorrection;
 
         protected override void DrawInternal(RenderDrawContext context)
         {
-            var width = Width;
-            var height = Height;
+            var userBounds = Bounds;
+            var viewPort = context.RenderContext.ViewportState.Viewport0;
+            var viewPortSize = new Vector2(viewPort.Size.X * 0.01f, viewPort.Size.Y * 0.01f);
 
-            switch (AspectRatioCorrectionMode)
-            {
-                case AspectRatioCorrectionMode.NoCorrection:
-                    break;
-                case AspectRatioCorrectionMode.AutoWidth:
-                    width = 0;
-                    break;
-                case AspectRatioCorrectionMode.AutoHeight:
-                    height = 0;
-                    break;
-                default:
-                    break;
-            }
+            AspectRatioUtils.FixAspectRatio(
+                ref userBounds,
+                ref viewPortSize,
+                AspectRatioCorrectionMode,
+                ScreenSpaces.FlipAnchorForStride(Anchor),
+                out var actualBounds
+                );
 
-            Spaces.GetWithinScreenSpaceTransformation(
-                context.RenderContext.ViewportState.Viewport0.Bounds, Sizing.ManualSize, width, height, Anchor, Spaces.NearDefault, Spaces.FarDefault, out var m);
+            ScreenSpaces.GetWithinVirtualScreenSpaceTransformation(
+                actualBounds, ScreenSpaces.NearDefault, ScreenSpaces.FarDefault, out var m);
 
             using (context.RenderContext.RenderView.PushScreenSpace(
                 ref Identity, ref m,

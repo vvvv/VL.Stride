@@ -1,12 +1,13 @@
 ﻿using Stride.Core.Mathematics;
 using Stride.Rendering;
+using VL.Lib.Mathematics;
 
 namespace VL.Stride.Rendering
 {
     public class WithRenderView : RendererBase
     {
         public RenderView RenderView  { get; set; }
-        public AspectRatioCorrectionMode AspectRatioCorrectionMode { get; set; }
+        public SizeMode AspectRatioCorrectionMode { get; set; }
 
         protected override void DrawInternal(RenderDrawContext context)
         {
@@ -24,16 +25,16 @@ namespace VL.Stride.Rendering
                     renderView.ViewSize = new Vector2(viewport.Value.Width, viewport.Value.Height);
                 }
 
-                if (AspectRatioCorrectionMode != AspectRatioCorrectionMode.NoCorrection)
+                if (AspectRatioCorrectionMode != SizeMode.Size)
                 {
                     //var currentAspectRatio = renderView.Projection.M22 / renderView.Projection.M11;
                     //var actualAspectRatio = viewport.Value.Height / viewport.Value.Width;
                     switch (AspectRatioCorrectionMode)
                     {
-                        case AspectRatioCorrectionMode.AutoWidth:
+                        case SizeMode.AutoWidth:
                             renderView.Projection.M11 = renderView.Projection.M22 * viewport.Value.Height / viewport.Value.Width; 
                             break;
-                        case AspectRatioCorrectionMode.AutoHeight:
+                        case SizeMode.AutoHeight:
                             renderView.Projection.M22 = renderView.Projection.M11 * viewport.Value.Width / viewport.Value.Height;
                             break;
                         default:
