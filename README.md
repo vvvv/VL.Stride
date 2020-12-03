@@ -10,10 +10,13 @@ Download: http://visualprogramming.net
 - Install [git lfs](https://git-lfs.github.com/) if you don't have it already
 - Checkout this repository into a folder which doesn't have spaces
 - Run `git lfs install` and `git lfs pull` in the git bash (could be that this step is not needed)
-- Install a vvvv gamma version from teamcity.vvvv.org as specified by the `VLVersion` property in `packages\Directory.Build.props`
 - Open the solution `packages\VL.Stride.sln`, switch it to `Release` mode, set VL.Stride as startup project and press `Ctrl+F5` to start vvvv. (VL.Stride is configured as a source package automatically)
 
+The build process will download and install the required vvvv gamma version in case it's not installed yet.
+
 Compiling and running in `Debug` requires the [graphic diagnostic tools](https://docs.microsoft.com/en-us/windows/uwp/gaming/use-the-directx-runtime-and-visual-studio-graphics-diagnostic-features) to be installed.
+
+In case one wants to use a different vvvv gamma installation its path can be set with the `VVVV_BinPath` property in `packages\Directory.Build.props`.
 
 ## Credits
 
