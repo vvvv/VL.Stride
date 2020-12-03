@@ -12,7 +12,12 @@
     stage override float4 Shading()
     {
         float4 c = InTex();
-        c = (c - fromBlack)/(fromWhite - fromBlack);
+        float4 fromDelta = fromWhite - fromBlack;
+        if (fromDelta.x == 0) fromDelta.x = 0.0000001;
+        if (fromDelta.y == 0) fromDelta.y = 0.0000001;
+        if (fromDelta.z == 0) fromDelta.z = 0.0000001;
+        if (fromDelta.w == 0) fromDelta.w = 0.0000001;
+        c = (c - fromBlack) / fromDelta;
         c = sign(c) * pow(abs(c), Gamma);
         c = Clamp(c);
 	    c = c * (toWhite - toBlack) + toBlack;
