@@ -51,7 +51,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
             if (Key == null)
             {
-                UsedKey = UsedKey ?? GetInputKey(context);
+                UsedKey = GetInputKey(context);
                 context.Parameters.Set(UsedKey, Input);
 
                 // remember parameters for updates from main loop 
