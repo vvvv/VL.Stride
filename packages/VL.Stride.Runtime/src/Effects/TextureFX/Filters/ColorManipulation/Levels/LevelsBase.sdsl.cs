@@ -18,10 +18,10 @@ namespace Stride.Rendering
 {
     public static partial class LevelsBaseKeys
     {
-        public static readonly ValueParameterKey<Color4> fromBlack = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,0));
-        public static readonly ValueParameterKey<Color4> fromWhite = ParameterKeys.NewValue<Color4>(new Color4(0,0,1,1));
+        public static readonly ValueParameterKey<Color4> fromBlack = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));
+        public static readonly ValueParameterKey<Color4> fromWhite = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
         public static readonly ValueParameterKey<Color4> toBlack = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));
-        public static readonly ValueParameterKey<Color4> toWhite = ParameterKeys.NewValue<Color4>(new Color4(0,0,1,1));
+        public static readonly ValueParameterKey<Color4> toWhite = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
         public static readonly ValueParameterKey<float> Gamma = ParameterKeys.NewValue<float>(1.0f);
     }
 }

@@ -1,9 +1,9 @@
 ﻿shader LevelsBase : TextureFX
 {
-    [Color] float4 fromBlack = float4(0,0,0,0);
-    [Color] float4 fromWhite = float4(0,0,1,1);
+    [Color] float4 fromBlack = float4(0,0,0,1);
+    [Color] float4 fromWhite = float4(1,1,1,1);
     [Color] float4 toBlack = float4(0,0,0,1);
-    [Color] float4 toWhite = float4(0,0,1,1);
+    [Color] float4 toWhite = float4(1,1,1,1);
 
     float Gamma = 1.0f;
 
@@ -13,11 +13,9 @@
     {
         float4 c = InTex();
         float4 fromDelta = fromWhite - fromBlack;
-        if (fromDelta.x == 0) fromDelta.x = 0.0000001;
-        if (fromDelta.y == 0) fromDelta.y = 0.0000001;
-        if (fromDelta.z == 0) fromDelta.z = 0.0000001;
-        if (fromDelta.w == 0) fromDelta.w = 0.0000001;
-        c = (c - fromBlack) / fromDelta;
+        float4 cMin = c - fromBlack;
+        c = cMin / fromDelta;
+        c = isnan(c) ? cMin : c;
         c = sign(c) * pow(abs(c), Gamma);
         c = Clamp(c);
 	    c = c * (toWhite - toBlack) + toBlack;
