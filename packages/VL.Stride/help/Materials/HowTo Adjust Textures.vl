@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="Qak0REvSRYOQE8pkzElJ5r" LanguageVersion="2020.3.0.33" Version="0.128">
-  <NugetDependency Id="Rq1hxtGm4prLgcbPnzpr1q" Location="VL.CoreLib" Version="2020.3.0-0033-gaf8186b882" />
+<Document xmlns:p="property" Id="Qak0REvSRYOQE8pkzElJ5r" LanguageVersion="2020.3.0.72" Version="0.128">
+  <NugetDependency Id="Rq1hxtGm4prLgcbPnzpr1q" Location="VL.CoreLib" Version="2020.3.0-0072-g169e836da4" />
   <Patch Id="EflKC5Ddi2BN1mZWLv60qK">
     <Canvas Id="NBB3K3ClmntMsyQxzUGU5L" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -33,6 +33,7 @@
             </Pin>
             <Pin Id="RDWw4Fhr13NOklqg1vSFiN" Name="Material" Kind="InputPin" />
             <Pin Id="SRWcvBwxZoiLZvC1CdVmR6" Name="Is Shadow Caster" Kind="InputPin" />
+            <Pin Id="CmCHb0OvxaRO5D9lj31zIB" Name="Components" Kind="InputPin" />
             <Pin Id="PHF72iRF8PPMNbLZfykPDk" Name="Children" Kind="InputPin" />
             <Pin Id="NlIzFK2uXazOhjq9GQ4tRK" Name="Name" Kind="InputPin" />
             <Pin Id="OMSAuqUVLmIOUpfDYGy4F2" Name="Enabled" Kind="InputPin" />
@@ -56,21 +57,13 @@
             </p:NodeReference>
             <Pin Id="DyNdtQKo37DMr7VzH4fW9r" Name="Transformation" Kind="InputPin" />
             <Pin Id="CdbEtk3N8fUMl61QDt8DUa" Name="Cube Map" Kind="InputPin" />
-            <Pin Id="MeXNoiNTL0NORvwc8jsZrv" Name="Is Specular Only" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Boolean" />
-              </p:TypeAnnotation>
-            </Pin>
+            <Pin Id="MeXNoiNTL0NORvwc8jsZrv" Name="Is Specular Only" Kind="InputPin" />
             <Pin Id="VXOzYbVS7vdQcvzlUB0CWM" Name="Intensity" Kind="InputPin" DefaultValue="5">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="KF0I45NBHbAPhjm3ECO3DR" Name="Background Intensity" Kind="InputPin">
-              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                <Choice Kind="TypeFlag" Name="Float32" />
-              </p:TypeAnnotation>
-            </Pin>
+            <Pin Id="KF0I45NBHbAPhjm3ECO3DR" Name="Background Intensity" Kind="InputPin" />
             <Pin Id="MKMD4jKvuudNvstyJkZXUb" Name="Background Enabled" Kind="InputPin" DefaultValue="False">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
@@ -136,20 +129,21 @@
             <Pin Id="H3xa8afmwZALVxkGbgHXiG" Name="Input Source" Kind="OutputPin" />
           </Node>
           <Node Bounds="506,525,205,19" Id="BnGdUMFTilVLa0ZdmAOuei">
-            <p:NodeReference LastCategoryFullName="Stride.Materials" LastSymbolSource="VL.Stride.Rendering.vl">
+            <p:NodeReference LastCategoryFullName="Stride.Materials" LastSymbolSource="VL.Stride.Rendering.ShaderFX.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="PBRMaterial (Texture)" />
+              <Choice Kind="ProcessAppFlag" Name="PBRMaterial (Metallic Texture)" />
             </p:NodeReference>
-            <Pin Id="J6h5O7mLjxuOVUbRry0b5Z" Name="Diffuse Texture" Kind="InputPin" />
-            <Pin Id="DTZWUGTGp3XLIw7JpbUtkP" Name="Diffuse Fallback Color" Kind="InputPin" />
-            <Pin Id="G0QX491VCj8PBEf9B2cr1O" Name="Metalness Texture" Kind="InputPin" />
+            <Pin Id="FS2PplzvokUNE22WkJFEua" Name="Diffuse Texture" Kind="InputPin" />
+            <Pin Id="JabyWuue6beMFB5RtJoEzu" Name="Diffuse Fallback Color" Kind="InputPin" />
+            <Pin Id="UzGLL4ELWXxPCVOAcb63Dd" Name="Metalness Texture" Kind="InputPin" />
             <Pin Id="JZGaR4ZMUSkNde9ZmqeTZu" Name="Metalness Fallback Value" Kind="InputPin" />
             <Pin Id="Ty0MFN4AS1NPTqxRoCROPn" Name="Roughness Texture" Kind="InputPin" />
-            <Pin Id="FEWFOYaq4plMOl0nFQetbL" Name="Roughness Fallback Value" Kind="InputPin" />
-            <Pin Id="PUXGc9V7IaDP97hKCqxV3f" Name="Normal Texture" Kind="InputPin" />
-            <Pin Id="MDfMWJ7alKIO4xmpzzsByf" Name="Normal Scale and Offset" Kind="InputPin" />
-            <Pin Id="KojB8Ppmn0VLQv0HTswZ57" Name="Normal Reconstruct Z" Kind="InputPin" />
+            <Pin Id="GLQYetorJp1OJ3nKHCsIP9" Name="Roughness Fallback Value" Kind="InputPin" />
+            <Pin Id="L9EezP38dWWP4nmT24r8a7" Name="Normal Texture" Kind="InputPin" />
+            <Pin Id="UCee2y1k2xbMywWs846rDs" Name="Normal Scale and Offset" Kind="InputPin" />
+            <Pin Id="RbBJFeFxxXkOddNFhwIYcO" Name="Normal Reconstruct Z" Kind="InputPin" />
             <Pin Id="SPJtR02Ta09QJZekItWmpk" Name="Transparency" Kind="InputPin" />
+            <Pin Id="RgPLuqWQxxLPQ31HhGBDCL" Name="Layers" Kind="InputPin" />
             <Pin Id="ENDizcjgG4tOSRieVEGTKk" Name="Cull Mode" Kind="InputPin" />
             <Pin Id="JdywM05tR7QNxxdVXNhbKN" Name="Output" Kind="OutputPin" />
           </Node>
@@ -285,5 +279,5 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.8.0-g4d798294da" />
+  <NugetDependency Id="O4cakjMGDhTLmzD7Q9aWkK" Location="VL.Stride" Version="0.8.87-g05eef96666" />
 </Document>
