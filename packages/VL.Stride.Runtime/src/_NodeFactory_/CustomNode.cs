@@ -516,6 +516,7 @@ namespace VL.Stride
                 : base(node, instance, getter, setter, initialValue)
             {
                 this.equals = equals ?? EqualityComparer<T>.Default.Equals;
+                lastValue = initialValue;
             }
 
             public override T Value
