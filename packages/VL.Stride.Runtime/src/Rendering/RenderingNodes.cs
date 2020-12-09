@@ -63,6 +63,11 @@ namespace VL.Stride.Rendering
                 .AddOutput(nameof(GetWindowInputSource.InputSource), x => x.InputSource)
             ;
 
+            yield return factory.NewNode(c => new MipMapGenerator(c), name: "MipMap", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)
+                .AddInput("Input", x => x.InputTexture, (x, v) => x.InputTexture = v)
+                .AddInput(nameof(MipMapGenerator.MaxMipMapCount), x => x.MaxMipMapCount, (x, v) => x.MaxMipMapCount = v)
+                .AddOutput("Output", x => { x.ScheduleForRendering(); return x.OutputTexture; });
+
             // Compute effect dispatchers
             var dispatchersCategory = $"{renderingAdvancedCategory}.ComputeEffect";
             yield return factory.NewNode<DirectComputeEffectDispatcher>(name: "DirectDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)
