@@ -28,10 +28,10 @@ namespace VL.Stride.Rendering.Materials
 
             // Geometry
             yield return nodeFactory.NewNode<GeometryAttributes>(category: materialCategory, fragmented: true)
-                .AddInput(nameof(GeometryAttributes.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v)
-                .AddInput(nameof(GeometryAttributes.Displacement), x => x.Displacement, (x, v) => x.Displacement = v)
-                .AddInput(nameof(GeometryAttributes.Surface), x => x.Surface, (x, v) => x.Surface = v)
-                .AddInput(nameof(GeometryAttributes.MicroSurface), x => x.MicroSurface, (x, v) => x.MicroSurface = v);
+                .AddCachedInput(nameof(GeometryAttributes.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v)
+                .AddCachedInput(nameof(GeometryAttributes.Displacement), x => x.Displacement, (x, v) => x.Displacement = v)
+                .AddCachedInput(nameof(GeometryAttributes.Surface), x => x.Surface, (x, v) => x.Surface = v)
+                .AddCachedInput(nameof(GeometryAttributes.MicroSurface), x => x.MicroSurface, (x, v) => x.MicroSurface = v);
 
             yield return NewMaterialNode<MaterialTessellationFlatFeature>(nodeFactory, "FlatTessellation", geometryCategory);
             yield return NewMaterialNode<MaterialTessellationPNFeature>(nodeFactory, "PointNormalTessellation", geometryCategory);
@@ -41,12 +41,12 @@ namespace VL.Stride.Rendering.Materials
 
             // Shading
             yield return nodeFactory.NewNode<ShadingAttributes>(category: materialCategory, fragmented: true)
-                .AddInput(nameof(ShadingAttributes.Diffuse), x => x.Diffuse, (x, v) => x.Diffuse = v)
-                .AddInput(nameof(ShadingAttributes.DiffuseModel), x => x.DiffuseModel, (x, v) => x.DiffuseModel = v)
-                .AddInput(nameof(ShadingAttributes.Specular), x => x.Specular, (x, v) => x.Specular = v)
-                .AddInput(nameof(ShadingAttributes.SpecularModel), x => x.SpecularModel, (x, v) => x.SpecularModel = v)
-                .AddInput(nameof(ShadingAttributes.Emissive), x => x.Emissive, (x, v) => x.Emissive = v)
-                .AddInput(nameof(ShadingAttributes.SubsurfaceScattering), x => x.SubsurfaceScattering, (x, v) => x.SubsurfaceScattering = v);
+                .AddCachedInput(nameof(ShadingAttributes.Diffuse), x => x.Diffuse, (x, v) => x.Diffuse = v)
+                .AddCachedInput(nameof(ShadingAttributes.DiffuseModel), x => x.DiffuseModel, (x, v) => x.DiffuseModel = v)
+                .AddCachedInput(nameof(ShadingAttributes.Specular), x => x.Specular, (x, v) => x.Specular = v)
+                .AddCachedInput(nameof(ShadingAttributes.SpecularModel), x => x.SpecularModel, (x, v) => x.SpecularModel = v)
+                .AddCachedInput(nameof(ShadingAttributes.Emissive), x => x.Emissive, (x, v) => x.Emissive = v)
+                .AddCachedInput(nameof(ShadingAttributes.SubsurfaceScattering), x => x.SubsurfaceScattering, (x, v) => x.SubsurfaceScattering = v);
 
             yield return NewMaterialNode<MaterialDiffuseMapFeature>(nodeFactory, "Diffuse", shadingCategory);
 
@@ -59,7 +59,7 @@ namespace VL.Stride.Rendering.Materials
 
             yield return nodeFactory.NewNode<MaterialSpecularCelShadingModelFeature>("CelShading", specularModelCategory, fragmented: true)
                 .AddInputs()
-                .AddInput(nameof(MaterialSpecularCelShadingModelFeature.RampFunction), x => x.RampFunction, (x, v) => x.RampFunction = v);
+                .AddCachedInput(nameof(MaterialSpecularCelShadingModelFeature.RampFunction), x => x.RampFunction, (x, v) => x.RampFunction = v);
 
             yield return NewMaterialNode<MaterialCelShadingLightDefault>(nodeFactory, "DefaultLightFunction", $"{specularModelCategory}.CelShading");
             yield return NewMaterialNode<MaterialCelShadingLightRamp>(nodeFactory, "RampLightFunction", $"{specularModelCategory}.CelShading");
@@ -72,7 +72,7 @@ namespace VL.Stride.Rendering.Materials
             var defaultGlass = new MaterialSpecularThinGlassModelFeature();
             yield return nodeFactory.NewNode<MaterialSpecularThinGlassModelFeature>("Glass", specularModelCategory, fragmented: true)
                 .AddInputs()
-                .AddInput(nameof(MaterialSpecularThinGlassModelFeature.RefractiveIndex), x => x.RefractiveIndex, (x, v) => x.RefractiveIndex = v, defaultGlass.RefractiveIndex);
+                .AddCachedInput(nameof(MaterialSpecularThinGlassModelFeature.RefractiveIndex), x => x.RefractiveIndex, (x, v) => x.RefractiveIndex = v, defaultGlass.RefractiveIndex);
 
             yield return NewMaterialNode<MaterialEmissiveMapFeature>(nodeFactory, "Emissive", shadingCategory);
             yield return NewMaterialNode<MaterialSubsurfaceScatteringFeature>(nodeFactory, "SubsurfaceScattering", shadingCategory);
@@ -83,11 +83,11 @@ namespace VL.Stride.Rendering.Materials
 
             // Misc
             yield return nodeFactory.NewNode<MiscAttributes>(category: materialCategory, fragmented: true)
-                .AddInput(nameof(MiscAttributes.Occlusion), x => x.Occlusion, (x, v) => x.Occlusion = v)
-                .AddInput(nameof(MiscAttributes.Transparency), x => x.Transparency, (x, v) => x.Transparency = v)
-                .AddInput(nameof(MiscAttributes.Overrides), x => x.Overrides, (x, v) => x.Overrides = v)
-                .AddInput(nameof(MiscAttributes.CullMode), x => x.CullMode, (x, v) => x.CullMode = v, CullMode.Back)
-                .AddInput(nameof(MiscAttributes.ClearCoat), x => x.ClearCoat, (x, v) => x.ClearCoat = v);
+                .AddCachedInput(nameof(MiscAttributes.Occlusion), x => x.Occlusion, (x, v) => x.Occlusion = v)
+                .AddCachedInput(nameof(MiscAttributes.Transparency), x => x.Transparency, (x, v) => x.Transparency = v)
+                .AddCachedInput(nameof(MiscAttributes.Overrides), x => x.Overrides, (x, v) => x.Overrides = v)
+                .AddCachedInput(nameof(MiscAttributes.CullMode), x => x.CullMode, (x, v) => x.CullMode = v, CullMode.Back)
+                .AddCachedInput(nameof(MiscAttributes.ClearCoat), x => x.ClearCoat, (x, v) => x.ClearCoat = v);
             yield return NewMaterialNode<MaterialOcclusionMapFeature>(nodeFactory, "Occlusion", miscCategory);
             yield return NewMaterialNode<MaterialTransparencyAdditiveFeature>(nodeFactory, "Additive", transparencyCategory);
             yield return NewMaterialNode<MaterialTransparencyBlendFeature>(nodeFactory, "Blend", transparencyCategory);
@@ -105,10 +105,10 @@ namespace VL.Stride.Rendering.Materials
                 ctor: ctx => new MaterialBuilder(ctx),
                 hasStateOutput: false, 
                 fragmented: true)
-                .AddInput(nameof(MaterialBuilder.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
-                .AddInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
-                .AddInput(nameof(MaterialBuilder.Misc), x => x.Misc, (x, v) => x.Misc = v)
-                .AddListInput(nameof(MaterialBuilder.Layers), x => x.Layers)
+                .AddCachedInput(nameof(MaterialBuilder.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
+                .AddCachedInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
+                .AddCachedInput(nameof(MaterialBuilder.Misc), x => x.Misc, (x, v) => x.Misc = v)
+                .AddCachedListInput(nameof(MaterialBuilder.Layers), x => x.Layers)
                 .AddCachedOutput("Output", x => x.ToMaterial());        
         }
 
@@ -123,10 +123,10 @@ namespace VL.Stride.Rendering.Materials
         {
             var i = new T();
             return node
-                .AddInput(nameof(MaterialSpecularMicrofacetModelFeature.Fresnel), x => x.Fresnel.ToEnum(), (x, v) => x.Fresnel = v.ToFunction(), i.Fresnel.ToEnum())
-                .AddInput(nameof(MaterialSpecularMicrofacetModelFeature.Visibility), x => x.Visibility.ToEnum(), (x, v) => x.Visibility = v.ToFunction(), i.Visibility.ToEnum())
-                .AddInput(nameof(MaterialSpecularMicrofacetModelFeature.NormalDistribution), x => x.NormalDistribution.ToEnum(), (x, v) => x.NormalDistribution = v.ToFunction(), i.NormalDistribution.ToEnum())
-                .AddInput(nameof(MaterialSpecularMicrofacetModelFeature.Environment), x => x.Environment.ToEnum(), (x, v) => x.Environment = v.ToFunction(), i.Environment.ToEnum());
+                .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.Fresnel), x => x.Fresnel.ToEnum(), (x, v) => x.Fresnel = v.ToFunction(), i.Fresnel.ToEnum())
+                .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.Visibility), x => x.Visibility.ToEnum(), (x, v) => x.Visibility = v.ToFunction(), i.Visibility.ToEnum())
+                .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.NormalDistribution), x => x.NormalDistribution.ToEnum(), (x, v) => x.NormalDistribution = v.ToFunction(), i.NormalDistribution.ToEnum())
+                .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.Environment), x => x.Environment.ToEnum(), (x, v) => x.Environment = v.ToFunction(), i.Environment.ToEnum());
         }
 
         static CustomNodeDesc<T> AddStateOutputWithRefEquality<T>(this CustomNodeDesc<T> node)
@@ -135,10 +135,10 @@ namespace VL.Stride.Rendering.Materials
             var i = new T();
             return node
                 .AddOutput("Output", x => x)
-                .AddInput(nameof(MaterialSpecularMicrofacetModelFeature.Fresnel), x => x.Fresnel.ToEnum(), (x, v) => x.Fresnel = v.ToFunction(), i.Fresnel.ToEnum())
-                .AddInput(nameof(MaterialSpecularMicrofacetModelFeature.Visibility), x => x.Visibility.ToEnum(), (x, v) => x.Visibility = v.ToFunction(), i.Visibility.ToEnum())
-                .AddInput(nameof(MaterialSpecularMicrofacetModelFeature.NormalDistribution), x => x.NormalDistribution.ToEnum(), (x, v) => x.NormalDistribution = v.ToFunction(), i.NormalDistribution.ToEnum())
-                .AddInput(nameof(MaterialSpecularMicrofacetModelFeature.Environment), x => x.Environment.ToEnum(), (x, v) => x.Environment = v.ToFunction(), i.Environment.ToEnum());
+                .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.Fresnel), x => x.Fresnel.ToEnum(), (x, v) => x.Fresnel = v.ToFunction(), i.Fresnel.ToEnum())
+                .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.Visibility), x => x.Visibility.ToEnum(), (x, v) => x.Visibility = v.ToFunction(), i.Visibility.ToEnum())
+                .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.NormalDistribution), x => x.NormalDistribution.ToEnum(), (x, v) => x.NormalDistribution = v.ToFunction(), i.NormalDistribution.ToEnum())
+                .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.Environment), x => x.Environment.ToEnum(), (x, v) => x.Environment = v.ToFunction(), i.Environment.ToEnum());
         }
 
         class LiveComputeFloat : ComputeFloat

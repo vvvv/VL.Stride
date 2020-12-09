@@ -33,7 +33,7 @@ namespace VL.Stride.Engine
                 },
                 category: strideCategoryAdvanced,
                 copyOnWrite: false)
-                .AddInput(nameof(SceneInstanceSystem.RootScene), x => x.RootScene, (x, v) => x.RootScene = v)
+                .AddCachedInput(nameof(SceneInstanceSystem.RootScene), x => x.RootScene, (x, v) => x.RootScene = v)
                 .AddOutput(nameof(SceneInstanceSystem.SceneInstance), x => x.SceneInstance);
 
             yield return new CustomNodeDesc<SceneInstanceRenderer>(factory,
@@ -46,26 +46,26 @@ namespace VL.Stride.Engine
                 },
                 category: strideCategoryAdvanced,
                 copyOnWrite: false)
-                .AddInput(nameof(SceneInstanceRenderer.SceneInstance), x => x.SceneInstance, (x, v) => x.SceneInstance = v)
-                .AddInput(nameof(SceneInstanceRenderer.GraphicsCompositor), x => x.GraphicsCompositor, (x, v) => x.GraphicsCompositor = v);
+                .AddCachedInput(nameof(SceneInstanceRenderer.SceneInstance), x => x.SceneInstance, (x, v) => x.SceneInstance = v)
+                .AddCachedInput(nameof(SceneInstanceRenderer.GraphicsCompositor), x => x.GraphicsCompositor, (x, v) => x.GraphicsCompositor = v);
 
             // Light components
             var lightsCategory = "Stride.Lights.Advanced";
 
             yield return factory.NewComponentNode<LightComponent>(lightsCategory)
-                .AddInput(nameof(LightComponent.Type), x => x.Type, (x, v) => x.Type = v)
-                .AddInput(nameof(LightComponent.Intensity), x => x.Intensity, (x, v) => x.Intensity = v, 1f)
+                .AddCachedInput(nameof(LightComponent.Type), x => x.Type, (x, v) => x.Type = v)
+                .AddCachedInput(nameof(LightComponent.Intensity), x => x.Intensity, (x, v) => x.Intensity = v, 1f)
                 .WithEnabledPin();
 
             yield return factory.NewComponentNode<LightShaftComponent>(lightsCategory)
-                .AddInput(nameof(LightShaftComponent.DensityFactor), x => x.DensityFactor, (x, v) => x.DensityFactor = v, 0.002f)
-                .AddInput(nameof(LightShaftComponent.SampleCount), x => x.SampleCount, (x, v) => x.SampleCount = v, 16)
-                .AddInput(nameof(LightShaftComponent.SeparateBoundingVolumes), x => x.SeparateBoundingVolumes, (x, v) => x.SeparateBoundingVolumes = v, true)
+                .AddCachedInput(nameof(LightShaftComponent.DensityFactor), x => x.DensityFactor, (x, v) => x.DensityFactor = v, 0.002f)
+                .AddCachedInput(nameof(LightShaftComponent.SampleCount), x => x.SampleCount, (x, v) => x.SampleCount = v, 16)
+                .AddCachedInput(nameof(LightShaftComponent.SeparateBoundingVolumes), x => x.SeparateBoundingVolumes, (x, v) => x.SeparateBoundingVolumes = v, true)
                 .WithEnabledPin();
 
             yield return factory.NewComponentNode<LightShaftBoundingVolumeComponent>(lightsCategory)
-                .AddInput(nameof(LightShaftBoundingVolumeComponent.Model), x => x.Model, (x, v) => x.Model = v) // Ensure to check for change! Property throws event!
-                .AddInput(nameof(LightShaftBoundingVolumeComponent.LightShaft), x => x.LightShaft, (x, v) => x.LightShaft = v) // Ensure to check for change! Property throws event!
+                .AddCachedInput(nameof(LightShaftBoundingVolumeComponent.Model), x => x.Model, (x, v) => x.Model = v) // Ensure to check for change! Property throws event!
+                .AddCachedInput(nameof(LightShaftBoundingVolumeComponent.LightShaft), x => x.LightShaft, (x, v) => x.LightShaft = v) // Ensure to check for change! Property throws event!
                 .WithEnabledPin();
 
             // Camera components
@@ -90,48 +90,48 @@ namespace VL.Stride.Engine
             var compositionCategory = $"{renderingCategoryAdvanced}.Compositing";
             var cameraComponent = new CameraComponent() { ViewMatrix = Matrix.Translation(0, 0, -2), UseCustomViewMatrix = true };
             yield return factory.NewGraphicsRendererNode<SceneExternalCameraRenderer>(name: "CameraRenderer", category: compositionCategory)
-                .AddInput("Camera", x => x.ExternalCamera ?? cameraComponent, (x, v) => x.ExternalCamera = v)
-                .AddInput(nameof(SceneExternalCameraRenderer.Child), x => x.Child, (x, v) => x.Child = v)
+                .AddCachedInput("Camera", x => x.ExternalCamera ?? cameraComponent, (x, v) => x.ExternalCamera = v)
+                .AddCachedInput(nameof(SceneExternalCameraRenderer.Child), x => x.Child, (x, v) => x.Child = v)
                 .AddEnabledPin();
 
             // Model components
             var modelsCategory = "Stride.Models";
 
             yield return factory.NewComponentNode<ModelComponent>(modelsCategory)
-                .AddInput(nameof(ModelComponent.Model), x => x.Model, (x, v) => x.Model = v)
-                .AddInput(nameof(ModelComponent.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v)
-                .AddInput(nameof(ModelComponent.IsShadowCaster), x => x.IsShadowCaster, (x, v) => x.IsShadowCaster = v, true)
-                .AddListInput(nameof(ModelComponent.Materials), x => x.Materials)
+                .AddCachedInput(nameof(ModelComponent.Model), x => x.Model, (x, v) => x.Model = v)
+                .AddCachedInput(nameof(ModelComponent.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v)
+                .AddCachedInput(nameof(ModelComponent.IsShadowCaster), x => x.IsShadowCaster, (x, v) => x.IsShadowCaster = v, true)
+                .AddCachedListInput(nameof(ModelComponent.Materials), x => x.Materials)
                 .WithEnabledPin();
 
             // Texture components
             var texturesCategory = "Stride.Textures";
 
             yield return factory.NewComponentNode<BackgroundComponent>(texturesCategory)
-                .AddInput(nameof(BackgroundComponent.Texture), x => x.Texture, (x, v) => x.Texture = v)
-                .AddInput(nameof(BackgroundComponent.Intensity), x => x.Intensity, (x, v) => x.Intensity = v)
-                .AddInput(nameof(BackgroundComponent.Is2D), x => x.Is2D, (x, v) => x.Is2D = v)
-                .AddInput(nameof(BackgroundComponent.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v)
+                .AddCachedInput(nameof(BackgroundComponent.Texture), x => x.Texture, (x, v) => x.Texture = v)
+                .AddCachedInput(nameof(BackgroundComponent.Intensity), x => x.Intensity, (x, v) => x.Intensity = v)
+                .AddCachedInput(nameof(BackgroundComponent.Is2D), x => x.Is2D, (x, v) => x.Is2D = v)
+                .AddCachedInput(nameof(BackgroundComponent.RenderGroup), x => x.RenderGroup, (x, v) => x.RenderGroup = v)
                 .WithEnabledPin();
 
             // Input components
             var inputCategory = "Stride.Experimental.Input.Advanced";
 
             yield return factory.NewComponentNode<InputSourceComponent>(inputCategory)
-                .AddInput(nameof(InputSourceComponent.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true)
+                .AddCachedInput(nameof(InputSourceComponent.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true)
                 .AddOutput(nameof(InputSourceComponent.InputSource), c => c.InputSource);
 
             yield return factory.NewComponentNode<CameraInputSourceComponent>(inputCategory)
-                .AddInput(nameof(CameraInputSourceComponent.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true)
+                .AddCachedInput(nameof(CameraInputSourceComponent.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true)
                 .AddOutput(nameof(CameraInputSourceComponent.InputSource), c => c.InputSource);
 
             yield return factory.NewNode<CameraInputSourceSceneRenderer>(name: nameof(CameraInputSourceSceneRenderer), category: inputCategory)
-                .AddInput(nameof(CameraInputSourceSceneRenderer.CameraInputSourceComponent), x => x.CameraInputSourceComponent, (x, v) => x.CameraInputSourceComponent = v);
+                .AddCachedInput(nameof(CameraInputSourceSceneRenderer.CameraInputSourceComponent), x => x.CameraInputSourceComponent, (x, v) => x.CameraInputSourceComponent = v);
 
             
             // Patchable script
             yield return factory.NewComponentNode<InterfaceSyncScript>(strideCategoryAdvanced, name: "PatchScriptComponent")
-                .AddInput(nameof(InterfaceSyncScript.PatchScript), x => x.PatchScript, (x, v) => x.PatchScript = v)
+                .AddCachedInput(nameof(InterfaceSyncScript.PatchScript), x => x.PatchScript, (x, v) => x.PatchScript = v)
                 ;
 
         }

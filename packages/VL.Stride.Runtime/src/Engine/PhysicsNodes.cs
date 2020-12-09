@@ -41,55 +41,55 @@ namespace VL.Stride.Engine
                 .WithEnabledPin();
 
             yield return NewColliderShapeNode<CapsuleColliderShapeDesc>(factory, physicsColliderShapesCategory)
-                .AddInput(nameof(CapsuleColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
-                .AddInput(nameof(CapsuleColliderShapeDesc.Length), x => x.Length, (x, v) => x.Length = v, 0.5f)
-                .AddInput(nameof(CapsuleColliderShapeDesc.Orientation), x => x.Orientation, (x, v) => x.Orientation = v, ShapeOrientation.UpY)
-                .AddInput(nameof(CapsuleColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
-                .AddInput(nameof(CapsuleColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
-                .AddInput(nameof(CapsuleColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
+                .AddCachedInput(nameof(CapsuleColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddCachedInput(nameof(CapsuleColliderShapeDesc.Length), x => x.Length, (x, v) => x.Length = v, 0.5f)
+                .AddCachedInput(nameof(CapsuleColliderShapeDesc.Orientation), x => x.Orientation, (x, v) => x.Orientation = v, ShapeOrientation.UpY)
+                .AddCachedInput(nameof(CapsuleColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddCachedInput(nameof(CapsuleColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
+                .AddCachedInput(nameof(CapsuleColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
                 ;
 
             yield return NewColliderShapeNode<ConeColliderShapeDesc>(factory, physicsColliderShapesCategory)
-                .AddInput(nameof(ConeColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
-                .AddInput(nameof(ConeColliderShapeDesc.Height), x => x.Radius, (x, v) => x.Radius = v, 1.0f)
-                .AddInput(nameof(ConeColliderShapeDesc.Orientation), x => x.Orientation, (x, v) => x.Orientation = v, ShapeOrientation.UpY)
-                .AddInput(nameof(ConeColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
-                .AddInput(nameof(ConeColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
-                .AddInput(nameof(ConeColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddCachedInput(nameof(ConeColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddCachedInput(nameof(ConeColliderShapeDesc.Height), x => x.Radius, (x, v) => x.Radius = v, 1.0f)
+                .AddCachedInput(nameof(ConeColliderShapeDesc.Orientation), x => x.Orientation, (x, v) => x.Orientation = v, ShapeOrientation.UpY)
+                .AddCachedInput(nameof(ConeColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddCachedInput(nameof(ConeColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
+                .AddCachedInput(nameof(ConeColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
                 ;
 
             yield return NewColliderShapeNode<CylinderColliderShapeDesc>(factory, physicsColliderShapesCategory)
-                .AddInput(nameof(CylinderColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
-                .AddInput(nameof(CylinderColliderShapeDesc.Height), x => x.Radius, (x, v) => x.Radius = v, 1.0f)
-                .AddInput(nameof(CylinderColliderShapeDesc.Orientation), x => x.Orientation, (x, v) => x.Orientation = v, ShapeOrientation.UpY)
-                .AddInput(nameof(CylinderColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
-                .AddInput(nameof(CylinderColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
-                .AddInput(nameof(CylinderColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddCachedInput(nameof(CylinderColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddCachedInput(nameof(CylinderColliderShapeDesc.Height), x => x.Radius, (x, v) => x.Radius = v, 1.0f)
+                .AddCachedInput(nameof(CylinderColliderShapeDesc.Orientation), x => x.Orientation, (x, v) => x.Orientation = v, ShapeOrientation.UpY)
+                .AddCachedInput(nameof(CylinderColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddCachedInput(nameof(CylinderColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
+                .AddCachedInput(nameof(CylinderColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
                 ;
 
             yield return NewColliderShapeNode<BoxColliderShapeDesc>(factory, physicsColliderShapesCategory)
-                .AddInput(nameof(BoxColliderShapeDesc.Size), x => x.Size, (x, v) => x.Size = v, Vector3.One)
-                .AddInput(nameof(BoxColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
-                .AddInput(nameof(BoxColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
-                .AddInput(nameof(BoxColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
+                .AddCachedInput(nameof(BoxColliderShapeDesc.Size), x => x.Size, (x, v) => x.Size = v, Vector3.One)
+                .AddCachedInput(nameof(BoxColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddCachedInput(nameof(BoxColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
+                .AddCachedInput(nameof(BoxColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
                 ;
 
             yield return NewColliderShapeNode<HeightfieldColliderShapeDesc>(factory, physicsColliderShapesCategory)
-                .AddInput(nameof(HeightfieldColliderShapeDesc.FlipQuadEdges), x => x.FlipQuadEdges, (x, v) => x.FlipQuadEdges = v, false)
-                .AddInput(nameof(HeightfieldColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
-                .AddInput(nameof(HeightfieldColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
-                .AddInput(nameof(HeightfieldColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddCachedInput(nameof(HeightfieldColliderShapeDesc.FlipQuadEdges), x => x.FlipQuadEdges, (x, v) => x.FlipQuadEdges = v, false)
+                .AddCachedInput(nameof(HeightfieldColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddCachedInput(nameof(HeightfieldColliderShapeDesc.LocalRotation), x => x.LocalRotation, (x, v) => x.LocalRotation = v, Quaternion.Identity)
+                .AddCachedInput(nameof(HeightfieldColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
                 ;
 
             yield return NewColliderShapeNode<SphereColliderShapeDesc>(factory, physicsColliderShapesCategory)
-                .AddInput(nameof(SphereColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
-                .AddInput(nameof(SphereColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
-                .AddInput(nameof(SphereColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
+                .AddCachedInput(nameof(SphereColliderShapeDesc.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddCachedInput(nameof(SphereColliderShapeDesc.LocalOffset), x => x.LocalOffset, (x, v) => x.LocalOffset = v, Vector3.Zero)
+                .AddCachedInput(nameof(SphereColliderShapeDesc.Is2D), x => x.Is2D, (x, v) => x.Is2D = v, false)
                 ;
 
             yield return NewColliderShapeNode<StaticPlaneColliderShapeDesc>(factory, physicsColliderShapesCategory)
-                .AddInput(nameof(StaticPlaneColliderShapeDesc.Normal), x => x.Normal, (x, v) => x.Normal = v, Vector3.UnitY)
-                .AddInput(nameof(StaticPlaneColliderShapeDesc.Offset), x => x.Offset, (x, v) => x.Offset = v, 0f)
+                .AddCachedInput(nameof(StaticPlaneColliderShapeDesc.Normal), x => x.Normal, (x, v) => x.Normal = v, Vector3.UnitY)
+                .AddCachedInput(nameof(StaticPlaneColliderShapeDesc.Offset), x => x.Offset, (x, v) => x.Offset = v, 0f)
                 ;
 
         }
@@ -115,7 +115,7 @@ namespace VL.Stride.Engine
         {
             init ??= InitPhysicsComponent;
             return factory.NewComponentNode(name: name, category: category, init: init)
-                .AddListInput(nameof(PhysicsComponent.ColliderShapes), x => x.ColliderShapes, ColliderShapeChanged)
+                .AddCachedListInput(nameof(PhysicsComponent.ColliderShapes), x => x.ColliderShapes, ColliderShapeChanged)
                 ;
         }
 
@@ -136,20 +136,20 @@ namespace VL.Stride.Engine
             where TPhysicsComponent : PhysicsComponent, new()
         {
             return nodeDesc
-                .AddInput(nameof(PhysicsComponent.Restitution), x => x.Restitution, (x, v) => x.Restitution = v, Defaults.Restitution)
-                .AddInput(nameof(PhysicsComponent.Friction), x => x.Friction, (x, v) => x.Friction = v, Defaults.Friction)
-                .AddInput(nameof(PhysicsComponent.RollingFriction), x => x.RollingFriction, (x, v) => x.RollingFriction = v, Defaults.RollingFriction)
-                .AddInput(nameof(PhysicsComponent.CcdMotionThreshold), x => x.CcdMotionThreshold, (x, v) => x.CcdMotionThreshold = v)
-                .AddInput(nameof(PhysicsComponent.CcdSweptSphereRadius), x => x.CcdSweptSphereRadius, (x, v) => x.CcdSweptSphereRadius = v)
+                .AddCachedInput(nameof(PhysicsComponent.Restitution), x => x.Restitution, (x, v) => x.Restitution = v, Defaults.Restitution)
+                .AddCachedInput(nameof(PhysicsComponent.Friction), x => x.Friction, (x, v) => x.Friction = v, Defaults.Friction)
+                .AddCachedInput(nameof(PhysicsComponent.RollingFriction), x => x.RollingFriction, (x, v) => x.RollingFriction = v, Defaults.RollingFriction)
+                .AddCachedInput(nameof(PhysicsComponent.CcdMotionThreshold), x => x.CcdMotionThreshold, (x, v) => x.CcdMotionThreshold = v)
+                .AddCachedInput(nameof(PhysicsComponent.CcdSweptSphereRadius), x => x.CcdSweptSphereRadius, (x, v) => x.CcdSweptSphereRadius = v)
                 ;
         }
 
         static CustomNodeDesc<RigidbodyComponent> AddRigidBodyParams(this CustomNodeDesc<RigidbodyComponent> nodeDesc)
         {
             return nodeDesc
-                .AddInput(nameof(RigidbodyComponent.Mass), x => x.Mass, (x, v) => x.Mass = v, 1f)
-                .AddInput(nameof(RigidbodyComponent.LinearDamping), x => x.LinearDamping, (x, v) => x.LinearDamping = v)
-                .AddInput(nameof(RigidbodyComponent.AngularDamping), x => x.AngularDamping, (x, v) => x.AngularDamping = v)
+                .AddCachedInput(nameof(RigidbodyComponent.Mass), x => x.Mass, (x, v) => x.Mass = v, 1f)
+                .AddCachedInput(nameof(RigidbodyComponent.LinearDamping), x => x.LinearDamping, (x, v) => x.LinearDamping = v)
+                .AddCachedInput(nameof(RigidbodyComponent.AngularDamping), x => x.AngularDamping, (x, v) => x.AngularDamping = v)
                 //.AddInput(nameof(RigidbodyComponent.OverrideGravity), x => x.OverrideGravity, (x, v) => x.OverrideGravity = v)
                 //.AddInput(nameof(RigidbodyComponent.Gravity), x => x.Gravity, (x, v) => x.Gravity = v, Vector3.Zero)
                 //.AddInput(nameof(RigidbodyComponent.IsKinematic), x => x.IsKinematic, (x, v) => x.IsKinematic = v)
@@ -162,9 +162,9 @@ namespace VL.Stride.Engine
             where TPhysicsComponent : PhysicsComponent, new()
         {
             return nodeDesc
-                .AddInput(nameof(PhysicsComponent.CanSleep), x => x.CanSleep, (x, v) => x.CanSleep = v, true)
-                .AddInput(nameof(PhysicsComponent.CollisionGroup), x => x.CollisionGroup, (x, v) => x.CollisionGroup = v, CollisionFilterGroups.DefaultFilter)
-                .AddInput(nameof(PhysicsComponent.CanCollideWith), x => x.CanCollideWith, (x, v) => x.CanCollideWith = v, CollisionFilterGroupFlags.AllFilter)
+                .AddCachedInput(nameof(PhysicsComponent.CanSleep), x => x.CanSleep, (x, v) => x.CanSleep = v, true)
+                .AddCachedInput(nameof(PhysicsComponent.CollisionGroup), x => x.CollisionGroup, (x, v) => x.CollisionGroup = v, CollisionFilterGroups.DefaultFilter)
+                .AddCachedInput(nameof(PhysicsComponent.CanCollideWith), x => x.CanCollideWith, (x, v) => x.CanCollideWith = v, CollisionFilterGroupFlags.AllFilter)
                 ;
         }
 

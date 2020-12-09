@@ -99,7 +99,7 @@ namespace VL.Stride
         public static IVLNodeDescription WithEnabledPin<TComponent>(this CustomNodeDesc<TComponent> node)
             where TComponent : ActivableEntityComponent
         {
-            return node.AddInput("Enabled", x => x.Enabled, (x, v) => x.Enabled = v, true);
+            return node.AddCachedInput("Enabled", x => x.Enabled, (x, v) => x.Enabled = v, true);
         }
     }
 
@@ -218,13 +218,13 @@ namespace VL.Stride
             return false;
         }
 
-        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default, string summary = default, string remarks = default)
+        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, string summary = default, string remarks = default)
         {
             inputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
-                CreatePin = (node, instance) => new InputPin<T>(node, instance, getter, setter, getter(instance), equals)
+                CreatePin = (node, instance) => new InputPin<T>(node, instance, getter, setter, getter(instance))
             });
             return this;
         }
@@ -241,6 +241,52 @@ namespace VL.Stride
             return this;
         }
 
+        public CustomNodeDesc<TInstance> AddCachedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default, string summary = default, string remarks = default)
+        {
+            inputs.Add(new CustomPinDesc(name, summary, remarks)
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                CreatePin = (node, instance) => new CachedInputPin<T>(node, instance, getter, setter, getter(instance), equals)
+            });
+            return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddCachedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue, string summary = default, string remarks = default)
+        {
+            inputs.Add(new CustomPinDesc(name, summary, remarks)
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                DefaultValue = defaultValue,
+                CreatePin = (node, instance) => new CachedInputPin<T>(node, instance, getter, setter, defaultValue)
+            });
+            return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddOptimizedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default, string summary = default, string remarks = default)
+        {
+            inputs.Add(new CustomPinDesc(name, summary, remarks)
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                CreatePin = (node, instance) => new OptimizedInputPin<T>(node, instance, getter, setter, getter(instance))
+            });
+            return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddOptimizedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue, string summary = default, string remarks = default)
+        {
+            inputs.Add(new CustomPinDesc(name, summary, remarks)
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                DefaultValue = defaultValue,
+                CreatePin = (node, instance) => new OptimizedInputPin<T>(node, instance, getter, setter, defaultValue)
+            });
+            return this;
+        }
+
         static bool SequenceEqual<T>(IEnumerable<T> a, IEnumerable<T> b)
         {
             if (a is null)
@@ -250,9 +296,9 @@ namespace VL.Stride
             return a.SequenceEqual(b);
         }
 
-        public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, IList<T>> getter, Action<TInstance> updateInstanceAfterSetter = null)
+        public CustomNodeDesc<TInstance> AddCachedListInput<T>(string name, Func<TInstance, IList<T>> getter, Action<TInstance> updateInstanceAfterSetter = null)
         {
-            return AddInput<IReadOnlyList<T>>(name, 
+            return AddCachedInput<IReadOnlyList<T>>(name, 
                 getter: instance => (IReadOnlyList<T>)getter(instance),
                 equals: SequenceEqual,
                 setter: (x, v) =>
@@ -275,9 +321,9 @@ namespace VL.Stride
                 });
         }
 
-        public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, T[]> getter, Action<TInstance, T[]> setter)
+        public CustomNodeDesc<TInstance> AddCachedListInput<T>(string name, Func<TInstance, T[]> getter, Action<TInstance, T[]> setter)
         {
-            return AddInput<IReadOnlyList<T>>(name,
+            return AddCachedInput<IReadOnlyList<T>>(name,
                 getter: getter,
                 equals: SequenceEqual,
                 setter: (x, v) =>
@@ -287,10 +333,10 @@ namespace VL.Stride
                 });
         }
 
-        public CustomNodeDesc<TInstance> AddListInput<T>(string name, Func<TInstance, IndexingDictionary<T>> getter)
+        public CustomNodeDesc<TInstance> AddCachedListInput<T>(string name, Func<TInstance, IndexingDictionary<T>> getter)
             where T : class
         {
-            return AddInput<IReadOnlyList<T>>(name,
+            return AddCachedInput<IReadOnlyList<T>>(name,
                 getter: x => getter(x).Values.ToList(),
                 equals: SequenceEqual,
                 setter: (x, v) =>
@@ -428,15 +474,12 @@ namespace VL.Stride
 
         class InputPin<T> : Pin<T>, IVLPin
         {
-            readonly Func<T, T, bool> equals;
-
-            public InputPin(Node node, TInstance instance, Func<TInstance, T> getter, Action<TInstance, T> setter, T initialValue, Func<T, T, bool> equals = default) 
+            public InputPin(Node node, TInstance instance, Func<TInstance, T> getter, Action<TInstance, T> setter, T initialValue)
                 : base(node, instance)
             {
-                this.equals = equals ?? EqualityComparer<T>.Default.Equals;
                 this.getter = getter;
                 this.setter = setter;
-                this.InitialValue = lastValue = initialValue;
+                this.InitialValue = initialValue;
                 setter(instance, initialValue);
             }
 
@@ -447,27 +490,67 @@ namespace VL.Stride
                 get => getter(Instance);
                 set
                 {
-                    if (!equals(value, lastValue))
-                    {
-                        lastValue = value;
+                    // Normalize the value first
+                    if (value is null)
+                        value = InitialValue;
 
-                        // Normalize the value first
-                        if (value is null)
-                            value = InitialValue;
-
-                        setter(Instance, value);
-                        Node.needsUpdate = true;
-                    }
+                    setter(Instance, value);
+                    Node.needsUpdate = true;
                 }
             }
-
-            T lastValue;
 
             public override void Update(TInstance instance)
             {
                 var currentValue = getter(Instance);
                 base.Update(instance);
                 setter(instance, currentValue);
+            }
+        }
+
+        class CachedInputPin<T> : InputPin<T>, IVLPin
+        {
+            readonly Func<T, T, bool> equals;
+            T lastValue;
+
+            public CachedInputPin(Node node, TInstance instance, Func<TInstance, T> getter, Action<TInstance, T> setter, T initialValue, Func<T, T, bool> equals = default) 
+                : base(node, instance, getter, setter, initialValue)
+            {
+                this.equals = equals ?? EqualityComparer<T>.Default.Equals;
+                lastValue = initialValue;
+            }
+
+            public override T Value
+            {
+                get => getter(Instance);
+                set
+                {
+                    if (!equals(value, lastValue))
+                    {
+                        lastValue = value;
+                        base.Value = value;
+                    }
+                }
+            }
+        }
+
+        class OptimizedInputPin<T> : InputPin<T>, IVLPin
+        {
+            readonly Func<T, T, bool> equals;
+
+            public OptimizedInputPin(Node node, TInstance instance, Func<TInstance, T> getter, Action<TInstance, T> setter, T initialValue)
+                : base(node, instance, getter, setter, initialValue)
+            {
+                this.equals = equals ?? EqualityComparer<T>.Default.Equals;
+            }
+
+            public override T Value
+            {
+                get => getter(Instance);
+                set
+                {
+                    if (!equals(value, Value))
+                        base.Value = value;
+                }
             }
         }
 
