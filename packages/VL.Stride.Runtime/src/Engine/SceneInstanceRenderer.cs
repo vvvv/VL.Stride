@@ -40,12 +40,6 @@ namespace VL.Stride.Engine
             var renderContext = renderDrawContext.RenderContext;
             var sceneInstance = SceneInstance ?? fallbackSceneInstance;
 
-            // Reset the context
-            renderContext.Reset();
-
-            // ???
-            // renderContext.Allocator.Recycle(link => true);
-
             // Execute Draw step of SceneInstance
             // This will run entity processors
             sceneInstance.Draw(renderContext);
