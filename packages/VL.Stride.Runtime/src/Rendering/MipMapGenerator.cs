@@ -87,7 +87,9 @@ namespace VL.Stride.Rendering
             var width = inputTexture.Width;
             var height = inputTexture.Height;
 
-            var mipMapCount = Texture.CountMips(Math.Max(width, height));
+            // Calculate the optimum amount of mip maps
+            var mipMapCount = Texture.CountMips(width, height);
+            // Clamp it to user maximum if provided
             if (MaxMipMapCount > 0)
                 mipMapCount = Math.Min(mipMapCount, MaxMipMapCount);
 
