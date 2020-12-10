@@ -9,7 +9,7 @@ Download: http://visualprogramming.net
 
 - Make sure [git lfs](https://git-lfs.github.com/) is available (check by typing `git lfs` into the git bash)
 - Checkout this repository into a folder which doesn't have spaces
-- Run `git lfs install` and `git lfs pull` in the git bash (this step is not be needed, high-level git tools like GitExtensions do this automatically)
+- (Run `git lfs install` and `git lfs pull` in the git bash (high-level git tools like GitExtensions do this automatically))
 - Open the solution `packages\VL.Stride.sln`, switch it to `Release` mode, set VL.Stride as startup project and press `Ctrl+F5` to start vvvv. (VL.Stride is configured as a source package automatically)
 
 The build process will download and install the required vvvv gamma version in case it's not installed yet.
