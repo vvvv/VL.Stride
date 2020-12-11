@@ -158,6 +158,7 @@ namespace VL.Stride.Rendering.Lights
                 .AddInput(nameof(SkyboxRenderer.IsSpecularOnly), x => x.IsSpecularOnly, (x, v) => x.IsSpecularOnly = v)
                 .AddInput(nameof(SkyboxRenderer.DiffuseSHOrder), x => x.DiffuseSHOrder, (x, v) => x.DiffuseSHOrder = v, SkyboxPreFilteringDiffuseOrder.Order3)
                 .AddInput(nameof(SkyboxRenderer.SpecularCubeMapSize), x => x.SpecularCubeMapSize, (x, v) => x.SpecularCubeMapSize = v, 256)
+                .AddInput(nameof(SkyboxRenderer.ForceRendering), x => x.ForceRendering, (x, v) => x.ForceRendering = v)
                 .AddOutput("Output", x =>
                 {
                     x.ScheduleForRendering();

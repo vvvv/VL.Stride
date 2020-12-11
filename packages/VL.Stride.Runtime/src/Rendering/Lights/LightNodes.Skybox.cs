@@ -115,6 +115,12 @@ namespace VL.Stride.Rendering.Lights
                 }
             }
 
+            /// <summary>
+            /// Force rendering of the skybox. 
+            /// By default the skybox will only be rendered when changing one of its parameters.
+            /// </summary>
+            public bool ForceRendering { get; set; }
+
             public Skybox Skybox { get; }
 
             public void ScheduleForRendering()
@@ -125,8 +131,7 @@ namespace VL.Stride.Rendering.Lights
                     return;
                 }
 
-                // If the cube map is a render target assume it changes every frame
-                if (invalidated || CubeMap.IsRenderTarget)
+                if (invalidated || ForceRendering)
                 {
                     invalidated = false;
                     schedulerSystem.Schedule(this);
