@@ -12,6 +12,7 @@ using Stride.Rendering.Materials;
 using Stride.Rendering.Shadows;
 using Stride.Rendering.Sprites;
 using Stride.Rendering.SubsurfaceScattering;
+using Stride.Rendering.UI;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -225,6 +226,9 @@ namespace VL.Stride.Rendering.Compositing
                 .AddCachedListInput(nameof(EntityRendererRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors)
                 .AddCachedInput(nameof(EntityRendererRenderFeature.HelpersRenderStage), x => x.HelpersRenderStage, (x, v) => x.HelpersRenderStage = v)
                 .AddCachedInput(nameof(EntityRendererRenderFeature.HelpersRenderer), x => x.HelpersRenderer, (x, v) => x.HelpersRenderer = v);
+
+            yield return nodeFactory.NewNode<UIRenderFeature>(category: renderingCategoryAdvanced)
+                .AddCachedListInput(nameof(UIRenderFeature.RenderStageSelectors), x => x.RenderStageSelectors);
 
             // Sub render features for mesh render feature
             var renderFeaturesCategory = $"{renderingCategoryAdvanced}.RenderFeatures";
