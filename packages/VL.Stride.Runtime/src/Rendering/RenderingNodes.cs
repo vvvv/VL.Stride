@@ -137,6 +137,11 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(TorusProceduralModel.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
                 .AddDefaultPins();
 
+            // TextureFX
+            yield return factory.NewNode(c => new MipMapGenerator(c), name: "MipMap", category: "Stride.Textures.TextureFX", copyOnWrite: false, fragmented: true, hasStateOutput: false)
+                .AddInput("Input", x => x.InputTexture, (x, v) => x.InputTexture = v)
+                .AddInput(nameof(MipMapGenerator.MaxMipMapCount), x => x.MaxMipMapCount, (x, v) => x.MaxMipMapCount = v)
+                .AddOutput("Output", x => { x.ScheduleForRendering(); return x.OutputTexture; });
         }
 
         static CustomNodeDesc<TInputRenderBase> NewInputRenderBaseNode<TInputRenderBase>(IVLNodeDescriptionFactory factory, string category, string name = null)
