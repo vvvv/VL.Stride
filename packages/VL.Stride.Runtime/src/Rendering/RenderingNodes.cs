@@ -58,27 +58,27 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(WithWindowInputSource.InputSource), x => x.InputSource, (x, v) => x.InputSource = v)
                 ;
 
-            yield return factory.NewNode<GetWindowInputSource>(name: nameof(GetWindowInputSource), category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true)
+            yield return factory.NewNode<GetWindowInputSource>(name: nameof(GetWindowInputSource), category: renderingAdvancedCategory, copyOnWrite: false)
                 .AddCachedInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v)
                 .AddOutput(nameof(GetWindowInputSource.InputSource), x => x.InputSource)
             ;
 
             // Compute effect dispatchers
             var dispatchersCategory = $"{renderingAdvancedCategory}.ComputeEffect";
-            yield return factory.NewNode<DirectComputeEffectDispatcher>(name: "DirectDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)
+            yield return factory.NewNode<DirectComputeEffectDispatcher>(name: "DirectDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, hasStateOutput: false)
                 .AddCachedInput(nameof(DirectComputeEffectDispatcher.ThreadGroupCount), x => x.ThreadGroupCount, (x, v) => x.ThreadGroupCount = v, Int3.One)
                 .AddOutput<IComputeEffectDispatcher>("Output", x => x);
 
-            yield return factory.NewNode<IndirectComputeEffectDispatcher>(name: "IndirectDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)
+            yield return factory.NewNode<IndirectComputeEffectDispatcher>(name: "IndirectDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, hasStateOutput: false)
                 .AddCachedInput(nameof(IndirectComputeEffectDispatcher.ArgumentBuffer), x => x.ArgumentBuffer, (x, v) => x.ArgumentBuffer = v)
                 .AddCachedInput(nameof(IndirectComputeEffectDispatcher.OffsetInBytes), x => x.OffsetInBytes, (x, v) => x.OffsetInBytes = v)
                 .AddOutput<IComputeEffectDispatcher>("Output", x => x);
 
-            yield return factory.NewNode<CustomComputeEffectDispatcher>(name: "CustomDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true, hasStateOutput: false)
+            yield return factory.NewNode<CustomComputeEffectDispatcher>(name: "CustomDispatcher", category: renderingAdvancedCategory, copyOnWrite: false, hasStateOutput: false)
                 .AddCachedInput(nameof(CustomComputeEffectDispatcher.ThreadGroupCountsSelector), x => x.ThreadGroupCountsSelector, (x, v) => x.ThreadGroupCountsSelector = v)
                 .AddOutput<IComputeEffectDispatcher>("Output", x => x);
 
-            //yield return factory.NewNode<RenderView>(name: "RenderView", category: renderingAdvancedCategory, copyOnWrite: false, fragmented: true)
+            //yield return factory.NewNode<RenderView>(name: "RenderView", category: renderingAdvancedCategory, copyOnWrite: false)
             //    .AddInput(nameof(RenderView.View), x => x.View, (x, v) => x.View = v)
             //    .AddInput(nameof(RenderView.Projection), x => x.Projection, (x, v) => x.Projection = v)
             //    .AddInput(nameof(RenderView.NearClipPlane), x => x.NearClipPlane, (x, v) => x.NearClipPlane = v)
@@ -138,7 +138,7 @@ namespace VL.Stride.Rendering
                 .AddDefaultPins();
 
             // TextureFX
-            yield return factory.NewNode(c => new MipMapGenerator(c), name: "MipMap", category: "Stride.Textures.TextureFX", copyOnWrite: false, fragmented: true, hasStateOutput: false)
+            yield return factory.NewNode(c => new MipMapGenerator(c), name: "MipMap", category: "Stride.Textures.TextureFX", copyOnWrite: false, hasStateOutput: false)
                 .AddInput("Input", x => x.InputTexture, (x, v) => x.InputTexture = v)
                 .AddInput(nameof(MipMapGenerator.MaxMipMapCount), x => x.MaxMipMapCount, (x, v) => x.MaxMipMapCount = v)
                 .AddOutput("Output", x => { x.ScheduleForRendering(); return x.OutputTexture; });
@@ -147,7 +147,7 @@ namespace VL.Stride.Rendering
         static CustomNodeDesc<TInputRenderBase> NewInputRenderBaseNode<TInputRenderBase>(IVLNodeDescriptionFactory factory, string category, string name = null)
             where TInputRenderBase : RendererBase, new()
         {
-            return factory.NewNode<TInputRenderBase>(name: name, category: category, copyOnWrite: false, fragmented: true)
+            return factory.NewNode<TInputRenderBase>(name: name, category: category, copyOnWrite: false)
                 .AddCachedInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v);
         }
 
@@ -159,7 +159,6 @@ namespace VL.Stride.Rendering
                 category: "Stride.Models.Meshes",
                 copyOnWrite: false,
                 hasStateOutput: false,
-                fragmented: true,
                 ctor: nodeContext =>
                 {
                     var generator = new TProceduralModel();

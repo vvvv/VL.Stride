@@ -97,7 +97,7 @@ namespace VL.Stride.Engine
         static CustomNodeDesc<TColliderShape> NewColliderShapeNode<TColliderShape>(IVLNodeDescriptionFactory factory, string category, string name = null)
             where TColliderShape : class, IInlineColliderShapeDesc, new()
         {
-            return factory.NewNode<TColliderShape>(name: name, category: category, copyOnWrite: true, hasStateOutput: true, fragmented: true)
+            return factory.NewNode<TColliderShape>(name: name, category: category, copyOnWrite: true, hasStateOutput: true)
                 //.AddCachedOutput("Output", x => Spread.Create<IInlineColliderShapeDesc>(x))
                 ;
         }
