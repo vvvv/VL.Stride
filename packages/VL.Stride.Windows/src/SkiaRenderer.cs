@@ -1,5 +1,4 @@
-﻿using NuGet;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using SharpDX.Direct3D11;
@@ -23,8 +22,9 @@ namespace VL.Stride.Windows
 {
     public partial class SkiaRenderer : IGraphicsRendererBase
     {
-        private readonly SerialDisposable InputSubscription = new SerialDisposable();
-        private IInputSource LastInputSource;
+        private readonly SerialDisposable inputSubscription = new SerialDisposable();
+        private IInputSource lastInputSource;
+        private SharedSurface lastSharedSurface;
         
         public ILayer Layer { get; set; }
 
@@ -49,10 +49,11 @@ namespace VL.Stride.Windows
 
             // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
             var inputSource = context.RenderContext.GetWindowInputSource();
-            if (inputSource != LastInputSource)
+            if (inputSource != lastInputSource || sharedSurface != lastSharedSurface)
             {
-                LastInputSource = inputSource;
-                InputSubscription.Disposable = SubscribeToInputSource(inputSource, context, sharedSurface);
+                lastInputSource = inputSource;
+                lastSharedSurface = sharedSurface;
+                inputSubscription.Disposable = SubscribeToInputSource(inputSource, context, sharedSurface);
             }
 
             // Lock the backbuffer

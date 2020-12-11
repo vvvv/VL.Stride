@@ -85,13 +85,13 @@ namespace VL.Stride.Rendering.Lights
         static CustomNodeDesc<TLight> NewEnvironmentLightNode<TLight>(IVLNodeDescriptionFactory factory, string category)
             where TLight : class, IEnvironmentLight, new()
         {
-            return factory.NewNode<TLight>(category: category, copyOnWrite: false, fragmented: true);
+            return factory.NewNode<TLight>(category: category, copyOnWrite: false);
         }
 
         static CustomNodeDesc<TLight> NewColorLightNode<TLight>(IVLNodeDescriptionFactory factory, string category)
             where TLight : class, IColorLight, new()
         {
-            return factory.NewNode<TLight>(category: category, copyOnWrite: false, fragmented: true)
+            return factory.NewNode<TLight>(category: category, copyOnWrite: false)
                 .AddCachedInput(nameof(IColorLight.Color), x => new Color4(x.Color.ComputeColor()), (x, v) => ((ColorRgbProvider)x.Color).Value = v.ToColor3(), Color4.White);
         }
 
@@ -125,7 +125,7 @@ namespace VL.Stride.Rendering.Lights
         static CustomNodeDesc<TShadow> NewShadowNode<TShadow>(IVLNodeDescriptionFactory factory, string category)
             where TShadow : LightShadowMap, new()
         {
-            return factory.NewNode<TShadow>(category: category, copyOnWrite: true /* In order to detect changes */, fragmented: true);
+            return factory.NewNode<TShadow>(category: category, copyOnWrite: true /* In order to detect changes */);
         }
 
         static CustomNodeDesc<TShadow> AddDefaultPins<TShadow>(this CustomNodeDesc<TShadow> node)
@@ -148,22 +148,20 @@ namespace VL.Stride.Rendering.Lights
 
         static IVLNodeDescription NewSkyboxNode(IVLNodeDescriptionFactory factory, string category)
         {
-            return factory.NewNode<SkyboxDescription>(
+            return factory.NewNode(
+                ctor: c => new SkyboxRenderer(c),
                 name: "Skybox",
                 category: category,
                 copyOnWrite: false,
-                hasStateOutput: false,
-                fragmented: true)
-                .AddCachedInput(nameof(SkyboxDescription.CubeMap), x => x.CubeMap, (x, v) => x.CubeMap = v)
-                .AddCachedInput(nameof(SkyboxDescription.IsSpecularOnly), x => x.IsSpecularOnly, (x, v) => x.IsSpecularOnly = v)
-                .AddCachedInput(nameof(SkyboxDescription.DiffuseSHOrder), x => x.DiffuseSHOrder, (x, v) => x.DiffuseSHOrder = v, SkyboxPreFilteringDiffuseOrder.Order3)
-                .AddCachedInput(nameof(SkyboxDescription.SpecularCubeMapSize), x => x.SpecularCubeMapSize, (x, v) => x.SpecularCubeMapSize = v, 256)
-                .AddCachedOutput("Output", (nodeContext, x) =>
+                hasStateOutput: false)
+                .AddInput(nameof(SkyboxRenderer.CubeMap), x => x.CubeMap, (x, v) => x.CubeMap = v)
+                .AddInput(nameof(SkyboxRenderer.IsSpecularOnly), x => x.IsSpecularOnly, (x, v) => x.IsSpecularOnly = v)
+                .AddInput(nameof(SkyboxRenderer.DiffuseSHOrder), x => x.DiffuseSHOrder, (x, v) => x.DiffuseSHOrder = v, SkyboxPreFilteringDiffuseOrder.Order3)
+                .AddInput(nameof(SkyboxRenderer.SpecularCubeMapSize), x => x.SpecularCubeMapSize, (x, v) => x.SpecularCubeMapSize = v, 256)
+                .AddOutput("Output", x =>
                 {
-                    using (var context = new SkyboxGeneratorContext(nodeContext))
-                    {
-                        return GenerateSkybox(x, context);
-                    }
+                    x.ScheduleForRendering();
+                    return x.Skybox;
                 });
         }
     }
