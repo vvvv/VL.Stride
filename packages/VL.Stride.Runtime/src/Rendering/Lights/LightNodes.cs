@@ -148,21 +148,20 @@ namespace VL.Stride.Rendering.Lights
 
         static IVLNodeDescription NewSkyboxNode(IVLNodeDescriptionFactory factory, string category)
         {
-            return factory.NewNode<SkyboxDescription>(
+            return factory.NewNode(
+                ctor: c => new SkyboxRenderer(c),
                 name: "Skybox",
                 category: category,
                 copyOnWrite: false,
                 hasStateOutput: false)
-                .AddCachedInput(nameof(SkyboxDescription.CubeMap), x => x.CubeMap, (x, v) => x.CubeMap = v)
-                .AddCachedInput(nameof(SkyboxDescription.IsSpecularOnly), x => x.IsSpecularOnly, (x, v) => x.IsSpecularOnly = v)
-                .AddCachedInput(nameof(SkyboxDescription.DiffuseSHOrder), x => x.DiffuseSHOrder, (x, v) => x.DiffuseSHOrder = v, SkyboxPreFilteringDiffuseOrder.Order3)
-                .AddCachedInput(nameof(SkyboxDescription.SpecularCubeMapSize), x => x.SpecularCubeMapSize, (x, v) => x.SpecularCubeMapSize = v, 256)
-                .AddCachedOutput("Output", (nodeContext, x) =>
+                .AddInput(nameof(SkyboxRenderer.CubeMap), x => x.CubeMap, (x, v) => x.CubeMap = v)
+                .AddInput(nameof(SkyboxRenderer.IsSpecularOnly), x => x.IsSpecularOnly, (x, v) => x.IsSpecularOnly = v)
+                .AddInput(nameof(SkyboxRenderer.DiffuseSHOrder), x => x.DiffuseSHOrder, (x, v) => x.DiffuseSHOrder = v, SkyboxPreFilteringDiffuseOrder.Order3)
+                .AddInput(nameof(SkyboxRenderer.SpecularCubeMapSize), x => x.SpecularCubeMapSize, (x, v) => x.SpecularCubeMapSize = v, 256)
+                .AddOutput("Output", x =>
                 {
-                    using (var context = new SkyboxGeneratorContext(nodeContext))
-                    {
-                        return GenerateSkybox(x, context);
-                    }
+                    x.ScheduleForRendering();
+                    return x.Skybox;
                 });
         }
     }
