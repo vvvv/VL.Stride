@@ -20,8 +20,7 @@ namespace VL.Stride
            string name = default,
            string category = default,
            bool copyOnWrite = true,
-           bool hasStateOutput = true,
-           bool fragmented = false)
+           bool hasStateOutput = true)
             where T : class
         {
             return new CustomNodeDesc<T>(factory,
@@ -33,8 +32,7 @@ namespace VL.Stride
                 name: name,
                 category: category,
                 copyOnWrite: copyOnWrite,
-                hasStateOutput: hasStateOutput,
-                fragmented: fragmented);
+                hasStateOutput: hasStateOutput);
         }
 
         public static CustomNodeDesc<T> NewNode<T>(this IVLNodeDescriptionFactory factory, 
@@ -42,8 +40,7 @@ namespace VL.Stride
             string category = default, 
             bool copyOnWrite = true,
             Action<T> init = default,
-            bool hasStateOutput = true,
-            bool fragmented = false) 
+            bool hasStateOutput = true) 
             where T : class, new()
         {
             return new CustomNodeDesc<T>(factory, 
@@ -56,8 +53,7 @@ namespace VL.Stride
                 name: name, 
                 category: category,
                 copyOnWrite: copyOnWrite,
-                hasStateOutput: hasStateOutput,
-                fragmented: fragmented);
+                hasStateOutput: hasStateOutput);
         }
 
         public static CustomNodeDesc<TComponent> NewComponentNode<TComponent>(this IVLNodeDescriptionFactory factory, string category, Action<TComponent> init = null, string name = null)
@@ -92,8 +88,7 @@ namespace VL.Stride
                     }
                 }, 
                 category: category, 
-                copyOnWrite: false,
-                fragmented: true);
+                copyOnWrite: false);
         }
 
         public static IVLNodeDescription WithEnabledPin<TComponent>(this CustomNodeDesc<TComponent> node)
@@ -114,8 +109,7 @@ namespace VL.Stride
             string name = default, 
             string category = default, 
             bool copyOnWrite = true, 
-            bool hasStateOutput = true,
-            bool fragmented = false)
+            bool hasStateOutput = true)
         {
             Factory = factory;
             this.ctor = ctor;
@@ -123,7 +117,6 @@ namespace VL.Stride
             Name = name ?? typeof(TInstance).Name;
             Category = category ?? string.Empty;
             CopyOnWrite = copyOnWrite;
-            Fragmented = fragmented;
 
             if (hasStateOutput)
                 AddOutput("Output", x => x);
@@ -135,7 +128,7 @@ namespace VL.Stride
 
         public string Category { get; }
 
-        public bool Fragmented { get; }
+        public bool Fragmented => true;
 
         public bool CopyOnWrite { get; }
 

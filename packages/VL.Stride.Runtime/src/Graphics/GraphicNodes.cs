@@ -24,7 +24,6 @@ namespace VL.Stride.Graphics
                 name: "PipelineState",
                 category: graphicsCategory,
                 copyOnWrite: false,
-                fragmented: true,
                 hasStateOutput: false)
                 .AddCachedInput(nameof(PipelineStateDescription.RootSignature), x => x.State.RootSignature, (x, v) => x.State.RootSignature = v)
                 .AddCachedInput(nameof(PipelineStateDescription.EffectBytecode), x => x.State.EffectBytecode, (x, v) => x.State.EffectBytecode = v)
@@ -180,7 +179,7 @@ namespace VL.Stride.Graphics
 
         static CustomNodeDesc<StructRef<T>> NewDescriptionNode<T>(this IVLNodeDescriptionFactory factory, string category, T initial, string name = default) where T : struct
         {
-            return factory.NewNode(name: name ?? typeof(T).Name, category: category, copyOnWrite: false, fragmented: true, hasStateOutput: false, ctor: _ => S(initial));
+            return factory.NewNode(name: name ?? typeof(T).Name, category: category, copyOnWrite: false, hasStateOutput: false, ctor: _ => S(initial));
         }
 
         static CustomNodeDesc<StructRef<T>> AddStateOutput<T>(this CustomNodeDesc<StructRef<T>> node) where T : struct

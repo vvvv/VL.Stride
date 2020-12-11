@@ -23,12 +23,11 @@ namespace VL.Stride
         private List<StateOutput> outputs;
         internal Type stateOutputType;
 
-        public StrideNodeDesc(IVLNodeDescriptionFactory factory, string name = default, string category = default, Type stateOutputType = default, bool isFragmented = false)
+        public StrideNodeDesc(IVLNodeDescriptionFactory factory, string name = default, string category = default, Type stateOutputType = default)
         {
             Factory = factory;
             Name = name ?? typeof(TInstance).Name;
             Category = category ?? string.Empty;
-            Fragmented = isFragmented;
             this.stateOutputType = stateOutputType ?? typeof(TInstance);
         }
 
@@ -40,7 +39,7 @@ namespace VL.Stride
 
         public string Category { get; }
 
-        public bool Fragmented { get; }
+        public bool Fragmented => true;
 
         public IReadOnlyList<IVLPinDescription> Inputs
         {

@@ -68,6 +68,14 @@ namespace VL.Stride.Engine
 
         public override void Draw(GameTime gameTime)
         {
+            var renderContext = RenderContext.GetShared(Services);
+
+            // Reset the context
+            renderContext.Reset();
+
+            // Recycle temporary resources (for example textures allocated by render features through GetTemporaryTexture)
+            renderContext.Allocator.Recycle(r => r.AccessCountSinceLastRecycle == 0);
+
             try
             {
                 foreach (var system in queue)
