@@ -27,7 +27,7 @@ namespace VL.Stride.Rendering.Materials
             string subsurfaceScatteringCategory = $"{shadingCategory}.SubsurfaceScattering";
 
             // Geometry
-            yield return nodeFactory.NewNode<GeometryAttributes>(category: materialCategory, fragmented: true)
+            yield return nodeFactory.NewNode<GeometryAttributes>(category: materialCategory)
                 .AddCachedInput(nameof(GeometryAttributes.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v)
                 .AddCachedInput(nameof(GeometryAttributes.Displacement), x => x.Displacement, (x, v) => x.Displacement = v)
                 .AddCachedInput(nameof(GeometryAttributes.Surface), x => x.Surface, (x, v) => x.Surface = v)
@@ -40,7 +40,7 @@ namespace VL.Stride.Rendering.Materials
             yield return NewMaterialNode<MaterialGlossinessMapFeature>(nodeFactory, "Glossiness", geometryCategory);
 
             // Shading
-            yield return nodeFactory.NewNode<ShadingAttributes>(category: materialCategory, fragmented: true)
+            yield return nodeFactory.NewNode<ShadingAttributes>(category: materialCategory)
                 .AddCachedInput(nameof(ShadingAttributes.Diffuse), x => x.Diffuse, (x, v) => x.Diffuse = v)
                 .AddCachedInput(nameof(ShadingAttributes.DiffuseModel), x => x.DiffuseModel, (x, v) => x.DiffuseModel = v)
                 .AddCachedInput(nameof(ShadingAttributes.Specular), x => x.Specular, (x, v) => x.Specular = v)
@@ -57,7 +57,7 @@ namespace VL.Stride.Rendering.Materials
             yield return NewMaterialNode<MaterialMetalnessMapFeature>(nodeFactory, "Metalness", shadingCategory);
             yield return NewMaterialNode<MaterialSpecularMapFeature>(nodeFactory, "Specular", shadingCategory);
 
-            yield return nodeFactory.NewNode<MaterialSpecularCelShadingModelFeature>("CelShading", specularModelCategory, fragmented: true)
+            yield return nodeFactory.NewNode<MaterialSpecularCelShadingModelFeature>("CelShading", specularModelCategory)
                 .AddInputs()
                 .AddCachedInput(nameof(MaterialSpecularCelShadingModelFeature.RampFunction), x => x.RampFunction, (x, v) => x.RampFunction = v);
 
@@ -66,23 +66,23 @@ namespace VL.Stride.Rendering.Materials
 
             yield return NewMaterialNode<MaterialSpecularHairModelFeature>(nodeFactory, "Hair", specularModelCategory);
 
-            yield return nodeFactory.NewNode<MaterialSpecularMicrofacetModelFeature>("Microfacet", specularModelCategory, fragmented: true)
+            yield return nodeFactory.NewNode<MaterialSpecularMicrofacetModelFeature>("Microfacet", specularModelCategory)
                 .AddInputs();
 
             var defaultGlass = new MaterialSpecularThinGlassModelFeature();
-            yield return nodeFactory.NewNode<MaterialSpecularThinGlassModelFeature>("Glass", specularModelCategory, fragmented: true)
+            yield return nodeFactory.NewNode<MaterialSpecularThinGlassModelFeature>("Glass", specularModelCategory)
                 .AddInputs()
                 .AddCachedInput(nameof(MaterialSpecularThinGlassModelFeature.RefractiveIndex), x => x.RefractiveIndex, (x, v) => x.RefractiveIndex = v, defaultGlass.RefractiveIndex);
 
             yield return NewMaterialNode<MaterialEmissiveMapFeature>(nodeFactory, "Emissive", shadingCategory);
             yield return NewMaterialNode<MaterialSubsurfaceScatteringFeature>(nodeFactory, "SubsurfaceScattering", shadingCategory);
-            yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringKernelSkin>(nodeFactory, "SkinKernel", subsurfaceScatteringCategory, isFragmented: true);
-            yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileSkin>(nodeFactory, "SkinProfile", subsurfaceScatteringCategory, isFragmented: true);
-            yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileCustom>(nodeFactory, "CustomProfile", subsurfaceScatteringCategory, isFragmented: true);
-            yield return new StrideNodeDesc<FallbackEffect>(nodeFactory, category: materialCategory, isFragmented: true);
+            yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringKernelSkin>(nodeFactory, "SkinKernel", subsurfaceScatteringCategory);
+            yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileSkin>(nodeFactory, "SkinProfile", subsurfaceScatteringCategory);
+            yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileCustom>(nodeFactory, "CustomProfile", subsurfaceScatteringCategory);
+            yield return new StrideNodeDesc<FallbackEffect>(nodeFactory, category: materialCategory);
 
             // Misc
-            yield return nodeFactory.NewNode<MiscAttributes>(category: materialCategory, fragmented: true)
+            yield return nodeFactory.NewNode<MiscAttributes>(category: materialCategory)
                 .AddCachedInput(nameof(MiscAttributes.Occlusion), x => x.Occlusion, (x, v) => x.Occlusion = v)
                 .AddCachedInput(nameof(MiscAttributes.Transparency), x => x.Transparency, (x, v) => x.Transparency = v)
                 .AddCachedInput(nameof(MiscAttributes.Overrides), x => x.Overrides, (x, v) => x.Overrides = v)
@@ -103,8 +103,7 @@ namespace VL.Stride.Rendering.Materials
                 name: "Material", 
                 category: materialCategory,
                 ctor: ctx => new MaterialBuilder(ctx),
-                hasStateOutput: false, 
-                fragmented: true)
+                hasStateOutput: false)
                 .AddCachedInput(nameof(MaterialBuilder.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
                 .AddCachedInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
                 .AddCachedInput(nameof(MaterialBuilder.Misc), x => x.Misc, (x, v) => x.Misc = v)
@@ -115,7 +114,7 @@ namespace VL.Stride.Rendering.Materials
         static StrideNodeDesc<T> NewMaterialNode<T>(this IVLNodeDescriptionFactory nodeFactory, string name, string category)
             where T : new()
         {
-            return new StrideNodeDesc<T>(nodeFactory, name, category, isFragmented: true);
+            return new StrideNodeDesc<T>(nodeFactory, name, category);
         }
 
         static CustomNodeDesc<T> AddInputs<T>(this CustomNodeDesc<T> node)
