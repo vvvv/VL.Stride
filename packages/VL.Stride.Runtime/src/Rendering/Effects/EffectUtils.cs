@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using VL.Core;
 using Stride.Core.Mathematics;
 using Stride.Rendering;
+using Stride.Graphics;
 
 namespace VL.Stride.Rendering
 {
@@ -53,6 +54,7 @@ namespace VL.Stride.Rendering
         public static readonly Dictionary<string, PerFrameParameters> PerFrameMap = BuildParameterMap<PerFrameParameters>("Global");
         public static readonly Dictionary<string, PerViewParameters> PerViewMap = BuildParameterMap<PerViewParameters>("Transformation");
         public static readonly Dictionary<string, PerDrawParameters> PerDrawMap = BuildParameterMap<PerDrawParameters>("Transformation");
+        public static readonly Dictionary<string, TexturingParameters> TexturingMap = BuildParameterMap<TexturingParameters>("Texturing");
 
         public static IEnumerable<T> GetWellKnownParameters<T>(this ParameterCollection parameters, Dictionary<string, T> map)
         {
@@ -60,6 +62,42 @@ namespace VL.Stride.Rendering
             {
                 if (map.TryGetValue(p.Key.Name, out T entry))
                     yield return entry;
+            }
+        }
+
+        public static IEnumerable<TexturingParameters> GetTexturingParameters(this ParameterCollection parameters)
+        {
+            foreach (var p in parameters.Layout.LayoutParameterKeyInfos)
+            {
+                if (p.Key == TexturingKeys.Texture0)
+                    yield return TexturingParameters.Texture0TexelSize;
+
+                if (p.Key == TexturingKeys.Texture1)
+                    yield return TexturingParameters.Texture1TexelSize;
+
+                if (p.Key == TexturingKeys.Texture2)
+                    yield return TexturingParameters.Texture2TexelSize;
+
+                if (p.Key == TexturingKeys.Texture3)
+                    yield return TexturingParameters.Texture3TexelSize;
+
+                if (p.Key == TexturingKeys.Texture4)
+                    yield return TexturingParameters.Texture4TexelSize;
+
+                if (p.Key == TexturingKeys.Texture5)
+                    yield return TexturingParameters.Texture5TexelSize;
+
+                if (p.Key == TexturingKeys.Texture6)
+                    yield return TexturingParameters.Texture6TexelSize;
+
+                if (p.Key == TexturingKeys.Texture7)
+                    yield return TexturingParameters.Texture7TexelSize;
+
+                if (p.Key == TexturingKeys.Texture8)
+                    yield return TexturingParameters.Texture8TexelSize;
+
+                if (p.Key == TexturingKeys.Texture9)
+                    yield return TexturingParameters.Texture9TexelSize;
             }
         }
 
@@ -177,6 +215,55 @@ namespace VL.Stride.Rendering
             }
         }
 
+        public static void SetTexturingParameters(this ParameterCollection parameters, TexturingParameters[] texturingParams)
+        {
+            foreach (var texturingParam in texturingParams)
+            {
+                switch (texturingParam)
+                {
+                    case TexturingParameters.Texture0TexelSize:
+                        SetTexelSize(parameters, 0);
+                        break;
+                    case TexturingParameters.Texture1TexelSize:
+                        SetTexelSize(parameters, 1);
+                        break;
+                    case TexturingParameters.Texture2TexelSize:
+                        SetTexelSize(parameters, 2);
+                        break;
+                    case TexturingParameters.Texture3TexelSize:
+                        SetTexelSize(parameters, 3);
+                        break;
+                    case TexturingParameters.Texture4TexelSize:
+                        SetTexelSize(parameters, 4);
+                        break;
+                    case TexturingParameters.Texture5TexelSize:
+                        SetTexelSize(parameters, 5);
+                        break;
+                    case TexturingParameters.Texture6TexelSize:
+                        SetTexelSize(parameters, 6);
+                        break;
+                    case TexturingParameters.Texture7TexelSize:
+                        SetTexelSize(parameters, 7);
+                        break;
+                    case TexturingParameters.Texture8TexelSize:
+                        SetTexelSize(parameters, 8);
+                        break;
+                    case TexturingParameters.Texture9TexelSize:
+                        SetTexelSize(parameters, 9);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+        }
+
+        private static void SetTexelSize(ParameterCollection parameters, int i)
+        {
+            var tex = parameters.Get(TexturingKeys.DefaultTextures[i]);
+            if (tex != null)
+                parameters.Set(TexturingKeys.TexturesTexelSize[i], new Vector2(1.0f / tex.ViewWidth, 1.0f / tex.ViewHeight));
+        }
+
         static Dictionary<string, T> BuildParameterMap<T>(string effectName)
         {
             var map = new Dictionary<string, T>();
@@ -261,5 +348,19 @@ namespace VL.Stride.Rendering
         /// Eye vector in model space. Default to = (World*View)^-1[M41,M42,M43,1.0]
         /// </summary>
         EyeMS
+    }
+
+    enum TexturingParameters
+    {
+        Texture0TexelSize,
+        Texture1TexelSize,
+        Texture2TexelSize,
+        Texture3TexelSize,
+        Texture4TexelSize,
+        Texture5TexelSize,
+        Texture6TexelSize,
+        Texture7TexelSize,
+        Texture8TexelSize,
+        Texture9TexelSize
     }
 }
