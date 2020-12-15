@@ -265,7 +265,9 @@ namespace VL.Stride.Rendering
                         continue;
 
                     // Skip well known parameters
-                    if (WellKnownParameters.PerFrameMap.ContainsKey(name) || WellKnownParameters.PerViewMap.ContainsKey(name))
+                    if (WellKnownParameters.PerFrameMap.ContainsKey(name) 
+                        || WellKnownParameters.PerViewMap.ContainsKey(name) 
+                        || WellKnownParameters.TexturingMap.ContainsKey(name))
                         continue;
 
                     yield return parameter;
@@ -293,10 +295,6 @@ namespace VL.Stride.Rendering
                         {
                             var key = parameter.Key;
                             var name = key.Name;
-
-                            // Skip well known parameters
-                            if (WellKnownParameters.PerFrameMap.ContainsKey(name) || WellKnownParameters.PerViewMap.ContainsKey(name))
-                                continue;
 
                             if (WellKnownParameters.PerDrawMap.ContainsKey(name))
                             {
@@ -458,10 +456,6 @@ namespace VL.Stride.Rendering
                         {
                             var key = parameter.Key;
                             var name = key.Name;
-
-                            // Skip texel size - gets set by ImageEffectShader
-                            if (name.EndsWith("TexelSize"))
-                                continue;
 
                             // Skip the matrix transform - we're drawing fullscreen using a triangle
                             if (key == SpriteBaseKeys.MatrixTransform)
@@ -703,6 +697,7 @@ namespace VL.Stride.Rendering
             readonly PerFrameParameters[] perFrameParams;
             readonly PerViewParameters[] perViewParams;
             readonly PerDrawParameters[] perDrawParams;
+            readonly TexturingParameters[] texturingParams;
 
             public CustomEffect(string effectName, IServiceRegistry serviceRegistry, GraphicsDevice graphicsDevice, ParameterCollection parameters = default)
             {
@@ -713,6 +708,7 @@ namespace VL.Stride.Rendering
                 perFrameParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
                 perViewParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
                 perDrawParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
+                texturingParams = EffectInstance.Parameters.GetTexturingParameters().ToArray();
             }
 
             public ParameterCollection Parameters => EffectInstance.Parameters;
@@ -746,6 +742,8 @@ namespace VL.Stride.Rendering
                     }
 
                     parameters.SetPerViewParameters(perViewParams, renderView);
+
+                    parameters.SetTexturingParameters(texturingParams);
 
                     ParameterSetter?.Invoke(parameters, renderView, renderDrawContext);
                 }

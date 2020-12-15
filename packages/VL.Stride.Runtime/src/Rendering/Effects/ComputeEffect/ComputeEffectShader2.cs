@@ -19,6 +19,8 @@ namespace VL.Stride.Rendering.ComputeEffect
         PerFrameParameters[] perFrameParams;
         PerViewParameters[] perViewParams;
         PerDrawParameters[] perDrawParams;
+        TexturingParameters[] texturingParams;
+
         static Dictionary<string, ProfilingKey> profilingKeys = new Dictionary<string, ProfilingKey>();
         ProfilingKey profilingKey;
 
@@ -72,6 +74,7 @@ namespace VL.Stride.Rendering.ComputeEffect
             perFrameParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
             perViewParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
             perDrawParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerDrawMap).ToArray();
+            texturingParams = EffectInstance.Parameters.GetTexturingParameters().ToArray();
 
             if (!profilingKeys.TryGetValue(Name, out profilingKey))
             {
@@ -120,6 +123,8 @@ namespace VL.Stride.Rendering.ComputeEffect
             }
 
             Parameters.SetPerViewParameters(perViewParams, renderView);
+
+            Parameters.SetTexturingParameters(texturingParams);
 
             Dispatcher?.UpdateParameters(Parameters, ThreadGroupSize);
         }
