@@ -16,8 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class ChromaKey_TextureFXKeys
+    public static partial class SetAlpha_Internal_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Color4> ChromaKey = ParameterKeys.NewValue<Color4>(new Color4(0.05f,0.63f,0.14f,1.0f));
+        public static readonly ValueParameterKey<int> AlphaChannel = ParameterKeys.NewValue<int>(0);
+        public static readonly ValueParameterKey<float> Opacity = ParameterKeys.NewValue<float>(1);
     }
 }

@@ -25,12 +25,11 @@
         float4 col = InTex();
 
         // get distance to key
-       float dist = CalcKeyDist(col);
+        float dist = CalcKeyDist(col);
 
-        // write mask into alpha channel
+        // get mask
         float mask = CalcMask(dist);
-        col.a = Invert ? 1 - mask : mask;
-    
-        return col;
+
+        return Invert ? 1 - mask : mask;
     }
 };
