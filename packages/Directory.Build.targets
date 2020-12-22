@@ -6,4 +6,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+  <!-- Auto NuGet build packages and deploy them -->
+  <Target Name="StrideAutoPackDeploy" AfterTargets="Pack">
+    <Copy Condition="'%(Extension)' == '.nupkg'" SourceFiles="@(NuGetPackOutput)" DestinationFolder="$(LocalAppData)\Stride\NugetDev"/>
+    <!-- Deleting .sha512 file and/or .nupkg.metadata seems to be enough for NuGet restore to force extract new package and properly compile dependent projects -->
+    <Delete Files="$(NuGetPackageRoot)\$(PackageId.ToLowerInvariant())\$(PackageVersion)\$(PackageId).$(PackageVersion).nupkg.sha512"/>
+    <Delete Files="$(NuGetPackageRoot)\$(PackageId.ToLowerInvariant())\$(PackageVersion)\.nupkg.metadata"/>
+  </Target>
 </Project>

@@ -61,7 +61,7 @@ namespace VL.Stride.Games
             //GameContext.RequestedWidth = WindowManager.PreferredBackBufferWidth;
             //GameContext.RequestedHeight = WindowManager.PreferredBackBufferHeight;
             Window = gamePlatform.CreateWindow(GameContext);
-            Window.SetSize(new Int2(WindowManager.PreferredBackBufferWidth, WindowManager.PreferredBackBufferHeight));
+            //Window.SetSize(new Int2(WindowManager.PreferredBackBufferWidth, WindowManager.PreferredBackBufferHeight));
 
             Window.Visible = true;
 

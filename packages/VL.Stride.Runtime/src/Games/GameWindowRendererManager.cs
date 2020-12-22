@@ -901,7 +901,7 @@ namespace VL.Stride.Games
                                     presenter.Resize(newWidth, newHeight, newFormat);
 
                                     // Change full screen if needed
-                                    presenter.IsFullScreen = presentationParameters.IsFullScreen && !window.FullscreenIsBorderlessWindow;
+                                    //presenter.IsFullScreen = presentationParameters.IsFullScreen && !window.FullscreenIsBorderlessWindow;
 
                                     needToCreateNewDevice = false;
                                 }
