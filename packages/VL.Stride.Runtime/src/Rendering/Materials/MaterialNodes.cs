@@ -79,7 +79,7 @@ namespace VL.Stride.Rendering.Materials
             yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringKernelSkin>(nodeFactory, "SkinKernel", subsurfaceScatteringCategory);
             yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileSkin>(nodeFactory, "SkinProfile", subsurfaceScatteringCategory);
             yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileCustom>(nodeFactory, "CustomProfile", subsurfaceScatteringCategory);
-            yield return new StrideNodeDesc<FallbackEffect>(nodeFactory, category: materialCategory);
+            yield return new StrideNodeDesc<FallbackMaterial>(nodeFactory, category: materialCategory);
 
             // Misc
             yield return nodeFactory.NewNode<MiscAttributes>(category: materialCategory)

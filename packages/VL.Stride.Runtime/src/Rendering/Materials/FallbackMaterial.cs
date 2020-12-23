@@ -1,5 +1,4 @@
-﻿using Stride.Core;
-using Stride.Core.Annotations;
+﻿using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 using Stride.Engine;
 using Stride.Graphics;
@@ -9,44 +8,31 @@ using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
 using Stride.Shaders.Compiler;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace VL.Stride.Rendering.Materials
 {
-    public class FallbackEffect
+    public class FallbackMaterial
     {
         Game game;
 
-        //[DataMember]
         public Game Game
         {
             get => game;
             set
             {
                 game = value;
-                //if (game != null)
-                //    Initialize(game);
             }
         }
 
         public void Initialize(Game game, MeshRenderFeature meshRenderFeature)
         {
             // Create fallback effect to use when material is still loading
-            fallbackColorMaterial ??= Material.New(game.GraphicsDevice, new MaterialDescriptor
+            fallbackMaterial ??= Material.New(game.GraphicsDevice, new MaterialDescriptor
             {
                 Attributes =
                 {
-                    Diffuse = new MaterialDiffuseMapFeature(new ComputeColor(new Color4(1f, 1f, 1f))),
-                    DiffuseModel = new MaterialDiffuseLambertModelFeature()
-                }
-            });
-
-            fallbackTextureMaterial ??= Material.New(game.GraphicsDevice, new MaterialDescriptor
-            {
-                Attributes =
-                {
-                    Diffuse = new MaterialDiffuseMapFeature(new ComputeTextureColor { FallbackValue = null }), // Do not use fallback value, we want a DiffuseMap
+                    Diffuse = new MaterialDiffuseMapFeature(new ComputeShaderClassColor() { MixinReference = "MaterialCompiling" }),
                     DiffuseModel = new MaterialDiffuseLambertModelFeature()
                 }
             });
@@ -77,19 +63,13 @@ namespace VL.Stride.Rendering.Materials
         }
 
         EffectSystem effectSystem;
-        Material fallbackTextureMaterial;
-        Material fallbackColorMaterial;
+        Material fallbackMaterial;
 
         protected Effect ComputeMeshFallbackEffect(RenderObject renderObject, [NotNull] RenderEffect renderEffect, RenderEffectState renderEffectState)
         {
             try
             {
                 var renderMesh = (RenderMesh)renderObject;
-
-                bool hasDiffuseMap = renderMesh.MaterialPass.Parameters.ContainsKey(MaterialKeys.DiffuseMap);
-                var fallbackMaterial = hasDiffuseMap
-                    ? fallbackTextureMaterial
-                    : fallbackColorMaterial;
 
                 // High priority
                 var compilerParameters = new CompilerParameters { EffectParameters = { TaskPriority = -1 } };
@@ -123,10 +103,36 @@ namespace VL.Stride.Rendering.Materials
                 //// Also set a value so that we know something is loading (green glowing FX) or error (red glowing FX)
                 //if (!ignoreState)
                 //{
-                //    if (renderEffectState == RenderEffectState.Compiling)
-                //        compilerParameters.Set(SceneEditorParameters.IsEffectCompiling, true);
-                //    else if (renderEffectState == RenderEffectState.Error)
-                //        compilerParameters.Set(SceneEditorParameters.IsEffectError, true);
+                //    var meshParams = renderMesh.MaterialPass.Parameters;
+                //    var fallbackParams = renderEffect.FallbackParameters;
+                //    var textureKey = meshParams.ParameterKeyInfos.Select(pi => pi.Key).OfType<ObjectParameterKey<Texture>>().FirstOrDefault(key => key != MaterialSpecularMicrofacetEnvironmentGGXLUTKeys.EnvironmentLightingDFG_LUT);
+
+                //    if (textureKey != null)
+                //    {
+                //        fallbackParams.Set(MaterialCompilingKeys.OriginalTexture, meshParams.Get(textureKey));
+                //        fallbackParams.Set(MaterialCompilingKeys.HasTexture, true);
+                //    }
+                //    else
+                //    {
+                //        var colorKey = meshParams.ParameterKeyInfos.Select(pi => pi.Key).OfType<ValueParameterKey<Color4>>().FirstOrDefault();
+                //        if (colorKey != null)
+                //        {
+                //            fallbackParams.Set(MaterialCompilingKeys.OriginalColor, meshParams.Get(colorKey));
+                //        }
+                //        else
+                //        {
+                //            var float4Key = meshParams.ParameterKeyInfos.Select(pi => pi.Key).OfType<ValueParameterKey<Vector4>>().FirstOrDefault();
+                //            if (float4Key != null)
+                //            {
+                //                fallbackParams.Set(MaterialCompilingKeys.OriginalColor, new Color4(meshParams.Get(float4Key))); 
+                //            }
+
+                //        }
+
+                //        fallbackParams.Set(MaterialCompilingKeys.HasTexture, false);
+                //    }
+
+                //    fallbackParams.Set(MaterialCompilingKeys.HasError, renderEffectState == RenderEffectState.Error);
                 //}
 
                 if (renderEffectState == RenderEffectState.Error)

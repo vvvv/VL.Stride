@@ -50,6 +50,12 @@ shader ShaderUtils
 
     // COLOR UTILS ==============================================================
 
+    // Approximates luminance from an RGB value
+    float Luminance(float3 color)
+    {
+        return dot(color, float3(0.299f, 0.587f, 0.114f));
+    }
+
     float4 BitsToColor(float f)
     {
         uint u = asuint(f);
