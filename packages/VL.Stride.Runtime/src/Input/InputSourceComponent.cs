@@ -1,4 +1,5 @@
 ﻿using Stride.Animations;
+using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Engine;
 using Stride.Engine.Design;
@@ -8,6 +9,7 @@ using VL.Stride.Shaders.ShaderFX;
 
 namespace VL.Stride.Input
 {
+    [DataContract("InputSourceComponent")]
     [DefaultEntityComponentProcessor(typeof(InputSourceProcessor), ExecutionMode = ExecutionMode.All)]
     public class InputSourceComponent : ActivableEntityComponent
     {
