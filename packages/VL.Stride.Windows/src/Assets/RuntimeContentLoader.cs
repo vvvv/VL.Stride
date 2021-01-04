@@ -535,10 +535,10 @@ namespace VL.Stride.Assets
                 logger?.Debug($"Unloading {url} (Pub: {entry?.PublicReferenceCount ?? 0}, Priv:{entry?.PrivateReferenceCount ?? 0})");
             }
 #endif
-            //Notify asset removed if reference count is 1 (about to be 0) or asset doesnt exist
-            ContentManager.GetReferenceCounts(url, out var exists, out var publiceRefCount, out var privateRefCount);
-            if (!exists || publiceRefCount <= 1)
-                AssetRemoved.OnNext(url);
+            ////Notify asset removed if reference count is 1 (about to be 0) or asset doesnt exist
+            //ContentManager.GetReferenceCounts(url, out var exists, out var publiceRefCount, out var privateRefCount);
+            //if (!exists || publiceRefCount <= 1)
+            //    AssetRemoved.OnNext(url);
 
             ContentManager.Unload(url);
 #if DEBUG
