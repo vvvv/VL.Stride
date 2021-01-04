@@ -1,0 +1,54 @@
+// original code:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Filter/Keying.tfx
+
+shader ChannelKeyingBase : TextureFX
+{
+    
+    float Threshold = 0.3f;
+    float Smooth = 0.1f;
+    float AlphaBlur = 0.0f;
+    
+    bool Invert = false;
+    bool SourceAlpha = false;
+    bool Premultiply  = false;
+    
+    float4 mmap(float2 uv, float2 R)
+    {
+	    return Texture0.SampleLevel(LinearSampler, uv, (saturate(AlphaBlur)*log2(max(R.x, R.y))));
+    }
+
+    float4 keyer(float4 col, float4 map, float key)
+    { 
+        col.a = smoothstep(Threshold-Smooth, Threshold+Smooth+.0001, key);
+
+        if(Invert)
+        {
+            col.a = 1-col.a;
+        }
+        
+        if(Premultiply)
+        {
+            col.rgb *= sqrt(1./col.a);
+        }
+
+        if(SourceAlpha)
+        {
+            col.a *= map.a;
+        }
+
+        return col;
+    }
+
+    abstract float4 Key(float4 col, float4 map);
+
+    stage override float4 Shading()
+    { 
+        float2 uv = streams.TexCoord;
+        float2 R = 1/Texture0TexelSize;
+
+        float4 col = Texture0.SampleLevel(LinearSampler, uv, 0);
+        float4 map = mmap(uv, R);
+        
+        return Key(col, map);
+    }
+};
