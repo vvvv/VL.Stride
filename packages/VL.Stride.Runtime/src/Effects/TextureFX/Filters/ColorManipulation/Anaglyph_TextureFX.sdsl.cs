@@ -18,7 +18,7 @@ namespace Stride.Rendering
 {
     public static partial class Anaglyph_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Boost = ParameterKeys.NewValue<float>(1f);
+        public static readonly ValueParameterKey<float> Boost = ParameterKeys.NewValue<float>(1.0f);
         public static readonly ValueParameterKey<float> Dist = ParameterKeys.NewValue<float>(0.1f);
         public static readonly ValueParameterKey<float> MapBlur = ParameterKeys.NewValue<float>(0.1f);
     }
