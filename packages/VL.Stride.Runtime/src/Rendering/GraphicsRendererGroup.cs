@@ -34,38 +34,52 @@ namespace VL.Stride.Rendering
         IDisposable ModifyRenderContext(RenderContext renderContext);
     }
 
-    public class SetParentTransformation : IRenderContextModifier
+    public class ParentTransformationModifier : IRenderContextModifier
     {
-        private Matrix currentParentTransformation;
+        private Matrix currentParentTransformation = Matrix.Identity;
+        private Matrix transformation = Matrix.Identity;
 
-        public void Update (Matrix parentTransformation)
-        {
-            currentParentTransformation = parentTransformation;
-        }
+        public Matrix Transformation { get => transformation; set => transformation = value; }
+
+        public ModelTransformUsage ExistingTransformUsage { get; set; } = ModelTransformUsage.Ignore;
 
         public IDisposable ModifyRenderContext(RenderContext renderContext)
         {
-            return renderContext.PushTagAndRestore(EntityRendererRenderFeature.CurrentParentTransformation, currentParentTransformation);
+            switch (ExistingTransformUsage)
+            {
+                case ModelTransformUsage.Ignore:
+                    return renderContext.PushTagAndRestore(EntityRendererRenderFeature.CurrentParentTransformation, transformation);
+                case ModelTransformUsage.PreMultiply:
+                    var p = renderContext.Tags.Get(EntityRendererRenderFeature.CurrentParentTransformation);
+                    Matrix.Multiply(ref p, ref transformation, out currentParentTransformation);
+                    return renderContext.PushTagAndRestore(EntityRendererRenderFeature.CurrentParentTransformation, currentParentTransformation);
+                case ModelTransformUsage.PostMultiply:
+                    p = renderContext.Tags.Get(EntityRendererRenderFeature.CurrentParentTransformation);
+                    Matrix.Multiply(ref transformation, ref p, out currentParentTransformation);
+                    return renderContext.PushTagAndRestore(EntityRendererRenderFeature.CurrentParentTransformation, currentParentTransformation);
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 
 
-    public class RenderContextRenderer : IGraphicsRendererBase
+    public class RenderContextModifierRenderer : RendererBase
     {
-        IGraphicsRendererBase upstreamRenderer;
-        IRenderContextModifier modifier;
+        public IRenderContextModifier Modifier { get; set; }
 
-        public void Update(IGraphicsRendererBase input, IRenderContextModifier contextModifier)
+        protected override void DrawInternal(RenderDrawContext context)
         {
-            upstreamRenderer = input;
-            modifier = contextModifier;
-        }
-
-        public void Draw(RenderDrawContext context)
-        {
-            using (modifier.ModifyRenderContext(context.RenderContext))
+            if (Modifier is null)
             {
-                upstreamRenderer.Draw(context);
+                DrawInput(context);
+            }
+            else
+            {
+                using (Modifier.ModifyRenderContext(context.RenderContext))
+                {
+                    Input?.Draw(context);
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="PwY6LKPeo6iO0yovVrdC7t" LanguageVersion="2020.3.0.131" Version="0.128">
+<Document xmlns:p="property" Id="PwY6LKPeo6iO0yovVrdC7t" LanguageVersion="2020.3.0.132" Version="0.128">
   <NugetDependency Id="RpPAo2Mz2hINnzdyPwCgpq" Location="VL.CoreLib" Version="2020.3.0-0131-g93477ef404" />
   <Patch Id="J2Vq6inJsyVOtMcCMNylcQ">
     <Canvas Id="JSu0taSJ8rOOa9Gx7GIL6b" DefaultCategory="Stride" CanvasType="FullCategory">
@@ -10509,6 +10509,133 @@
             </Pad>
           </Canvas>
         </Canvas>
+        <!--
+
+    ************************ WithTransformation ************************
+
+-->
+        <Node Name="WithTransformation" Bounds="265,461" Id="Swqx6l6eL57QEVZVEK0GMD">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="Tu01He6doKJMEkiy11l98x">
+            <Canvas Id="Sz5S5n2jfVLNrXC77m5c9V" CanvasType="Group">
+              <Node Bounds="358,434" Id="IZw0fm73mPONPySfPw0Uhg">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.Nodes">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessNode" Name="RenderContextModifierRenderer" />
+                </p:NodeReference>
+                <Pin Id="OJDKTpec7b2NVJzHokck6x" Name="Input" Kind="InputPin" />
+                <Pin Id="NIizaBeyE1tQG2zNmJQzB7" Name="Modifier" Kind="InputPin" />
+                <Pin Id="UaLsKpP0a6fPuD90fD2oSB" Name="Output" Kind="OutputPin" />
+              </Node>
+              <Node Bounds="515,389,153,19" Id="OiVH08FZTakLMcJsmQf4by">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.Nodes">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessNode" Name="ParentTransformationModifier" />
+                </p:NodeReference>
+                <Pin Id="LdUS2JE8aVNMy2nqco1UQx" Name="Transformation" Kind="InputPin" />
+                <Pin Id="PI5LJpgyVUONdGMeeIxJ2I" Name="Existing Transform Usage" Kind="InputPin" />
+                <Pin Id="TGFPUUaHOXOLPS3HZrH8pk" Name="Output" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="G104jXXLDd6OycrwGFzuwL" Bounds="360,476" />
+              <ControlPoint Id="MgBNAlNA5bpQcbnGOFn3Hr" Bounds="360,394" />
+              <ControlPoint Id="IlfmcMOoWPqPmk9TKpBnW8" Bounds="517,354" />
+              <ControlPoint Id="IcmvMKEIBMhL00VjPFOMuR" Bounds="665,359" />
+            </Canvas>
+            <Patch Id="LaBFNwis5UNOGUitqpBl5L" Name="Create" ParticipatingElements="HU8jLCtmXNlOXy7aCTwNEO" />
+            <Patch Id="Q00I0nnCll7OKkah5giCfp" Name="Update">
+              <Pin Id="Kso8jUmXf9YN4GPssf6Rf8" Name="Output" Kind="OutputPin" Bounds="360,474" />
+            </Patch>
+            <Link Id="HU8jLCtmXNlOXy7aCTwNEO" Ids="TGFPUUaHOXOLPS3HZrH8pk,NIizaBeyE1tQG2zNmJQzB7" />
+            <Link Id="B3EW2TeN4DSOTuQLqgXxOD" Ids="UaLsKpP0a6fPuD90fD2oSB,G104jXXLDd6OycrwGFzuwL" />
+            <Link Id="Blj5aLBNLYEPxfQ7oCt7bc" Ids="G104jXXLDd6OycrwGFzuwL,Kso8jUmXf9YN4GPssf6Rf8" IsHidden="true" />
+            <Link Id="V4ZgQl8EKZYLvFUwXkrkge" Ids="MgBNAlNA5bpQcbnGOFn3Hr,OJDKTpec7b2NVJzHokck6x" />
+            <Link Id="Mm289023d7iP1x23oV8ebg" Ids="ScSHVdKl3UDP8bFXr7sdI7,MgBNAlNA5bpQcbnGOFn3Hr" IsHidden="true" />
+            <Link Id="JkHFU7ADB2rL6Ycs1EfJsD" Ids="IlfmcMOoWPqPmk9TKpBnW8,LdUS2JE8aVNMy2nqco1UQx" />
+            <Link Id="TTwV53p2alsNCJdyfm3j6e" Ids="BSemL8XdgIKMWZuwgWtDjb,IlfmcMOoWPqPmk9TKpBnW8" IsHidden="true" />
+            <Patch Id="RDRQekIjkaCPFLyGz4LNcA" Name="SetTransformation">
+              <Pin Id="BSemL8XdgIKMWZuwgWtDjb" Name="Transformation" Kind="InputPin" />
+            </Patch>
+            <Link Id="ETDwfZ4MNyzNBwQwZQURZy" Ids="IcmvMKEIBMhL00VjPFOMuR,PI5LJpgyVUONdGMeeIxJ2I" />
+            <Link Id="S0mnzxlklSJNGyghCqEd0V" Ids="SgvociP94npQHX0g9Qx7Re,IcmvMKEIBMhL00VjPFOMuR" IsHidden="true" />
+            <Patch Id="PhvRDqkW505N1Bh7PSwkVV" Name="SetExistingTransformUsage">
+              <Pin Id="SgvociP94npQHX0g9Qx7Re" Name="Existing Transform Usage" Kind="InputPin" />
+            </Patch>
+            <Patch Id="KY3qzf34CCwLbXyDbF16hv" Name="SetInput">
+              <Pin Id="ScSHVdKl3UDP8bFXr7sdI7" Name="Input" Kind="InputPin" />
+            </Patch>
+            <ProcessDefinition Id="RcgjkWMA4cgOIKMVV06QYE">
+              <Fragment Id="P3jrh2ZXXtzLUi26oOsppo" Patch="LaBFNwis5UNOGUitqpBl5L" Enabled="true" />
+              <Fragment Id="Kag0B94sAa6NrS6GWkvymB" Patch="KY3qzf34CCwLbXyDbF16hv" Enabled="true" />
+              <Fragment Id="RK53gn6CozbN8kkeYfjPbJ" Patch="RDRQekIjkaCPFLyGz4LNcA" Enabled="true" />
+              <Fragment Id="FI639J387E4O6QgmCj9tPx" Patch="PhvRDqkW505N1Bh7PSwkVV" Enabled="true" />
+              <Fragment Id="U73keNqSINPQdTcSvsrj8K" Patch="Q00I0nnCll7OKkah5giCfp" Enabled="true" />
+            </ProcessDefinition>
+          </Patch>
+        </Node>
+        <!--
+
+    ************************ Enabled ************************
+
+-->
+        <Node Name="Enabled" Bounds="265,509" Id="HeIGGEpogi3NSlODRIa6dv">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="Ven2wreoSbxLDEWVOXHaKU">
+            <Canvas Id="UIjy1lyGU3ZPrjtFUoivBh" CanvasType="Group">
+              <Node Bounds="358,434" Id="V2FPS8urrz5PxBCMLC03of">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.Nodes">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessNode" Name="RenderContextModifierRenderer" />
+                </p:NodeReference>
+                <Pin Id="H5OAGS4EHbHM12OpUiioe2" Name="Input" Kind="InputPin" />
+                <Pin Id="JNxdxKXffcILbW1iQl2n3d" Name="Modifier" Kind="InputPin" />
+                <Pin Id="QMkrbqSj2ioPDdeQKVYKWN" Name="Output" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="SfplAKkAmRULQrOL4gllI2" Bounds="360,476" />
+              <ControlPoint Id="JlrdCa3mqwFNBKeXuUBZ7a" Bounds="399,322" />
+              <Node Bounds="358,401,45,19" Id="KM2w9oWhdVlOKNUf5HM5S6">
+                <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="OperationCallFlag" Name="Switch (Boolean)" />
+                </p:NodeReference>
+                <Pin Id="MdVq5RLweOfLmC8K0Hm9Yj" Name="Condition" Kind="InputPin" />
+                <Pin Id="RpmDMY05r0MOJ5sHF7Yk8j" Name="Input" Kind="InputPin" />
+                <Pin Id="NbHHAtfqeywLHa1sFGWhcz" Name="Input 2" Kind="InputPin" />
+                <Pin Id="BgzljbdWewsNai3xJQ2dxK" Name="Output" Kind="OutputPin" />
+              </Node>
+              <Pad Id="F34R9vMzxvhMQf4kEmWSkw" SlotId="Vu0JSYrKbvYO2rZyPEeaFz" Bounds="486,375" />
+              <ControlPoint Id="MdiSYKcjAHwOlLIW0eA8B9" Bounds="486,327" />
+            </Canvas>
+            <Patch Id="HJulcDLPZ8KN4I73nR6OcC" Name="Create" />
+            <Patch Id="SEujpSI3aGePxCUM1YeOxH" Name="Update">
+              <Pin Id="D5pRkYvVp9TNWK1ixEYLbR" Name="Output" Kind="OutputPin" Bounds="360,474" />
+            </Patch>
+            <Link Id="U0ClglIHewJMgsUBsTMEkA" Ids="QMkrbqSj2ioPDdeQKVYKWN,SfplAKkAmRULQrOL4gllI2" />
+            <Link Id="F2JK5nUNGMVQRYsP5U8dZa" Ids="SfplAKkAmRULQrOL4gllI2,D5pRkYvVp9TNWK1ixEYLbR" IsHidden="true" />
+            <Link Id="KAoPb9M8AofPC3d2FL545D" Ids="EBSCXjHKWagQZv7qNSoi6k,JlrdCa3mqwFNBKeXuUBZ7a" IsHidden="true" />
+            <Patch Id="GmAciJQZAoAOUucT2c0Kr5" Name="SetEnabled">
+              <Pin Id="KElo6nrt7vMM1rRBZVJdJg" Name="Enabled" Kind="InputPin" />
+            </Patch>
+            <Patch Id="HuTxNFxm7BkPg4Vz42k41f" Name="SetInput">
+              <Pin Id="EBSCXjHKWagQZv7qNSoi6k" Name="Input" Kind="InputPin" />
+            </Patch>
+            <ProcessDefinition Id="Mmv7qsYwSSpOGQ3YLB8pRu">
+              <Fragment Id="Jqbu6X4vLBwMROf4uaq34X" Patch="HJulcDLPZ8KN4I73nR6OcC" Enabled="true" />
+              <Fragment Id="QtupAy3kAfwNvnHbmJoNAu" Patch="HuTxNFxm7BkPg4Vz42k41f" Enabled="true" />
+              <Fragment Id="OT74dsMX7XDMESS5oj8kA7" Patch="GmAciJQZAoAOUucT2c0Kr5" Enabled="true" />
+              <Fragment Id="LjOFhWKq3AZMGaAovCM8HZ" Patch="SEujpSI3aGePxCUM1YeOxH" Enabled="true" />
+            </ProcessDefinition>
+            <Link Id="NMthwW28j71M9sC0UYNNkj" Ids="BgzljbdWewsNai3xJQ2dxK,H5OAGS4EHbHM12OpUiioe2" />
+            <Link Id="O3ZhS1Ap8NXLrqArCHNk8F" Ids="JlrdCa3mqwFNBKeXuUBZ7a,NbHHAtfqeywLHa1sFGWhcz" />
+            <Slot Id="Vu0JSYrKbvYO2rZyPEeaFz" Name="Condition" />
+            <Link Id="VpiSFxRD82pNoFLU3FzwOJ" Ids="F34R9vMzxvhMQf4kEmWSkw,MdVq5RLweOfLmC8K0Hm9Yj" />
+            <Link Id="V4THhkerZInL88skGNnRqJ" Ids="MdiSYKcjAHwOlLIW0eA8B9,F34R9vMzxvhMQf4kEmWSkw" />
+            <Link Id="QEG82GvhGW1OoWurauJAyC" Ids="KElo6nrt7vMM1rRBZVJdJg,MdiSYKcjAHwOlLIW0eA8B9" IsHidden="true" />
+          </Patch>
+        </Node>
       </Canvas>
       <Canvas Id="G2SqaBKhKhsO53yWpBm7Zf" Name="Textures" Position="178,274">
         <!--
