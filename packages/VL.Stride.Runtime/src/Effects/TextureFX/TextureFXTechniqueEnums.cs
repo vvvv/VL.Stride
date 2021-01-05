@@ -12,6 +12,7 @@ namespace VL.Stride.Effects.TextureFX
     public enum ColorConvertTechnique { Alpha, Red, Green, Blue, Hue, Saturation, Value, HSVtoRGB, RGBtoHSV };
     public enum ColorMapTechnique { Hue, HueSaturation, HueValue, Luma, RedBlue, RGBA, SaturationValue, Tone, Value };
     public enum ColorRampTechnique { RGB, Hue, Luma, Saturation };
+    public enum HaloTechnique { Linear, Smooth, Spike, Textured };
     public enum LevelsClampType { None, Top, Bottom, Both };
     public enum TunnelsDistortionTechnique { Square, Cylinder, Fly };
     public enum GlowTechnique { Pre, Glow, Mix };
