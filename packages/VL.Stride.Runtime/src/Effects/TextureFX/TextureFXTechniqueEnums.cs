@@ -9,6 +9,7 @@ namespace VL.Stride.Effects.TextureFX
    
     public enum BumpTechnique { Directional, Point };
     public enum ChannelKeyingTechnique { Alpha, Red, Green, Blue, Luma, Saturation };
+    public enum ColorMapTechnique { Hue, HueSaturation, HueValue, Luma, RedBlue, RGBA, SaturationValue, Tone, Value };
     public enum ColorRampTechnique { RGB, Hue, Luma, Saturation };
     public enum LevelsClampType { None, Top, Bottom, Both };
     public enum TunnelsDistortionTechnique { Square, Cylinder, Fly };
