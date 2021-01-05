@@ -20,8 +20,15 @@
     <PackageReference Include="Stride.Assets.Models" Version="$(StrideVersion)" />
     <!-- A pure package dependency so on install all VL packages come in -->
     <PackageReference Include="Stride.TextureConverter" Version="$(StrideVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(InPrivateRepo)' == 'true'">
+    <ProjectReference Include="..\..\..\..\VL.Skia\src\VL.Skia.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(InPrivateRepo)' != 'true'">
     <PackageReference Include="VL.Skia" Version="$(VLVersion)" PrivateAssets="all" />
   </ItemGroup>
+  
   <Target Name="IncludeStridePackageContent" BeforeTargets="InferPackageContents" DependsOnTargets="_StridePrepareAssetsForPack">
     <Message Importance="high" Text="Called Stride package targets" />
   </Target>
