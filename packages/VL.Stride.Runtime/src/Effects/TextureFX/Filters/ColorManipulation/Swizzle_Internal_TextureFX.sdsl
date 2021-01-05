@@ -1,0 +1,21 @@
+// source:
+// https://github.com/vvvv/vvvv-sdk/blob/develop/vvvv45/addonpack/lib/nodes/modules/TextureFX/Filter/Swizzle/Swizzle.fx
+
+shader Swizzle_Internal_TextureFX : TextureFX
+{
+    int  Channel0;
+    int  Channel1;
+    int  Channel2;
+    int  Channel3;
+  
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord;
+        
+        float4 col = Texture0.Sample(LinearSampler, uv);
+    
+        float4 newCol = float4 (col[Channel1], col[Channel2], col[Channel3], col[Channel0]);
+	
+        return newCol;
+    }
+};

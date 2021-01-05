@@ -19,6 +19,7 @@ namespace VL.Stride.Effects.TextureFX
     public enum NoiseType { Perlin, PerlinGrad, Value, ValueGrad, Simplex, SimplexGrad, WorleyFast, WorleyFastGrad };
     public enum PaletteTechnique { HSL, HSV, Radial };
     public enum PolarCoordinatesTechnique { Cartesian, Polar };
+    public enum SwizzleTechnique { Red, Green, Blue, Alpha };
     public enum TunnelsDistortionTechnique { Square, Cylinder, Fly };
 
 
