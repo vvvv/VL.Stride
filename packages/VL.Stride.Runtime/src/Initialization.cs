@@ -70,7 +70,10 @@ namespace VL.Stride.Core
             RegisterStaticNodeFactory(ref engineNode, services, "VL.Stride.Engine.Nodes", nodeFactory =>
             {
                 return EngineNodes.GetNodeDescriptions(nodeFactory)
-                    .Concat(PhysicsNodes.GetNodeDescriptions(nodeFactory));
+                    .Concat(PhysicsNodes.GetNodeDescriptions(nodeFactory))
+                    .Concat(VRNodes.GetNodeDescriptions(nodeFactory))
+                    ;
+
             });
 
             EffectShaderNodes.Register(services);
