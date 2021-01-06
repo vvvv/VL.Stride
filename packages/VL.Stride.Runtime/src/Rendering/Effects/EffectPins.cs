@@ -73,26 +73,34 @@ namespace VL.Stride.Rendering
         public override string Name { get; }
         public override Type Type { get; }
         public override object DefaultValueBoxed { get; }
-        public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => EffectPins.CreatePin(graphicsDevice, parameters, Key, Count, IsPermutationKey);
+        public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => EffectPins.CreatePin(graphicsDevice, parameters, Key, Count, IsPermutationKey, DefaultValueBoxed);
     }
 
     static class EffectPins
     {
-        public static IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey)
+        public static IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey, object value)
         {
             if (key is ValueParameterKey<Color4> colorKey)
-                return new ColorParameterPin(parameters, colorKey, graphicsDevice.ColorSpace);
+                return new ColorParameterPin(parameters, colorKey, graphicsDevice.ColorSpace, (Color4)value);
 
             var argument = key.GetType().GetGenericArguments()[0];
             if (isPermutationKey)
             {
                 var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreatePermutationPin), BindingFlags.Static | BindingFlags.Public);
-                return createPinMethod.MakeGenericMethod(argument).Invoke(null, new object[] { parameters, key }) as IVLPin;
+                return createPinMethod.MakeGenericMethod(argument).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
             }
             else if (argument.IsValueType)
             {
-                var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateValuePin), BindingFlags.Static | BindingFlags.Public);
-                return createPinMethod.MakeGenericMethod(argument).Invoke(null, new object[] { parameters, key, count }) as IVLPin;
+                if (count > 1)
+                {
+                    var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateArrayPin), BindingFlags.Static | BindingFlags.Public);
+                    return createPinMethod.MakeGenericMethod(argument).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+                }
+                else
+                {
+                    var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateValuePin), BindingFlags.Static | BindingFlags.Public);
+                    return createPinMethod.MakeGenericMethod(argument).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+                }
             }
             else
             {
@@ -101,21 +109,19 @@ namespace VL.Stride.Rendering
             }
         }
 
-        public static IVLPin CreatePermutationPin<T>(ParameterCollection parameters, PermutationParameterKey<T> key)
+        public static IVLPin CreatePermutationPin<T>(ParameterCollection parameters, PermutationParameterKey<T> key, T value)
         {
-            return new PermutationParameterPin<T>(parameters, key);
+            return new PermutationParameterPin<T>(parameters, key, value);
         }
 
-        public static IVLPin CreateValuePin<T>(ParameterCollection parameters, ValueParameterKey<T> key, int count) where T : struct
+        public static IVLPin CreateValuePin<T>(ParameterCollection parameters, ValueParameterKey<T> key, T value) where T : struct
         {
-            if (count > 1)
-            {
-                return new ArrayValueParameterPin<T>(parameters, key);
-            }
-            else
-            {
-                return new ValueParameterPin<T>(parameters, key);
-            }
+            return new ValueParameterPin<T>(parameters, key, value);
+        }
+
+        public static IVLPin CreateArrayPin<T>(ParameterCollection parameters, ValueParameterKey<T> key, T[] value) where T : struct
+        {
+            return new ArrayValueParameterPin<T>(parameters, key, value);
         }
 
         public static IVLPin CreateResourcePin<T>(ParameterCollection parameters, ObjectParameterKey<T> key) where T : class
@@ -151,10 +157,11 @@ namespace VL.Stride.Rendering
         public readonly PermutationParameterKey<T> Key;
         readonly EqualityComparer<T> comparer = EqualityComparer<T>.Default;
 
-        public PermutationParameterPin(ParameterCollection parameters, PermutationParameterKey<T> key) 
+        public PermutationParameterPin(ParameterCollection parameters, PermutationParameterKey<T> key, T value) 
             : base(parameters, key)
         {
             this.Key = key;
+            this.Value = value;
         }
 
         public T Value
@@ -178,10 +185,11 @@ namespace VL.Stride.Rendering
     {
         public readonly ValueParameterKey<T> Key;
 
-        public ValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key) 
+        public ValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key, T value)
             : base(parameters, key)
         {
             this.Key = key;
+            this.Value = value;
         }
 
         public T Value
@@ -202,11 +210,12 @@ namespace VL.Stride.Rendering
         public readonly ValueParameterKey<Color4> Key;
         public readonly ColorSpace ColorSpace;
 
-        public ColorParameterPin(ParameterCollection parameters, ValueParameterKey<Color4> key, ColorSpace colorSpace)
+        public ColorParameterPin(ParameterCollection parameters, ValueParameterKey<Color4> key, ColorSpace colorSpace, Color4 value)
             : base(parameters, key)
         {
             this.Key = key;
             this.ColorSpace = colorSpace;
+            this.Value = value;
         }
 
         public Color4 Value
@@ -226,10 +235,11 @@ namespace VL.Stride.Rendering
     {
         public readonly ValueParameterKey<T> Key;
 
-        public ArrayValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key) 
+        public ArrayValueParameterPin(ParameterCollection parameters, ValueParameterKey<T> key, T[] value) 
             : base(parameters, key)
         {
             this.Key = key;
+            this.Value = value;
         }
 
         // TODO: Add overloads to Stride wich take accessor instead of less optimal key
