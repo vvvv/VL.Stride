@@ -142,7 +142,6 @@ namespace VL.Stride.Rendering.Compositing
 
 
             yield return new StrideNodeDesc<SubsurfaceScatteringBlur>(nodeFactory, category: compositionCategory);
-            yield return new StrideNodeDesc<VRRendererSettings>(nodeFactory, category: compositionCategory);
             yield return new StrideNodeDesc<LightShafts>(nodeFactory, category: compositionCategory);
             yield return new StrideNodeDesc<MSAAResolver>(nodeFactory, category: compositionCategory);
 

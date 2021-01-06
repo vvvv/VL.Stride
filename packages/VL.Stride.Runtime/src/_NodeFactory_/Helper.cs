@@ -90,6 +90,8 @@ namespace VL.Stride
         {
             return type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetMethod != null && p.GetMethod.IsPublic && ((p.SetMethod != null && p.SetMethod.IsPublic) || !p.PropertyType.IsValueType))
+                .OfType<MemberInfo>()
+                .Concat(type.GetFields(BindingFlags.Public | BindingFlags.Instance))
                 .Select(p =>
                 {
                     // Do not include properties which have explicit ignore flags set
@@ -115,7 +117,7 @@ namespace VL.Stride
                         order = int.MaxValue;
 
                     return (
-                        Property: (MemberInfo)p,
+                        Property: p,
                         Order: order,
                         Name: name,
                         Category: display?.Category?.UpperCaseAfterSpace());
