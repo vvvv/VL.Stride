@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Document xmlns:p="property" Id="PwY6LKPeo6iO0yovVrdC7t" LanguageVersion="2020.3.0.136" Version="0.128">
-  <NugetDependency Id="RpPAo2Mz2hINnzdyPwCgpq" Location="VL.CoreLib" Version="2020.3.0-0092-gae02f44ee4" />
+  <NugetDependency Id="RpPAo2Mz2hINnzdyPwCgpq" Location="VL.CoreLib" Version="2020.3.0-0131-g93477ef404" />
   <Patch Id="J2Vq6inJsyVOtMcCMNylcQ">
     <Canvas Id="JSu0taSJ8rOOa9Gx7GIL6b" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="KouU4NDrV4yMANodMZ0uIi" Name="Utils" Position="180,530">
@@ -2652,7 +2652,7 @@
     ************************ LineVertices ************************
 
 -->
-              <Node Name="LineVertices" Bounds="836,1009,209,310" Id="JffmkbDdy4IL7T8SmdYfnD">
+              <Node Name="LineVertices" Bounds="832,1009,213,310" Id="JffmkbDdy4IL7T8SmdYfnD">
                 <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="Builtin">
                   <Choice Kind="OperationDefinition" Name="Operation" />
                 </p:NodeReference>
@@ -2671,12 +2671,11 @@
                     <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="VL.CoreLib.dll">
                       <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                       <CategoryReference Kind="Category" Name="Primitive" />
-                      <Choice Kind="ApplicationStatefulRegion" Name="ForEach" />
+                      <Choice Kind="ApplicationStatefulRegion" Name="Repeat" />
                     </p:NodeReference>
                     <ControlPoint Id="CPwpyFZkTyPQOQps5DVsG2" Bounds="938,1131" Alignment="Top" />
                     <ControlPoint Id="B3CMAhUQQzNPmQmBcDMWUf" Bounds="898,1131" Alignment="Top" />
                     <ControlPoint Id="DaK8134ueSIPSjSCxNjdBV" Bounds="897,1272" Alignment="Bottom" />
-                    <Pin Id="OWIheFCAnVXOCvirWYgQwL" Name="Break" Kind="OutputPin" />
                     <Patch Id="HyW2EN84HLgOTsIIm98kIF" ManuallySortedPins="true">
                       <Patch Id="Ho4AWBn8Xk8M6DV2UomSJw" Name="Create" ManuallySortedPins="true" />
                       <Patch Id="RlESw49blHLPSI94w5R8uC" Name="Update" ManuallySortedPins="true" />
@@ -2705,6 +2704,8 @@
                         <Pin Id="U08PTKl4788LQ8o24vU2EB" Name="Output" Kind="StateOutputPin" />
                       </Node>
                     </Patch>
+                    <Pin Id="P5CGzVHPOYtPXy8K81tOBT" Name="Iteration Count" Kind="InputPin" />
+                    <Pin Id="OWIheFCAnVXOCvirWYgQwL" Name="Break" Kind="OutputPin" />
                   </Node>
                   <Link Id="QzQupl6yfEiPaC6PMbsePu" Ids="CPwpyFZkTyPQOQps5DVsG2,SYIwISjuUarNbPj3EiHQCY" />
                   <Link Id="Tw4UEjqpggOL9TjDh2Oa8j" Ids="DhpUGJIuWjDOD7KOEijbKJ,B3CMAhUQQzNPmQmBcDMWUf" />
@@ -2713,6 +2714,18 @@
                   <Link Id="RDyY9EZeqmSOiBLZ4omEXu" Ids="PsUICPuMewVMprCJdWUxhx,VvXAY48u0lwOu4MAuPv0DK" />
                   <Link Id="Gg0X5QgXQxfQUfdYsTZe4R" Ids="U08PTKl4788LQ8o24vU2EB,DaK8134ueSIPSjSCxNjdBV" />
                   <Link Id="JiSsAAoqF94NC5HF1Or126" Ids="NLrRF8OskMTOCMgei1uvKh,CPwpyFZkTyPQOQps5DVsG2" />
+                  <Node Bounds="844,1071,65,26" Id="JFoe2Ez02LxNF1K4ltRWs0">
+                    <p:NodeReference LastCategoryFullName="Collections.Interfaces.IReadOnlyList" LastSymbolSource="VL.Collections.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="OperationCallFlag" Name="Count" />
+                      <CategoryReference Kind="MutableInterfaceType" Name="IReadOnlyList" NeedsToBeDirectParent="true" />
+                    </p:NodeReference>
+                    <Pin Id="MtYckFkzDFBPQIzAYsEbxE" Name="Input" Kind="StateInputPin" />
+                    <Pin Id="LqNmQvLLAT7PUZGUNUEAHK" Name="Output" Kind="OutputPin" />
+                    <Pin Id="Sqr8xXTSFl2MoKTtObwtoF" Name="Count" Kind="OutputPin" />
+                  </Node>
+                  <Link Id="UOZj9VMHys3PiS69zlqQck" Ids="Sqr8xXTSFl2MoKTtObwtoF,P5CGzVHPOYtPXy8K81tOBT" />
+                  <Link Id="TvgDQEnKjCiOI1o1HpfKG5" Ids="DhpUGJIuWjDOD7KOEijbKJ,MtYckFkzDFBPQIzAYsEbxE" />
                 </Patch>
               </Node>
               <!--
@@ -8623,7 +8636,7 @@
     ************************ DebugTextRenderer ************************
 
 -->
-        <Node Name="DebugTextRenderer" Bounds="830,170" Id="H1W8uhxjtVfOY24iJWzdcG">
+        <Node Name="DebugTextRenderer" Aspects="Internal" Bounds="830,170" Id="H1W8uhxjtVfOY24iJWzdcG">
           <p:NodeReference>
             <Choice Kind="ClassDefinition" Name="Class" />
             <FullNameCategoryReference ID="Primitive" />
@@ -14493,12 +14506,12 @@
   <PlatformDependency Id="Rmk1hhUSQ4uOQmsJAH5lsU" Location="Stride.Core.Mathematics.dll" />
   <PlatformDependency Id="Tc8NoUSn0SuMMBZAUjprPJ" Location="Stride.Rendering.dll" />
   <PlatformDependency Id="CszHwhDkPr3NhEtP3Djfl7" Location="Stride.Graphics.dll" />
-  <NugetDependency Id="EkUWkHqtRXcQVEg26rgBpq" Location="VL.Core" Version="2020.3.0-0092-gae02f44ee4" />
+  <NugetDependency Id="EkUWkHqtRXcQVEg26rgBpq" Location="VL.Core" Version="2020.3.0-0131-g93477ef404" />
   <DocumentDependency Id="GgJFG0lRV0ZOQUkVvPG0vL" Location="./VL.Stride.Games.vl" />
   <PlatformDependency Id="ARsp3DhFm9mL1X4DOx1Vtm" Location="Stride.Games.dll" />
   <PlatformDependency Id="MwArYn0D5CiNAmmLjqaRgA" Location="Stride.dll" />
   <PlatformDependency Id="Q7nST93Js7JPC6j1sTV9L9" Location="Stride.Core.dll" />
-  <NugetDependency Id="EjPOOnYIHFTPiEWYlANtiy" Location="VL.UI.Core" Version="2020.3.0-0092-gae02f44ee4" />
+  <NugetDependency Id="EjPOOnYIHFTPiEWYlANtiy" Location="VL.UI.Core" Version="2020.3.0-0131-g93477ef404" />
   <DocumentDependency Id="UObWgh0LBvhOQjw1GfoR4z" Location="./VL.Stride.Input.vl" IsFriend="true" />
   <NodeFactoryDependency Id="G8f0R8c6bNHPPJESeWChtz" Location="VL.Stride.Rendering.Nodes" IsForward="true" />
   <NodeFactoryDependency Id="T4XjgRvHD6SOaL2LXA4EBL" Location="VL.Stride.Rendering.EffectShaderNodes" IsForward="true" />

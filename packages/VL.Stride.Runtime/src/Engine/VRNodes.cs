@@ -31,9 +31,9 @@ namespace VL.Stride.Engine
                 .AddOutput(nameof(VRDevice.HeadRotation), x => x.v.Device?.HeadRotation ?? Quaternion.Identity)
                 .AddOutput(nameof(VRDevice.HeadLinearVelocity), x => x.v.Device?.HeadLinearVelocity ?? Vector3.Zero)
                 .AddOutput(nameof(VRDevice.HeadAngularVelocity), x => x.v.Device?.HeadAngularVelocity ?? Vector3.Zero)
+                .AddOutput(nameof(VRDevice.TrackedItems), x => x.TrackedItems)
                 .AddOutput(nameof(VRDevice.MirrorTexture), x => x.v.Device?.MirrorTexture)
                 .AddOutput(nameof(VRDevice.VRApi), x => x.v.Device?.VRApi ?? VRApi.Dummy)
-                .AddOutput(nameof(VRDevice.TrackedItems), x => x.TrackedItems)
                 .AddOutput("VR Device System", x => x.v)
                 ;
 
@@ -43,12 +43,25 @@ namespace VL.Stride.Engine
                 .AddOutput(nameof(TouchController.Rotation), x => x.v?.Rotation ?? Quaternion.Identity)
                 .AddOutput(nameof(TouchController.LinearVelocity), x => x.v?.LinearVelocity ?? Vector3.Zero)
                 .AddOutput(nameof(TouchController.AngularVelocity), x => x.v?.AngularVelocity ?? Vector3.Zero)
+                .AddOutput(nameof(TouchController.Trigger), x => x.v?.Trigger ?? 0.0f)
+                .AddOutput(nameof(TouchController.Grip), x => x.v?.Grip ?? 0.0f)
+                .AddOutput(nameof(TouchController.IndexPointing), x => x.v?.IndexPointing ?? false)
+                .AddOutput(nameof(TouchController.IndexResting), x => x.v?.IndexResting ?? false)
+                .AddOutput(nameof(TouchController.ThumbAxis), x => x.v?.ThumbAxis ?? Vector2.Zero)
+                .AddOutput(nameof(TouchController.ThumbResting), x => x.v?.ThumbResting ?? false)
+                .AddOutput(nameof(TouchController.ThumbstickAxis), x => x.v?.ThumbstickAxis ?? Vector2.Zero)
+                .AddOutput(nameof(TouchController.ThumbUp), x => x.v?.ThumbUp ?? false)
                 ;
 
             yield return factory.NewSplitNode<TrackedItem>(vrCategory)
                 .AddOutput(nameof(TrackedItem.State), x => x.v?.State ?? DeviceState.Invalid)
+                .AddOutput(nameof(TrackedItem.Class), x => x.v?.Class ?? DeviceClass.Invalid)
                 .AddOutput(nameof(TrackedItem.Position), x => x.v?.Position ?? Vector3.Zero)
                 .AddOutput(nameof(TrackedItem.Rotation), x => x.v?.Rotation ?? Quaternion.Identity)
+                .AddOutput(nameof(TrackedItem.LinearVelocity), x => x.v?.LinearVelocity ?? Vector3.Zero)
+                .AddOutput(nameof(TrackedItem.AngularVelocity), x => x.v?.AngularVelocity ?? Vector3.Zero)
+                .AddOutput(nameof(TrackedItem.SerialNumber), x => x.v?.SerialNumber ?? "")
+                .AddOutput(nameof(TrackedItem.BatteryPercentage), x => x.v?.BatteryPercentage ?? 0.0f)
                 ;
         }
 
