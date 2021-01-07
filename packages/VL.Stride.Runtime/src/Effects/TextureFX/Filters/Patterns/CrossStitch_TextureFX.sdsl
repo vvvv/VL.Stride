@@ -38,12 +38,12 @@ shader CrossStitch_TextureFX : TextureFX
             if (Invert)
                 col = Color;
             else
-                col = Texture0.SampleLevel(LinearRepeatSampler, tlPos * float2(1.0/R.x, 1.0/R.y), 0) * 1.4;
+                col = Texture0.SampleLevel(LinearRepeatSampler, tlPos * Texture0TexelSize, 0) * 1.4;
         }
         else
         {
             if (Invert)
-                col = Texture0.SampleLevel(LinearRepeatSampler, tlPos * float2(1.0/R.x, 1.0/R.y), 0) * 1.4;
+                col = Texture0.SampleLevel(LinearRepeatSampler, tlPos * Texture0TexelSize, 0) * 1.4;
             else
                 col = Color;
         }
