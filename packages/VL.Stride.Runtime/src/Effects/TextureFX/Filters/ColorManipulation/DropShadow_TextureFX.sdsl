@@ -23,7 +23,7 @@ shader DropShadow_TextureFX : TextureFX
         float4 col = 0;
         
         float2 sx = uv + sqrt(2)*Offset*sin((Angle+float2(0, -0.25))*acos(-1)*2);
-        float2 off = .5/R*pow(2,lod) * saturate(lod);
+        float2 off = .5 * Texture0TexelSize * pow(2, lod) * saturate(lod);
         
         col += Texture0.SampleLevel(LinearSampler, sx+float2(0,0)*off, lod);
         col += Texture0.SampleLevel(LinearSampler, sx+float2(1,1)*off, lod);
