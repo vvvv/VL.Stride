@@ -3,7 +3,7 @@
 
 shader Liquish_TextureFX : TextureFX
 {
-	float Time;
+    float Time;
     float2 ScaleXY = float2(10.0f, 10.0f);
 
     [Color] 
@@ -12,12 +12,11 @@ shader Liquish_TextureFX : TextureFX
     float4 ColorB  = float4(1.0f, 1.0f, 1.0f, 1.0f);
     [Color] 
     float4 ColorC  = float4(0.5f, 0.0f, 0.15f, 1.0f);
-	
-
+    
     float rand(float2 co)
     {
-	    // implementation found at: lumina.sourceforge.net/Tutorials/Noise.html
-	    return frac(sin(dot(co.xy, float2(12.9898,78.233))) * 43758.5453);
+        // implementation found at: lumina.sourceforge.net/Tutorials/Noise.html
+        return frac(sin(dot(co.xy, float2(12.9898,78.233))) * 43758.5453);
     }
 
     float noise2f(in float2 p)
@@ -55,7 +54,7 @@ shader Liquish_TextureFX : TextureFX
 
     float2 cMul(float2 a, float2 b) 
     {
-	    return float2( a.x*b.x - a.y*b.y, a.x*b.y + a.y * b.x);
+        return float2( a.x*b.x - a.y*b.y, a.x*b.y + a.y * b.x);
     }
 
     float pattern( float2 p, out float2 q, out float2 r) 
@@ -72,7 +71,7 @@ shader Liquish_TextureFX : TextureFX
     {
         float2 uv = streams.TexCoord;
         
-		float2 q;
+        float2 q;
         float2 r;
         float2 c = uv.xy * ScaleXY;
         float f = pattern(c, q, r);

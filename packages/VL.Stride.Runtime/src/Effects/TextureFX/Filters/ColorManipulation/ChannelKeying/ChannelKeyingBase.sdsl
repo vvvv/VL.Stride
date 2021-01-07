@@ -3,7 +3,6 @@
 
 shader ChannelKeyingBase : TextureFX
 {
-    
     float Threshold = 0.3f;
     float Smooth = 0.1f;
     float AlphaBlur = 0.0f;
@@ -14,7 +13,7 @@ shader ChannelKeyingBase : TextureFX
     
     float4 mmap(float2 uv, float2 R)
     {
-	    return Texture0.SampleLevel(LinearSampler, uv, (saturate(AlphaBlur)*log2(max(R.x, R.y))));
+        return Texture0.SampleLevel(LinearSampler, uv, (saturate(AlphaBlur)*log2(max(R.x, R.y))));
     }
 
     float4 keyer(float4 col, float4 map, float key)

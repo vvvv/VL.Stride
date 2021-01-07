@@ -3,19 +3,19 @@
 
 shader DropShadow_TextureFX : TextureFX
 {
-	float Blur = 0.5f;
-	float Offset = 0.05f;
-	float Angle = 0.9f;
+    float Blur = 0.5f;
+    float Offset = 0.05f;
+    float Angle = 0.9f;
     [Color]
-	float4 Color = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	float Alpha = 1.0f;
-	float Extension = 0.0f;
+    float4 Color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float Alpha = 1.0f;
+    float Extension = 0.0f;
 
     stage override float4 Shading()
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;
-	
+    
         float4 c0 = Texture0.SampleLevel(LinearSampler, uv, 0);
 
         float lod = log2(max(R.x, R.y));

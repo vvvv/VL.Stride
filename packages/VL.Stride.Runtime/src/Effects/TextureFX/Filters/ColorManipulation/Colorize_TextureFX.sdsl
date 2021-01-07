@@ -15,14 +15,14 @@ shader Colorize_TextureFX : TextureFX
         float2 uv = streams.TexCoord;
         float4 pixcol = length(Texture0.Sample(LinearSampler, uv).rgb);
         float3 tc;
-	    
+        
         float3 colors[3];
-	    colors[0] = float3 (ColorA.r, ColorA.g, ColorA.b);
-	    colors[1] = float3 (ColorB.r, ColorB.g, ColorB.b);
-	    colors[2] = float3 (ColorC.r, ColorC.g, ColorC.b);	
-	
+        colors[0] = float3 (ColorA.r, ColorA.g, ColorA.b);
+        colors[1] = float3 (ColorB.r, ColorB.g, ColorB.b);
+        colors[2] = float3 (ColorC.r, ColorC.g, ColorC.b);	
+    
         float lum = (pixcol.r+pixcol.g+pixcol.b)/3.0;
-	    
+        
         float ix = lum < .5 ? 0 : 1;
 
         tc = lerp(colors[ix], colors[ix+1], (lum - float(ix)*0.5)/0.5);

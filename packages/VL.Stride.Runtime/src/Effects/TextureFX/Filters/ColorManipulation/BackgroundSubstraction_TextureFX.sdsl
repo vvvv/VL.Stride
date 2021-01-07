@@ -3,24 +3,24 @@
 
 shader BackgroundSubstraction_TextureFX : TextureFX
 {
-	float Threshold <float uimin=0.0;float uimax=1.0;> = 0.05f;
-	float Softness <float uimin=0.0;float uimax=1.0;> = 0.05f;
-	bool Invert;
+    float Threshold <float uimin=0.0;float uimax=1.0;> = 0.05f;
+    float Softness <float uimin=0.0;float uimax=1.0;> = 0.05f;
+    bool Invert;
    
     stage override float4 Shading()
     {
-		float2 uv = streams.TexCoord;
-	
-	    float4 image = Texture0.Sample(LinearSampler, uv);
-		float4 background = Texture1.Sample(LinearSampler, uv);
-		float4 col = image;
+        float2 uv = streams.TexCoord;
     
-		col.a = smoothstep(Threshold, Threshold + Softness + .000001, length(image.rgb - background.rgb));
-		
-		if(Invert)
-		{
-			col.a = 1 - col.a;
-		}
+        float4 image = Texture0.Sample(LinearSampler, uv);
+        float4 background = Texture1.Sample(LinearSampler, uv);
+        float4 col = image;
+    
+        col.a = smoothstep(Threshold, Threshold + Softness + .000001, length(image.rgb - background.rgb));
+        
+        if(Invert)
+        {
+            col.a = 1 - col.a;
+        }
 
         return col;
     }

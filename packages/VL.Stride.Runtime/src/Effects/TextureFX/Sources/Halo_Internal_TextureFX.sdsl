@@ -6,57 +6,55 @@ shader Halo_Internal_TextureFX : TextureFX
     matrix Transform;
 
     [Color]
-	float4 Color1 = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 Color1 = float4(0.0f, 0.0f, 0.0f, 1.0f);
     [Color]
-	float4 Color2 = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 Color2 = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	float Gamma = 0.5f;
+    float Gamma = 0.5f;
     float MaxColor = 10.0f;
     int Type = 0;
 
     float4 Linear(float f, float g)
     {
         f = saturate(1-2 * f);
-	    f = pow(f, g);
-	
-	    return lerp(Color1, Color2, f);
+        f = pow(f, g);
+    
+        return lerp(Color1, Color2, f);
     }
 
     float4 Smooth(float f, float g)
     {
         f = saturate(1-2 * f);
         f = smoothstep(0,1,f);
-	    f = pow(f, g);
-	
-	    return lerp(Color1, Color2, f);
+        f = pow(f, g);
+    
+        return lerp(Color1, Color2, f);
     }
     
     float4 Spike(float d, float f, float g)
     {
         f = saturate(1-2 * f);
-	
         f = 2*pow(.5*f/(pow(d, .5) + .5), g);
 
-	    float4 c = lerp(Color1, Color2, f);
+        float4 c = lerp(Color1, Color2, f);
 
-	    return min(MaxColor, c);
+        return min(MaxColor, c);
     }
 
     float4 Textured(float f, float g)
     {
         f = Texture0.SampleLevel(LinearSampler, f.x*2, 0);
-	    f = sign(f) * pow(abs(f), g);
-	    
+        f = sign(f) * pow(abs(f), g);
+        
         float4 c = lerp(Color1, Color2, f);
 
-	    return min(MaxColor, c);
+        return min(MaxColor, c);
     }
 
     stage override float4 Shading()
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;
-
 
         float4 col = 0;
 
@@ -66,7 +64,6 @@ shader Halo_Internal_TextureFX : TextureFX
      
         float g = Gamma/(1.00001-Gamma);
         f = saturate(1 - 2*f);
-
 
          switch((uint)Type%4)
          {

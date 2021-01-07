@@ -5,7 +5,7 @@ shader Bump_Point_Internal_TextureFX : BumpBase
 {
     float4 PhongPoint(float3 PosW, float3 NormV, float3 ViewDirV, float3 LightDirV)
     {
-	    float d = distance(PosW, lDir);
+        float d = distance(PosW, lDir);
         float atten = 0;
 
         //compute attenuation only if vertex within lightrange
@@ -43,12 +43,12 @@ shader Bump_Point_Internal_TextureFX : BumpBase
     {
         float3 NormV = float3(nmap.x  -0.5, -(nmap.y  -0.5), -1);
 
-	    NormV = lerp (float3(0, 0, -1), NormV, BumpAmount);
-	    NormV = normalize(NormV);
-	    float3 ViewDirV = -normalize(float3((uv.xy * 2 - 1) * float2(1, -1) * R/R.x, 1));
+        NormV = lerp (float3(0, 0, -1), NormV, BumpAmount);
+        NormV = normalize(NormV);
+        float3 ViewDirV = -normalize(float3((uv.xy * 2 - 1) * float2(1, -1) * R/R.x, 1));
 
-	    float3 PosW = float3((uv.xy * 2 - 1) * float2(1, -1) * R/R.x * 0.5, 0);
-	    float3 LightDirV = normalize(lDir - PosW);
+        float3 PosW = float3((uv.xy * 2 - 1) * float2(1, -1) * R/R.x * 0.5, 0);
+        float3 LightDirV = normalize(lDir - PosW);
 
         return PhongPoint(PosW, NormV, ViewDirV, LightDirV).rgb;
     };

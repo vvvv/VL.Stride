@@ -3,7 +3,7 @@
 
 shader Lomograph_TextureFX : TextureFX
 {
-	float VignetteStart = 0.1f;
+    float VignetteStart = 0.1f;
     float VignetteAmount = 0.25f;
     float VignetteDodge = 0.1f;
 
@@ -47,7 +47,7 @@ shader Lomograph_TextureFX : TextureFX
         x.g = lerp(x, x*x*x*G.x + x*x*G.y + x*G.z + G.w, eff).g;
         x.b = lerp(x, x*x*x*B.x  +x*x*B.y + x*B.z  +B.w, eff).b;
 
-	    return x;
+        return x;
     }
 
     float3 EffectShape3(float3 x, float eff)
@@ -171,9 +171,9 @@ shader Lomograph_TextureFX : TextureFX
 
     // float3 sat(float3 c)
     // {
-	//     col.rgb+=dot(col.rgb,.3);
+    //     col.rgb+=dot(col.rgb,.3);
 
-	//     return c;
+    //     return c;
     // }
 
     // float vstep(float a, float b, float x)
@@ -186,10 +186,10 @@ shader Lomograph_TextureFX : TextureFX
 
     float4 prepass(float2 x, float2 R)
     {
-	    float4 col = Texture0.Sample(s0, x);
-	    float3 z = col.rgb;
+        float4 col = Texture0.Sample(s0, x);
+        float3 z = col.rgb;
 
-	    float itr = min(Iterations, 20);
+        float itr = min(Iterations, 20);
         
         for(float i=0; i<itr; i++)
         {

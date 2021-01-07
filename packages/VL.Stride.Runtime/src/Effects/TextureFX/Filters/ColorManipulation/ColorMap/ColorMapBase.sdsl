@@ -4,15 +4,15 @@
 shader ColorMapBase : TextureFX
 {
     float2 Center = float2(0.0f, 0.0f);
-	float2 Direction = float2(0.5f, 0.5f);
-	float MapSmooth = 0.0f;
+    float2 Direction = float2(0.5f, 0.5f);
+    float MapSmooth = 0.0f;
     
     float4 Ramp(float2 f)
     {
-	    float2 R = 1/Texture0TexelSize;
+        float2 R = 1/Texture0TexelSize;
 
         float lod = log2(max(R.x, R.y)) * MapSmooth;
-	    return Texture1.SampleLevel(LinearRepeatSampler, Center*.5 + .5 + Direction*f, lod);
+        return Texture1.SampleLevel(LinearRepeatSampler, Center*.5 + .5 + Direction*f, lod);
     }
 
     abstract float4 ColorMap(float4 col);

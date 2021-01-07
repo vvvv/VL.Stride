@@ -4,19 +4,19 @@
 shader Kaleidoscope_TextureFX : TextureFX
 {
     int Divisions = 3;
-	int Iterations = 5;
-	float Rotate = 0.0f;
-	float Zoom = 0.5f;
-	float2 Center = float2(0.0f, 0.0f);
-	float IterationZoom = 0.0f;
-	
-	float2 CellOffset = float2(0.0f, 0.0f);
-	float CellRotate = 0.0f;
-	float2 CellScale = float2(1.0f, 1.0f);
-	
-	float4 ControlFactor = float4(1.0f, 0.0f, 0.0f, 0.0f);
-	//Keep Aspect Ratio
-	bool Aspect = true;
+    int Iterations = 5;
+    float Rotate = 0.0f;
+    float Zoom = 0.5f;
+    float2 Center = float2(0.0f, 0.0f);
+    float IterationZoom = 0.0f;
+    
+    float2 CellOffset = float2(0.0f, 0.0f);
+    float CellRotate = 0.0f;
+    float2 CellScale = float2(1.0f, 1.0f);
+    
+    float4 ControlFactor = float4(1.0f, 0.0f, 0.0f, 0.0f);
+    //Keep Aspect Ratio
+    bool Aspect = true;
 
     //diffent implementation than in Effects/Common/ShaderUtils.sdsl
     override float2 r2d(float2 x, float a)
@@ -46,7 +46,7 @@ shader Kaleidoscope_TextureFX : TextureFX
 
     stage override float4 Shading()
     {
-		float2 uv = streams.TexCoord;
+        float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;
 
         float2 asp = lerp(1, R/R.x, Aspect);

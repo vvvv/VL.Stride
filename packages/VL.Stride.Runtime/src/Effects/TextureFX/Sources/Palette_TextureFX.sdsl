@@ -9,7 +9,7 @@ shader Palette_TextureFX : TextureFX
     float4 HSL(float4 col, float2 uv) 
     {
         col.rgb = HSVtoRGB(float3(uv.x,1,saturate(2-2*uv.y)));
-	    col.rgb = lerp(col.rgb, max(col.r, max(col.g, col.b)), saturate(1 - uv.y*2));
+        col.rgb = lerp(col.rgb, max(col.r, max(col.g, col.b)), saturate(1 - uv.y*2));
 
         return col;
     }
@@ -24,7 +24,7 @@ shader Palette_TextureFX : TextureFX
     float4 Radial(float4 col, float2 uv) 
     {
         col.rgb = float3(uv.x, uv.y, length(uv));
-	    col.rgb = HSLtoRGB(float3(atan2(uv.y-.5, uv.x-.5)/acos(-1)/2, 1, length(uv-.5)));
+        col.rgb = HSLtoRGB(float3(atan2(uv.y-.5, uv.x-.5)/acos(-1)/2, 1, length(uv-.5)));
 
         return col;
     }
@@ -35,7 +35,7 @@ shader Palette_TextureFX : TextureFX
         float2 R = 1/Texture0TexelSize;
 
         uv = mul(float4((uv.xy*2-1)*float2(1,-1)*.5,0,1), Transform).xy*float2(1,-1) + 0.5;
-	    
+        
         float4 col = 1;
 
          switch((uint)Type%3)

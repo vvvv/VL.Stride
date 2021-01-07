@@ -28,15 +28,15 @@ shader LinearDepth_TextureFX : TextureFX
         matrix tP = Projection;
 
         float d = Texture0.SampleLevel(s0, uv, 0).x;
-	    float ld = tP._43/(d - tP._33);
+        float ld = tP._43/(d - tP._33);
 
-	    if(IS_ORTHO(tP))
+        if(IS_ORTHO(tP))
         {
             ld = (d-tP._43)/tP._33;
         }
-	    
+        
         float4 c =  ThreshholdOrLinear ? ld : linstep(MinDepth, MaxDepth, ld);
-	    
+        
         return c;
     }
 };

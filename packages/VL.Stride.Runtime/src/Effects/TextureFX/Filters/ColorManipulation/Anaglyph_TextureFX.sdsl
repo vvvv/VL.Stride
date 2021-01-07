@@ -3,24 +3,24 @@
 
 shader Anaglyph_TextureFX : TextureFX
 {
-	float Boost = 1.0f;
-	float Dist = 0.1f;
-	float MapBlur = 0.1f;
+    float Boost = 1.0f;
+    float Dist = 0.1f;
+    float MapBlur = 0.1f;
 
     stage override float4 Shading()
     {
         float2 uv = streams.TexCoord;
-		float2 R = 1/Texture0TexelSize;
-		
+        float2 R = 1/Texture0TexelSize;
+        
         float lod = 1 + saturate(MapBlur) * log2(max(R.x, R.y));
-    	float2 off = float2(Boost, 0)/256.;
-    	float4 map = Texture1.Sample(LinearSampler, float4(uv, 0, lod));
-    	float depth = map.x-Dist;
-		
-    	float4 col = 0;
-    	col.ra += Texture0.Sample(LinearSampler, uv-off * depth).ra;
-    	col.gba += Texture0.Sample(LinearSampler, uv+off * depth).gba;
-		
-		return col;
+        float2 off = float2(Boost, 0)/256.;
+        float4 map = Texture1.Sample(LinearSampler, float4(uv, 0, lod));
+        float depth = map.x-Dist;
+        
+        float4 col = 0;
+        col.ra += Texture0.Sample(LinearSampler, uv-off * depth).ra;
+        col.gba += Texture0.Sample(LinearSampler, uv+off * depth).gba;
+        
+        return col;
     }
 };
