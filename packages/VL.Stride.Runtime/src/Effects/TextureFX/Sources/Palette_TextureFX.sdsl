@@ -23,7 +23,6 @@ shader Palette_TextureFX : TextureFX
 
     float4 Radial(float4 col, float2 uv) 
     {
-        col.rgb = float3(uv.x, uv.y, length(uv));
         col.rgb = HSLtoRGB(float3(atan2(uv.y-.5, uv.x-.5)/acos(-1)/2, 1, length(uv-.5)));
 
         return col;
@@ -32,7 +31,6 @@ shader Palette_TextureFX : TextureFX
     stage override float4 Shading()
     {
         float2 uv = streams.TexCoord;
-        float2 R = 1/Texture0TexelSize;
 
         uv = mul(float4((uv.xy*2-1)*float2(1,-1)*.5,0,1), Transform).xy*float2(1,-1) + 0.5;
         
