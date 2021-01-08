@@ -23,11 +23,11 @@
 
   <!-- Check if vvvv gamma is installed before building -->
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' != 'Packages' AND !$(InPrivateRepo) AND !Exists('$(VVVVExePath)')">
-    <DownloadFile SourceUrl="$(VLSetupUrl)" DestinationFolder="$(IntermediateOutputPath)">
-      <Output TaskParameter="DownloadedFile" ItemName="_VLSetupFile_" />
+    <DownloadFile SourceUrl="$(VLZipUrl)" DestinationFolder="$(IntermediateOutputPath)">
+      <Output TaskParameter="DownloadedFile" ItemName="_VLZipFile_" />
     </DownloadFile>
-    <Exec Command="@(_VLSetupFile_)" />
-    <Error Text="'$(VVVVExePath)' does not exist. Make sure vvvv gamma ($(VLVersion)) is installed." Condition="!Exists('$(VVVVExePath)')" />
+    <Unzip SourceFiles="@(_VLZipFile_)" DestinationFolder="$(VVVV_BinPath).." OverwriteReadOnlyFiles="true" />
+    <Error Text="'$(VVVVExePath)' does not exist. Make sure vvvv gamma ($(VLVersion)) is present at the specified path." Condition="!Exists('$(VVVVExePath)')" />
   </Target>
   
   <ItemGroup>
