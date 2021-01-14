@@ -12,6 +12,7 @@ namespace VL.Stride.Effects.TextureFX
     public enum GlowTechnique { Pre, Glow, Mix };
     public enum LevelsClampType { None, Top, Bottom, Both };
     public enum NoiseType { Perlin, PerlinGrad, Value, ValueGrad, Simplex, SimplexGrad, WorleyFast, WorleyFastGrad };
+    public enum SwizzleTechnique { Red, Green, Blue, Alpha };
     public enum TunnelsDistortionTechnique { Square, Cylinder, Fly };
 
    
