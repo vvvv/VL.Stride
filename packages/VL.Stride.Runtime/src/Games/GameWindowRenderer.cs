@@ -125,6 +125,16 @@ namespace VL.Stride.Games
                 EnsurePresenter();
 
                 GraphicsDevice.Presenter = Presenter;
+
+                // Perform begin of frame presenter operations
+                var commandList = Game.GraphicsContext.CommandList;
+                if (Presenter.DepthStencilBuffer != null)
+                    commandList.ResourceBarrierTransition(Presenter.DepthStencilBuffer, GraphicsResourceState.DepthWrite);
+                if (Presenter.BackBuffer != null)
+                    commandList.ResourceBarrierTransition(Presenter.BackBuffer, GraphicsResourceState.RenderTarget);
+
+                Presenter.BeginDraw(commandList);
+
                 beginDrawOk = true;
                 return true;
             }
@@ -135,8 +145,33 @@ namespace VL.Stride.Games
 
         public override void EndDraw()
         {
-            if (beginDrawOk && GraphicsDevice != null)
+            if (beginDrawOk)
             {
+                // We'd like to call Present() here like in the original code, however that would be too early
+                // in case other game systems want to draw into our backbuffer (like GameProfilingSystem).
+                // Present();
+                var game = (VLGame)Game;
+                game.PendingPresentCalls.Add(this);
+
+                if (savedPresenter != null)
+                {
+                    GraphicsDevice.Presenter = savedPresenter;
+                }
+            }
+        }
+
+        // Called by VLGame at the very end to ensure that other game systems (like the GameProfilingSystem) were able to post their draw commands
+        internal void Present()
+        {
+            if (beginDrawOk)
+            {
+                // Perform end of frame presenter operations
+                var commandList = Game.GraphicsContext.CommandList;
+                Presenter.EndDraw(commandList, present: true);
+
+                if (Presenter.BackBuffer != null)
+                    commandList.ResourceBarrierTransition(Presenter.BackBuffer, GraphicsResourceState.Present);
+
                 try
                 {
                     Presenter.Present();
@@ -149,10 +184,7 @@ namespace VL.Stride.Games
                     }
                 }
 
-                if (savedPresenter != null)
-                {
-                    GraphicsDevice.Presenter = savedPresenter;
-                }
+                beginDrawOk = false;
             }
         }
     }

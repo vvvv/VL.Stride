@@ -29,6 +29,9 @@ namespace VL.Stride.Games
 
         public TimeSpan ElapsedUserTime;
 
+        // Used to post-pone the present calls to the very end of a frame
+        internal readonly List<GameWindowRenderer> PendingPresentCalls = new List<GameWindowRenderer>();
+
         protected override void PrepareContext()
         {
             base.PrepareContext();
@@ -142,6 +145,21 @@ namespace VL.Stride.Games
                 UpdateShaderPaths(nodeFactoryRegistry);
 
             base.Update(gameTime);
+        }
+
+        protected override void EndDraw(bool present)
+        {
+            try
+            {
+                base.EndDraw(present);
+
+                foreach (var r in PendingPresentCalls)
+                    r.Present();
+            }
+            finally
+            {
+                PendingPresentCalls.Clear();
+            }
         }
 
         void UpdateShaderPaths(NodeFactoryRegistry nodeFactoryRegistry)
