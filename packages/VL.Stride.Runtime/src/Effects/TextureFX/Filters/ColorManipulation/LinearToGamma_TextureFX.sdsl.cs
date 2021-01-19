@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class ToGamma_TextureFXKeys
+    public static partial class LinearToGamma_TextureFXKeys
     {
         public static readonly ValueParameterKey<float> Gamma = ParameterKeys.NewValue<float>(2.2f);
     }
