@@ -1,0 +1,11 @@
+shader GammaToLinear_TextureFX : TextureFX, ColorUtilityTemp
+{
+    float Gamma = 2.2f;
+    
+    stage override float4 Shading()
+    {
+        float4 col = InTex();
+        col.rgb = GammaToLinear(col, Gamma);
+        return col;
+    }
+};
