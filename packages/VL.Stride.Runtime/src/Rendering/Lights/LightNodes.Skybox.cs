@@ -116,10 +116,10 @@ namespace VL.Stride.Rendering.Lights
             }
 
             /// <summary>
-            /// Force rendering of the skybox. 
-            /// By default the skybox will only be rendered when changing one of its parameters.
+            /// Forces a re-build of the skybox environment map.
+            /// By default the skybox will only be built when one of its parameters changes.
             /// </summary>
-            public bool ForceRendering { get; set; }
+            public bool ForceBuild { get; set; }
 
             public Skybox Skybox { get; }
 
@@ -131,7 +131,7 @@ namespace VL.Stride.Rendering.Lights
                     return;
                 }
 
-                if (invalidated || ForceRendering)
+                if (invalidated || ForceBuild)
                 {
                     invalidated = false;
                     schedulerSystem.Schedule(this);
