@@ -5,8 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Stride.Core;
 using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
 
@@ -508,7 +510,7 @@ namespace VL.Stride.Games
         }
 
         private GameGraphicsParameters SetupPreferredParameters()
-        {
+        {          
             // Setup preferred parameters before passing them to the factory
             var preferredParameters = new GameGraphicsParameters
             {
@@ -560,6 +562,18 @@ namespace VL.Stride.Games
             }
 
             return preferredParameters;
+        }
+
+        private static float GetIntersectionSize(GraphicsOutput output, Rectangle windowBounds)
+        {
+            var desktopBounds = output.DesktopBounds;
+
+            //fix bounds, bug in SharpDX?
+            desktopBounds.Width = desktopBounds.Width - desktopBounds.X;
+            desktopBounds.Height = desktopBounds.Height - desktopBounds.Y;
+
+            var intersection = Rectangle.Intersect(windowBounds, desktopBounds);
+            return intersection.Width * intersection.Height;
         }
 
         /// <summary>
@@ -759,7 +773,7 @@ namespace VL.Stride.Games
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
         {
-            if (!isChangingDevice && ((window.ClientBounds.Height != 0) || (window.ClientBounds.Width != 0)))
+            if (!isChangingDevice && !window.IsFullscreen && ((window.ClientBounds.Height != 0) || (window.ClientBounds.Width != 0)))
             {
                 resizedBackBufferWidth = window.ClientBounds.Width;
                 resizedBackBufferHeight = window.ClientBounds.Height;
@@ -798,8 +812,19 @@ namespace VL.Stride.Games
                 IsFullScreen = window.IsFullscreen;
                 if (IsFullScreen)
                 {
-                    resizedBackBufferWidth = window.PreferredFullscreenSize.X;
-                    resizedBackBufferHeight = window.PreferredFullscreenSize.Y;
+                    var windowBounds = window.ClientBounds;
+                    windowBounds.X = window.Position.X;
+                    windowBounds.Y = window.Position.Y;
+
+                    var outputs = GraphicsDevice.Adapter.Outputs.ToList();
+
+                    var output = outputs.OrderByDescending(o => GetIntersectionSize(o, windowBounds)).First();
+
+                    PreferredFullScreenOutputIndex = outputs.IndexOf(output);
+
+                    resizedBackBufferWidth = window.PreferredFullscreenSize.X <= 0 ? output.CurrentDisplayMode.Width : window.PreferredFullscreenSize.X;
+                    resizedBackBufferHeight = window.PreferredFullscreenSize.Y <= 0 ? output.CurrentDisplayMode.Height : window.PreferredFullscreenSize.Y;
+
                 }
                 else
                 {
