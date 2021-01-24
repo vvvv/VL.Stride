@@ -545,17 +545,18 @@ namespace VL.Stride.Rendering
                     fragmented: true,
                     init: buildContext =>
                     {
-                        const int defaultSize = 512;
-                        const PixelFormat defaultFormat = PixelFormat.R8G8B8A8_UNorm;
-
                         var _inputs = shaderDescription.Inputs.ToList();
                         var hasTextureInput = _inputs.Any(p => p.Type == typeof(Texture) && p.Name != "Output Texture");
-                        if (!hasTextureInput)
-                        {
-                            _inputs.Insert(0, new PinDescription<int>("Width", defaultSize));
-                            _inputs.Insert(1, new PinDescription<int>("Height", defaultSize));
-                            _inputs.Insert(2, new PinDescription<PixelFormat>("Format", defaultFormat));
-                        }
+                        var enabledInputIndex = shaderDescription.Inputs.IndexOf(p => p.Name == "Enabled");
+
+                        var defaultSize = hasTextureInput ? -1 : 512;
+                        var defaultFormat = hasTextureInput ? PixelFormat.None : PixelFormat.R8G8B8A8_UNorm; //TODO: add meta info in effect/shader
+
+                        var pinOffset = hasTextureInput ? enabledInputIndex : 0;
+                        _inputs.Insert(0 + pinOffset, new PinDescription<int>("Width", defaultSize));
+                        _inputs.Insert(1 + pinOffset, new PinDescription<int>("Height", defaultSize));
+                        _inputs.Insert(2 + pinOffset, new PinDescription<PixelFormat>("Format", defaultFormat));
+
                         return buildContext.Implementation(
                             inputs: _inputs,
                             outputs: new[] { buildContext.Pin("Output", typeof(Texture)) },
@@ -572,12 +573,10 @@ namespace VL.Stride.Rendering
 
                                 IVLPin<int> outputWidth = default, outputHeight = default;
                                 IVLPin<PixelFormat> outputFormat = default;
-                                if (!hasTextureInput)
-                                {
-                                    inputs.Insert(0, outputWidth = nodeBuildContext.Input(defaultSize));
-                                    inputs.Insert(1, outputHeight = nodeBuildContext.Input(defaultSize));
-                                    inputs.Insert(2, outputFormat = nodeBuildContext.Input(defaultFormat));
-                                }
+
+                                inputs.Insert(0 + pinOffset, outputWidth = nodeBuildContext.Input(defaultSize));
+                                inputs.Insert(1 + pinOffset, outputHeight = nodeBuildContext.Input(defaultSize));
+                                inputs.Insert(2 + pinOffset, outputFormat = nodeBuildContext.Input(defaultFormat));
 
                                 var gameHandle = nodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
@@ -594,13 +593,20 @@ namespace VL.Stride.Rendering
                                     var outputTexture = outputTextureInput.Value as Texture;
                                     if (outputTexture is null)
                                     {
+                                        var pinWidth = outputWidth.Value;
+                                        var pinHeight = outputHeight.Value;
+                                        var pinFormat = outputFormat.Value;
+
                                         // No output texture is provided, generate on
                                         const TextureFlags textureFlags = TextureFlags.ShaderResource | TextureFlags.RenderTarget;
                                         var desc = default((int width, int height, PixelFormat format));
                                         if (inputTexture != null)
-                                        {
+                                        {                                            
                                             // Based on the input texture
-                                            desc = (inputTexture.Width, inputTexture.Height, inputTexture.Format);
+                                            desc = (
+                                                pinWidth > 0 ? pinWidth : inputTexture.Width, 
+                                                pinHeight > 0 ? pinHeight : inputTexture.Height, 
+                                                pinFormat != PixelFormat.None ? pinFormat : inputTexture.Format);
 
                                             // Watch out for feedback loops
                                             if (inputTexture == output1.texture)
@@ -612,9 +618,9 @@ namespace VL.Stride.Rendering
                                         {
                                             // Based on the given parameters
                                             desc = (
-                                                Math.Max(1, outputWidth.Value), 
-                                                Math.Max(1, outputHeight.Value), 
-                                                outputFormat.Value != PixelFormat.None ? outputFormat.Value : defaultFormat);
+                                                Math.Max(1, pinWidth), 
+                                                Math.Max(1, pinHeight), 
+                                                pinFormat != PixelFormat.None ? pinFormat : defaultFormat);
                                         }
 
                                         // Ensure we have an output of proper size
