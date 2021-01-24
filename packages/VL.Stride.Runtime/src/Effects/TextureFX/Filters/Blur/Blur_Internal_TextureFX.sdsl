@@ -1,16 +1,16 @@
 ﻿shader Blur_Internal_TextureFX : TextureFX
 {
-    float Width;
-    float2 R;
+    float Strength;
 
     stage override float4 Shading()
     {
+        float2 R = 1/Texture0TexelSize;
         float4 map = InTex2();
         map = max(map.x, max(map.y, map.z)) * map.a;
-        float lod = 1 + map.x * (Width) * log2(max(R.x, R.y));
+        float lod = 1 + map.x * (Strength) * log2(max(R.x, R.y));
         float4 c = 0;
         float2 x = streams.TexCoord;
-        float2 off = .25/R * pow(2, lod) * saturate(lod - 1);
+        float2 off = 0.25/R * pow(2, lod) * saturate(lod - 1);
         
         // TODO: Check if this is a correct usage of lod in SampleLevel
         c+=Texture0.SampleLevel(LinearSampler, x + float2( 0,  0) * off, lod);

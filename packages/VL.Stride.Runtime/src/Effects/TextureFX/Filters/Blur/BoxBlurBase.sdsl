@@ -4,7 +4,7 @@
 shader BoxBlurBase : TextureFX
 {
     int KernelSize = 3;
-    float blurStrength = 1;
+    float Strength = 1;
 
     abstract float2 GetSampleOffset(float2 texelSize, float i);
 
@@ -18,11 +18,11 @@ shader BoxBlurBase : TextureFX
 
         // Original implementation does not consider stretching texel size
         // However I couldn't get any visible blur results when the kernel used 
-        float2 texelSize = Texture0TexelSize * blurStrength;
+        float2 texelSize = Texture0TexelSize * Strength;
 
         for (int i = lower; i <= upper; ++i)
         {
-            float2 offset = GetSampleOffset(texelSize,i);
+            float2 offset = GetSampleOffset(texelSize, i);
             sum += Texture0.SampleLevel(LinearSampler, streams.TexCoord + offset, 0);
         }
 

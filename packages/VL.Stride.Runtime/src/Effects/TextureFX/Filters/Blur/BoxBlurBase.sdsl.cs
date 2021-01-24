@@ -19,6 +19,6 @@ namespace Stride.Rendering
     public static partial class BoxBlurBaseKeys
     {
         public static readonly ValueParameterKey<int> KernelSize = ParameterKeys.NewValue<int>(3);
-        public static readonly ValueParameterKey<float> blurStrength = ParameterKeys.NewValue<float>(1);
+        public static readonly ValueParameterKey<float> Strength = ParameterKeys.NewValue<float>(1);
     }
 }

@@ -18,7 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class Blur_Internal_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Width = ParameterKeys.NewValue<float>();
-        public static readonly ValueParameterKey<Vector2> R = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<float> Strength = ParameterKeys.NewValue<float>();
     }
 }
