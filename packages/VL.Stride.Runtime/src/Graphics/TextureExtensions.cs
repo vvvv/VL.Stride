@@ -8,6 +8,7 @@ using Stride.Graphics;
 using Buffer = Stride.Graphics.Buffer;
 using StridePixelFormat = Stride.Graphics.PixelFormat;
 using VLPixelFormat = VL.Lib.Basics.Imaging.PixelFormat;
+using Stride.Core;
 
 namespace VL.Stride.Graphics
 {
@@ -44,6 +45,20 @@ namespace VL.Stride.Graphics
             }
 
             return texture;
+        }
+
+        /// <summary>
+        /// Similiar to <see cref="Texture.Load(GraphicsDevice, Stream, TextureFlags, GraphicsResourceUsage, bool)"/> but allocates memory on unmanaged heap only.
+        /// </summary>
+        public static unsafe Texture Load(GraphicsDevice device, string file, TextureFlags textureFlags = TextureFlags.ShaderResource, GraphicsResourceUsage usage = GraphicsResourceUsage.Immutable, bool loadAsSRGB = false)
+        {
+            using var src = File.OpenRead(file);
+            var ptr = Utilities.AllocateMemory((int)src.Length);
+            using var dst = new UnmanagedMemoryStream((byte*)ptr.ToPointer(), 0, (int)src.Length, FileAccess.ReadWrite);
+            src.CopyTo(dst);
+            var dataBuffer = new DataPointer(ptr, (int)dst.Length);
+            using var image = Image.Load(dataBuffer, makeACopy: false, loadAsSRGB: loadAsSRGB);
+            return Texture.New(device, image, textureFlags, usage);
         }
 
         public static void SaveTexture(this Texture texture, CommandList commandList, string filename, ImageFileType imageFileType = ImageFileType.Png)
