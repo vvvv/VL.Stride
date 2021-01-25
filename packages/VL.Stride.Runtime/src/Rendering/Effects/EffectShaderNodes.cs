@@ -541,7 +541,7 @@ namespace VL.Stride.Rendering
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.Textures.TextureFX",
+                    category: "Stride.Textures.Experimental.TextureFX",
                     fragmented: true,
                     init: buildContext =>
                     {
