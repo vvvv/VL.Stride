@@ -6,11 +6,33 @@ using VL.Core;
 using Stride.Core.Mathematics;
 using Stride.Rendering;
 using Stride.Graphics;
+using Stride.Core.IO;
+using System.IO;
+using Stride.Shaders.Compiler;
 
 namespace VL.Stride.Rendering
 {
     static class EffectUtils
     {
+        public static string GetPathOfSdslShader(string effectName, IVirtualFileProvider fileProvider)
+        {
+            var path = EffectCompilerBase.GetStoragePathFromShaderType(effectName);
+            if (fileProvider.TryGetFileLocation(path, out var filePath, out _, out _))
+                return filePath;
+
+            var pathUrl = path + "/path";
+            if (fileProvider.FileExists(pathUrl))
+            {
+                using (var pathStream = fileProvider.OpenStream(pathUrl, VirtualFileMode.Open, VirtualFileAccess.Read))
+                using (var reader = new StreamReader(pathStream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+
+            return null;
+        }
+
         static readonly Regex FCamelCasePattern = new Regex("[a-z][A-Z0-9]", RegexOptions.Compiled);
 
         public static void SelectPin<TPin>(this IVLPin[] pins, IVLPinDescription description, ref TPin pin) where TPin : Pin

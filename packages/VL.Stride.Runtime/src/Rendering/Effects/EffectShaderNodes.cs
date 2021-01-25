@@ -4,6 +4,7 @@ using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
 using Stride.Core.Serialization.Contents;
+using Stride.Core.Yaml.Serialization;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.ComputeEffect;
@@ -19,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
+using System.Text;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Model;
@@ -105,6 +107,7 @@ namespace VL.Stride.Rendering
             effectSystem.Update(default);
 
             var compiler = effectSystem.Compiler;
+            var serializer = new Serializer();
 
             const string sdslFileFilter = "*.sdsl";
             const string drawFXSuffix = "_DrawFX";
@@ -134,10 +137,12 @@ namespace VL.Stride.Rendering
                 {
                     var name = GetNodeName(effectName, textureFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
+                    
+                    ShaderMetadata.TryReadMetadata(EffectUtils.GetPathOfSdslShader(effectName, fileProvider), serializer, out var shaderMetadata);
 
                     IVLNodeDescription shaderNodeDescription;
                     yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName);
-                    yield return NewTextureFXNode(shaderNodeDescription, name);
+                    yield return NewTextureFXNode(shaderNodeDescription, name, shaderMetadata);
                 }
                 else if (effectName.EndsWith(computeFXSuffix))
                 {
@@ -164,28 +169,9 @@ namespace VL.Stride.Rendering
                 return new NameAndVersion(name);
             }
 
-            string GetPathOfSdslShader(string effectName)
-            {
-                var path = EffectCompilerBase.GetStoragePathFromShaderType(effectName);
-                if (fileProvider.TryGetFileLocation(path, out var filePath, out _, out _))
-                    return filePath;
-
-                var pathUrl = path + "/path";
-                if (fileProvider.FileExists(pathUrl))
-                {
-                    using (var pathStream = fileProvider.OpenStream(pathUrl, VirtualFileMode.Open, VirtualFileAccess.Read))
-                    using (var reader = new StreamReader(pathStream))
-                    {
-                        return reader.ReadToEnd();
-                    }
-                }
-
-                return null;
-            }
-
             bool OpenEditor(string effectName)
             {
-                var path = GetPathOfSdslShader(effectName);
+                var path = EffectUtils.GetPathOfSdslShader(effectName, fileProvider);
                 try
                 {
                     Process.Start(path);
@@ -537,7 +523,7 @@ namespace VL.Stride.Rendering
                     });
             }
 
-            IVLNodeDescription NewTextureFXNode(IVLNodeDescription shaderDescription, string name)
+            IVLNodeDescription NewTextureFXNode(IVLNodeDescription shaderDescription, string name, ShaderMetadata shaderMetadata)
             {
                 return factory.NewNodeDescription(
                     name: name,
@@ -550,7 +536,7 @@ namespace VL.Stride.Rendering
                         var enabledInputIndex = shaderDescription.Inputs.IndexOf(p => p.Name == "Enabled");
 
                         var defaultSize = hasTextureInput ? -1 : 512;
-                        var defaultFormat = hasTextureInput ? PixelFormat.None : PixelFormat.R8G8B8A8_UNorm; //TODO: add meta info in effect/shader
+                        var defaultFormat = shaderMetadata.GetPixelFormat(hasTextureInput);
 
                         var pinOffset = hasTextureInput ? enabledInputIndex : 0;
                         _inputs.Insert(0 + pinOffset, new PinDescription<int>("Width", defaultSize));
@@ -760,5 +746,6 @@ namespace VL.Stride.Rendering
                 return EffectInstance;
             }
         }
+
     }
 }
