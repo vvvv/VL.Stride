@@ -147,7 +147,7 @@ namespace VL.Stride.Rendering
                 .AddDefaultPins();
 
             // TextureFX
-            yield return factory.NewNode(c => new MipMapGenerator(c), name: "MipMap", category: "Stride.Textures.TextureFX", copyOnWrite: false, hasStateOutput: false)
+            yield return factory.NewNode(c => new MipMapGenerator(c), name: "MipMap", category: "Stride.Textures.Experimental.TextureFX", copyOnWrite: false, hasStateOutput: false)
                 .AddInput("Input", x => x.InputTexture, (x, v) => x.InputTexture = v)
                 .AddInput(nameof(MipMapGenerator.MaxMipMapCount), x => x.MaxMipMapCount, (x, v) => x.MaxMipMapCount = v)
                 .AddOutput("Output", x => { x.ScheduleForRendering(); return x.OutputTexture; });
