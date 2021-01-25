@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class MaterialCompilingKeys
+    public static partial class MaterialErrorKeys
     {
         public static readonly ValueParameterKey<Color4> OriginalColor = ParameterKeys.NewValue<Color4>();
         public static readonly ValueParameterKey<bool> HasTexture = ParameterKeys.NewValue<bool>();

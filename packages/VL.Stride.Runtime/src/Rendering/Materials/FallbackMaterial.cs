@@ -28,11 +28,20 @@ namespace VL.Stride.Rendering.Materials
         public void Initialize(Game game, MeshRenderFeature meshRenderFeature)
         {
             // Create fallback effect to use when material is still loading
-            fallbackMaterial ??= Material.New(game.GraphicsDevice, new MaterialDescriptor
+            fallbackMaterialCompiling ??= Material.New(game.GraphicsDevice, new MaterialDescriptor
             {
                 Attributes =
                 {
                     Diffuse = new MaterialDiffuseMapFeature(new ComputeShaderClassColor() { MixinReference = "MaterialCompiling" }),
+                    DiffuseModel = new MaterialDiffuseLambertModelFeature()
+                }
+            });
+
+            fallbackMaterialError ??= Material.New(game.GraphicsDevice, new MaterialDescriptor
+            {
+                Attributes =
+                {
+                    Diffuse = new MaterialDiffuseMapFeature(new ComputeShaderClassColor() { MixinReference = "MaterialError" }),
                     DiffuseModel = new MaterialDiffuseLambertModelFeature()
                 }
             });
@@ -63,13 +72,17 @@ namespace VL.Stride.Rendering.Materials
         }
 
         EffectSystem effectSystem;
-        Material fallbackMaterial;
+        Material fallbackMaterialCompiling;
+        Material fallbackMaterialError;
 
         protected Effect ComputeMeshFallbackEffect(RenderObject renderObject, [NotNull] RenderEffect renderEffect, RenderEffectState renderEffectState)
         {
             try
             {
                 var renderMesh = (RenderMesh)renderObject;
+
+                // Fallback material that we know something is loading (green glowing FX) or error (red glowing FX)
+                var fallbackMaterial = renderEffectState == RenderEffectState.Error ? fallbackMaterialError : fallbackMaterialCompiling;
 
                 // High priority
                 var compilerParameters = new CompilerParameters { EffectParameters = { TaskPriority = -1 } };
@@ -100,7 +113,7 @@ namespace VL.Stride.Rendering.Materials
                 var ignoreState = renderEffect.EffectSelector.EffectName.EndsWith(".Wireframe") || renderEffect.EffectSelector.EffectName.EndsWith(".Highlight") ||
                                   renderEffect.EffectSelector.EffectName.EndsWith(".Picking");
 
-                //// Also set a value so that we know something is loading (green glowing FX) or error (red glowing FX)
+                
                 //if (!ignoreState)
                 //{
                 //    var meshParams = renderMesh.MaterialPass.Parameters;
@@ -124,7 +137,7 @@ namespace VL.Stride.Rendering.Materials
                 //            var float4Key = meshParams.ParameterKeyInfos.Select(pi => pi.Key).OfType<ValueParameterKey<Vector4>>().FirstOrDefault();
                 //            if (float4Key != null)
                 //            {
-                //                fallbackParams.Set(MaterialCompilingKeys.OriginalColor, new Color4(meshParams.Get(float4Key))); 
+                //                fallbackParams.Set(MaterialCompilingKeys.OriginalColor, new Color4(meshParams.Get(float4Key)));
                 //            }
 
                 //        }
@@ -132,7 +145,6 @@ namespace VL.Stride.Rendering.Materials
                 //        fallbackParams.Set(MaterialCompilingKeys.HasTexture, false);
                 //    }
 
-                //    fallbackParams.Set(MaterialCompilingKeys.HasError, renderEffectState == RenderEffectState.Error);
                 //}
 
                 if (renderEffectState == RenderEffectState.Error)
