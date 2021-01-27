@@ -20,7 +20,7 @@ namespace MyGame
     
         // Declared public member fields and properties will show in the game studio
         // and can be accessed from VL
-        public float MovementSpeed = 1;
+        public float Speed = 1;
         public MovementDirection Direction = MovementDirection.Clockwise;
         
         public override void Start()
@@ -32,9 +32,9 @@ namespace MyGame
         public override void Update()
         {
             if (Direction == MovementDirection.Clockwise) 
-                angle += MovementSpeed * 0.01f;
+                angle += Speed * 0.01f;
             else
-                angle -= MovementSpeed * 0.01f;
+                angle -= Speed * 0.01f;
                 
             Entity.Transform.Position = new Vector3((float)Math.Cos(angle), 0.5f, (float)Math.Sin(angle));
         }
