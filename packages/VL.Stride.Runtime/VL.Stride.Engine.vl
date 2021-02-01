@@ -15850,8 +15850,6 @@
                       <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                       <Choice Kind="ProcessAppFlag" Name="PostFX" />
                     </p:NodeReference>
-                    <Pin Id="Uow6gPLALZ9N54sjgrbdYV" Name="Color Transforms" Kind="InputPin" />
-                    <Pin Id="UTRS9iTqn46PQwfunKjqlv" Name="Enable Default ToneMap" Kind="InputPin" />
                     <Pin Id="NI3xp9sYcDANe5D1Oy6Of6" Name="Ambient Occlusion" Kind="InputPin" />
                     <Pin Id="HhiyQsW9rbcOquN4OTRaX1" Name="Local Reflections" Kind="InputPin" />
                     <Pin Id="Dzi8AD0r7gXNRLLizTHOQL" Name="Depth Of Field" Kind="InputPin" />
@@ -15859,6 +15857,8 @@
                     <Pin Id="HDvaqTFOnnzNSg2uEGPeZT" Name="Bloom" Kind="InputPin" />
                     <Pin Id="NqnbvdyAcEcQJFq3Rhy9Y0" Name="Light Streak" Kind="InputPin" />
                     <Pin Id="J4iaPgrMEt6QUEzE4oNFRO" Name="Lens Flare" Kind="InputPin" />
+                    <Pin Id="TxGaWRfE2qQLBrsOLMjkii" Name="Color Transforms" Kind="InputPin" />
+                    <Pin Id="K2r9ySbDp20OQHQwPk7yIW" Name="Enable Default ToneMap" Kind="InputPin" />
                     <Pin Id="JtryiqbDFeXNoTdXptFM5e" Name="Antialiasing" Kind="InputPin" />
                     <Pin Id="OjRxCbxIGoROfjn2r6KwAu" Name="Output" Kind="OutputPin" />
                   </Node>
@@ -16347,9 +16347,10 @@
     ************************ PostFX ************************
 
 -->
-        <Node Name="PostFX" Bounds="294,479" Id="USLjXEUVWW8MczagW9Rhxy">
-          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
-            <Choice Kind="ContainerDefinition" Name="Process" />
+        <Node Name="PostFX" Aspects="Internal" Bounds="294,479" Id="USLjXEUVWW8MczagW9Rhxy">
+          <p:NodeReference>
+            <Choice Kind="ClassDefinition" Name="Class" />
+            <FullNameCategoryReference ID="Primitive" />
           </p:NodeReference>
           <Patch Id="UT8OP0YAmxOOsR2LlBhEGd">
             <Canvas Id="VPkYK2YHgLVLDcZoAEaEVP" CanvasType="Group">
@@ -16455,38 +16456,49 @@
                 <ControlPoint Id="GD295h78XGDNlgbVqbdjjT" Bounds="655,416" Alignment="Bottom" />
               </Node>
               <ControlPoint Id="D6BstjCXAUkP42nXhpJ2q5" Bounds="865,445" />
+              <Node Bounds="414,-133,54,19" Id="MJEP0X5fD5vPcmBcJabn2R">
+                <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessAppFlag" Name="OnOpen" />
+                </p:NodeReference>
+                <Pin Id="IwjyryveyUuLAFAxTMVrW1" Name="Simulate" Kind="InputPin" />
+                <Pin Id="CROG45LBYN7LrIhTXTV147" Name="Output" Kind="OutputPin" />
+              </Node>
+              <Node Bounds="414,-85,131,107" Id="EzSr6MuWDOpLzYZtrBuAfu">
+                <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="VL.CoreLib.dll">
+                  <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                  <Choice Kind="ApplicationStatefulRegion" Name="If" />
+                  <CategoryReference Kind="Category" Name="Primitive" />
+                </p:NodeReference>
+                <Pin Id="K9pi6Qg0rHMO5HPzgUOEYZ" Name="Condition" Kind="InputPin" />
+                <Patch Id="OfXzF9cF0HQM20XagFR2DQ" ManuallySortedPins="true">
+                  <Patch Id="GgG8UkpPEv2MGmSMviAZWp" Name="Create" ManuallySortedPins="true" />
+                  <Patch Id="Vo6YuEbY8WNMAnThqevhou" Name="Then" ManuallySortedPins="true" />
+                  <Node Bounds="426,-62" Id="KopB3Jhp2WsMFhjPqzTYGO">
+                    <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="ProcessAppFlag" Name="This" />
+                      <CategoryReference Kind="Category" Name="Primitive" />
+                    </p:NodeReference>
+                    <Pin Id="IhfDxCTyTs1P6qz7gkhqdf" Name="Instance" Kind="OutputPin" />
+                  </Node>
+                  <Node Bounds="426,-24,107,26" Id="GstnyHHwqCRMvdh1UKvQNc">
+                    <p:NodeReference LastCategoryFullName="Stride.Rendering.PostFX" LastSymbolSource="VL.Stride.Engine.vl">
+                      <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                      <Choice Kind="OperationCallFlag" Name="SetColorTransforms" />
+                    </p:NodeReference>
+                    <Pin Id="Iq2EZY8DHRiPr4Q0sOjZgB" Name="Input" Kind="StateInputPin" />
+                    <Pin Id="KGdvi8bVciVOpBioXyGqPP" Name="Color Transforms" Kind="InputPin" />
+                    <Pin Id="TrvvNJXIOiINZNdPDd7YcR" Name="Enable Default ToneMap" Kind="InputPin" />
+                    <Pin Id="VoMi6g7Ohc6Pf3vLtZekxh" Name="Output" Kind="StateOutputPin" />
+                  </Node>
+                </Patch>
+              </Node>
             </Canvas>
             <Patch Id="Dzu1Y5PJqfUOfNPHdFsLz7" Name="Create" />
             <Patch Id="PoJRbPFs2VGMZQCd9Yl8cf" Name="Update">
               <Pin Id="KGR1JmpfUR9PtP8doUTBlM" Name="Output" Kind="OutputPin" Bounds="328,450" />
-              <Pin Id="NkFc2JX9lDROOKsxqjJLdw" Name="Color Transforms" Kind="InputPin">
-                <p:TypeAnnotation>
-                  <Choice Kind="TypeFlag" Name="Spread" />
-                  <p:TypeArguments>
-                    <TypeReference>
-                      <Choice Kind="TypeFlag" Name="ColorTransform" />
-                    </TypeReference>
-                  </p:TypeArguments>
-                </p:TypeAnnotation>
-              </Pin>
-              <Pin Id="NKGuHNrsupxQYkrWBUAXI0" Name="Enable Default ToneMap" Kind="InputPin" DefaultValue="True">
-                <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-                  <Choice Kind="TypeFlag" Name="Boolean" />
-                </p:TypeAnnotation>
-              </Pin>
             </Patch>
-            <ProcessDefinition Id="G0pmKoEvfGKOLu5tHdwn0c">
-              <Fragment Id="IWk3ppOvujVLCnP1zOIEwM" Patch="Dzu1Y5PJqfUOfNPHdFsLz7" Enabled="true" />
-              <Fragment Id="P97KCS3saGWObfq0kN4pLp" Patch="PoJRbPFs2VGMZQCd9Yl8cf" Enabled="true" />
-              <Fragment Id="BrMmsr8aJndPFqIwLDGjUB" Patch="KGiMRHQj0I5QDNfiAVUoyo" Enabled="true" />
-              <Fragment Id="CxlEHjrdmzyOZIIECDX5yL" Patch="Bog8WNzHbc0MenX80YXekI" Enabled="true" />
-              <Fragment Id="Tvz8tD7WfYVPo9fWkBQElc" Patch="BvyjskTXAssP1UYA2mW1yc" Enabled="true" />
-              <Fragment Id="GAyWabeG7CSN3LXnnsMngF" Patch="QWEFYkstfrIQJt6evyJHLY" Enabled="true" />
-              <Fragment Id="UxS3sIi5ysAP53BrTAvkTO" Patch="PzYOvOFcOnoO6oKmzuKHqz" Enabled="true" />
-              <Fragment Id="LvTybzKL5XsPn6MZrVoaE7" Patch="AP5BWxAH7ftMZpc10WtEEV" Enabled="true" />
-              <Fragment Id="Na77sZs9jKfOW3iqO0amOb" Patch="GhMUn78X51tMpnkeP9zVZg" Enabled="true" />
-              <Fragment Id="ICRBZ2ny2GYQdszQs8k6EE" Patch="Mjd1zjvklAGLEJ9k5rOsEy" Enabled="true" />
-            </ProcessDefinition>
             <Link Id="UGw3D9JunxVOVPvjq8nuZJ" Ids="AeTEVvYj0oAQDQFTeUJUXw,LDiroPy4II2P8AjVMYBiHw" />
             <Link Id="DDng9aiCyarPBYiF9fijy4" Ids="LDiroPy4II2P8AjVMYBiHw,KGR1JmpfUR9PtP8doUTBlM" IsHidden="true" />
             <Link Id="FqNG8a5fKsfMnyFaFQPbkF" Ids="OBNy9GTNAxkPFzixPHtXos,O9RyB1tvzCGLBpLgQ0OWA3" />
@@ -16502,9 +16514,9 @@
             <Link Id="TdFhUabedsuMZQMJqWKjbu" Ids="DHl8WOMnSXsP5Dw0TvU83N,QquW5r3t5SlNDyiWGjmCMv" />
             <Link Id="FCm9DzaribQNNM2Tmmy7Zq" Ids="Vn2Q3Ar9zD4MCjd3Uykr9x,DHl8WOMnSXsP5Dw0TvU83N" IsHidden="true" />
             <Link Id="C4GzwTvkfozOXrdFhHByWR" Ids="U8OwX2UnnryNp5ejMasobk,HHmw18LFseNNzBYgZYNQzG" IsHidden="true" />
-            <Link Id="FCWfZQ9C7HrPWl8X9tDexu" Ids="NkFc2JX9lDROOKsxqjJLdw,DsFQYIH8WWOPptwDRQq4hw" IsHidden="true" />
+            <Link Id="FCWfZQ9C7HrPWl8X9tDexu" Ids="QvUeSsuJfmAQWo9lkaMQjP,DsFQYIH8WWOPptwDRQq4hw" IsHidden="true" />
             <Link Id="HHbXF0SUArjMuEUufJ9tD6" Ids="HHmw18LFseNNzBYgZYNQzG,KNMfOXEXi6KM1t3WIEAoFn" />
-            <Link Id="Js1XI3h7wwLK98nhO7kQEX" Ids="NKGuHNrsupxQYkrWBUAXI0,LQp3wnruREyMC158Q3DfWB" IsHidden="true" />
+            <Link Id="Js1XI3h7wwLK98nhO7kQEX" Ids="FekPJ5VdCFJNppo5SQ9xsY,LQp3wnruREyMC158Q3DfWB" IsHidden="true" />
             <Link Id="MwvaSr6HQSiLGlUkVHAA09" Ids="VbkqgobEamiNTNojFQHCcj,D6BstjCXAUkP42nXhpJ2q5,L9UnprVx8hvPSmVqNoJG06" />
             <Link Id="LABviLb1wUOOuJDuSYpPR5" Ids="SJSO3rhjwhrPGoLeeHKhO3,VbkqgobEamiNTNojFQHCcj" IsHidden="true" />
             <Patch Id="KGiMRHQj0I5QDNfiAVUoyo" Name="SetAmbientOcclusion">
@@ -16546,6 +16558,38 @@
             <Link Id="FJxv5q8p4rAOu6D1hMf1Bp" Ids="Ox8mqDCfvZvQJYOgrdf1A8,DH0pwCOoy0EMFmtFrvIdas" />
             <Link Id="VFpxq33iPrlPhIUzJtIdPg" Ids="M2ItsVHiO0yLbdh6UA6k6o,GD295h78XGDNlgbVqbdjjT" />
             <Link Id="Ql3PsjhzjIwMCkUZJiCRUz" Ids="GD295h78XGDNlgbVqbdjjT,IgSbqQSBrKWO3fFhrKgtnd" />
+            <Patch Id="GPPPlqtjaK5Lvm91lrOydD" Name="SetColorTransforms" ParticipatingElements="Ql3PsjhzjIwMCkUZJiCRUz">
+              <Pin Id="QvUeSsuJfmAQWo9lkaMQjP" Name="Color Transforms" Kind="InputPin">
+                <p:TypeAnnotation>
+                  <Choice Kind="TypeFlag" Name="Spread" />
+                  <p:TypeArguments>
+                    <TypeReference>
+                      <Choice Kind="TypeFlag" Name="ColorTransform" />
+                    </TypeReference>
+                  </p:TypeArguments>
+                </p:TypeAnnotation>
+              </Pin>
+              <Pin Id="FekPJ5VdCFJNppo5SQ9xsY" Name="Enable Default ToneMap" Kind="InputPin" DefaultValue="True">
+                <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="TypeFlag" Name="Boolean" />
+                </p:TypeAnnotation>
+              </Pin>
+            </Patch>
+            <Link Id="VJKMAAQeL18OzwBbWp0YBF" Ids="IhfDxCTyTs1P6qz7gkhqdf,Iq2EZY8DHRiPr4Q0sOjZgB" />
+            <Link Id="EGlZbhiLLI8PzoSwmISSlL" Ids="CROG45LBYN7LrIhTXTV147,K9pi6Qg0rHMO5HPzgUOEYZ" />
+            <ProcessDefinition Id="G0pmKoEvfGKOLu5tHdwn0c">
+              <Fragment Id="IWk3ppOvujVLCnP1zOIEwM" Patch="Dzu1Y5PJqfUOfNPHdFsLz7" Enabled="true" />
+              <Fragment Id="BrMmsr8aJndPFqIwLDGjUB" Patch="KGiMRHQj0I5QDNfiAVUoyo" Enabled="true" />
+              <Fragment Id="CxlEHjrdmzyOZIIECDX5yL" Patch="Bog8WNzHbc0MenX80YXekI" Enabled="true" />
+              <Fragment Id="Tvz8tD7WfYVPo9fWkBQElc" Patch="BvyjskTXAssP1UYA2mW1yc" Enabled="true" />
+              <Fragment Id="GAyWabeG7CSN3LXnnsMngF" Patch="QWEFYkstfrIQJt6evyJHLY" Enabled="true" />
+              <Fragment Id="UxS3sIi5ysAP53BrTAvkTO" Patch="PzYOvOFcOnoO6oKmzuKHqz" Enabled="true" />
+              <Fragment Id="LvTybzKL5XsPn6MZrVoaE7" Patch="AP5BWxAH7ftMZpc10WtEEV" Enabled="true" />
+              <Fragment Id="Na77sZs9jKfOW3iqO0amOb" Patch="GhMUn78X51tMpnkeP9zVZg" Enabled="true" />
+              <Fragment Id="BEIW1k4ilKaOIEP87ipQsQ" Patch="GPPPlqtjaK5Lvm91lrOydD" Enabled="true" />
+              <Fragment Id="ICRBZ2ny2GYQdszQs8k6EE" Patch="Mjd1zjvklAGLEJ9k5rOsEy" Enabled="true" />
+              <Fragment Id="P97KCS3saGWObfq0kN4pLp" Patch="PoJRbPFs2VGMZQCd9Yl8cf" Enabled="true" />
+            </ProcessDefinition>
           </Patch>
         </Node>
       </Canvas>
