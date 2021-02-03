@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using VL.Lang;
 using VL.Lang.Symbols;
 using VL.Model;
-using VVVV.NuGetAssemblyLoader;
 
 namespace MyTests
 {
@@ -60,23 +59,22 @@ namespace MyTests
             RepositoriesPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\..\"));
             VLPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\..\..\vvvv50\"));
 
-            foreach (var pack in Packs)
-                AssemblyLoader.AddPackageRepositories(pack);
+            var searchPaths = Packs.ToList();
 
             // Add the vvvv_stride\public-vl\VL.Stride\packages folder
-            AssemblyLoader.AddPackageRepositories(MainLibPath);
+            searchPaths.Add(MainLibPath);
 
             // Add the vvvv_stride\public-vl folder
-            AssemblyLoader.AddPackageRepositories(RepositoriesPath);
+            searchPaths.Add(RepositoriesPath);
 
             // Add the vvvv_stride\vvvv50 folder
-            AssemblyLoader.AddPackageRepositories(VLPath);
+            searchPaths.Add(VLPath);
 
             if (SynchronizationContext.Current == null)
                 SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
 
 
-            Session = new VLSession("gamma", SynchronizationContext.Current, includeUserPackages: false)
+            Session = new VLSession("gamma", SynchronizationContext.Current, searchPaths: searchPaths)
             {
                 CheckSolution = false,
                 IgnoreDynamicEnumErrors = true,
@@ -97,11 +95,11 @@ namespace MyTests
         /// </summary>
         /// <param name="filePath"></param>
         [TestCaseSource(nameof(NormalPatches))]
-        public static void IsntRed(string filePath)
+        public static async Task IsntRed(string filePath)
         {
             filePath = Path.Combine(MainLibPath, filePath);
-            var solution = FCompiledSolution ?? (FCompiledSolution = Compile(NormalPatches()));
-            var document = solution.GetOrAddDocument(filePath);
+            var solution = FCompiledSolution ?? (FCompiledSolution = await Compile(NormalPatches()));
+            var document = solution.DocumentMap[filePath];
 
             // Check document structure
             Assert.True(document.IsValid);
@@ -114,11 +112,10 @@ namespace MyTests
             CheckNodes(document.AllTopLevelDefinitions);
         }
 
-        static Solution Compile(IEnumerable<string> docs)
+        static async Task<Solution> Compile(IEnumerable<string> docs)
         {
-            var solution = Session.CurrentSolution;
-            foreach (var f in docs)
-                solution = solution.GetOrAddDocument(Path.Combine(MainLibPath, f)).Solution;
+            var solution = await Session.CurrentSolution
+                .LoadDocuments(docs.Select(f => Path.Combine(MainLibPath, f)));
             return solution.WithFreshCompilation();
         }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <LangVersion>8.0</LangVersion>
     
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -21,6 +21,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="3.8.0" />
     <!-- A pure package dependency so on install all VL packages come in -->
     <PackageReference Include="Stride.Core" Version="$(StrideVersion)" />
     <PackageReference Include="Stride.Core.Assets.CompilerApp" Version="$(StrideVersion)" IncludeAssets="build;buildTransitive" />
@@ -737,7 +738,6 @@
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\Blur\Blur_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blur_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\Blur\BoxBlurBase.sdsl.cs">
       <DesignTime>True</DesignTime>
@@ -748,24 +748,20 @@
     <Compile Update="Effects\TextureFX\Filters\Blur\BoxBlur_VerticalPass_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\ColorRamp\ColorRampBase.sdsl.cs">
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\ColorRamp\ColorRamp_Hue_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>ColorRamp_Hue_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\ColorRamp\ColorRamp_Luma_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>ColorRamp_Luma_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\ColorRamp\ColorRamp_RGB_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\ColorRamp\ColorRamp_Saturation_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>ColorRamp_Saturation_Internal_TextureFX.sdsl</DependentUpon>
-    </Compile>
-    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\ColorRamp\ColorRampBase.sdsl.cs">
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ColorRampBase.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\HSCB_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
@@ -775,34 +771,27 @@
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Keying\ChromaKey_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>ChromaKey_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Keying\KeyingBase.sdsl.cs">
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Keying\LumaKey_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>LumaKey_Internal_TextureFX.sdsl</DependentUpon>
-    </Compile>
-    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Levels\Levels_ClampBoth_Internal_TextureFX.sdsl.cs">
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Levels_ClampBoth_Internal_TextureFX.sdsl</DependentUpon>
-    </Compile>
-    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Levels\Levels_ClampBottom_Internal_TextureFX.sdsl.cs">
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Levels_ClampBottom_Internal_TextureFX.sdsl</DependentUpon>
-    </Compile>
-    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Levels\Levels_ClampNone_Internal_TextureFX.sdsl.cs">
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Levels_ClampNone_Internal_TextureFX.sdsl</DependentUpon>
-    </Compile>
-    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Levels\Levels_ClampTop_Internal_TextureFX.sdsl.cs">
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Levels_ClampTop_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Levels\LevelsBase.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>LevelsBase.sdsl</DependentUpon>
+    </Compile>
+    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Levels\Levels_ClampBoth_Internal_TextureFX.sdsl.cs">
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Levels\Levels_ClampBottom_Internal_TextureFX.sdsl.cs">
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Levels\Levels_ClampNone_Internal_TextureFX.sdsl.cs">
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Levels\Levels_ClampTop_Internal_TextureFX.sdsl.cs">
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\ColorManipulation\Posterize\Posterize_HSL_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
@@ -824,19 +813,15 @@
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\Distortion\Tunnels\TunnelsBase.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>TunnelsBase.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\Distortion\Tunnels\Tunnels_Cylinder_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Tunnels_Cylinder_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\Distortion\Tunnels\Tunnels_Fly_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Tunnels_Fly_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\Distortion\Tunnels\Tunnels_Square_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Tunnels_Square_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Filters\Glow\SimpleBloom_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
@@ -852,7 +837,6 @@
     </Compile>
     <Compile Update="Effects\TextureFX\Math\SetAlpha_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>SetAlpha_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Math\UVOffset_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
@@ -862,79 +846,60 @@
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Add_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Add_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Burn_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Burn_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Darken_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Darken_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Difference_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Difference_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Divide_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Divide_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Dodge_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Dodge_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Exclusion_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Exclusion_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Freeze_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Freeze_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Glow_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Glow_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Hardlight_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Hardlight_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Heat_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Heat_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Lighten_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Lighten_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Multiply_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Multiply_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Normal_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Normal_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Overlay_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Overlay_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Reflect_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Reflect_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Screen_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Screen_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Softlight_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Softlight_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blend\Blend_Subtract_Internal_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>Blend_Subtract_Internal_TextureFX.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\TextureFX\Mixers\Blood_TextureFX.sdsl.cs">
       <DesignTime>True</DesignTime>
@@ -973,7 +938,6 @@
     </Compile>
     <Compile Update="Effects\Utils\MaterialCompiling.sdsl.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>MaterialCompiling.sdsl</DependentUpon>
     </Compile>
     <Compile Update="Effects\Utils\MaterialError.sdsl.cs">
       <DesignTime>True</DesignTime>
@@ -1002,29 +966,11 @@
     <None Update="Effects\ComputeFX\ComputeFXGraphEffect.sdfx">
       <LastGenOutput>ComputeFXGraphEffect.sdfx.cs</LastGenOutput>
     </None>
-    <None Update="Effects\ShaderFX\Functions\Float3ToFloat2.sdsl">
-      <LastGenOutput>%(Filename).sdsl.cs</LastGenOutput>
-    </None>
     <None Update="Effects\ShaderFX\ShaderFXGraphEffect.sdfx">
       <LastGenOutput>ShaderFXGraphEffect.sdfx.cs</LastGenOutput>
     </None>
-    <None Update="Effects\TextureFX\Filters\ColorManipulation\ColorRamp\ColorRamp_RGB_Internal_TextureFX.sdsl">
-      <LastGenOutput>%(Filename).sdsl.cs</LastGenOutput>
-    </None>
-    <None Update="Effects\TextureFX\Filters\ColorManipulation\Keying\ChromaKey_Internal_TextureFX.sdsl">
-      <LastGenOutput>ChromaKey_Internal_TextureFX.sdsl.cs</LastGenOutput>
-    </None>
-    <None Update="Effects\TextureFX\Filters\ColorManipulation\Keying\LumaKey_Internal_TextureFX.sdsl">
-      <LastGenOutput>LumaKey_Internal_TextureFX.sdsl.cs</LastGenOutput>
-    </None>
-    <None Update="Effects\TextureFX\Filters\ColorManipulation\Levels\Levels_ClampNone_Internal_TextureFX.sdsl">
-      <LastGenOutput>%(Filename).sdsl.cs</LastGenOutput>
-    </None>
     <None Update="Effects\TextureFX\TextureFXGraphEffect.sdfx">
       <LastGenOutput>TextureFXGraphEffect.sdfx.cs</LastGenOutput>
-    </None>
-    <None Update="Effects\Utils\MaterialError.sdsl">
-      <LastGenOutput>%(Filename).sdsl.cs</LastGenOutput>
     </None>
     <None Update="Rendering\Materials\FallbackMaterial\SceneEditorParameters.sdfx">
       <LastGenOutput>SceneEditorParameters.sdfx.cs</LastGenOutput>

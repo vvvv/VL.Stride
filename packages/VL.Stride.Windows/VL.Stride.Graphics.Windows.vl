@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="CWTbJ7dBwqtLwCqXKAv402" LanguageVersion="2021.3.0.20" Version="0.128">
+<Document xmlns:p="property" Id="CWTbJ7dBwqtLwCqXKAv402" LanguageVersion="2021.3.0.65" Version="0.128">
   <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="2021.3.0-0020-g2dbfb8d5b3" />
   <Patch Id="AXcrkz7wtuiLTLQMfXYFvQ">
     <Canvas Id="UNxfqzqFZ0sNZX8LT3rUat" DefaultCategory="Stride" CanvasType="FullCategory">
@@ -216,7 +216,7 @@
                         <Choice Kind="TypeFlag" Name="Boolean" />
                       </p:TypeAnnotation>
                       <p:ValueBoxSettings>
-                        <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
+                        <p:buttonmode p:Assembly="VL.Core" p:Type="VL.Core.ButtonModeEnum">Toggle</p:buttonmode>
                       </p:ValueBoxSettings>
                     </Pad>
                   </Patch>
@@ -302,7 +302,7 @@
                     <Choice Kind="TypeFlag" Name="Boolean" />
                   </p:TypeAnnotation>
                   <p:ValueBoxSettings>
-                    <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Bang</p:buttonmode>
+                    <p:buttonmode p:Assembly="VL.Core" p:Type="VL.Core.ButtonModeEnum">Bang</p:buttonmode>
                   </p:ValueBoxSettings>
                 </Pad>
                 <ControlPoint Id="By91bd5Mg9xMKh5Ja053lZ" Bounds="818,312" />
@@ -369,10 +369,20 @@
                             <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                             <Choice Kind="OperationCallFlag" Name="Read" />
                             <CategoryReference Kind="AssemblyCategory" Name="Stream" NeedsToBeDirectParent="true" />
+                            <PinReference Kind="InputPin" Name="Buffer">
+                              <p:DataTypeReference p:Type="TypeReference" LastCategoryFullName="System" LastSymbolSource="System.Runtime.dll">
+                                <Choice Kind="TypeFlag" Name="Array`1" />
+                                <p:TypeArguments>
+                                  <TypeReference LastCategoryFullName="System" LastSymbolSource="System.Runtime.dll">
+                                    <Choice Kind="TypeFlag" Name="Byte" />
+                                  </TypeReference>
+                                </p:TypeArguments>
+                              </p:DataTypeReference>
+                            </PinReference>
                           </p:NodeReference>
                           <Pin Id="RPD4jd930mKNGNnPzP1u7K" Name="Input" Kind="StateInputPin" />
                           <Pin Id="EsY0xEYY0tSNOpaGHhAlVc" Name="Buffer" Kind="InputPin" />
-                          <Pin Id="BV27D7qV2CgLGiMPaII39B" Name="Offset" Kind="InputPin" />
+                          <Pin Id="MvBf5wI1nEcPcJ2eHzlaMH" Name="Offset" Kind="InputPin" />
                           <Pin Id="IBXEti5lSCVPHLe2qkKhS5" Name="Count" Kind="InputPin" DefaultValue="16">
                             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                               <Choice Kind="TypeFlag" Name="Integer32" />
@@ -891,7 +901,7 @@
               <ControlPoint Id="Ixu3vDa42fyNyDVc4pvMMb" Bounds="636,229" />
               <ControlPoint Id="H77QADvlhilMcGrZb5scTw" Bounds="727,208" />
               <Node Bounds="675,494,125,19" Id="IPTzAje68hpQLh9wWCS0xi">
-                <p:NodeReference LastCategoryFullName="Stride" LastSymbolSource="VL.Stride.Rendering.vl">
+                <p:NodeReference LastCategoryFullName="Stride" LastSymbolSource="VL.Stride.Engine.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                   <Choice Kind="ProcessAppFlag" Name="RenderTexture" />
                 </p:NodeReference>
