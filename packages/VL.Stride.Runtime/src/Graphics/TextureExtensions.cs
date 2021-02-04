@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Immutable;
 using System.IO;
-using System.Runtime.CompilerServices;
 using VL.Lib.Basics.Imaging;
 using VL.Lib.Collections;
 using Stride.Graphics;
@@ -9,6 +7,7 @@ using Buffer = Stride.Graphics.Buffer;
 using StridePixelFormat = Stride.Graphics.PixelFormat;
 using VLPixelFormat = VL.Lib.Basics.Imaging.PixelFormat;
 using Stride.Core;
+using System.Runtime.InteropServices;
 
 namespace VL.Stride.Graphics
 {
@@ -29,9 +28,11 @@ namespace VL.Stride.Graphics
         /// <returns>The GPU buffer.</returns>
         public static unsafe Texture SetData<TData>(this Texture texture, CommandList commandList, Spread<TData> fromData, int arraySlice, int mipSlice, ResourceRegion? region) where TData : struct
         {
-            var immutableArray = fromData._array;
-            var array = Unsafe.As<ImmutableArray<TData>, TData[]>(ref immutableArray);
-            texture.SetData(commandList, array, arraySlice, mipSlice, region);
+            var s = MemoryMarshal.AsBytes(fromData.AsSpan());
+            fixed (void* p = s)
+            {
+                texture.SetData(commandList, new DataPointer(p, s.Length), arraySlice, mipSlice, region);
+            }
             return texture;
         }
 

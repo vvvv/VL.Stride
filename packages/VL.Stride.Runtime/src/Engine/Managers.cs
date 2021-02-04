@@ -44,11 +44,11 @@ namespace VL.Stride.Engine
             }
 
             // Synchronize our entity links
-            var @array = children._array;
+            var span = children.AsSpan();
             var newChildren = 0;
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < span.Length; i++)
             {
-                var child = array[i];
+                var child = span[i];
                 if (child != null)
                 {
                     if (GetParent(child) == null)
