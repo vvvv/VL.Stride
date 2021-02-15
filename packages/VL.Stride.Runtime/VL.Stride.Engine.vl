@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2021.3.0.61" Version="0.128">
+<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2021.3.0.64" Version="0.128">
   <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2021.3.0-0061-gda7d0b07e5" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride" CanvasType="FullCategory">
@@ -4281,6 +4281,8 @@
                 <Pin Id="Arq565EPfNEMY1Worz0R7e" Name="Transformation" Kind="InputPin" />
                 <Pin Id="BB8S8IIv0etP9gzMmMNmct" Name="Vertices" Kind="InputPin" />
                 <Pin Id="BAH8rVWpeCZK9vfe9WOZol" Name="Colors" Kind="InputPin" />
+                <Pin Id="M5U1yNJn6nvMswRoO6nWsB" Name="Rasterizer State" Kind="InputPin" />
+                <Pin Id="Q42DiAAM8fyLpq33lwwLBx" Name="Depth Stencil State" Kind="InputPin" />
                 <Pin Id="BTvWaI9XwUbLsf0IriqMAv" Name="Output" Kind="OutputPin" />
               </Node>
               <Node Bounds="1360,375,25,19" Id="Nev2JXUHNflMljsm2IccNU">
@@ -4297,7 +4299,7 @@
                 </Pin>
                 <Pin Id="FqMHfGoY5dkMGLOPcOj4B4" Name="Output" Kind="OutputPin" />
               </Node>
-              <Pad Id="QqOMdLac8f3O4YIIiG6oZR" Comment="Color" Bounds="614,825,136,15" ShowValueBox="true" isIOBox="true" Value="0, 0, 0, 0.8000002">
+              <Pad Id="QqOMdLac8f3O4YIIiG6oZR" Comment="Color" Bounds="604,826,136,15" ShowValueBox="true" isIOBox="true" Value="0, 0, 0, 0.8000002">
                 <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
                   <Choice Kind="TypeFlag" Name="RGBA" />
                 </p:TypeAnnotation>
@@ -4395,7 +4397,7 @@
               <Pad Id="NPLNU4Nea3tOxZAgeCUxzq" Bounds="292,418" />
               <ControlPoint Id="BGQzBQLhEYCOEEtAcXwaWa" Bounds="559,468" />
               <ControlPoint Id="MdIQZxMvrycOPF9lMApJhs" Bounds="561,1473" />
-              <Node Bounds="669,783,67,19" Id="TkKTn6NuajFO26dT1MXE26">
+              <Node Bounds="622,791,67,19" Id="TkKTn6NuajFO26dT1MXE26">
                 <p:NodeReference LastCategoryFullName="Stride.API.Graphics.BlendStateDescription" LastSymbolSource="VL.Stride.Runtime.CSharpImport.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                   <Choice Kind="OperationCallFlag" Name="AlphaBlend" />
@@ -4594,6 +4596,8 @@
                         <Pin Id="L1pApT7dw9aLfzwsL7VTOh" Name="Transformation" Kind="InputPin" />
                         <Pin Id="S26ryy0LHfFNxlBXD5wOkP" Name="Vertices" Kind="InputPin" />
                         <Pin Id="QOYdrTR89NcL1zVlp6k5MV" Name="Colors" Kind="InputPin" />
+                        <Pin Id="AF96hSByFC5M0VOd6iQhPN" Name="Rasterizer State" Kind="InputPin" />
+                        <Pin Id="IgV9AwPdH4UPG0pZJULthF" Name="Depth Stencil State" Kind="InputPin" />
                         <Pin Id="KCFPIGWJywFLPY0grvtKGc" Name="Output" Kind="OutputPin" />
                       </Node>
                       <Node Bounds="1171,1130,33,19" Id="RwKEXD0QgPFPgoyGFVtnGs">
@@ -4747,6 +4751,26 @@
                   <Item>0.3695991, 0.02000004, 0.4000006, 0.6700003</Item>
                 </p:Value>
               </Pad>
+              <Node Bounds="835,579,148,19" Id="E1ghWmNSEHAM1qIJ1Th8T7">
+                <p:NodeReference LastCategoryFullName="Stride.Graphics" LastSymbolSource="VL.Stride.Graphics.Nodes">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessNode" Name="DepthStencilStateDescription" />
+                </p:NodeReference>
+                <Pin Id="VbWujvKdcZsLgMwIyk0Vgo" Name="Depth Buffer Enable" Kind="InputPin" DefaultValue="False">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Boolean" />
+                  </p:TypeAnnotation>
+                </Pin>
+                <Pin Id="RubN2Sz6Y00NekqZtZSwbX" Name="Depth Buffer Write Enable" Kind="InputPin" />
+                <Pin Id="JHX2QLm0UGeNsH2yKrevrU" Name="Depth Buffer Function" Kind="InputPin" />
+                <Pin Id="JiBQTtRWHPKNx3ISWAmi4p" Name="Stencil Enable" Kind="InputPin" />
+                <Pin Id="QpJaWRFx2Z2OQ9e86KxjKL" Name="Front Face" Kind="InputPin" />
+                <Pin Id="RlAgGgpdTDULcgQsST0ONZ" Name="Back Face" Kind="InputPin" />
+                <Pin Id="SzxJBal1ZXvQVF2ggV3lh7" Name="Stencil Mask" Kind="InputPin" />
+                <Pin Id="VdDSEEDgMq1PIrAQN6tDb1" Name="Stencil Write Mask" Kind="InputPin" />
+                <Pin Id="U1fBKyewxu8PvrQDGDPUqK" Name="Output" Kind="OutputPin" />
+              </Node>
+              <ControlPoint Id="MjnIo5JXKq9Pu5c8rytELf" Bounds="1307,630" />
             </Canvas>
             <Patch Id="E3kk0tG2SQINKHI4qM0rGV" Name="Create" ParticipatingElements="PEBq8fjJwnOLFFs36TV9HJ,BzcqwZyk4jVMs9eQ5aTEYC,NqoBaMN46wyLKuSKuhSyqJ,BE0nbrYACDjN2vqc3ciNc6,Bmar80SEEFJQZmO8pNUewD" />
             <Patch Id="LOPqOcbBDCTP5AnCtYqsaw" Name="Update">
@@ -4878,6 +4902,9 @@
             <Link Id="CcgPbOkXe03OFJOrSkVm0I" Ids="BpZ9aSbqL9xMXF2s70wALR,VB70GMDYG42MqjusB0jcbo" />
             <Link Id="PeXqR7xVtiVPuEdT9fXe6g" Ids="QmrBeGjGbnmMhdHLuvD8on,KWSqSOBdhw1Pk3mAHLgIGt" />
             <Link Id="MsDxAjDHfXaOyH1A2dQngc" Ids="SCRSO0jlp8OOP4t0bVpsLt,TnoxzWuzVuHOnIxsNCrJde" />
+            <Link Id="JogMJSZt1maMRa4sX7d3kI" Ids="U1fBKyewxu8PvrQDGDPUqK,GzzjCrvlHPlQH0lxWrWR53" />
+            <Link Id="RzgCI3TRDnINVzRhH9MEVP" Ids="U1fBKyewxu8PvrQDGDPUqK,Q42DiAAM8fyLpq33lwwLBx" />
+            <Link Id="NuZ7LL2YvdKNETVljbCi4X" Ids="U1fBKyewxu8PvrQDGDPUqK,MjnIo5JXKq9Pu5c8rytELf,IgV9AwPdH4UPG0pZJULthF" />
           </Patch>
         </Node>
         <!--
@@ -10170,6 +10197,8 @@
                   <Pin Id="Lq3s97DluwMOVOMSrjotKq" Name="Transformation" Kind="InputPin" />
                   <Pin Id="IKDsoHfU5lDLNCrgPTfQ1n" Name="Vertices" Kind="InputPin" />
                   <Pin Id="CWIxAMx9IcxMJeTe6HH7LL" Name="Colors" Kind="InputPin" />
+                  <Pin Id="QJdvlbnQDYdMlQSQ8jMp2l" Name="Rasterizer State" Kind="InputPin" />
+                  <Pin Id="LfyqHA65NjHOtRf3dWvXjA" Name="Depth Stencil State" Kind="InputPin" />
                   <Pin Id="NbrGhopOX78Lpp0pBGKpdc" Name="Output" Kind="OutputPin" />
                 </Node>
                 <ControlPoint Id="QI6OmGrfdiZLT7aIbsnHBS" Bounds="900,322" />
