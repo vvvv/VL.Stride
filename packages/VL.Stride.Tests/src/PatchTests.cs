@@ -38,7 +38,8 @@ namespace MyTests
             foreach (var file in vlStrideRuntime.Concat(vlStride).Concat(vlStrideWindows))
             {
                 // Shows up red on build server - maybe due to super cheap graphics card?
-                if (Path.GetFileName(file) == "HowTo Write a Shader.vl")
+                if (Path.GetFileName(file) == "HowTo Write a Shader.vl" ||
+                    Path.GetFileName(file) == "HowTo Create a Custom ShaderFX Node.vl")
                     continue;
 
                 var fileUri = new Uri(file, UriKind.Absolute);
