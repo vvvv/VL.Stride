@@ -1,0 +1,54 @@
+﻿shader ColorUtilityTemp
+{
+   float4 GammaToLinear (float4 RGBa, float Gamma)
+   {
+        RGBa.rgb = pow(RGBa.rgb, 1/Gamma);
+        return RGBa;
+    }
+
+    float4 LinearToGamma (float4 RGBa, float Gamma)
+    {
+        RGBa.rgb = pow(RGBa.rgb, Gamma);
+        return RGBa;
+    }
+   
+
+    //https://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
+    float4 LinearTosRGB(float4 RGBa)
+    {
+        float3 RGB = RGBa.rgb;
+
+        float3 S1 = sqrt(RGB);
+        float3 S2 = sqrt(S1);
+        float3 S3 = sqrt(S2);
+
+        return float4(0.662002687f * S1 + 0.684122060f * S2 - 0.323583601f * S3 - 0.0225411470f * RGB, RGBa.a);
+    }
+
+
+    //https://github.com/vvvv/VL.Stride/pull/395#issuecomment-760253956
+
+    // Converts a color from linear light gamma to sRGB gamma
+    float4 GammaTosRGB(float4 RGBa)
+    {
+        // bvec4 cutoff = lessThan(linearRGB, vec4(0.0031308));
+        float4 cutoff = step(RGBa, float4(0.0031308f));
+        float4 higher = float4(1.055f)*pow(RGBa, float4(1.0f/2.4f)) - float4(0.055f);
+        float4 lower = RGBa * float4(12.92f);
+
+        //mix(higher, lower, cutoff);
+        return lerp(higher, lower, cutoff);
+    }
+
+    // Converts a color from sRGB gamma to linear light gamma
+    float4 sRGBtoGamma(float4 sRGBa)
+    {
+        //bvec4 cutoff = lessThan(sRGB, vec4(0.04045));
+        float4 cutoff = step(sRGBa, float4(0.04045f));
+        float4 higher = pow((sRGBa + float4(0.055f))/float4(1.055f), float4(2.4f));
+        float4 lower = sRGBa/float4(12.92f);
+
+        //mix(higher, lower, cutoff);
+        return lerp(higher, lower, cutoff);
+    }
+};
