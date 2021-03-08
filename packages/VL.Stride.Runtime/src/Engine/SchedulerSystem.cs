@@ -154,6 +154,8 @@ namespace VL.Stride.Engine
                 finally
                 {
                     Layers.Clear();
+                    renderDrawContext.ResourceGroupAllocator.Flush();
+                    renderDrawContext.QueryManager.Flush();
                 }
             }
         }

@@ -275,7 +275,7 @@ namespace VL.Stride.Rendering.Compositing
 
             IVLNodeDescription CreatePostEffectsNode()
             {
-                return nodeFactory.NewNode<PostProcessingEffects>(name: "PostFX", category: renderingCategory, copyOnWrite: false, 
+                return nodeFactory.NewNode<PostProcessingEffects>(name: "PostFXCore (Internal)", category: renderingCategory, copyOnWrite: false, 
                     init: effects =>
                     {
                         // Can't use effects.DisableAll() - disables private effects used by AA

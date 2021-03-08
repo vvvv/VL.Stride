@@ -10,7 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\*.vl" Pack="true" PackagePath=" " />
-    <None Include="..\Demos\*.vl" Pack="true" PackagePath="Demos\%(RecursiveDir)%(Filename)%(Extension)" />
+    <!-- Setting AutoGen metadata is a hack to avoid getting picked up by asset compiler -->
+    <None Include="..\help\**\*" Link="help\%(RecursiveDir)%(Filename)%(Extension)" Pack="true" AutoGen="false" PackagePath="help\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="3.2.0" />

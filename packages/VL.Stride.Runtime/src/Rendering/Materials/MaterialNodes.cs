@@ -16,18 +16,25 @@ namespace VL.Stride.Rendering.Materials
     {
         public static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory nodeFactory)
         {
-            string materialCategory = "Stride.Advanced.Materials";
+            string materialCategory = "Stride.Materials";
+            string materialAdvancedCategory = "Stride.Advanced.Materials";
             string geometryCategory = $"{materialCategory}.{nameof(GeometryAttributes)}";
+            string geometryAdvancedCategory = $"{materialAdvancedCategory}.{nameof(GeometryAttributes)}";
             string shadingCategory = $"{materialCategory}.{nameof(ShadingAttributes)}";
+            string shadingAdvancedCategory = $"{materialAdvancedCategory}.{nameof(ShadingAttributes)}";
             string miscCategory = $"{materialCategory}.{nameof(MiscAttributes)}";
+            string miscAdvancedCategory = $"{materialAdvancedCategory}.{nameof(MiscAttributes)}";
             string transparencyCategory = $"{miscCategory}.Transparency";
+            string transparencyAdvancedCategory = $"{miscAdvancedCategory}.Transparency";
             string layersCategory = $"{materialCategory}.Layers";
-            string diffuseModelCategory = $"{shadingCategory}.DiffuseModel";
-            string specularModelCategory = $"{shadingCategory}.SpecularModel";
+            string layersAdvancedCategory = $"{materialAdvancedCategory}.Layers";
+            string diffuseModelAdvancedCategory = $"{shadingAdvancedCategory}.DiffuseModel";
+            string specularModelAdvancedCategory = $"{shadingAdvancedCategory}.SpecularModel";
             string subsurfaceScatteringCategory = $"{shadingCategory}.SubsurfaceScattering";
+            string subsurfaceScatteringAdvancedCategory = $"{shadingAdvancedCategory}.SubsurfaceScattering";
 
             // Geometry
-            yield return nodeFactory.NewNode<GeometryAttributes>(category: materialCategory)
+            yield return nodeFactory.NewNode<GeometryAttributes>(category: materialAdvancedCategory)
                 .AddCachedInput(nameof(GeometryAttributes.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v)
                 .AddCachedInput(nameof(GeometryAttributes.Displacement), x => x.Displacement, (x, v) => x.Displacement = v)
                 .AddCachedInput(nameof(GeometryAttributes.Surface), x => x.Surface, (x, v) => x.Surface = v)
@@ -37,10 +44,10 @@ namespace VL.Stride.Rendering.Materials
             yield return NewMaterialNode<MaterialTessellationPNFeature>(nodeFactory, "PointNormalTessellation", geometryCategory);
             yield return NewMaterialNode<MaterialDisplacementMapFeature>(nodeFactory, "Displacement", geometryCategory);
             yield return NewMaterialNode<MaterialNormalMapFeature>(nodeFactory, "Normal", geometryCategory);
-            yield return NewMaterialNode<MaterialGlossinessMapFeature>(nodeFactory, "Glossiness", geometryCategory);
+            yield return NewMaterialNode<MaterialGlossinessMapFeature>(nodeFactory, "Glossiness", geometryAdvancedCategory);
 
             // Shading
-            yield return nodeFactory.NewNode<ShadingAttributes>(category: materialCategory)
+            yield return nodeFactory.NewNode<ShadingAttributes>(category: materialAdvancedCategory)
                 .AddCachedInput(nameof(ShadingAttributes.Diffuse), x => x.Diffuse, (x, v) => x.Diffuse = v)
                 .AddCachedInput(nameof(ShadingAttributes.DiffuseModel), x => x.DiffuseModel, (x, v) => x.DiffuseModel = v)
                 .AddCachedInput(nameof(ShadingAttributes.Specular), x => x.Specular, (x, v) => x.Specular = v)
@@ -48,29 +55,29 @@ namespace VL.Stride.Rendering.Materials
                 .AddCachedInput(nameof(ShadingAttributes.Emissive), x => x.Emissive, (x, v) => x.Emissive = v)
                 .AddCachedInput(nameof(ShadingAttributes.SubsurfaceScattering), x => x.SubsurfaceScattering, (x, v) => x.SubsurfaceScattering = v);
 
-            yield return NewMaterialNode<MaterialDiffuseMapFeature>(nodeFactory, "Diffuse", shadingCategory);
+            yield return NewMaterialNode<MaterialDiffuseMapFeature>(nodeFactory, "Diffuse", shadingAdvancedCategory);
 
-            yield return NewMaterialNode<MaterialDiffuseCelShadingModelFeature>(nodeFactory, "CelShading", diffuseModelCategory);
-            yield return NewMaterialNode<MaterialDiffuseHairModelFeature>(nodeFactory, "Hair", diffuseModelCategory);
-            yield return NewMaterialNode<MaterialDiffuseLambertModelFeature>(nodeFactory, "Lambert", diffuseModelCategory);
+            yield return NewMaterialNode<MaterialDiffuseCelShadingModelFeature>(nodeFactory, "CelShading", diffuseModelAdvancedCategory);
+            yield return NewMaterialNode<MaterialDiffuseHairModelFeature>(nodeFactory, "Hair", diffuseModelAdvancedCategory);
+            yield return NewMaterialNode<MaterialDiffuseLambertModelFeature>(nodeFactory, "Lambert", diffuseModelAdvancedCategory);
 
-            yield return NewMaterialNode<MaterialMetalnessMapFeature>(nodeFactory, "Metalness", shadingCategory);
-            yield return NewMaterialNode<MaterialSpecularMapFeature>(nodeFactory, "Specular", shadingCategory);
+            yield return NewMaterialNode<MaterialMetalnessMapFeature>(nodeFactory, "Metalness", shadingAdvancedCategory);
+            yield return NewMaterialNode<MaterialSpecularMapFeature>(nodeFactory, "Specular", shadingAdvancedCategory);
 
-            yield return nodeFactory.NewNode<MaterialSpecularCelShadingModelFeature>("CelShading", specularModelCategory)
+            yield return nodeFactory.NewNode<MaterialSpecularCelShadingModelFeature>("CelShading", specularModelAdvancedCategory)
                 .AddInputs()
                 .AddCachedInput(nameof(MaterialSpecularCelShadingModelFeature.RampFunction), x => x.RampFunction, (x, v) => x.RampFunction = v);
 
-            yield return NewMaterialNode<MaterialCelShadingLightDefault>(nodeFactory, "DefaultLightFunction", $"{specularModelCategory}.CelShading");
-            yield return NewMaterialNode<MaterialCelShadingLightRamp>(nodeFactory, "RampLightFunction", $"{specularModelCategory}.CelShading");
+            yield return NewMaterialNode<MaterialCelShadingLightDefault>(nodeFactory, "DefaultLightFunction", $"{specularModelAdvancedCategory}.CelShading");
+            yield return NewMaterialNode<MaterialCelShadingLightRamp>(nodeFactory, "RampLightFunction", $"{specularModelAdvancedCategory}.CelShading");
 
-            yield return NewMaterialNode<MaterialSpecularHairModelFeature>(nodeFactory, "Hair", specularModelCategory);
+            yield return NewMaterialNode<MaterialSpecularHairModelFeature>(nodeFactory, "Hair", specularModelAdvancedCategory);
 
-            yield return nodeFactory.NewNode<MaterialSpecularMicrofacetModelFeature>("Microfacet", specularModelCategory)
+            yield return nodeFactory.NewNode<MaterialSpecularMicrofacetModelFeature>("Microfacet", specularModelAdvancedCategory)
                 .AddInputs();
 
             var defaultGlass = new MaterialSpecularThinGlassModelFeature();
-            yield return nodeFactory.NewNode<MaterialSpecularThinGlassModelFeature>("Glass", specularModelCategory)
+            yield return nodeFactory.NewNode<MaterialSpecularThinGlassModelFeature>("Glass", specularModelAdvancedCategory)
                 .AddInputs()
                 .AddCachedInput(nameof(MaterialSpecularThinGlassModelFeature.RefractiveIndex), x => x.RefractiveIndex, (x, v) => x.RefractiveIndex = v, defaultGlass.RefractiveIndex);
 
@@ -79,10 +86,10 @@ namespace VL.Stride.Rendering.Materials
             yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringKernelSkin>(nodeFactory, "SkinKernel", subsurfaceScatteringCategory);
             yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileSkin>(nodeFactory, "SkinProfile", subsurfaceScatteringCategory);
             yield return new StrideNodeDesc<MaterialSubsurfaceScatteringScatteringProfileCustom>(nodeFactory, "CustomProfile", subsurfaceScatteringCategory);
-            yield return new StrideNodeDesc<FallbackMaterial>(nodeFactory, category: materialCategory);
+            yield return new StrideNodeDesc<FallbackMaterial>(nodeFactory, category: materialAdvancedCategory);
 
             // Misc
-            yield return nodeFactory.NewNode<MiscAttributes>(category: materialCategory)
+            yield return nodeFactory.NewNode<MiscAttributes>(category: materialAdvancedCategory)
                 .AddCachedInput(nameof(MiscAttributes.Occlusion), x => x.Occlusion, (x, v) => x.Occlusion = v)
                 .AddCachedInput(nameof(MiscAttributes.Transparency), x => x.Transparency, (x, v) => x.Transparency = v)
                 .AddCachedInput(nameof(MiscAttributes.Overrides), x => x.Overrides, (x, v) => x.Overrides = v)
@@ -92,7 +99,7 @@ namespace VL.Stride.Rendering.Materials
             yield return NewMaterialNode<MaterialTransparencyAdditiveFeature>(nodeFactory, "Additive", transparencyCategory);
             yield return NewMaterialNode<MaterialTransparencyBlendFeature>(nodeFactory, "Blend", transparencyCategory);
             yield return NewMaterialNode<MaterialTransparencyCutoffFeature>(nodeFactory, "Cutoff", transparencyCategory);
-            yield return NewMaterialNode<MaterialClearCoatFeature>(nodeFactory, "ClearCoat", miscCategory);
+            yield return NewMaterialNode<MaterialClearCoatFeature>(nodeFactory, "ClearCoat", miscAdvancedCategory);
 
             // Layers
             yield return NewMaterialNode<MaterialBlendLayer>(nodeFactory, "MaterialLayer", layersCategory);
@@ -101,7 +108,7 @@ namespace VL.Stride.Rendering.Materials
             // Top level
             yield return nodeFactory.NewNode(
                 name: "Material", 
-                category: materialCategory,
+                category: materialAdvancedCategory,
                 ctor: ctx => new MaterialBuilder(ctx),
                 hasStateOutput: false)
                 .AddCachedInput(nameof(MaterialBuilder.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)

@@ -1,5 +1,4 @@
-﻿using Microsoft.Build.Construction;
-using Stride.Core;
+﻿using Stride.Core;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
@@ -60,9 +59,8 @@ namespace VL.Stride.Rendering
                                 return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
                                     export: c =>
                                     {
-                                        var project = c.ProjectRootElement as ProjectRootElement;
                                         // Copy all shaders to the project directory
-                                        var assetsFolder = Path.Combine(project.DirectoryPath, "Assets");
+                                        var assetsFolder = Path.Combine(c.DirectoryPath, "Assets");
                                         Directory.CreateDirectory(assetsFolder);
                                         foreach (var f in Directory.EnumerateFiles(shadersPath))
                                         {
@@ -527,7 +525,7 @@ namespace VL.Stride.Rendering
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.Textures.TextureFX",
+                    category: "Stride.Textures.Experimental.TextureFX",
                     fragmented: true,
                     init: buildContext =>
                     {
