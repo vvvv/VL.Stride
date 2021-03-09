@@ -444,6 +444,9 @@ namespace VL.Stride.Rendering
                     });
             }
 
+            const string textureInputName = "Input";
+            const string samplerInputName = "Sampler";
+
             // name = LevelsShader (ClampBoth)
             // effectName = Levels_ClampBoth_TextureFX
             // effectMainName = Levels
@@ -460,13 +463,18 @@ namespace VL.Stride.Rendering
                         var _inputs = new List<IVLPinDescription>();
                         var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(ImageEffectShader)) };
 
+                        // The pins as specified by https://github.com/devvvvs/vvvv/issues/5756
                         var usedNames = new HashSet<string>()
                         {
+                            "Output Size",
+                            "Output Format",
                             "Output Texture",
-                            "Enabled"
+                            "Enabled",
+                            "Apply"
                         };
 
                         var _textureCount = 0;
+                        var _samplerCount = 0;
                         foreach (var parameter in GetParameters(_effect).OrderBy(p => p.Key.Name.Contains("Texture") ? 0 : 1))
                         {
                             var key = parameter.Key;
@@ -478,12 +486,22 @@ namespace VL.Stride.Rendering
 
                             if (key.PropertyType == typeof(Texture))
                             {
-                                var pinName = ++_textureCount == 1 ? "Texture" : $"Texture {_textureCount}";
+                                var pinName = ++_textureCount == 1 ? textureInputName : $"{textureInputName} {_textureCount}";
                                 usedNames.Add(pinName);
                                 _inputs.Add(new PinDescription<Texture>(pinName));
                             }
                             else
-                                _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count));
+                            {
+                                var pinName = default(string); // Using null the name is based on the parameter name
+                                var isVisible = true;
+                                if (key.PropertyType == typeof(SamplerState))
+                                {
+                                    pinName = ++_samplerCount == 1 ? samplerInputName : $"{samplerInputName} {_samplerCount}";
+                                    usedNames.Add(pinName);
+                                    isVisible = false;
+                                }
+                                _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, name: pinName) { IsVisible = isVisible });
+                            }
                         }
 
                         IVLPinDescription _outputTextureInput, _enabledInput;
@@ -492,7 +510,8 @@ namespace VL.Stride.Rendering
                             _outputTextureInput = new PinDescription<Texture>("Output Texture") 
                             { 
                                 Summary = "The texture to render to. If not set the node creates its own output texture based on the input texture.",
-                                Remarks = "The provided texture must be a render target."
+                                Remarks = "The provided texture must be a render target.",
+                                IsVisible = false
                             });
                         _inputs.Add(_enabledInput = new PinDescription<bool>("Enabled", defaultValue: true));
 
@@ -560,17 +579,40 @@ namespace VL.Stride.Rendering
                     fragmented: true,
                     init: buildContext =>
                     {
-                        const int defaultSize = 512;
-                        const PixelFormat defaultFormat = PixelFormat.R8G8B8A8_UNorm;
+                        const string Enabled = "Enabled";
 
                         var _inputs = shaderDescription.Inputs.ToList();
+
                         var hasTextureInput = _inputs.Any(p => p.Type == typeof(Texture) && p.Name != "Output Texture");
-                        if (!hasTextureInput)
+
+                        var defaultSize = new Int2(512);
+                        var defaultFormat = PixelFormat.R8G8B8A8_UNorm;
+                        if (hasTextureInput)
                         {
-                            _inputs.Insert(0, new PinDescription<int>("Width", defaultSize));
-                            _inputs.Insert(1, new PinDescription<int>("Height", defaultSize));
-                            _inputs.Insert(2, new PinDescription<PixelFormat>("Format", defaultFormat));
+                            defaultSize = Int2.Zero;
+                            defaultFormat = PixelFormat.None;
                         }
+
+                        var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = !hasTextureInput };
+                        var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = !hasTextureInput };
+                        if (hasTextureInput)
+                        {
+                            // Filter or Mixer
+                            _inputs.Insert(_inputs.Count - 1, _outputSize);
+                            _inputs.Insert(_inputs.Count - 1, _outputFormat);
+
+                            // Replace Enabled with Apply
+                            var _enabledPinIndex = _inputs.IndexOf(p => p.Name == Enabled);
+                            if (_enabledPinIndex >= 0)
+                                _inputs[_enabledPinIndex] = new PinDescription<bool>("Apply", defaultValue: true);
+                        }
+                        else
+                        {
+                            // Pure source
+                            _inputs.Insert(0, _outputSize);
+                            _inputs.Insert(1, _outputFormat);
+                        }
+
                         return buildContext.Implementation(
                             inputs: _inputs,
                             outputs: new[] { buildContext.Pin("Output", typeof(Texture)) },
@@ -581,41 +623,52 @@ namespace VL.Stride.Rendering
                                 var nodeContext = nodeBuildContext.NodeContext;
                                 var node = shaderDescription.CreateInstance(nodeContext);
                                 var inputs = node.Inputs.ToList();
-                                var textureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == "Texture"));
+                                var textureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == textureInputName));
                                 var outputTextureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == "Output Texture"));
-                                var enabledInput = (IVLPin<bool>)node.Inputs.ElementAt(shaderDescription.Inputs.IndexOf(p => p.Name == "Enabled"));
+                                var enabledInput = (IVLPin<bool>)node.Inputs.ElementAt(shaderDescription.Inputs.IndexOf(p => p.Name == Enabled));
 
-                                IVLPin<int> outputWidth = default, outputHeight = default;
-                                IVLPin<PixelFormat> outputFormat = default;
-                                if (!hasTextureInput)
+                                var outputSize = nodeBuildContext.Input(defaultSize);
+                                var outputFormat = nodeBuildContext.Input(defaultFormat);
+                                if (hasTextureInput)
                                 {
-                                    inputs.Insert(0, outputWidth = nodeBuildContext.Input(defaultSize));
-                                    inputs.Insert(1, outputHeight = nodeBuildContext.Input(defaultSize));
-                                    inputs.Insert(2, outputFormat = nodeBuildContext.Input(defaultFormat));
+                                    inputs.Insert(inputs.Count - 1, outputSize);
+                                    inputs.Insert(inputs.Count - 1, outputFormat);
+                                }
+                                else
+                                {
+                                    inputs.Insert(0, outputSize);
+                                    inputs.Insert(1, outputFormat);
                                 }
 
                                 var gameHandle = nodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
                                 var scheduler = game.Services.GetService<SchedulerSystem>();
                                 var graphicsDevice = game.GraphicsDevice;
-                                var output1 = default(((int width, int height, PixelFormat format) desc, Texture texture));
-                                var output2 = default(((int width, int height, PixelFormat format) desc, Texture texture));
+                                // Remove this once FrameDelay can deal with textures properly
+                                var output1 = default(((Int2 size, PixelFormat format) desc, Texture texture));
+                                var output2 = default(((Int2 size, PixelFormat format) desc, Texture texture));
                                 var mainOutput = nodeBuildContext.Output<Texture>(getter: () =>
                                 {
                                     var inputTexture = textureInput?.Value as Texture;
+
                                     if (!enabledInput.Value)
-                                        return inputTexture;
+                                    {
+                                        if (hasTextureInput)
+                                            return inputTexture; // By pass
+                                        else
+                                            return output1.texture; // Last result
+                                    }
 
                                     var outputTexture = outputTextureInput.Value as Texture;
                                     if (outputTexture is null)
                                     {
-                                        // No output texture is provided, generate on
+                                        // No output texture is provided, generate one
                                         const TextureFlags textureFlags = TextureFlags.ShaderResource | TextureFlags.RenderTarget;
-                                        var desc = default((int width, int height, PixelFormat format));
+                                        var desc = (size: Int2.One, format: PixelFormat.R8G8B8A8_UNorm);
                                         if (inputTexture != null)
                                         {
-                                            // Based on the input texture
-                                            desc = (inputTexture.Width, inputTexture.Height, inputTexture.Format);
+                                            // Base it on the input texture
+                                            desc = (new Int2(inputTexture.Width, inputTexture.Height), inputTexture.Format);
 
                                             // Watch out for feedback loops
                                             if (inputTexture == output1.texture)
@@ -623,14 +676,14 @@ namespace VL.Stride.Rendering
                                                 Utilities.Swap(ref output1, ref output2);
                                             }
                                         }
-                                        else if (!hasTextureInput)
-                                        {
-                                            // Based on the given parameters
-                                            desc = (
-                                                Math.Max(1, outputWidth.Value), 
-                                                Math.Max(1, outputHeight.Value), 
-                                                outputFormat.Value != PixelFormat.None ? outputFormat.Value : defaultFormat);
-                                        }
+
+                                        // Overwrite with user settings
+                                        if (outputSize.Value.X > 0)
+                                            desc.size.X = outputSize.Value.X;
+                                        if (outputSize.Value.Y > 0)
+                                            desc.size.Y = outputSize.Value.Y;
+                                        if (outputFormat.Value != PixelFormat.None)
+                                            desc.format = outputFormat.Value;
 
                                         // Ensure we have an output of proper size
                                         if (desc != output1.desc)
@@ -638,7 +691,7 @@ namespace VL.Stride.Rendering
                                             output1.texture?.Dispose();
                                             output1.desc = desc;
                                             if (desc != default)
-                                                output1.texture = Texture.New2D(graphicsDevice, desc.width, desc.height, desc.format, textureFlags);
+                                                output1.texture = Texture.New2D(graphicsDevice, desc.size.X, desc.size.Y, desc.format, textureFlags);
                                             else
                                                 output1.texture = null;
                                         }
