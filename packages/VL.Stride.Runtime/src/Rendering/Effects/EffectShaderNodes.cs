@@ -434,7 +434,7 @@ namespace VL.Stride.Rendering
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.Rendering.ImageShaders",
+                    category: "Stride.Rendering.ImageShaders.Experimental.Advanced",
                     fragmented: true,
                     init: buildContext =>
                     {
