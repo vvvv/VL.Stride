@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Model;
@@ -105,9 +106,9 @@ namespace VL.Stride.Rendering
             var compiler = effectSystem.Compiler;
 
             const string sdslFileFilter = "*.sdsl";
-            const string drawFXSuffix = "_DrawFX";
-            const string computeFXSuffix = "_ComputeFX";
-            const string textureFXSuffix = "_TextureFX";
+            const string drawFXType = "DrawFX";
+            const string computeFXType = "ComputeFX";
+            const string textureFXType = "TextureFX";
 
             // Traverse either the "shaders" folder in the database or in the given path (if present)
             IVirtualFileProvider fileProvider = default;
@@ -116,31 +117,42 @@ namespace VL.Stride.Rendering
             else
                 fileProvider = contentManager.FileProvider;
 
+            /* 
+             * Blood
+             * Blood_TextureFX
+             * Blend_Internal_TextureFX
+             * Blend_Internal_Experimental_TextureFX
+             * Noise_TextureFX_Source
+             * Noise_TextureFX_Source_Advanced
+             */
+            var regex = new Regex("^(?'name'[a-zA-Z0-9]+)(_(?'version'[a-zA-Z0-9_]+))*?_(?'type'[A-Z][a-z]+FX)(_(?'category'[a-zA-Z0-9_]+))?$");
             foreach (var file in fileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.TopDirectoryOnly))
             {
                 var effectName = Path.GetFileNameWithoutExtension(file);
-                if (effectName.EndsWith(drawFXSuffix))
+                var match = regex.Match(effectName);
+                if (!match.Success)
+                    continue;
+
+                var (type, name, subCategory) = SplitMatch(match);
+                if (type == drawFXType)
                 {
                     // Shader only for now
-                    var name = GetNodeName(effectName, drawFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
 
-                    yield return NewDrawEffectShaderNode(shaderNodeName, effectName);
+                    yield return NewDrawEffectShaderNode(shaderNodeName, effectName, subCategory);
                     //DrawFX node
                 }
-                else if (effectName.EndsWith(textureFXSuffix))
+                else if (type == textureFXType)
                 {
-                    var name = GetNodeName(effectName, textureFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
 
                     IVLNodeDescription shaderNodeDescription;
                     yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName);
-                    yield return NewTextureFXNode(shaderNodeDescription, name);
+                    yield return NewTextureFXNode(shaderNodeDescription, name, subCategory);
                 }
-                else if (effectName.EndsWith(computeFXSuffix))
+                else if (type == computeFXType)
                 {
                     // Shader only for now
-                    var name = GetNodeName(effectName, computeFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
 
                     yield return NewComputeEffectShaderNode(shaderNodeName, effectName);
@@ -148,18 +160,23 @@ namespace VL.Stride.Rendering
                 }
             }
 
-            static NameAndVersion GetNodeName(string effectName, string suffix)
+            static (string type, NameAndVersion name, string subCategory) SplitMatch(Match match)
             {
-                // Levels_ClampBoth_TextureFX
-                var name = effectName.Substring(0, effectName.Length - suffix.Length);
-                // Levels_ClampBoth
-                var nameParts = name.Split('_');
-                if (nameParts.Length > 0)
-                {
-                    name = nameParts[0];
-                    return new NameAndVersion(name, string.Join(" ", nameParts.Skip(1)));
-                }
-                return new NameAndVersion(name);
+                var name = match.Groups["name"];
+                var version = match.Groups["version"];
+                var type = match.Groups["type"];
+                var category = match.Groups["category"];
+                var nameAndVersion = version?.Value != null ? new NameAndVersion(name.Value, version.Value.Replace('_', ' ')) : new NameAndVersion(name.Value);
+                return (type.Value, nameAndVersion, category?.Value?.Replace('_', '.'));
+            }
+
+            static string GetCategory(string rootCategory, string subCategory)
+            {
+                if (string.IsNullOrEmpty(rootCategory))
+                    return subCategory;
+                if (!string.IsNullOrEmpty(subCategory))
+                    return $"{rootCategory}.{subCategory}";
+                return rootCategory;
             }
 
             string GetPathOfSdslShader(string effectName)
@@ -272,11 +289,11 @@ namespace VL.Stride.Rendering
                 }
             }
 
-            IVLNodeDescription NewDrawEffectShaderNode(NameAndVersion name, string effectName)
+            IVLNodeDescription NewDrawEffectShaderNode(NameAndVersion name, string effectName, string subCategory)
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.Rendering.DrawShaders",
+                    category: GetCategory("Stride.Rendering.DrawShaders", subCategory),
                     fragmented: true,
                     init: buildContext =>
                     {
@@ -535,11 +552,11 @@ namespace VL.Stride.Rendering
                     });
             }
 
-            IVLNodeDescription NewTextureFXNode(IVLNodeDescription shaderDescription, string name)
+            IVLNodeDescription NewTextureFXNode(IVLNodeDescription shaderDescription, string name, string subCategory)
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.Textures.Experimental.TextureFX",
+                    category: GetCategory("Stride.Textures", subCategory),
                     fragmented: true,
                     init: buildContext =>
                     {
