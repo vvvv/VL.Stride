@@ -1,22 +1,22 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using Stride.Core.Yaml.Serialization;
 using Stride.Graphics;
-using Stride.Core.Shaders.Parser;
-using VL.Lib.Control;
-using Stride.Shaders.Parser;
 using Stride.Core.Shaders.Ast;
 using System.Linq;
 using Stride.Core.Shaders.Ast.Hlsl;
-using Stride.Core.Shaders.Ast.Stride;
 using System.Collections.Generic;
+using Stride.Core.IO;
 
 namespace VL.Stride.Rendering
 {
     public class ShaderMetadata
     {
-        public PixelFormat OutputFormat { get; set; } = PixelFormat.None;
+        public PixelFormat OutputFormat { get; private set; } = PixelFormat.None;
+
+        public string Category { get; private set; }
+
+        public string Summary { get; private set; }
+
+        public string Remarks { get; internal set; }
 
         public PixelFormat GetPixelFormat(bool hasTextureIn)
         {
@@ -26,57 +26,32 @@ namespace VL.Stride.Rendering
                 return OutputFormat;
         }
 
-        const string MetadataBegin = "/*MetadataBegin";
-        const string MetadataEnd = "MetadataEnd*/";
-        public static bool TryParseMetadata(string filename, Serializer serializer, out ShaderMetadata shaderMetadata)
+        public string GetCategory(string prefix)
         {
-            shaderMetadata = new ShaderMetadata();
+            var result = prefix;
 
-            try
-            {
-                using (var stream = File.OpenRead(filename))
-                using (var reader = new StreamReader(stream, Encoding.UTF8))
-                {
-                    var firstLine = reader.ReadLine();
+            if (string.IsNullOrWhiteSpace(Category))
+                return result;
 
-                    if (firstLine.Contains(MetadataBegin))
-                    {
-                        var success = false;
-                        var sb = new StringBuilder();
-                        var currentLine = firstLine;
-                        while (!reader.EndOfStream)
-                        {
-                            currentLine = reader.ReadLine();
-                            if (currentLine.Contains(MetadataEnd))
-                            {
-                                success = true;
-                                break;
-                            }
+            if (!Category.StartsWith(prefix))
+                return prefix + "." + Category;
 
-                            sb.AppendLine(currentLine);
-                        }
-
-                        if (success)
-                        {
-                            shaderMetadata = serializer.DeserializeInto(sb.ToString(), shaderMetadata);
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                System.Console.WriteLine("Could't read shader metadata of: " + Path.GetFileName(filename));
-                System.Console.WriteLine(e.InnermostException());
-            }
-
-            return false;
+            return Category;
         }
 
-        public static bool TryParseMetadataAttr(string inputFileName, Serializer serializer, out ShaderMetadata shaderMetadata)
-        {
-            shaderMetadata = new ShaderMetadata();
+        const string CategoryName = "Category";
+        const string SummaryName = "Summary";
+        const string RemarksName = "Remarks";
+        const string OutputFormatName = "OutputFormat";
 
+        public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider)
+        {
+            //create metadata with default values
+            var shaderMetadata = new ShaderMetadata();
+
+            var inputFileName = EffectUtils.GetPathOfSdslShader(effectName, fileProvider);
+
+            //try to populate metdata with information form the shader
             if (EffectUtils.TryParseEffect(inputFileName, out var shader))
             {
                 var shaderDecl = GetFistClassDecl(shader.Declarations);
@@ -87,8 +62,17 @@ namespace VL.Stride.Rendering
                     {
                         switch (attr.Name)
                         {
-                            case "OutputFormat":
-                                if (Enum.TryParse<PixelFormat>(attr.Parameters.FirstOrDefault().Value as string, true, out var pixelFormat))
+                            case CategoryName:
+                                shaderMetadata.Category = FirstParamAsString(attr);
+                                break;
+                            case SummaryName:
+                                shaderMetadata.Summary = FirstParamAsString(attr);
+                                break;
+                            case RemarksName:
+                                shaderMetadata.Remarks = FirstParamAsString(attr);
+                                break;
+                            case OutputFormatName:
+                                if (Enum.TryParse<PixelFormat>(FirstParamAsString(attr), true, out var pixelFormat))
                                     shaderMetadata.OutputFormat = pixelFormat;
                                 break;
                             default:
@@ -96,11 +80,14 @@ namespace VL.Stride.Rendering
                         }
                     }
                 }
-
-                return true;
             }
 
-            return false;
+            return shaderMetadata;
+        }
+
+        private static string FirstParamAsString(AttributeDeclaration attr)
+        {
+            return attr.Parameters.FirstOrDefault()?.Value as string;
         }
 
         static ClassType GetFistClassDecl(List<Node> nodes)

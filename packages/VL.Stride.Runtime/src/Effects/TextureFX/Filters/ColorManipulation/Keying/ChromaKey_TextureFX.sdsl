@@ -1,8 +1,9 @@
-﻿/*MetadataBegin
-OutputFormat: R32_Float
-MetadataEnd*/
+﻿[Internal]
+[Category("Filter")]
+[Summary("Compares the pixels of the input texture to a color and creates a texture with the keying mask")]
+[Remarks("The default output texture has a one channel 32-bit float pixel format")]
 [OutputFormat("R32_Float")]
-shader ChromaKey_Internal_TextureFX : KeyingBase
+shader ChromaKey_TextureFX : KeyingBase
 {
     // convert rgb to yuv
     static const float4x4 RGBtoYUV = float4x4(0.257,  0.439, -0.148, 0.0,
@@ -14,10 +15,12 @@ shader ChromaKey_Internal_TextureFX : KeyingBase
     [Color]
     float4 ChromaKey = float4(0.05f, 0.63f, 0.14f, 1.0f);
 
+    compose ComputeFloat4 Control;
+
     float CalcKeyDist(float4 col)
     {
         // convert to YUV
-        float4 keyYuv =  mul(ChromaKey, RGBtoYUV);
+        float4 keyYuv =  mul(ChromaKey, RGBtoYUV) + Control.Compute();
         float4 yuv = mul(col, RGBtoYUV);
 
         return length(keyYuv.gb - yuv.gb);

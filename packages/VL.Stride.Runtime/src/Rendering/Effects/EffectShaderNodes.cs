@@ -3,7 +3,6 @@ using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
 using Stride.Core.Serialization.Contents;
-using Stride.Core.Yaml.Serialization;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.ComputeEffect;
@@ -19,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
-using System.Text;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Model;
@@ -105,7 +103,6 @@ namespace VL.Stride.Rendering
             effectSystem.Update(default);
 
             var compiler = effectSystem.Compiler;
-            var serializer = new Serializer();
 
             const string sdslFileFilter = "*.sdsl";
             const string drawFXSuffix = "_DrawFX";
@@ -135,9 +132,8 @@ namespace VL.Stride.Rendering
                 {
                     var name = GetNodeName(effectName, textureFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
-                    
-                    //ShaderMetadata.TryParseMetadata(EffectUtils.GetPathOfSdslShader(effectName, fileProvider), serializer, out var shaderMetadata);
-                    ShaderMetadata.TryParseMetadataAttr(EffectUtils.GetPathOfSdslShader(effectName, fileProvider), serializer, out var shaderMetadata);
+
+                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, fileProvider);
 
                     IVLNodeDescription shaderNodeDescription;
                     yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName);
@@ -526,7 +522,7 @@ namespace VL.Stride.Rendering
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: "Stride.Textures.Experimental.TextureFX",
+                    category: shaderMetadata.GetCategory("Stride.Textures.Experimental.TextureFX"),
                     fragmented: true,
                     init: buildContext =>
                     {
@@ -547,6 +543,8 @@ namespace VL.Stride.Rendering
                             outputs: new[] { buildContext.Pin("Output", typeof(Texture)) },
                             messages: shaderDescription.Messages,
                             invalidated: shaderDescription.Invalidated,
+                            summary: shaderMetadata.Summary,
+                            remarks: shaderMetadata.Remarks,
                             newNode: nodeBuildContext =>
                             {
                                 var nodeContext = nodeBuildContext.NodeContext;

@@ -96,7 +96,7 @@ namespace VL.Stride.Rendering
                 // Changed some keywords to avoid ambiguities with HLSL and improve consistency
                 if (inputFileName != null && Path.GetExtension(inputFileName).ToLowerInvariant() == ".sdfx")
                 {
-                    // XKFX
+                    // SDFX
                     macros = new[]
                     {
                         new ShaderMacro("shader", "effect")
@@ -104,7 +104,7 @@ namespace VL.Stride.Rendering
                 }
                 else
                 {
-                    // XKSL
+                    // SDSL
                     macros = new[]
                     {
                         new ShaderMacro("class", "shader")
@@ -117,7 +117,7 @@ namespace VL.Stride.Rendering
                 {
                     return false;
                 }
-                else
+                else //success
                 {
                     shader = parsingResult.Shader;
                     return true;
