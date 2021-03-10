@@ -136,7 +136,8 @@ namespace VL.Stride.Rendering
                     var name = GetNodeName(effectName, textureFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
                     
-                    ShaderMetadata.TryReadMetadata(EffectUtils.GetPathOfSdslShader(effectName, fileProvider), serializer, out var shaderMetadata);
+                    //ShaderMetadata.TryParseMetadata(EffectUtils.GetPathOfSdslShader(effectName, fileProvider), serializer, out var shaderMetadata);
+                    ShaderMetadata.TryParseMetadataAttr(EffectUtils.GetPathOfSdslShader(effectName, fileProvider), serializer, out var shaderMetadata);
 
                     IVLNodeDescription shaderNodeDescription;
                     yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName);

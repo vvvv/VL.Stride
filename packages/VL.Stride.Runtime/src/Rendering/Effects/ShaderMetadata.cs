@@ -3,7 +3,14 @@ using System.IO;
 using System.Text;
 using Stride.Core.Yaml.Serialization;
 using Stride.Graphics;
+using Stride.Core.Shaders.Parser;
 using VL.Lib.Control;
+using Stride.Shaders.Parser;
+using Stride.Core.Shaders.Ast;
+using System.Linq;
+using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Ast.Stride;
+using System.Collections.Generic;
 
 namespace VL.Stride.Rendering
 {
@@ -21,7 +28,7 @@ namespace VL.Stride.Rendering
 
         const string MetadataBegin = "/*MetadataBegin";
         const string MetadataEnd = "MetadataEnd*/";
-        public static bool TryReadMetadata(string filename, Serializer serializer, out ShaderMetadata shaderMetadata)
+        public static bool TryParseMetadata(string filename, Serializer serializer, out ShaderMetadata shaderMetadata)
         {
             shaderMetadata = new ShaderMetadata();
 
@@ -64,6 +71,49 @@ namespace VL.Stride.Rendering
             }
 
             return false;
+        }
+
+        public static bool TryParseMetadataAttr(string inputFileName, Serializer serializer, out ShaderMetadata shaderMetadata)
+        {
+            shaderMetadata = new ShaderMetadata();
+
+            if (EffectUtils.TryParseEffect(inputFileName, out var shader))
+            {
+                var shaderDecl = GetFistClassDecl(shader.Declarations);
+
+                if (shaderDecl != null)
+                {
+                    foreach (var attr in shaderDecl.Attributes.OfType<AttributeDeclaration>())
+                    {
+                        switch (attr.Name)
+                        {
+                            case "OutputFormat":
+                                if (Enum.TryParse<PixelFormat>(attr.Parameters.FirstOrDefault().Value as string, true, out var pixelFormat))
+                                    shaderMetadata.OutputFormat = pixelFormat;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        static ClassType GetFistClassDecl(List<Node> nodes)
+        {
+            return nodes.OfType<ClassType>().FirstOrDefault();
+
+            //TODO: namespace could be surrounding the shader
+            //else if (firstDecl is NamespaceBlock ns)
+            //{
+            //    return GetFistClassDecl(ns.Body);
+            //}
+            //
+            //return null;
         }
     }
 }

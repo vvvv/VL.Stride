@@ -9,6 +9,9 @@ using Stride.Graphics;
 using Stride.Core.IO;
 using System.IO;
 using Stride.Shaders.Compiler;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Parser;
+using Stride.Shaders.Parser;
 
 namespace VL.Stride.Rendering
 {
@@ -68,6 +71,62 @@ namespace VL.Stride.Rendering
             if (dotIndex >= 0)
                 return name.Substring(dotIndex + 1);
             return name;
+        }
+
+        public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, out Shader shader)
+        {
+            shader = null;
+            var fileName = GetPathOfSdslShader(effectName, fileProvider);
+            if (!string.IsNullOrWhiteSpace(fileName))
+                return TryParseEffect(fileName, out shader);
+            else
+                return false;
+            
+        }
+
+
+        public static bool TryParseEffect(string inputFileName, out Shader shader)
+        {
+            shader = null;
+
+            try
+            {
+                ShaderMacro[] macros;
+
+                // Changed some keywords to avoid ambiguities with HLSL and improve consistency
+                if (inputFileName != null && Path.GetExtension(inputFileName).ToLowerInvariant() == ".sdfx")
+                {
+                    // XKFX
+                    macros = new[]
+                    {
+                        new ShaderMacro("shader", "effect")
+                    };
+                }
+                else
+                {
+                    // XKSL
+                    macros = new[]
+                    {
+                        new ShaderMacro("class", "shader")
+                    };
+                }
+
+                var parsingResult = StrideShaderParser.TryPreProcessAndParse(inputFileName, macros);
+
+                if (parsingResult.HasErrors)
+                {
+                    return false;
+                }
+                else
+                {
+                    shader = parsingResult.Shader;
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 
