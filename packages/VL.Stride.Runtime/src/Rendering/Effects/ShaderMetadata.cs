@@ -16,7 +16,9 @@ namespace VL.Stride.Rendering
 
         public string Summary { get; private set; }
 
-        public string Remarks { get; internal set; }
+        public string Remarks { get; private set; }
+
+        public string Tags { get; private set; }
 
         public PixelFormat GetPixelFormat(bool hasTextureIn)
         {
@@ -42,6 +44,7 @@ namespace VL.Stride.Rendering
         const string CategoryName = "Category";
         const string SummaryName = "Summary";
         const string RemarksName = "Remarks";
+        const string TagsName = "Tags";
         const string OutputFormatName = "OutputFormat";
 
         public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider)
@@ -70,6 +73,9 @@ namespace VL.Stride.Rendering
                                 break;
                             case RemarksName:
                                 shaderMetadata.Remarks = FirstParamAsString(attr);
+                                break;
+                            case TagsName:
+                                shaderMetadata.Tags = FirstParamAsString(attr);
                                 break;
                             case OutputFormatName:
                                 if (Enum.TryParse<PixelFormat>(FirstParamAsString(attr), true, out var pixelFormat))
