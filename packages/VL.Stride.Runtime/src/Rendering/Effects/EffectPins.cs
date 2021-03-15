@@ -8,7 +8,7 @@ using Stride.Graphics;
 
 namespace VL.Stride.Rendering
 {
-    abstract class EffectPinDescription : IVLPinDescription, IInfo
+    abstract class EffectPinDescription : IVLPinDescription, IInfo, IVLPinDescriptionWithVisibility
     {
         public abstract string Name { get; }
         public abstract Type Type { get; }
@@ -16,6 +16,8 @@ namespace VL.Stride.Rendering
 
         public string Summary { get; set; }
         public string Remarks { get; set; }
+
+        public bool IsVisible { get; set; } = true;
 
         object IVLPinDescription.DefaultValue => DefaultValueBoxed;
 
@@ -44,12 +46,12 @@ namespace VL.Stride.Rendering
         public readonly int Count;
         public readonly bool IsPermutationKey;
 
-        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, int count = 1, object defaultValue = null, bool isPermutationKey = false)
+        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, int count = 1, object defaultValue = null, bool isPermutationKey = false, string name = null)
         {
             Key = key;
             IsPermutationKey = isPermutationKey;
             Count = count;
-            Name = key.GetPinName(usedNames);
+            Name = name ?? key.GetPinName(usedNames);
             var elementType = key.PropertyType;
             defaultValue = defaultValue ?? key.DefaultValueMetadata?.GetDefaultValue();
             // TODO: This should be fixed in Stride
