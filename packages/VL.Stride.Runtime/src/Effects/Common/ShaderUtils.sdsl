@@ -91,25 +91,26 @@ shader ShaderUtils
         return (RGB - 0.5) * C + HSL.z;
     }
 
-    float3 RGBtoHSV(in float3 RGB)
-    {
-        float3 HSV = 0;
-        HSV.z = max(RGB.r, max(RGB.g, RGB.b));
-        float M = min(RGB.r, min(RGB.g, RGB.b));
-        float C = HSV.z - M;
-        if (C != 0)
-        {
-            float4 RGB0 = float4(RGB, 0);
-            float4 Delta = (HSV.z - RGB0) / C;
-            Delta.rgb -= Delta.brg;
-            Delta.rgb += float3(2,4,6);
-            Delta.brg = step(HSV.z, RGB) * Delta.brg;
-            HSV.x = max(Delta.r, max(Delta.g, Delta.b));
-            HSV.x = frac(HSV.x / 6);
-            HSV.y = 1 / Delta.w;
-        }
-        return HSV;
-    }
+    /* previous RGBtoHSL */
+    //float3 RGBtoHSV(in float3 RGB)
+    //{
+    //    float3 HSV = 0;
+    //    HSV.z = max(RGB.r, max(RGB.g, RGB.b));
+    //    float M = min(RGB.r, min(RGB.g, RGB.b));
+    //    float C = HSV.z - M;
+    //    if (C != 0)
+    //    {
+    //        float4 RGB0 = float4(RGB, 0);
+    //        float4 Delta = (HSV.z - RGB0) / C;
+    //        Delta.rgb -= Delta.brg;
+    //        Delta.rgb += float3(2,4,6);
+    //        Delta.brg = step(HSV.z, RGB) * Delta.brg;
+    //        HSV.x = max(Delta.r, max(Delta.g, Delta.b));
+    //        HSV.x = frac(HSV.x / 6);
+    //        HSV.y = 1 / Delta.w;
+    //    }
+    //    return HSV;
+    //}
 
     /* previous RGBtoHSL */
     //float3 RGBtoHSL(in float3 RGB)
@@ -144,6 +145,13 @@ shader ShaderUtils
         return float3(H, C, Q.x);
     }
 
+    float3 RGBtoHSV(in float3 RGB)
+    {
+        float3 HCV = RGBtoHCV(RGB);
+        float S = HCV.y / (HCV.z + Epsilon);
+        return float3(HCV.x, S, HCV.z);
+    }
+
     float3 RGBtoHSL(in float3 RGB)
     {
         float3 HCV = RGBtoHCV(RGB);
@@ -152,11 +160,59 @@ shader ShaderUtils
         return float3(HCV.x, S, L);
     }
 
+        // convert rgb to yuv
+    static const float4x4 RGBtoYUVMat = float4x4(0.257,  0.439, -0.148, 0.0,
+                                              0.504, -0.368, -0.291, 0.0,
+                                              0.098, -0.071,  0.439, 0.0,
+                                              0.0625, 0.500,  0.500, 1.0);
+
+    float4 RGBAtoYUV(in float4 RGBA)
+    {
+        return mul(RGBA, RGBtoYUVMat);
+    }
+
+    float3 RGBtoYUV(in float3 RGB)
+    {
+        return mul(float4(RGB, 1), RGBtoYUVMat).rgb;
+    }
+
     // VALUE UTILS ==============================================================
+   
     
     float ScaleOffsetScale(float x, float3 sos)
     {
         return ((x * sos.x) + sos.y) * sos.z;
+    }
+
+    float Quantize(float p, float x)
+    {
+        x += 1;
+        return floor(p * x) / x;
+    }
+
+    float2 Quantize(float2 p, float x)
+    {
+        x += 1;
+        return floor(p * x) / x;
+    }
+
+    float3 Quantize(float3 p, float x)
+    {
+        x += 1;
+        return floor(p * x) / x;
+    }
+
+    float4 Quantize(float4 p, float x)
+    {
+        x += 1;
+        return floor(p * x) / x;
+    }
+
+    float4 QuantizeXYZ(float4 p, float x)
+    {
+        x += 1;
+        p.xyz = floor(p.xyz * x) / x;
+        return p;
     }
 
     // ROTATION ==============================================================
@@ -170,6 +226,14 @@ shader ShaderUtils
 
     float2 r2d(float2 pt, float a)
     {
+        float x = cos(a) * pt.x + sin(a) * pt.y;
+        float y = cos(a) * pt.y - sin(a) * pt.x;
+        return float2(x,y);
+    }
+
+    float2 r2dCyc(float2 pt, float a)
+    {   
+        a *= TwoPi;
         float x = cos(a) * pt.x + sin(a) * pt.y;
         float y = cos(a) * pt.y - sin(a) * pt.x;
         return float2(x,y);

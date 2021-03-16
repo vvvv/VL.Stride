@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class LumaKey_Internal_TextureFXKeys
+    public static partial class LumaKey_TextureFXKeys
     {
         public static readonly ValueParameterKey<float> LumaKey = ParameterKeys.NewValue<float>(0.05f);
     }
