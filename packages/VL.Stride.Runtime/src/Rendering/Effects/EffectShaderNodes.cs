@@ -570,9 +570,11 @@ namespace VL.Stride.Rendering
                                 _inputs[_enabledPinIndex] = new PinDescription<bool>("Apply", defaultValue: true);
                         }
                         else
+                        {
                             // Pure source
                             _inputs.Insert(0, _outputSize);
                             _inputs.Insert(1, _outputFormat);
+                        }
 
                         return buildContext.Implementation(
                             inputs: _inputs,
