@@ -583,7 +583,7 @@ namespace VL.Stride.Rendering
                             invalidated: shaderDescription.Invalidated,
                             summary: shaderMetadata.Summary,
                             remarks: shaderMetadata.Remarks,
-                            //tags: shaderMetadata.Tags, // Needs to be added
+                            tags: shaderMetadata.Tags,
                             newNode: nodeBuildContext =>
                             {
                                 var nodeContext = nodeBuildContext.NodeContext;
