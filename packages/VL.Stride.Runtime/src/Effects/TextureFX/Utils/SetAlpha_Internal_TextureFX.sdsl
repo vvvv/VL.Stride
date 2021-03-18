@@ -1,4 +1,6 @@
-﻿shader SetAlpha_Internal_TextureFX : TextureFX
+﻿[Category("Utils")]
+[Tags("mask")]
+shader SetAlpha_Internal_TextureFX : TextureFX
 {
     int AlphaChannel = 0;
     float Opacity = 1;
@@ -14,6 +16,6 @@
         else if (AlphaChannel == 3) alpha = alphaMask.b;
         else if (AlphaChannel == 4) alpha = alphaMask.a;
         alpha *= Opacity;
-        return float4(col,alpha);
+        return float4(col, alpha);
     }
 };

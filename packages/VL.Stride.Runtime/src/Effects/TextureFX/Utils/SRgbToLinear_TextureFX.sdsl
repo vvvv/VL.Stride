@@ -1,0 +1,12 @@
+[Category("Utils")]
+[Summary("Converts a texture from sRGB to linear color space")]
+[Remarks("This node is only necessary if the texture pixel data is encoded in sRGB but the format doesn't reflect that. Input format shouldn't have _SRgb suffix and output format should have 16 or 32 bit per color channel.")]
+[Tags("convert")]
+[OutputFormat("R16G16B16A16_Float")] //Valid values: https://github.com/stride3d/stride/blob/master/sources/engine/Stride/Graphics/PixelFormat.cs
+shader SRgbToLinear_TextureFX : TextureFX
+{
+    stage override float4 Shading()
+    {
+        return ColorUtility.ToLinear(InTex());
+    }
+};
