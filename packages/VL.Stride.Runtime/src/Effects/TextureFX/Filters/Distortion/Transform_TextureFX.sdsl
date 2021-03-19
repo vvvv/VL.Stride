@@ -1,0 +1,17 @@
+// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Filter/TransformTexture.tfx
+
+shader Transform_TextureFX : TextureFX
+{
+    matrix Transform;
+
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord;        
+        
+        float2 x0 = mul(float4((uv * 2 - 1) * float2(1,-1) * .5, 0, 1), Transform).xy * float2(1,-1) + 0.5;
+        float4 col = Texture0.SampleLevel(LinearSampler, x0, 0);
+
+        return col;
+    }
+};

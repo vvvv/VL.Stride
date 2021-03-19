@@ -1,0 +1,27 @@
+// source:
+// https://github.com/vvvv/vvvv-sdk/blob/develop/vvvv45/addonpack/lib/nodes/modules/TextureFX/Filter/PolarCoordinates/PolarCoordinates.fx
+// credits: mtallen, dep, Libero Spagnolini
+
+shader CoordinatesBase : TextureFX
+{
+    float Interpolation = 1.0f;
+    float Repeats = 1.0f;
+    bool DoClamp = true;
+    float Scale = 1.0f;
+    float Twirl = 0.0f;
+    float Squeeze = 1.0f;
+    float Zoom = 1.0f;
+    float Lens = 0.0f;
+    float OffsetX= 0.0f;
+    float OffsetY = 0.0f;
+    float TunnelX = 0.0f;
+    float TunnelY = 0.0f;
+
+    abstract float4 Coordinates(float2 uv);
+
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord;
+        return Coordinates(uv);	
+    }
+};
