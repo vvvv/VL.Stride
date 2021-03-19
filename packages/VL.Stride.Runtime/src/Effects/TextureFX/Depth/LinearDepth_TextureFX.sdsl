@@ -1,0 +1,42 @@
+// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Filter/LinearDepth.tfx
+
+shader LinearDepth_TextureFX : TextureFX
+{
+    #define IS_ORTHO(P) (round(P._34)==0&&round(P._44)==1)
+    #define linstep(a,b,x) saturate((x-a)/(b-a))
+    
+    matrix Projection;
+    
+    float MinDepth = 0.0f;
+    float MaxDepth = 10.0f;
+
+    bool ThreshholdOrLinear = false;
+
+    SamplerState s0:IMMUTABLE 
+    {
+        Filter=MIN_MAG_MIP_POINT;
+        AddressU=CLAMP;
+        AddressV=CLAMP;
+    };
+
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord;
+        float2 R = 1/Texture0TexelSize;
+
+        matrix tP = Projection;
+
+        float d = Texture0.SampleLevel(s0, uv, 0).x;
+        float ld = tP._43/(d - tP._33);
+
+        if(IS_ORTHO(tP))
+        {
+            ld = (d-tP._43)/tP._33;
+        }
+        
+        float4 c =  ThreshholdOrLinear ? ld : linstep(MinDepth, MaxDepth, ld);
+        
+        return c;
+    }
+};
