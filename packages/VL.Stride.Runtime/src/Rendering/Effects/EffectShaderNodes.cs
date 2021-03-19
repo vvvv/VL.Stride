@@ -542,7 +542,7 @@ namespace VL.Stride.Rendering
             {
                 return factory.NewNodeDescription(
                     name: name,
-                    category: shaderMetadata.GetCategory("Stride.Textures.Experimental"),
+                    category: shaderMetadata.GetCategory("Stride.Textures"),
                     fragmented: true,
                     init: buildContext =>
                     {
