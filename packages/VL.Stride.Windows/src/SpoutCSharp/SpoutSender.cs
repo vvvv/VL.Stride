@@ -23,6 +23,11 @@ namespace VL.Stride.Spout
         {
 
             UpdateMaxSenders();
+
+            long len = SenderNameLength * MaxSenders;
+
+            SenderNamesMap = MemoryMappedFile.CreateOrOpen(SenderNamesMMF, len);
+
             if (AddNameToSendersList(senderName))
             {
                 byte[] desc = textureDesc.ToByteArray();
@@ -121,20 +126,19 @@ namespace VL.Stride.Spout
 
         void WriteSenderNamesToMMF(List<string> senders)
         {
-            int len = SenderNameLength * MaxSenders;
-            MemoryMappedFile mmf = MemoryMappedFile.CreateOrOpen(SenderNamesMMF, len);
-            MemoryMappedViewStream mmvs = mmf.CreateViewStream();
-            int count = 0;
-            for (int i = 0; i < senders.Count; i++)
+            using (var mmvs = SenderNamesMap.CreateViewStream())
             {
-                byte[] nameBytes = GetNameBytes(senders[i]);
-                mmvs.Write(nameBytes, 0, nameBytes.Length);
-                count += nameBytes.Length;
+                for (int i = 0; i < MaxSenders; i++)
+                {
+                    byte[] bytes;
+                    if (i < senders.Count)
+                        bytes = GetNameBytes(senders[i]);
+                    else //fill with 0s
+                        bytes = new byte[SenderNameLength];
+
+                    mmvs.Write(bytes, 0, bytes.Length);
+                }
             }
-            byte[] b = new byte[len - count];
-            mmvs.Write(b, 0, b.Length);
-            mmvs.Dispose();
-            mmf.Dispose();
         }
 
         public override void Dispose()
