@@ -21,6 +21,8 @@ namespace VL.Stride.Spout
 
         public void Initialize()
         {
+
+            UpdateMaxSenders();
             if (AddNameToSendersList(senderName))
             {
                 sharedMemory = MemoryMappedFile.CreateOrOpen(SenderName, 280);
@@ -122,6 +124,7 @@ namespace VL.Stride.Spout
 
         public override void Dispose()
         {
+            UpdateMaxSenders();
             RemoveNameFromSendersList();
             base.Dispose();
         }
