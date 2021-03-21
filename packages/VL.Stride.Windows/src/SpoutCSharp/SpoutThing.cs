@@ -13,13 +13,13 @@ namespace VL.Stride.Spout
     public abstract class SpoutThing : IDisposable
     {
         protected const string SenderNamesMMF = "SpoutSenderNames";
-        protected const string ActiveSenderMMF = "";
+        protected const string ActiveSenderMMF = "ActiveSenderName";
         protected const int SpoutWaitTimeout = 100;
         protected const int MaxSendersDefault = 64;
         public const int SenderNameLength = 256;
 
-        protected MemoryMappedFile sharedMemory;
-        protected MemoryMappedViewStream sharedMemoryStream;
+        protected MemoryMappedFile SenderDescriptionMap;
+        protected MemoryMappedFile ActiveSenderMap;
         protected Texture frame;
         protected TextureDesc textureDesc;
         protected string senderName;
@@ -39,10 +39,11 @@ namespace VL.Stride.Spout
 
         public virtual void Dispose()
         {
-            if (sharedMemoryStream != null)
-                sharedMemoryStream.Dispose();
-            if (sharedMemory != null)
-                sharedMemory.Dispose();
+            if (SenderDescriptionMap != null)
+                SenderDescriptionMap.Dispose();
+
+            if (ActiveSenderMap != null)
+                ActiveSenderMap.Dispose();
         }
 
         public List<string> GetSenderNames()
