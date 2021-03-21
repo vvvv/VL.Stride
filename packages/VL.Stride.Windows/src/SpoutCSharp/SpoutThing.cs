@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using Stride.Graphics;
+using Microsoft.Win32;  // for accessing the registry 
 
 namespace VL.Stride.Spout
 {
@@ -14,7 +15,7 @@ namespace VL.Stride.Spout
         protected const string SenderNamesMMF = "SpoutSenderNames";
         protected const string ActiveSenderMMF = "";
         protected const int SpoutWaitTimeout = 100;
-        public const int MaxSenders = 10;
+        protected const int MaxSendersDefault = 40;
         public const int SenderNameLength = 256;
 
         protected MemoryMappedFile sharedMemory;
@@ -22,6 +23,8 @@ namespace VL.Stride.Spout
         protected Texture frame;
         protected TextureDesc textureDesc;
         protected string senderName;
+
+        public int MaxSenders { get; private set; } = MaxSendersDefault;
 
         public Texture Frame
         {
@@ -81,5 +84,23 @@ namespace VL.Stride.Spout
             Array.Copy(nameBytes, b, nameBytes.Length);
             return b;
         }
+
+        // see https://github.com/vvvv/vvvv-sdk/blob/develop/vvvv45/src/nodes/plugins/System/SpoutSender.cs#L37
+        protected void UpdateMaxSenders() 
+        {
+            MaxSenders = MaxSendersDefault; 
+
+            RegistryKey subkey = Registry.CurrentUser.OpenSubKey("Software\\Leading Edge\\Spout");
+            if (subkey != null)
+            {
+                int m = (int)subkey.GetValue("MaxSenders"); // Get the value
+                if (m > 0)
+                {
+                    MaxSenders = m; // Set the global max senders value
+                }
+            }
+        }
+
+
     }
 }
