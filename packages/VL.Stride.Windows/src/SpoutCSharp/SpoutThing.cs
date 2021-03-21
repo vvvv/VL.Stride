@@ -19,6 +19,7 @@ namespace VL.Stride.Spout
         public const int SenderNameLength = 256;
 
         protected MemoryMappedFile SenderDescriptionMap;
+        protected MemoryMappedFile SenderNamesMap;
         protected MemoryMappedFile ActiveSenderMap;
         protected Texture frame;
         protected TextureDesc textureDesc;
@@ -42,6 +43,9 @@ namespace VL.Stride.Spout
             if (SenderDescriptionMap != null)
                 SenderDescriptionMap.Dispose();
 
+            if (SenderNamesMap != null)
+                SenderNamesMap.Dispose();
+
             if (ActiveSenderMap != null)
                 ActiveSenderMap.Dispose();
         }
@@ -49,32 +53,35 @@ namespace VL.Stride.Spout
         public List<string> GetSenderNames()
         {
             int len = MaxSenders * SenderNameLength;
-            //Read the memory mapped file in to a byte array and close this shit.
-            MemoryMappedFile mmf = MemoryMappedFile.CreateOrOpen(SenderNamesMMF, len);
-            MemoryMappedViewStream stream = mmf.CreateViewStream();
-            byte[] b = new byte[len];
-            stream.Read(b, 0, len);
-            stream.Dispose();
-            mmf.Dispose();
 
-            //split into strings searching for the nulls 
             List<string> namesList = new List<string>();
             StringBuilder name = new StringBuilder();
-            for (int i=0;i<len;i++)
+
+            //Read the memory mapped file in to a byte array
+
+            using (var mmvs = SenderNamesMap.CreateViewStream())
             {
-                if (b[i] == 0)
+                var b = new byte[len];
+                mmvs.Read(b, 0, len);
+
+                //split into strings searching for the nulls 
+                for (int i = 0; i < len; i++)
                 {
-                    if (name.Length == 0)
+                    if (b[i] == 0)
                     {
-                        i += SenderNameLength - (i % SenderNameLength) -1;
-                        continue;
+                        if (name.Length == 0)
+                        {
+                            i += SenderNameLength - (i % SenderNameLength) - 1;
+                            continue;
+                        }
+                        namesList.Add(name.ToString());
+                        name.Clear();
                     }
-                    namesList.Add(name.ToString());
-                    name.Clear();
+                    else
+                        name.Append((char)b[i]);
                 }
-                else
-                    name.Append((char)b[i]);                    
             }
+
             return namesList;
         }
 
