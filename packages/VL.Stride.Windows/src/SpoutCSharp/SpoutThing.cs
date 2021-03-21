@@ -6,22 +6,26 @@ using System.Threading.Tasks;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using Stride.Graphics;
+using Microsoft.Win32;  // for accessing the registry 
 
 namespace VL.Stride.Spout
 {
     public abstract class SpoutThing : IDisposable
     {
         protected const string SenderNamesMMF = "SpoutSenderNames";
-        protected const string ActiveSenderMMF = "";
+        protected const string ActiveSenderMMF = "ActiveSenderName";
         protected const int SpoutWaitTimeout = 100;
-        public const int MaxSenders = 10;
+        protected const int MaxSendersDefault = 64;
         public const int SenderNameLength = 256;
 
-        protected MemoryMappedFile sharedMemory;
-        protected MemoryMappedViewStream sharedMemoryStream;
+        protected MemoryMappedFile SenderDescriptionMap;
+        protected MemoryMappedFile SenderNamesMap;
+        protected MemoryMappedFile ActiveSenderMap;
         protected Texture frame;
         protected TextureDesc textureDesc;
         protected string senderName;
+
+        public int MaxSenders { get; private set; } = MaxSendersDefault;
 
         public Texture Frame
         {
@@ -36,41 +40,48 @@ namespace VL.Stride.Spout
 
         public virtual void Dispose()
         {
-            if (sharedMemoryStream != null)
-                sharedMemoryStream.Dispose();
-            if (sharedMemory != null)
-                sharedMemory.Dispose();
+            if (SenderDescriptionMap != null)
+                SenderDescriptionMap.Dispose();
+
+            if (SenderNamesMap != null)
+                SenderNamesMap.Dispose();
+
+            if (ActiveSenderMap != null)
+                ActiveSenderMap.Dispose();
         }
 
         public List<string> GetSenderNames()
         {
             int len = MaxSenders * SenderNameLength;
-            //Read the memory mapped file in to a byte array and close this shit.
-            MemoryMappedFile mmf = MemoryMappedFile.CreateOrOpen(SenderNamesMMF, len);
-            MemoryMappedViewStream stream = mmf.CreateViewStream();
-            byte[] b = new byte[len];
-            stream.Read(b, 0, len);
-            stream.Dispose();
-            mmf.Dispose();
 
-            //split into strings searching for the nulls 
             List<string> namesList = new List<string>();
             StringBuilder name = new StringBuilder();
-            for (int i=0;i<len;i++)
+
+            //Read the memory mapped file in to a byte array
+
+            using (var mmvs = SenderNamesMap.CreateViewStream())
             {
-                if (b[i] == 0)
+                var b = new byte[len];
+                mmvs.Read(b, 0, len);
+
+                //split into strings searching for the nulls 
+                for (int i = 0; i < len; i++)
                 {
-                    if (name.Length == 0)
+                    if (b[i] == 0)
                     {
-                        i += SenderNameLength - (i % SenderNameLength) -1;
-                        continue;
+                        if (name.Length == 0)
+                        {
+                            i += SenderNameLength - (i % SenderNameLength) - 1;
+                            continue;
+                        }
+                        namesList.Add(name.ToString());
+                        name.Clear();
                     }
-                    namesList.Add(name.ToString());
-                    name.Clear();
+                    else
+                        name.Append((char)b[i]);
                 }
-                else
-                    name.Append((char)b[i]);                    
             }
+
             return namesList;
         }
 
@@ -81,5 +92,23 @@ namespace VL.Stride.Spout
             Array.Copy(nameBytes, b, nameBytes.Length);
             return b;
         }
+
+        // see https://github.com/vvvv/vvvv-sdk/blob/develop/vvvv45/src/nodes/plugins/System/SpoutSender.cs#L37
+        protected void UpdateMaxSenders() 
+        {
+            MaxSenders = MaxSendersDefault; 
+
+            RegistryKey subkey = Registry.CurrentUser.OpenSubKey("Software\\Leading Edge\\Spout");
+            if (subkey != null)
+            {
+                int m = (int)subkey.GetValue("MaxSenders"); // Get the value
+                if (m > 0)
+                {
+                    MaxSenders = m; // Set the global max senders value
+                }
+            }
+        }
+
+
     }
 }
