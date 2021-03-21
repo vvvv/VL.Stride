@@ -15,7 +15,7 @@ namespace VL.Stride.Spout
         protected const string SenderNamesMMF = "SpoutSenderNames";
         protected const string ActiveSenderMMF = "";
         protected const int SpoutWaitTimeout = 100;
-        protected const int MaxSendersDefault = 40;
+        protected const int MaxSendersDefault = 64;
         public const int SenderNameLength = 256;
 
         protected MemoryMappedFile sharedMemory;
