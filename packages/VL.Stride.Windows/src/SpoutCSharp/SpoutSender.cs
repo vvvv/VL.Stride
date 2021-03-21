@@ -25,12 +25,27 @@ namespace VL.Stride.Spout
             UpdateMaxSenders();
             if (AddNameToSendersList(senderName))
             {
-                sharedMemory = MemoryMappedFile.CreateOrOpen(SenderName, 280);
-                sharedMemoryStream = sharedMemory.CreateViewStream();
-                byte[] nameBytes = Encoding.Unicode.GetBytes(SenderName);
-                Array.Copy(nameBytes, 0, textureDesc.Description, 0, nameBytes.Length);
                 byte[] desc = textureDesc.ToByteArray();
-                sharedMemoryStream.Write(desc, 0, desc.Length);
+                SenderDescriptionMap = MemoryMappedFile.CreateOrOpen(SenderName, desc.Length);
+                using (var mmvs = SenderDescriptionMap.CreateViewStream())
+                {
+                    mmvs.Write(desc, 0, desc.Length);
+                }
+
+                //If we are the first/only sender, create a new ActiveSenderName map.
+                //This is a separate shared memory containing just a sender name
+                //that receivers can use to retrieve the current active Sender.
+                ActiveSenderMap = MemoryMappedFile.CreateOrOpen(ActiveSenderMMF, SenderNameLength);
+                using (var mmvs = ActiveSenderMap.CreateViewStream())
+                {
+                    var firstByte = mmvs.ReadByte();
+                    if (firstByte == 0) //no active sender yet
+                    {
+                        mmvs.Position = 0;
+                        mmvs.Write(GetNameBytes(SenderName), 0, SenderNameLength);
+                    }
+                }
+
             }
         }
 
