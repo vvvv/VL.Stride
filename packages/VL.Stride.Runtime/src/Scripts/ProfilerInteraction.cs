@@ -7,7 +7,6 @@ using Stride.Input;
 using Stride.Engine;
 using Stride.Profiling;
 using Stride.Core;
-using SharpDX.Direct2D1;
 using VL.Core;
 
 namespace VL.Stride
