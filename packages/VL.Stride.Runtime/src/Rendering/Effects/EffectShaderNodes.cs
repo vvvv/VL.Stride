@@ -572,8 +572,8 @@ namespace VL.Stride.Rendering
                         else
                         {
                             // Pure source
-                            _inputs.Insert(0, _outputSize);
-                            _inputs.Insert(1, _outputFormat);
+                            _inputs.Insert(_inputs.Count - 2, _outputSize);
+                            _inputs.Insert(_inputs.Count - 2, _outputFormat);
                         }
 
                         return buildContext.Implementation(
@@ -602,8 +602,8 @@ namespace VL.Stride.Rendering
                                 }
                                 else
                                 {
-                                    inputs.Insert(0, outputSize);
-                                    inputs.Insert(1, outputFormat);
+                                    inputs.Insert(inputs.Count - 2, outputSize);
+                                    inputs.Insert(inputs.Count - 2, outputFormat);
                                 }
 
                                 var gameHandle = nodeContext.GetGameHandle();
