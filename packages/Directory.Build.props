@@ -41,7 +41,7 @@
 
     <!-- Check for .git/HEAD to determine whether we're in our private repo -->
     <InPrivateRepo>false</InPrivateRepo>
-    <InPrivateRepo Condition="Exists('$(MsBuildThisFileDirectory)..\..\VL.Core')">true</InPrivateRepo>
+    <InPrivateRepo Condition="'$(SolutionName)' == 'VL'">true</InPrivateRepo>
     <PackageOutputPath Condition="$(InPrivateRepo)">$(MsBuildThisFileDirectory)..\..\packages-build\</PackageOutputPath>
 
     <Configurations>Debug;Release;Packages</Configurations>
