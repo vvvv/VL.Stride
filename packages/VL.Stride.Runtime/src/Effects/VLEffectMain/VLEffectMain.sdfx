@@ -1,13 +1,17 @@
 // Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-namespace VL.Rendering
+namespace VL.Stride.Rendering
 {
     params GameParameters
     {
         bool EnableFog = true;
         bool EnableBend = true;
-        bool EnableOnflyTextureUVChange = false;
+        bool EnableExtension = false;
+        string MaterialExtensionName;
+        bool EnableExtensionShader = false;
+        ShaderSource MaterialExtensionShader;
+    
     }
 
     effect VLEffectMain
@@ -16,13 +20,20 @@ namespace VL.Rendering
         
         mixin StrideForwardShadingEffect;
 
-        if(GameParameters.EnableOnflyTextureUVChange)
-            mixin TransformationTextureUV;
+        if (GameParameters.EnableExtension)
+        {
+            mixin GameParameters.MaterialExtensionName;
+            if (GameParameters.EnableExtensionShader)
+            {
+                mixin compose ExtensionShader = GameParameters.MaterialExtensionShader;
+            }
+        }
 
-        if(GameParameters.EnableBend)
+
+        if (GameParameters.EnableBend)
             mixin TransformationBendWorld;
 
-        if(GameParameters.EnableFog)
+        if (GameParameters.EnableFog)
             mixin FogEffect;
     };
 }

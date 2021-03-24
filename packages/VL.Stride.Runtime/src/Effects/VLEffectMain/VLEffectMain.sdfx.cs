@@ -14,13 +14,16 @@ using Stride.Shaders;
 using Stride.Core.Mathematics;
 using Buffer = Stride.Graphics.Buffer;
 
-namespace VL.Rendering
+namespace VL.Stride.Rendering
 {
     [DataContract]public partial class GameParameters : ShaderMixinParameters
     {
         public static readonly PermutationParameterKey<bool> EnableFog = ParameterKeys.NewPermutation<bool>(true);
         public static readonly PermutationParameterKey<bool> EnableBend = ParameterKeys.NewPermutation<bool>(true);
-        public static readonly PermutationParameterKey<bool> EnableOnflyTextureUVChange = ParameterKeys.NewPermutation<bool>(false);
+        public static readonly PermutationParameterKey<bool> EnableExtension = ParameterKeys.NewPermutation<bool>(false);
+        public static readonly PermutationParameterKey<string> MaterialExtensionName = ParameterKeys.NewPermutation<string>();
+        public static readonly PermutationParameterKey<bool> EnableExtensionShader = ParameterKeys.NewPermutation<bool>(false);
+        public static readonly PermutationParameterKey<ShaderSource> MaterialExtensionShader = ParameterKeys.NewPermutation<ShaderSource>();
     };
     internal static partial class ShaderMixins
     {
@@ -29,8 +32,21 @@ namespace VL.Rendering
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
                 context.Mixin(mixin, "StrideForwardShadingEffect");
-                if (context.GetParam(GameParameters.EnableOnflyTextureUVChange))
-                    context.Mixin(mixin, "TransformationTextureUV");
+                if (context.GetParam(GameParameters.EnableExtension))
+                {
+                    context.Mixin(mixin, context.GetParam(GameParameters.MaterialExtensionName));
+                    if (context.GetParam(GameParameters.EnableExtensionShader))
+                    {
+
+                        {
+                            var __mixinToCompose__ = context.GetParam(GameParameters.MaterialExtensionShader);
+                            var __subMixin = new ShaderMixinSource();
+                            context.PushComposition(mixin, "ExtensionShader", __subMixin);
+                            context.Mixin(__subMixin, __mixinToCompose__);
+                            context.PopComposition();
+                        }
+                    }
+                }
                 if (context.GetParam(GameParameters.EnableBend))
                     context.Mixin(mixin, "TransformationBendWorld");
                 if (context.GetParam(GameParameters.EnableFog))

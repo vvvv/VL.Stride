@@ -1,8 +1,6 @@
 ﻿// Simple fog emulating fixed pipeline as described in http://www.ozone3d.net/tutorials/glsl_fog/p03.php
 shader FogEffect : ShadingBase, TransformationBase, Camera
 {
-    compose MyRayMarch RM;
-
     cbuffer PerDraw
     {
         // Color of the fog
@@ -32,7 +30,6 @@ shader FogEffect : ShadingBase, TransformationBase, Camera
     
     stage override float4 Shading() 
     {
-        RM();
         float4 normalShade = base.Shading();
 
         if(normalShade.w <= 0.005)

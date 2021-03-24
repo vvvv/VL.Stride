@@ -21,7 +21,6 @@ namespace VL.Stride.Rendering
 
         private ConstantBufferOffsetReference fog;
         private ConstantBufferOffsetReference bend;
-        private ConstantBufferOffsetReference uvChange;
 
         // Constant buffer layout for FogEffect
         private struct PerDrawFog
@@ -44,7 +43,6 @@ namespace VL.Stride.Rendering
 
             fog = ((RootEffectRenderFeature)RootRenderFeature).CreateDrawCBufferOffsetSlot(FogEffectKeys.FogColor.Name);
             bend = ((RootEffectRenderFeature)RootRenderFeature).CreateDrawCBufferOffsetSlot(TransformationBendWorldKeys.DeformFactorX.Name);
-            uvChange = ((RootEffectRenderFeature)RootRenderFeature).CreateDrawCBufferOffsetSlot(TransformationTextureUVKeys.TextureRegion.Name);
         }
 
         /// <inheritdoc/>
@@ -70,7 +68,10 @@ namespace VL.Stride.Rendering
                     // Generate shader permuatations
                     renderEffect.EffectValidator.ValidateParameter(GameParameters.EnableBend, renderMesh.Mesh.Parameters.Get(GameParameters.EnableBend));
                     renderEffect.EffectValidator.ValidateParameter(GameParameters.EnableFog, renderMesh.Mesh.Parameters.Get(GameParameters.EnableFog));
-                    renderEffect.EffectValidator.ValidateParameter(GameParameters.EnableOnflyTextureUVChange, renderMesh.Mesh.Parameters.Get(GameParameters.EnableOnflyTextureUVChange));
+                    renderEffect.EffectValidator.ValidateParameter(GameParameters.EnableExtension, renderMesh.Mesh.Parameters.Get(GameParameters.EnableExtension));
+                    renderEffect.EffectValidator.ValidateParameter(GameParameters.MaterialExtensionName, renderMesh.Mesh.Parameters.Get(GameParameters.MaterialExtensionName));
+                    renderEffect.EffectValidator.ValidateParameter(GameParameters.EnableExtensionShader, renderMesh.Mesh.Parameters.Get(GameParameters.EnableExtensionShader));
+                    renderEffect.EffectValidator.ValidateParameter(GameParameters.MaterialExtensionShader, renderMesh.Mesh.Parameters.Get(GameParameters.MaterialExtensionShader));
                 }
             }
         }
@@ -110,14 +111,6 @@ namespace VL.Stride.Rendering
                     var perDraw = (float*)((byte*)mappedCB + bendOffset);
                     *perDraw++ = parameters.Get(TransformationBendWorldKeys.DeformFactorX);
                     *perDraw = parameters.Get(TransformationBendWorldKeys.DeformFactorY);
-                }
-
-                // Updload uv change parameters
-                var uvChangeOffset = perDrawLayout.GetConstantBufferOffset(uvChange);
-                if (uvChangeOffset != -1)
-                {
-                    var perDraw = (Vector4*)((byte*)mappedCB + uvChangeOffset);
-                    *perDraw = parameters.Get(TransformationTextureUVKeys.TextureRegion);
                 }
             }
         }
