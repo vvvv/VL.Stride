@@ -237,6 +237,7 @@ namespace VL.Stride.Rendering.Compositing
             yield return new StrideNodeDesc<ShadowCasterRenderFeature>(nodeFactory, category: renderFeaturesCategory);
             yield return new StrideNodeDesc<InstancingRenderFeature>(nodeFactory, category: renderFeaturesCategory);
             yield return new StrideNodeDesc<SubsurfaceScatteringRenderFeature>(nodeFactory, category: renderFeaturesCategory);
+            yield return new StrideNodeDesc<VLEffectRenderFeature>(nodeFactory, category: renderFeaturesCategory);
 
             yield return nodeFactory.NewNode<ForwardLightingRenderFeature>(category: renderFeaturesCategory)
                 .AddCachedListInput(nameof(ForwardLightingRenderFeature.LightRenderers), x => x.LightRenderers)
