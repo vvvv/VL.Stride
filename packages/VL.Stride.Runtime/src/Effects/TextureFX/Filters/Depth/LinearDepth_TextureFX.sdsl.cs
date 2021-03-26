@@ -21,7 +21,7 @@ namespace Stride.Rendering
         public static readonly ValueParameterKey<Matrix> Projection = ParameterKeys.NewValue<Matrix>();
         public static readonly ValueParameterKey<float> MinDepth = ParameterKeys.NewValue<float>(0.0f);
         public static readonly ValueParameterKey<float> MaxDepth = ParameterKeys.NewValue<float>(10.0f);
-        public static readonly ValueParameterKey<bool> ThreshholdOrLinear = ParameterKeys.NewValue<bool>(false);
+        public static readonly ValueParameterKey<bool> ThresholdOrLinear = ParameterKeys.NewValue<bool>(false);
         public static readonly ObjectParameterKey<SamplerState> s0 = ParameterKeys.NewObject<SamplerState>();
     }
 }

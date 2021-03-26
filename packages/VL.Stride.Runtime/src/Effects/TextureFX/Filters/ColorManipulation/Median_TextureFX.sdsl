@@ -66,7 +66,7 @@ shader Median_TextureFX : TextureFX
             for(int dY = -2; dY <= 2; ++dY) 
             {		
                 float2 offset = float2(float(dX), float(dY));
-                v[(dX + 2) * 5 + (dY + 2)] = Texture0.SampleLevel(LinearSampler, uv + Radius*offset/R, 0).rgb;
+                v[(dX + 2) * 5 + (dY + 2)] = Texture0.SampleLevel(Sampler0, uv + Radius*offset/R, 0).rgb;
             }
         }
     
@@ -93,7 +93,7 @@ shader Median_TextureFX : TextureFX
         t25(12, 17,		7, 17,		7, 10,		12, 18,		7, 12);
         t24(10, 18,		12, 20,		10, 20,		10, 12);
         
-        float4 col =Texture0.SampleLevel(LinearSampler, uv, 0);
+        float4 col =Texture0.SampleLevel(Sampler0, uv, 0);
 
         col.rgb = v[max(0,min(24,round(Pos*24*.999)))];
     

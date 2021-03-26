@@ -6,7 +6,7 @@
 shader Anaglyph_TextureFX : TextureFX
 {
     float Boost = 1.0f;
-    float Dist = 0.1f;
+    float Distance = 0.1f;
     float MapBlur = 0.1f;
 
     stage override float4 Shading()
@@ -16,12 +16,12 @@ shader Anaglyph_TextureFX : TextureFX
         
         float lod = 1 + saturate(MapBlur) * log2(max(R.x, R.y));
         float2 off = float2(Boost, 0)/256.;
-        float4 map = Texture1.Sample(LinearSampler, float4(uv, 0, lod));
-        float depth = map.x-Dist;
+        float4 map = Texture1.Sample(Sampler1, float4(uv, 0, lod));
+        float depth = map.x-Distance;
         
         float4 col = 0;
-        col.ra += Texture0.Sample(LinearSampler, uv-off * depth).ra;
-        col.gba += Texture0.Sample(LinearSampler, uv+off * depth).gba;
+        col.ra += Texture0.Sample(Sampler0, uv-off * depth).ra;
+        col.gba += Texture0.Sample(Sampler0, uv+off * depth).gba;
         
         return col;
     }

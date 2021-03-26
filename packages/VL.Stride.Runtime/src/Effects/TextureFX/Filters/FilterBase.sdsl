@@ -1,0 +1,12 @@
+﻿shader FilterBase : TextureFX
+{
+    float4 Control;
+    abstract float Filter(float4 col);
+
+    stage override float4 Shading()
+    {
+        float4 col = InTex();
+
+        return lerp(col, Filter(col), Control);
+    }
+};

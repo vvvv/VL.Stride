@@ -18,7 +18,7 @@ shader Hatch_Dot_TextureFX : TextureFX
 
         float2 x = uv*R - 0.5;
 
-        float4 col = Texture0.SampleLevel(LinearSampler, uv, 0);
+        float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
         col.rgb = sqrt(col.rgb);
 
         return lerp(HatchColor, BackgroundColor, any(((x.x*5.0 + x.y) % 8.0 < col.b * Threshold)) * float4(1, 1, 1, col.a));

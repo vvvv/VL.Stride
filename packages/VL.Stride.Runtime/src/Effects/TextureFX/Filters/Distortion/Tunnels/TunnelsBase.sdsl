@@ -1,8 +1,8 @@
 ﻿shader TunnelsBase : TextureFX
 {
-	float time;
-	float Rotate = 0;
-	float Dist = 0.5f;
+	float Time;
+	float Rotation = 0;
+	float Distance = 0.5f;
 	float Offset = 0.0f;
 	float FogDistance = 0.5f;
 	[Color] float4 FogColor = float4(0,0,0,1);
@@ -13,8 +13,8 @@
 	{
 		float2 p = -1.0 + 2.0 * streams.TexCoord;
 		float3 tunnel = Tunnel(p);	
-		float4 col = Tex2D(Texture0, tunnel.xy);
-		float fog = 1/(1+(FogDistance*10.0) * pow(tunnel.z/Dist, 2));
+		float4 col = Texture0.SampleLevel(Sampler0, tunnel.xy, 0);
+		float fog = 1/(1+(FogDistance*10.0) * pow(tunnel.z/Distance, 2));
 		return lerp(col, FogColor, fog);
 	}
 };

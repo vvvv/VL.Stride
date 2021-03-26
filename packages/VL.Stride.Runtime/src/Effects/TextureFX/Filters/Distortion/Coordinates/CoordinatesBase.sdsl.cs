@@ -20,7 +20,7 @@ namespace Stride.Rendering
     {
         public static readonly ValueParameterKey<float> Interpolation = ParameterKeys.NewValue<float>(1.0f);
         public static readonly ValueParameterKey<float> Repeats = ParameterKeys.NewValue<float>(1.0f);
-        public static readonly ValueParameterKey<bool> DoClamp = ParameterKeys.NewValue<bool>(true);
+        public static readonly ValueParameterKey<bool> Clamp = ParameterKeys.NewValue<bool>(true);
         public static readonly ValueParameterKey<float> Scale = ParameterKeys.NewValue<float>(1.0f);
         public static readonly ValueParameterKey<float> Twirl = ParameterKeys.NewValue<float>(0.0f);
         public static readonly ValueParameterKey<float> Squeeze = ParameterKeys.NewValue<float>(1.0f);

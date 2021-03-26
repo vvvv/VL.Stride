@@ -30,8 +30,8 @@ shader NormalGlow_TextureFX : TextureFX
 
             float k = 1. / pow(2,i * Shape-lod + 1) * saturate(MaxRadius * lod - i + 1);
 
-            float dx = (mx(Texture0.SampleLevel(LinearSampler, uv - off * float2(1, 0), i).xyz) - mx(Texture0.SampleLevel(LinearSampler, uv + off * float2(1, 0), i).xyz)) * k;
-            float dy = (mx(Texture0.SampleLevel(LinearSampler, uv - off * float2(0, 1), i).xyz) - mx(Texture0.SampleLevel(LinearSampler, uv + off * float2(0, 1), i).xyz)) * k;
+            float dx = (mx(Texture0.SampleLevel(Sampler0, uv - off * float2(1, 0), i).xyz) - mx(Texture0.SampleLevel(Sampler0, uv + off * float2(1, 0), i).xyz)) * k;
+            float dy = (mx(Texture0.SampleLevel(Sampler0, uv - off * float2(0, 1), i).xyz) - mx(Texture0.SampleLevel(Sampler0, uv + off * float2(0, 1), i).xyz)) * k;
             
             col.xy += float2(dx, dy) * sqrt(R.x / R);
             col.z += length(float2(dx, dy));
@@ -44,7 +44,7 @@ shader NormalGlow_TextureFX : TextureFX
         col.z = pow(saturate(1 - dd * length(col.xy)), .5);
         col.xy = col.xy * dd + .5;
 
-        col.a = Texture0.SampleLevel(LinearSampler, uv, 0).a;
+        col.a = Texture0.SampleLevel(Sampler0, uv, 0).a;
         
         return col;
     }

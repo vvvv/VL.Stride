@@ -18,7 +18,7 @@ namespace Stride.Rendering
 {
     public static partial class BlurPerfector_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Radius = ParameterKeys.NewValue<float>(.2f);
-        public static readonly ValueParameterKey<float> Threshold = ParameterKeys.NewValue<float>(.2f);
+        public static readonly ValueParameterKey<float> Radius = ParameterKeys.NewValue<float>(0.2f);
+        public static readonly ValueParameterKey<float> Threshold = ParameterKeys.NewValue<float>(0.2f);
     }
 }

@@ -51,8 +51,8 @@ shader Metallica_TextureFX : TextureFX
             
             float k = 1./pow(2, i*Shape - lod)*saturate(MaxRadius*lod - i);
 
-            float dx = (mx(Texture0.SampleLevel(LinearSampler, uv - off*float2(1 ,0), i).xyz) - mx(Texture0.SampleLevel(LinearSampler, uv + off*float2(1, 0),i).xyz));
-            float dy = (mx(Texture0.SampleLevel(LinearSampler, uv - off*float2(0, 1), i).xyz) - mx(Texture0.SampleLevel(LinearSampler, uv + off*float2(0,1),i).xyz));
+            float dx = (mx(Texture0.SampleLevel(Sampler0, uv - off*float2(1 ,0), i).xyz) - mx(Texture0.SampleLevel(Sampler0, uv + off*float2(1, 0),i).xyz));
+            float dy = (mx(Texture0.SampleLevel(Sampler0, uv - off*float2(0, 1), i).xyz) - mx(Texture0.SampleLevel(Sampler0, uv + off*float2(0,1),i).xyz));
 
             col.xy += float2(dx, dy) * sqrt(R.x/R) * k;
             col.z += length(float2(dx, dy) * k);
@@ -76,7 +76,7 @@ shader Metallica_TextureFX : TextureFX
         col += lerp(ColorA*pow(2, Brightness.x), 0, r2d(dir, Angle.x).x*BumpAmount.x + .5);
         col += lerp(ColorB*pow(2, Brightness.y), 0, r2d(dir, Angle.y + .25).x*BumpAmount.y + .5)*(1 - abs(r2d(dir, Angle.x).x));
 
-        col.a=Texture0.SampleLevel(LinearSampler, uv, 0).a;
+        col.a=Texture0.SampleLevel(Sampler0, uv, 0).a;
 
         return col;
     }

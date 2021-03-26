@@ -5,12 +5,12 @@
 [Summary("")]
 shader Edge_TextureFX : TextureFX
 {
-    float Bright = 1.0f;
+    float Brightness = 1.0f;
     float Radius = 1.0f;
 
     float4 q(float2 uv,float2 off,float v)
     {
-        return Texture0.SampleLevel(LinearSampler, uv + off, v);
+        return Texture0.SampleLevel(Sampler0, uv + off, v);
     }
 
     stage override float4 Shading()
@@ -25,8 +25,8 @@ shader Edge_TextureFX : TextureFX
         float4 cx = q(uv, e.xy, v) + q(uv, e.xz, v) + q(uv, e.xx, v) - q(uv, e.yy, v) - q(uv, e.yz ,v) - q(uv, e.yx, v);
         float4 cy = q(uv, e.yy ,v) + q(uv, e.zy, v) + q(uv, e.xy, v) - q(uv, e.yx, v) - q(uv, e.zx, v) - q(uv, e.xx, v);
         
-        float4 col = sqrt(cx*cx+cy*cy) * Bright * pow(2, rad*ts)/sqrt(saturate(rad) + .001);
-        col.a = Texture0.SampleLevel(LinearSampler, uv, 0).a;
+        float4 col = sqrt(cx*cx+cy*cy) * Brightness * pow(2, rad*ts)/sqrt(saturate(rad) + .001);
+        col.a = Texture0.SampleLevel(Sampler0, uv, 0).a;
 
         return col;
     }

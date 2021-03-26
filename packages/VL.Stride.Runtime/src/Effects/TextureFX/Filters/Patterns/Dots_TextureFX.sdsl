@@ -23,7 +23,7 @@ shader Dots_TextureFX : TextureFX
         
         float2 vp = uv * R - .25;
         float2 sz = min( max(0.5/R, PixelSize), R);
-        float4 col = Texture0.Sample(LinearSampler, floor(vp/sz) * sz/R + .5/R);
+        float4 col = Texture0.Sample(Sampler0, floor(vp/sz) * sz/R + .5/R);
         float glow = length((frac(vp/sz) - .5) / Scale);
         float grey = mx(col.rgb);
 

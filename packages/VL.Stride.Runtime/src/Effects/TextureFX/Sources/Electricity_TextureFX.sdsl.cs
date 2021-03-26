@@ -19,8 +19,8 @@ namespace Stride.Rendering
     public static partial class Electricity_TextureFXKeys
     {
         public static readonly ValueParameterKey<float> Time = ParameterKeys.NewValue<float>();
-        public static readonly ValueParameterKey<Color4> ElectricityColor = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
         public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,1.0f));
+        public static readonly ValueParameterKey<Color4> ElectricityColor = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
         public static readonly ValueParameterKey<float> GlowStrength = ParameterKeys.NewValue<float>(40.0f);
         public static readonly ValueParameterKey<float> AmbientGlow = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> AmbientGlowHeightScale = ParameterKeys.NewValue<float>(1.0f);

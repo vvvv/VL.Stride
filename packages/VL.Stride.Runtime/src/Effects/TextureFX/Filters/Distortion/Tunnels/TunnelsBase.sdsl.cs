@@ -18,9 +18,9 @@ namespace Stride.Rendering
 {
     public static partial class TunnelsBaseKeys
     {
-        public static readonly ValueParameterKey<float> time = ParameterKeys.NewValue<float>();
-        public static readonly ValueParameterKey<float> Rotate = ParameterKeys.NewValue<float>(0);
-        public static readonly ValueParameterKey<float> Dist = ParameterKeys.NewValue<float>(0.5f);
+        public static readonly ValueParameterKey<float> Time = ParameterKeys.NewValue<float>();
+        public static readonly ValueParameterKey<float> Rotation = ParameterKeys.NewValue<float>(0);
+        public static readonly ValueParameterKey<float> Distance = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> Offset = ParameterKeys.NewValue<float>(0.0f);
         public static readonly ValueParameterKey<float> FogDistance = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<Color4> FogColor = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));

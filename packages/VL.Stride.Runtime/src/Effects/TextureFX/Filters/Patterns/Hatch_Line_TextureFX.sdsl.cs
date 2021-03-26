@@ -22,6 +22,6 @@ namespace Stride.Rendering
         public static readonly ValueParameterKey<Color4> HatchColor = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
         public static readonly ValueParameterKey<float> Threshhold = ParameterKeys.NewValue<float>(5.0f);
         public static readonly ValueParameterKey<float> Thickness = ParameterKeys.NewValue<float>(4.0f);
-        public static readonly ValueParameterKey<float> Rot = ParameterKeys.NewValue<float>(0.36f);
+        public static readonly ValueParameterKey<float> Rotation = ParameterKeys.NewValue<float>(0.36f);
     }
 }

@@ -12,7 +12,7 @@ shader ColorMapBase : TextureFX
         float2 R = 1/Texture0TexelSize;
 
         float lod = log2(max(R.x, R.y)) * MapSmooth;
-        return Texture1.SampleLevel(LinearRepeatSampler, Center*.5 + .5 + Direction*f, lod);
+        return Texture1.SampleLevel(Sampler1, Center*.5 + .5 + Direction*f, lod);
     }
 
     abstract float4 ColorMap(float4 col);
@@ -20,7 +20,7 @@ shader ColorMapBase : TextureFX
     stage override float4 Shading()
     {
         float2 uv = streams.TexCoord;
-        float4 col = Texture0.SampleLevel(LinearSampler, uv, 0);
+        float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
         
         return ColorMap(col);
     }

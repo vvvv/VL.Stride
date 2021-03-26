@@ -8,16 +8,16 @@ shader Blood_TextureFX : TextureFX
     stage override float4 Shading()
     {
 		float2 uv = streams.TexCoord;
-		float offset = min(Fader+Fader*Tex2D(Texture0, float2(uv.x, RandomSeed)).r, 1.0);
+		float offset = min(Fader+Fader*Texture0.SampleLevel(Sampler0, float2(uv.x, RandomSeed), 0).r, 1.0);
 		uv.y -= offset;
 
 		if(uv.y > 0.0)
 		{
-			return Tex2D(Texture0, uv);
+			return Texture0.SampleLevel(Sampler0, uv, 0);
 		}
 		else
 		{
-			return Tex2D(Texture1, frac(uv));
+			return Texture1.SampleLevel(Sampler1, frac(uv), 0);
 		}
     }
 };

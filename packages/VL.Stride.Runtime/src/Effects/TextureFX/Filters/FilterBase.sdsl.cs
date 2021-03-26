@@ -16,9 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Dissolve_TextureFXKeys
+    public static partial class KeyingBaseKeys
     {
-        public static readonly ValueParameterKey<float> Fadeer = ParameterKeys.NewValue<float>(0.5f);
-        public static readonly ValueParameterKey<float> RandomSeed = ParameterKeys.NewValue<float>(0.5f);
+        public static readonly ValueParameterKey<Vector2> MaskRange = ParameterKeys.NewValue<Vector2>(new Vector2(0.005f,0.1f));
+        public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
     }
 }
