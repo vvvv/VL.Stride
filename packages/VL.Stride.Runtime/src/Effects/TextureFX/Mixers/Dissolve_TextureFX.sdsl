@@ -12,17 +12,17 @@ shader Dissolve_TextureFX : TextureFX
     {
         float2 uv = streams.TexCoord;
 
-        float noise = dot(Texture2.SampleLevel(LinearSampler, uv + RandomSeed, 0), 0.33);
+        float noise = dot(Texture2.SampleLevel(Sampler2, uv + RandomSeed, 0), 0.33);
 
         float4 col;
 
         if((saturate(noise)-.5)*.99 + .5 > Fader)
         {
-            col = Texture0.SampleLevel(LinearSampler, uv, 0);
+            col = InTex();
         }
         else
         {
-            col = Texture1.SampleLevel(LinearSampler, uv, 0);
+            col = InTex2();
         }
 
         return col;

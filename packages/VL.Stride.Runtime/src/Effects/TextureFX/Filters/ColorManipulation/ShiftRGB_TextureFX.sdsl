@@ -17,7 +17,7 @@ shader ShiftRGB_TextureFX : TextureFX
     {
         float2 dir = sin((Direction + float2(0, .25)) * 2 * acos(-1));
         uv += dir * offset;
-        float3 col = tex2d.SampleLevel(LinearSampler, uv, 0).rgb;
+        float3 col = tex2d.SampleLevel(Sampler0, uv, 0).rgb;
         return float4(base.HSVtoRGB(float3(Hue,0,0) + base.RGBtoHSV(col)), 1);
     }
 

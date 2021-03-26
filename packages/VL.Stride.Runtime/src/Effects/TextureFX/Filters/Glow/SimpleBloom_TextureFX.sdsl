@@ -18,28 +18,28 @@ shader SimpleBloom_TextureFX : TextureFX
        //blur tutorial
        // blur in y (vertical)
        // take nine samples, with the distance blurSize between them
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x - 4*blurSize, texcoord.y)) * 0.05f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x - 3*blurSize, texcoord.y)) * 0.09f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x - 2*blurSize, texcoord.y)) * 0.12f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x - blurSize, texcoord.y)) * 0.15f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y)) * 0.16f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x + blurSize, texcoord.y)) * 0.15f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x + 2*blurSize, texcoord.y)) * 0.12f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x + 3*blurSize, texcoord.y)) * 0.09f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x + 4*blurSize, texcoord.y)) * 0.05f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x - 4*blurSize, texcoord.y)) * 0.05f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x - 3*blurSize, texcoord.y)) * 0.09f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x - 2*blurSize, texcoord.y)) * 0.12f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x - blurSize, texcoord.y)) * 0.15f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y)) * 0.16f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x + blurSize, texcoord.y)) * 0.15f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x + 2*blurSize, texcoord.y)) * 0.12f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x + 3*blurSize, texcoord.y)) * 0.09f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x + 4*blurSize, texcoord.y)) * 0.05f;
     
         // blur in y (vertical)
        // take nine samples, with the distance blurSize between them
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y - 4*blurSize)) * 0.05f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y - 3*blurSize)) * 0.09f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y - 2*blurSize)) * 0.12f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y - blurSize)) * 0.15f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y)) * 0.16f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y + blurSize)) * 0.15f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y + 2*blurSize)) * 0.12f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y + 3*blurSize)) * 0.09f;
-       sum += Texture0.Sample(LinearSampler, float2(texcoord.x, texcoord.y + 4*blurSize)) * 0.05f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y - 4*blurSize)) * 0.05f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y - 3*blurSize)) * 0.09f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y - 2*blurSize)) * 0.12f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y - blurSize)) * 0.15f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y)) * 0.16f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y + blurSize)) * 0.15f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y + 2*blurSize)) * 0.12f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y + 3*blurSize)) * 0.09f;
+       sum += Texture0.Sample(Sampler0, float2(texcoord.x, texcoord.y + 4*blurSize)) * 0.05f;
 
-       return sum * intensity + Texture0.Sample(LinearSampler, texcoord);
+       return sum * intensity + Texture0.Sample(Sampler0, texcoord);
     }
 };

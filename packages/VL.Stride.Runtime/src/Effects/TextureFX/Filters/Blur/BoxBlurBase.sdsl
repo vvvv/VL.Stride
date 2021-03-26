@@ -23,7 +23,7 @@ shader BoxBlurBase : TextureFX
         for (int i = lower; i <= upper; ++i)
         {
             float2 offset = GetSampleOffset(texelSize, i);
-            sum += Texture0.SampleLevel(LinearSampler, streams.TexCoord + offset, 0);
+            sum += Texture0.SampleLevel(Sampler0, streams.TexCoord + offset, 0);
         }
 
         sum /= kSize;

@@ -25,7 +25,7 @@ shader DirectionalBlurBase : TextureFX
 
         for (float i=0; i<1; i+=1./iter)
         {   
-            col += Texture0.SampleLevel(LinearSampler, ((uv-.5)/asp + Direction*float2(1,-1) * ctrl * (i-.5-SampleCenter/2))*asp+.5, 0);
+            col += Texture0.SampleLevel(Sampler0, ((uv-.5)/asp + Direction*float2(1,-1) * ctrl * (i-.5-SampleCenter/2))*asp+.5, 0);
         }
         
         col = col/iter;

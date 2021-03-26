@@ -30,8 +30,8 @@ shader Pixelate_TextureFX : TextureFX
     {
         float2 x = streams.TexCoord;
         float2 sz = R / min(max(0.5/R, CellSize), R);
-        float4 m = Tex2D(Texture1, round((x-.5)*sz) / sz+.5);
-        float4 c = Tex2D(Texture0, lerp(x,round((x-.5)*sz)/sz+.5,lm(m).x*Morph));
+        float4 m = Texture1.SampleLevel(Sampler1, round((x-.5)*sz) / sz+.5, 0);
+        float4 c = Texture1.SampleLevel(Sampler0, lerp(x,round((x-.5)*sz)/sz+.5,lm(m).x*Morph), 0);
         return c;
     }
 

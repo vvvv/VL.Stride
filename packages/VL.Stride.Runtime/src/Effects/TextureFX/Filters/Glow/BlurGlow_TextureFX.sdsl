@@ -22,7 +22,7 @@ shader BlurGlow_TextureFX : TextureFX
 
         for(float i = 0; i < min(lod-(1-Radius*lod), 14); i++)
         {
-            float4 nc = Texture0.SampleLevel(LinearSampler, uv, 1+i);
+            float4 nc = Texture0.SampleLevel(Sampler0, uv, 1+i);
             float k = pow (2, i*Shape-lod+1) * saturate(Radius*lod-i+1);
             col += nc*k;
             kk += k;
@@ -33,7 +33,7 @@ shader BlurGlow_TextureFX : TextureFX
         
         if(!Alpha)
         {
-            col.a = Texture0.SampleLevel(LinearSampler, uv, 0).a;
+            col.a = Texture0.SampleLevel(Sampler0, uv, 0).a;
         }
         
         return col;

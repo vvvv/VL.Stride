@@ -13,7 +13,7 @@ shader ChannelKeyingBase : TextureFX
     
     float4 mmap(float2 uv, float2 R)
     {
-        return Texture0.SampleLevel(LinearSampler, uv, (saturate(AlphaBlur)*log2(max(R.x, R.y))));
+        return Texture0.SampleLevel(Sampler0, uv, (saturate(AlphaBlur)*log2(max(R.x, R.y))));
     }
 
     float4 keyer(float4 col, float4 map, float key)
@@ -45,7 +45,7 @@ shader ChannelKeyingBase : TextureFX
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;
 
-        float4 col = Texture0.SampleLevel(LinearSampler, uv, 0);
+        float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
         float4 map = mmap(uv, R);
         
         return Key(col, map);

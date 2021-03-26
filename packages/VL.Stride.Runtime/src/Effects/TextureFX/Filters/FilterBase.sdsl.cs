@@ -16,11 +16,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Stripes_TextureFXKeys
+    public static partial class FilterBaseKeys
     {
-        public static readonly ValueParameterKey<int> Tiling = ParameterKeys.NewValue<int>(1);
-        public static readonly ValueParameterKey<bool> IsHorizontal = ParameterKeys.NewValue<bool>(false);
-        public static readonly ValueParameterKey<float> Offset = ParameterKeys.NewValue<float>(0);
-        public static readonly ValueParameterKey<float> RandomSeed = ParameterKeys.NewValue<float>(0);
+        public static readonly ValueParameterKey<Vector4> Control = ParameterKeys.NewValue<Vector4>(new Vector4(1,1,1,1));
     }
 }

@@ -26,8 +26,8 @@ shader Ripple_TextureFX : TextureFX
         float2 newUV1 = Center + normToUV * (distanceFromCenter + offset1);
         float2 newUV2 = Center + normToUV * (distanceFromCenter + offset2);
         
-        float4 c1 = Texture0.SampleLevel(LinearSampler, newUV1, 0); 
-        float4 c2 = Texture1.SampleLevel(LinearSampler, newUV2, 0);
+        float4 c1 = Texture0.SampleLevel(Sampler0, newUV1, 0); 
+        float4 c2 = Texture1.SampleLevel(Sampler1, newUV2, 0);
 
         return lerp(c1, c2, Fader);
     }

@@ -13,7 +13,7 @@ shader LinearDepth_TextureFX : TextureFX
     float MinDepth = 0.0f;
     float MaxDepth = 10.0f;
 
-    bool ThreshholdOrLinear = false;
+    bool ThresholdOrLinear = false;
 
     SamplerState s0:IMMUTABLE 
     {
@@ -37,7 +37,7 @@ shader LinearDepth_TextureFX : TextureFX
             ld = (d-tP._43)/tP._33;
         }
         
-        float4 c =  ThreshholdOrLinear ? ld : linstep(MinDepth, MaxDepth, ld);
+        float4 c =  ThresholdOrLinear ? ld : linstep(MinDepth, MaxDepth, ld);
         
         return c;
     }
