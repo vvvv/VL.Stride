@@ -98,10 +98,10 @@ namespace MyTests
         /// </summary>
         /// <param name="filePath"></param>
         [TestCaseSource(nameof(NormalPatches))]
-        public static void IsntRed(string filePath)
+        public static async Task IsntRed(string filePath)
         {
             filePath = Path.Combine(MainLibPath, filePath);
-            var solution = FCompiledSolution ?? (FCompiledSolution = Compile(NormalPatches()));
+            var solution = FCompiledSolution ?? (FCompiledSolution = await Compile(NormalPatches()));
             var document = solution.GetOrAddDocument(filePath);
 
             // Check document structure
@@ -115,12 +115,12 @@ namespace MyTests
             CheckNodes(document.AllTopLevelDefinitions);
         }
 
-        static Solution Compile(IEnumerable<string> docs)
+        static async Task<Solution> Compile(IEnumerable<string> docs)
         {
             var solution = Session.CurrentSolution;
             foreach (var f in docs)
                 solution = solution.GetOrAddDocument(Path.Combine(MainLibPath, f)).Solution;
-            return solution.WithFreshCompilation();
+            return await solution.WithFreshCompilationAsync();
         }
 
         public static void CheckNodes(IEnumerable<Node> nodes)
