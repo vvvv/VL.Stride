@@ -18,7 +18,7 @@ namespace Stride.Rendering
 {
     public static partial class Dissolve_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Fadeer = ParameterKeys.NewValue<float>(0.5f);
+        public static readonly ValueParameterKey<float> Fader = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> RandomSeed = ParameterKeys.NewValue<float>(0.5f);
     }
 }
