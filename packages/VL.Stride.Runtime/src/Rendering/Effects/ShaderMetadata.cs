@@ -5,6 +5,8 @@ using System.Linq;
 using Stride.Core.Shaders.Ast.Hlsl;
 using System.Collections.Generic;
 using Stride.Core.IO;
+using Stride.Rendering;
+using Stride.Core.Shaders.Ast.Stride;
 
 namespace VL.Stride.Rendering
 {
@@ -41,11 +43,49 @@ namespace VL.Stride.Rendering
             return Category;
         }
 
+        Dictionary<string, string> pinEnumAttributes = new Dictionary<string, string>();
+
+        private void AddEnumAttribute(string name, string enumTypeName)
+        {
+            pinEnumAttributes[name] = enumTypeName;
+        }
+
+        /// <summary>
+        /// Gets the type of the pin, if overwritten by an attribute, e.g. int -> enum.
+        /// </summary>
+        public Type GetPinType(ParameterKey key)
+        {
+            if (pinEnumAttributes.TryGetValue(key.Name, out var enumTypeName))
+            {
+                try
+                {
+                    var type = Type.GetType(enumTypeName);
+                    if (type != null && type.IsEnum)
+                        return type;
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+
+            return null;
+        }
+
+        //shader
         const string CategoryName = "Category";
         const string SummaryName = "Summary";
         const string RemarksName = "Remarks";
         const string TagsName = "Tags";
         const string OutputFormatName = "OutputFormat";
+
+        //pin
+        const string EnumTypeName = "EnumType";
+
+        public static void RegisterAdditionalShaderAttributes()
+        {
+            StrideAttributes.AvailableAttributes.Add(EnumTypeName);
+        }
 
         public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider)
         {
@@ -61,6 +101,7 @@ namespace VL.Stride.Rendering
 
                 if (shaderDecl != null)
                 {
+                    //shader 
                     foreach (var attr in shaderDecl.Attributes.OfType<AttributeDeclaration>())
                     {
                         switch (attr.Name)
@@ -83,6 +124,23 @@ namespace VL.Stride.Rendering
                                 break;
                             default:
                                 break;
+                        }
+                    }
+
+                    //pins
+                    foreach (var pinDecl in shaderDecl.Members.OfType<Variable>())
+                    {
+                        foreach (var attr in pinDecl.Attributes.OfType<AttributeDeclaration>())
+                        {
+                            switch (attr.Name)
+                            {
+                                case EnumTypeName:
+                                    var enumTypeName = FirstParamAsString(attr);
+                                    shaderMetadata.AddEnumAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text, enumTypeName);
+                                    break;                              
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
@@ -108,5 +166,7 @@ namespace VL.Stride.Rendering
             //
             //return null;
         }
+
+        
     }
 }

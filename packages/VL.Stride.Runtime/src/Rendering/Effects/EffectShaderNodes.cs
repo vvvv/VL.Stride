@@ -33,6 +33,8 @@ namespace VL.Stride.Rendering
     {
         public static void Register(IVLFactory services)
         {
+            ShaderMetadata.RegisterAdditionalShaderAttributes();
+
             services.RegisterNodeFactory("VL.Stride.Rendering.EffectShaderNodes",
                 init: factory =>
                 {
@@ -137,7 +139,7 @@ namespace VL.Stride.Rendering
                     var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, fileProvider);
 
                     IVLNodeDescription shaderNodeDescription;
-                    yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName);
+                    yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName, shaderMetadata);
                     yield return NewTextureFXNode(shaderNodeDescription, name, shaderMetadata);
                 }
                 else if (effectName.EndsWith(computeFXSuffix))
@@ -417,7 +419,7 @@ namespace VL.Stride.Rendering
             // name = LevelsShader (ClampBoth)
             // effectName = Levels_ClampBoth_TextureFX
             // effectMainName = Levels
-            IVLNodeDescription NewImageEffectShaderNode(NameAndVersion name, string effectName)
+            IVLNodeDescription NewImageEffectShaderNode(NameAndVersion name, string effectName, ShaderMetadata shaderMetadata)
             {
                 return factory.NewNodeDescription(
                     name: name,
@@ -467,7 +469,9 @@ namespace VL.Stride.Rendering
                                     usedNames.Add(pinName);
                                     isVisible = false;
                                 }
-                                _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, name: pinName) { IsVisible = isVisible });
+
+                                var pinTypeInPatch = shaderMetadata.GetPinType(key);
+                                _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, name: pinName, typeInPatch: pinTypeInPatch) { IsVisible = isVisible });
                             }
                         }
 

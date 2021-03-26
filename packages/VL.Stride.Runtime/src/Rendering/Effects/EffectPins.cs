@@ -5,6 +5,7 @@ using VL.Core;
 using Stride.Rendering;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
+using System.Runtime.CompilerServices;
 
 namespace VL.Stride.Rendering
 {
@@ -46,13 +47,13 @@ namespace VL.Stride.Rendering
         public readonly int Count;
         public readonly bool IsPermutationKey;
 
-        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, int count = 1, object defaultValue = null, bool isPermutationKey = false, string name = null)
+        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, int count = 1, object defaultValue = null, bool isPermutationKey = false, string name = null, Type typeInPatch = null)
         {
             Key = key;
             IsPermutationKey = isPermutationKey;
             Count = count;
             Name = name ?? key.GetPinName(usedNames);
-            var elementType = key.PropertyType;
+            var elementType = typeInPatch ?? key.PropertyType;
             defaultValue = defaultValue ?? key.DefaultValueMetadata?.GetDefaultValue();
             // TODO: This should be fixed in Stride
             if (key.PropertyType == typeof(Matrix))
@@ -75,17 +76,24 @@ namespace VL.Stride.Rendering
         public override string Name { get; }
         public override Type Type { get; }
         public override object DefaultValueBoxed { get; }
-        public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => EffectPins.CreatePin(graphicsDevice, parameters, Key, Count, IsPermutationKey, DefaultValueBoxed);
+        public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => EffectPins.CreatePin(graphicsDevice, parameters, Key, Count, IsPermutationKey, DefaultValueBoxed, Type);
     }
 
     static class EffectPins
     {
-        public static IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey, object value)
+        public static IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey, object value, Type type)
         {
             if (key is ValueParameterKey<Color4> colorKey)
                 return new ColorParameterPin(parameters, colorKey, graphicsDevice.ColorSpace, (Color4)value);
 
             var argument = key.GetType().GetGenericArguments()[0];
+
+            if (type.IsEnum)
+            {
+                var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateEnumPin), BindingFlags.Static | BindingFlags.Public);
+                return createPinMethod.MakeGenericMethod(argument, type).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+            }
+
             if (isPermutationKey)
             {
                 var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreatePermutationPin), BindingFlags.Static | BindingFlags.Public);
@@ -114,6 +122,11 @@ namespace VL.Stride.Rendering
         public static IVLPin CreatePermutationPin<T>(ParameterCollection parameters, PermutationParameterKey<T> key, T value)
         {
             return new PermutationParameterPin<T>(parameters, key, value);
+        }
+
+        public static IVLPin CreateEnumPin<T, TEnum>(ParameterCollection parameters, ValueParameterKey<T> key, TEnum value) where T : unmanaged where TEnum : unmanaged
+        {
+            return new EnumParameterPin<T, TEnum>(parameters, key, value);
         }
 
         public static IVLPin CreateValuePin<T>(ParameterCollection parameters, ValueParameterKey<T> key, T value) where T : struct
@@ -204,6 +217,34 @@ namespace VL.Stride.Rendering
         {
             get => Value;
             set => Value = (T)value;
+        }
+    }
+
+    class EnumParameterPin<T, TEnum> : ParameterPin, IVLPin<TEnum> where T : unmanaged where TEnum : unmanaged
+    {
+        public readonly ValueParameterKey<T> Key;
+
+        public EnumParameterPin(ParameterCollection parameters, ValueParameterKey<T> key, TEnum value)
+            : base(parameters, key)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+
+        public TEnum Value
+        {
+            get
+            {
+                T val = Parameters.Get(Key);
+                return Unsafe.As<T, TEnum>(ref val);
+            }
+            set => Parameters.Set(Key, Unsafe.As<TEnum, T>(ref value));
+        }
+
+        object IVLPin.Value
+        {
+            get => Value;
+            set => Value = (TEnum)value;
         }
     }
 
