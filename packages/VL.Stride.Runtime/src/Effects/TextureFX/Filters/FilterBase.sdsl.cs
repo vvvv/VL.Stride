@@ -16,9 +16,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class KeyingBaseKeys
+    public static partial class FilterBaseKeys
     {
-        public static readonly ValueParameterKey<Vector2> MaskRange = ParameterKeys.NewValue<Vector2>(new Vector2(0.005f,0.1f));
-        public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<Vector4> Control = ParameterKeys.NewValue<Vector4>(new Vector4(1,1,1,1));
     }
 }

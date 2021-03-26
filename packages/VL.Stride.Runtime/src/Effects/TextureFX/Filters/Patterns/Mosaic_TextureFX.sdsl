@@ -1,6 +1,6 @@
 ﻿[Category("Filter.Experimental")]
 [Summary("")]
-shader Mosaic_TextureFX : TextureFX
+shader Mosaic_TextureFX : FilterBase
 {
     float2 Cells = float2(1,1);
     bool Mirror = false;
@@ -8,7 +8,7 @@ shader Mosaic_TextureFX : TextureFX
     float2 Scaling = float2(1,1);
     bool Stripes = false;
 
-    stage override float4 Shading()
+    float4 Filter(float4 col)
     {
         float2 x = streams.TexCoord;
         if (Stripes) x.y = x.x;

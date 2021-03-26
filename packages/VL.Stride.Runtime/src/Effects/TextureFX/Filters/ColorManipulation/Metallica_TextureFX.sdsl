@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Metallica_TextureFX : TextureFX
+shader Metallica_TextureFX : FilterBase
 {
     [Color]
     float4 ColorA = float4(0.60f, 0.99f, 0.96f, 0.0f);
@@ -35,12 +35,12 @@ shader Metallica_TextureFX : TextureFX
 
     #define gam(x,y) sign(x)*pow(abs(x),(y))
 
-    stage override float4 Shading()
+    float4 Filter(float4 col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;
     
-        float4 col = 0;
+        col = 0;
         float lod = log2(max(R.x, R.y));
         float kk = 0;
 
