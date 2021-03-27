@@ -17,6 +17,7 @@ shader Electricity_TextureFX : TextureFX
     float AmbientGlowHeightScale = 1.0f;
     float Height = 0.25f;
     float GlowFallOff = 2.0f;
+    stage Texture2D NoiseTexture;
     float VertexNoise = 0.5f;
 
     stage override float4 Shading()
@@ -32,9 +33,9 @@ shader Electricity_TextureFX : TextureFX
         float xs2 = uv.y + uv.x ;
 
         // Noise for the three samples
-        float noise0 = Texture0.SampleLevel(LinearRepeatSampler, float3(xs0, t), 0).x;
-        float noise1 = Texture0.SampleLevel(LinearRepeatSampler, float3(xs1, t), 0).x;
-        float noise2 = Texture0.SampleLevel(LinearRepeatSampler, float3(xs2, t), 0).x;
+        float noise0 = NoiseTexture.SampleLevel(LinearRepeatSampler, float3(xs0, t), 0).x;
+        float noise1 = NoiseTexture.SampleLevel(LinearRepeatSampler, float3(xs1, t), 0).x;
+        float noise2 = NoiseTexture.SampleLevel(LinearRepeatSampler, float3(xs2, t), 0).x;
         
         // The position of the flash
         float mid0 = Height * (noise0 * 2 - 1) * (1 - xs0 * xs0);

@@ -26,6 +26,7 @@ namespace Stride.Rendering
         public static readonly ValueParameterKey<float> AmbientGlowHeightScale = ParameterKeys.NewValue<float>(1.0f);
         public static readonly ValueParameterKey<float> Height = ParameterKeys.NewValue<float>(0.25f);
         public static readonly ValueParameterKey<float> GlowFallOff = ParameterKeys.NewValue<float>(2.0f);
+        public static readonly ObjectParameterKey<Texture> NoiseTexture = ParameterKeys.NewObject<Texture>();
         public static readonly ValueParameterKey<float> VertexNoise = ParameterKeys.NewValue<float>(0.5f);
     }
 }

@@ -19,8 +19,8 @@ namespace Stride.Rendering
     public static partial class Halo_TextureFXKeys
     {
         public static readonly ValueParameterKey<Matrix> Transform = ParameterKeys.NewValue<Matrix>();
-        public static readonly ValueParameterKey<Color4> Color1 = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,1.0f));
-        public static readonly ValueParameterKey<Color4> Color2 = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
+        public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,1.0f));
+        public static readonly ValueParameterKey<Color4> HaloColor = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
         public static readonly ValueParameterKey<float> Gamma = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> MaxColor = ParameterKeys.NewValue<float>(10.0f);
         public static readonly ObjectParameterKey<Texture> GradientTexture = ParameterKeys.NewObject<Texture>();
