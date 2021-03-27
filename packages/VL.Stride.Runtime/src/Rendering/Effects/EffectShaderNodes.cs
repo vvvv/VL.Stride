@@ -455,7 +455,11 @@ namespace VL.Stride.Rendering
 
                             if (key.PropertyType == typeof(Texture))
                             {
-                                var pinName = ++_textureCount == 1 ? textureInputName : $"{textureInputName} {_textureCount}";
+                                var pinName = "";
+                                if (shaderMetadata.Category.StartsWith("Source"))
+                                    pinName = name.Replace(effectName + ".", "");
+                                else
+                                    pinName = ++_textureCount == 1 ? textureInputName : $"{textureInputName} {_textureCount}";
                                 usedNames.Add(pinName);
                                 _inputs.Add(new PinDescription<Texture>(pinName));
                             }
@@ -554,11 +558,12 @@ namespace VL.Stride.Rendering
 
                         var _inputs = shaderDescription.Inputs.ToList();
 
-                        var hasTextureInput = _inputs.Any(p => p.Type == typeof(Texture) && p.Name != "Output Texture");
+                        var hasTextureInput = false;
+                        if (!shaderMetadata.Category.StartsWith("Source"))
+                            hasTextureInput = _inputs.Any(p => p.Type == typeof(Texture) && p.Name != "Output Texture");
 
                         var defaultSize = hasTextureInput ? Int2.Zero : new Int2(512);
                         var defaultFormat = shaderMetadata.GetPixelFormat(hasTextureInput);
-
 
                         var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = !hasTextureInput };
                         var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = !hasTextureInput };
