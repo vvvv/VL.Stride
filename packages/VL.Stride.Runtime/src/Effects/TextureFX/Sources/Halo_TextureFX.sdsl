@@ -8,9 +8,9 @@ shader Halo_TextureFX : TextureFX
     matrix Transform;
 
     [Color]
-    float4 Color1 = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 BackgroundColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     [Color]
-    float4 Color2 = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 HaloColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
     float Gamma = 0.5f;
     float MaxColor = 10.0f;
     stage Texture2D GradientTexture;
@@ -23,7 +23,7 @@ shader Halo_TextureFX : TextureFX
         f = saturate(1-2 * f);
         f = pow(f, g);
     
-        return lerp(Color1, Color2, f);
+        return lerp(HaloColor, BackgroundColor, f);
     }
 
     float4 Smooth(float f, float g)
@@ -32,7 +32,7 @@ shader Halo_TextureFX : TextureFX
         f = smoothstep(0,1,f);
         f = pow(f, g);
     
-        return lerp(Color1, Color2, f);
+        return lerp(HaloColor, BackgroundColor, f);
     }
     
     float4 Spike(float d, float f, float g)
@@ -40,7 +40,7 @@ shader Halo_TextureFX : TextureFX
         f = saturate(1-2 * f);
         f = 2*pow(.5*f/(pow(d, .5) + .5), g);
 
-        float4 c = lerp(Color1, Color2, f);
+        float4 c = lerp(HaloColor, BackgroundColor, f);
 
         return min(MaxColor, c);
     }
@@ -50,7 +50,7 @@ shader Halo_TextureFX : TextureFX
         f = GradientTexture.SampleLevel(LinearSampler, f.x*2, 0);
         f = sign(f) * pow(abs(f), g);
         
-        float4 c = lerp(Color1, Color2, f);
+        float4 c = lerp(HaloColor, BackgroundColor, f);
 
         return min(MaxColor, c);
     }
