@@ -14,27 +14,26 @@ using Stride.Shaders;
 using Stride.Core.Mathematics;
 using Buffer = Stride.Graphics.Buffer;
 
-namespace VL.Stride.Effects.ShaderFX
+namespace VL.Stride.Effects.TextureFX
 {
-    [DataContract]public partial class ShaderFXKeys : ShaderMixinParameters
+    [DataContract]public partial class TextureFXEffectKeys : ShaderMixinParameters
     {
-        public static readonly PermutationParameterKey<ShaderSource> ShaderFXRoot = ParameterKeys.NewPermutation<ShaderSource>();
+        public static readonly PermutationParameterKey<ShaderSource> TextureFXShader = ParameterKeys.NewPermutation<ShaderSource>();
     };
     internal static partial class ShaderMixins
     {
-        internal partial class ShaderFXGraphEffect  : IShaderMixinBuilder
+        internal partial class TextureFXEffect  : IShaderMixinBuilder
         {
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
-                context.Mixin(mixin, "ShaderFXGraph");
-                context.Mixin(mixin, context.GetParam(ShaderFXKeys.ShaderFXRoot));
+                context.Mixin(mixin, context.GetParam(TextureFXEffectKeys.TextureFXShader));
             }
 
             [ModuleInitializer]
             internal static void __Initialize__()
 
             {
-                ShaderMixinManager.Register("ShaderFXGraphEffect", new ShaderFXGraphEffect());
+                ShaderMixinManager.Register("TextureFXEffect", new TextureFXEffect());
             }
         }
     }

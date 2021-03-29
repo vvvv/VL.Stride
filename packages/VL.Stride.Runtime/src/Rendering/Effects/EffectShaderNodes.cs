@@ -23,6 +23,7 @@ using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Model;
 using VL.Stride.Core;
+using VL.Stride.Effects.TextureFX;
 using VL.Stride.Engine;
 using VL.Stride.Rendering.ComputeEffect;
 using VL.Stride.Shaders;
@@ -419,7 +420,7 @@ namespace VL.Stride.Rendering
             // name = LevelsShader (ClampBoth)
             // effectName = Levels_ClampBoth_TextureFX
             // effectMainName = Levels
-            IVLNodeDescription NewImageEffectShaderNode(NameAndVersion name, string effectName, ShaderMetadata shaderMetadata)
+            IVLNodeDescription NewImageEffectShaderNode(NameAndVersion name, string shaderName, ShaderMetadata shaderMetadata)
             {
                 return factory.NewNodeDescription(
                     name: name,
@@ -427,7 +428,13 @@ namespace VL.Stride.Rendering
                     fragmented: true,
                     init: buildContext =>
                     {
-                        var (_effect, _messages, _invalidated) = CreateEffectInstance(effectName);
+                        var baseMixin = new ShaderMixinSource();
+                        baseMixin.Mixins.Add(new ShaderClassSource(shaderName));
+                        baseMixin.AddComposition("ColMul", new ShaderClassSource("TestCol"));
+
+                        var parameters = new ParameterCollection();
+                        parameters.Set(TextureFXEffectKeys.TextureFXShader, baseMixin);
+                        var (_effect, _messages, _invalidated) = CreateEffectInstance("TextureFXEffect", parameters, watchName: shaderName);
 
                         var _inputs = new List<IVLPinDescription>();
                         var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(ImageEffectShader)) };
@@ -493,7 +500,14 @@ namespace VL.Stride.Rendering
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
-                                var effect = new TextureFXEffect(effectName);
+                                var effect = new TextureFXEffect("TextureFXEffect");
+
+                                var baseMixin = new ShaderMixinSource();
+                                baseMixin.Mixins.Add(new ShaderClassSource(shaderName));
+                                baseMixin.AddComposition("ColMul", new ShaderClassSource("TestCol"));
+
+                                effect.Parameters.Set(TextureFXEffectKeys.TextureFXShader, baseMixin);
+                                //effect.Parameters.Set
                                 var inputs = new List<IVLPin>();
                                 var enabledInput = default(IVLPin);
                                 var textureCount = 0;
@@ -537,7 +551,7 @@ namespace VL.Stride.Rendering
                                     });
                             },
                             invalidated: _invalidated,
-                            openEditor: () => OpenEditor(effectName)
+                            openEditor: () => OpenEditor(shaderName)
                         );
                     });
             }

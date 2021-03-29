@@ -163,7 +163,7 @@ namespace VL.Stride.Shaders.ShaderFX
                 var mixin = new ShaderMixinSource();
                 mixin.AddComposition("Root", shaderSource);
 
-                effectImageShader.Parameters.Set(TextureFXKeys.TextureFXRoot, mixin);
+                effectImageShader.Parameters.Set(TextureFXGraphKeys.TextureFXRoot, mixin);
             }
             return effectImageShader;
         }

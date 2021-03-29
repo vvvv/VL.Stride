@@ -17,6 +17,10 @@ using Buffer = Stride.Graphics.Buffer;
 using Stride.Rendering.ComputeEffect;
 namespace VL.Stride.Effects.ComputeFX
 {
+    [DataContract]public partial class ComputeFXKeys : ShaderMixinParameters
+    {
+        public static readonly PermutationParameterKey<ShaderSource> ComputeFXRoot = ParameterKeys.NewPermutation<ShaderSource>();
+    };
     internal static partial class ShaderMixins
     {
         internal partial class ComputeFXGraphEffect  : IShaderMixinBuilder

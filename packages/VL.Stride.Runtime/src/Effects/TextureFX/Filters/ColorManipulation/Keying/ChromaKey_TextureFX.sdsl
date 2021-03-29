@@ -9,11 +9,13 @@ shader ChromaKey_TextureFX : KeyingBase
     [Color]
     float4 ChromaKey = float4(0.05f, 0.63f, 0.14f, 1.0f);
 
+    compose ComputeFloat4 ColMul;
+
     float CalcKeyDist(float4 col)
     {
         // convert to YUV
         float4 keyYuv = RGBAtoYUV(ChromaKey);
-        float4 yuv = RGBAtoYUV(col);
+        float4 yuv = RGBAtoYUV(col * ColMul.Compute());
 
         return length(keyYuv.gb - yuv.gb);
     }
