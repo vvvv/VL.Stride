@@ -1,0 +1,116 @@
+// source:
+// https://github.com/vvvv/vvvv-sdk/blob/develop/vvvv45/addonpack/lib/nodes/modules/TextureFX/Filter/PolarCoordinates/PolarCoordinates.fx
+// credits: mtallen, dep, Libero Spagnolini
+
+[Category("Filter.Experimental")]
+[Summary("")]
+shader Coordinates_TextureFX : TextureFX
+{
+    [EnumType("VL.Stride.Effects.TextureFX.CoordinatesType")]
+    int Type;
+
+    float Interpolation = 1.0f;
+    float Repeats = 1.0f;
+    bool Clamp = true;
+    float Scale = 1.0f;
+    float Twirl = 0.0f;
+    float Squeeze = 1.0f;
+    float Zoom = 1.0f;
+    float Lens = 0.0f;
+    float OffsetX= 0.0f;
+    float OffsetY = 0.0f;
+    float TunnelX = 0.0f;
+    float TunnelY = 0.0f;
+
+    // Helper functions
+    float2 polar(float2 coords)
+    {
+        coords = coords / 2.0;
+        coords += 0.5;
+        return coords;
+    }
+
+    float2 polarToCart(float2 coords)
+    {
+        float mag = coords[1];
+        float angle = -1.0*coords[0]*6.28319+1.57079633;
+
+        coords[0] = mag*cos(angle);
+        coords[1] = mag*sin(angle);
+        return coords;
+    }
+
+    float4 CoordinatesCartesian(float2 uv)
+    {
+        float2 coords = uv;
+        coords[0] = saturate(coords[0])+0.5;
+        coords[1] = saturate(coords[1]);
+        coords = polarToCart(coords);
+        coords = polar(coords);
+
+        coords = lerp(uv, coords, Interpolation) + float2(OffsetX, OffsetY);
+        float4 col = Texture0.Sample(LinearRepeatSampler, coords);
+        return col;
+    }
+
+    // Helper functions
+    float2 cartesian(float2 coords)
+    {
+        coords[0] -= (0.5 + OffsetX);
+        coords[1] -= (0.5 + OffsetY);
+        return coords;
+    }
+
+    float2 cartToPolar(float2 coords)
+    {
+        float mag = (length(coords)/0.5)*Scale;
+        // clamp it
+        if (!(Clamp))
+        {
+            mag = saturate(mag);
+        }
+        // angle = arc tangent of y/x
+        float angle = atan2(coords[1], coords[0])*Repeats;
+        angle = -(angle+1.57079633)/6.28319;
+        
+        mag = pow(mag, 1.0/Squeeze)*Zoom;	//squeeze & zoom
+        mag = lerp(mag, mag*mag/sqrt(2.0), Lens);	//fisheye/lens effect
+        angle += (1.0 - smoothstep(-1.0, 1.0, mag))*Twirl;     //twirl
+        
+        coords[0] = angle + TunnelX;
+        coords[1] = mag + TunnelY;
+        return coords;
+    }
+
+    float4 CoordinatesPolar(float2 uv)
+    {
+         /*
+        * for the conversion to polar coordinates we will offset the incoming
+        * pixels coordinates to be in a cartesian plane with 0.0, 0.0 as the center
+        * of the image and the upper left corner being -0.5, 0.5. From here we will
+        * use those coordinates as a vector, getting the magnitude and the angle
+        * using sweet sweet linear algebra. we clamp the radius to the size of the
+        * image (1.0), and we use that and the angle in radians for our new color!
+        */
+        
+        // convert to cartesian
+        float2 coords;
+        coords = cartesian(uv);
+        // do the algebra to get the angle and magnitude
+        //rotate the whole thing 90 CCW (this is what Pshop does)
+        coords = cartToPolar(coords);
+        coords = lerp(uv, coords, Interpolation);
+        float4 col = Texture0.Sample(LinearRepeatSampler,coords);
+        return col;	
+    }
+
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord;
+        switch((uint)Type%2)
+        {
+            case 0 : return CoordinatesCartesian(uv);
+            case 1 : return CoordinatesPolar(uv);
+        }
+    }
+};
