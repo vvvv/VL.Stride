@@ -21,5 +21,5 @@ namespace VL.Stride.Effects.TextureFX
     public enum PaletteType { HSL, HSV, Radial };
     public enum PolarCoordinatesType { Cartesian, Polar };
     public enum SwizzleType { Red, Green, Blue, Alpha };
-    public enum TunnelsDistortionType { Square, Cylinder, Fly };
+    public enum TunnelType { Square, Cylinder, Fly };
 }

@@ -12,27 +12,29 @@
  //
  // why not
 
-[Category("Filter.Experimental")]
+[Category("Mixer.Experimental")]
 [Summary("")]
 shader Pixelate_TextureFX : TextureFX
 {
-    float2 R;
-    float2 CellSize = float2(16,16);
-    float2 Morph = float2(1,1);
-
-    float4 lm(float4 c)
-    {
-        c.rgb = dot(c.rgb, normalize(float3(.33,.59,.11))/1.5);
-        return c;
-    }
+    float Fader;
 
     stage override float4 Shading()
     {
-        float2 x = streams.TexCoord;
-        float2 sz = R / min(max(0.5/R, CellSize), R);
-        float4 m = Texture1.SampleLevel(Sampler1, round((x-.5)*sz) / sz+.5, 0);
-        float4 c = Texture1.SampleLevel(Sampler0, lerp(x,round((x-.5)*sz)/sz+.5,lm(m).x*Morph), 0);
-        return c;
+        float pixels;
+		float segment_progress;
+		if (Fader < 0.5)
+		{
+			segment_progress = 1 - Fader * 2;
+		}
+		else
+		{		
+			segment_progress = (Fader - 0.5) * 2;
+		}
+		pixels = 5 + 1000 * segment_progress * segment_progress;
+		float2 newUV = round(streams.TexCoord * pixels) / pixels;	
+		float4 c1 = Texture0.SampleLevel(Sampler0, newUV, 0);
+		float4 c2 = Texture1.SampleLevel(Sampler1, newUV, 0);
+		float lerp_progress = saturate((Fader - 0.4) / 0.2);
+		return lerp(c1,c2, lerp_progress);	
     }
-
 };
