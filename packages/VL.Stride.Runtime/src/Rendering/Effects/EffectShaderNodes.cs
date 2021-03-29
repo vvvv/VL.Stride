@@ -432,9 +432,9 @@ namespace VL.Stride.Rendering
                         baseMixin.Mixins.Add(new ShaderClassSource(shaderName));
                         baseMixin.AddComposition("ColMul", new ShaderClassSource("TestCol"));
 
-                        var parameters = new ParameterCollection();
-                        parameters.Set(TextureFXEffectKeys.TextureFXShader, baseMixin);
-                        var (_effect, _messages, _invalidated) = CreateEffectInstance("TextureFXEffect", parameters, watchName: shaderName);
+                        var mixinParams = new ParameterCollection();
+                        mixinParams.Set(TextureFXEffectKeys.TextureFXShader, baseMixin);
+                        var (_effect, _messages, _invalidated) = CreateEffectInstance("TextureFXEffect", mixinParams, watchName: shaderName);
 
                         var _inputs = new List<IVLPinDescription>();
                         var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(ImageEffectShader)) };
