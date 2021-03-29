@@ -444,7 +444,33 @@ namespace VL.Stride.Rendering
 
                         var _textureCount = 0;
                         var _samplerCount = 0;
-                        foreach (var parameter in GetParameters(_effect).OrderBy(p => p.Key.Name.Contains("Texture") ? 0 : 1))
+                        var parameters = GetParameters(_effect).OrderBy(p => p.Key.Name.Contains(".Texture") ? 0 : 1).ToList();
+
+                        //order sampler pins after their corresponding texture pins
+                        var samplerPins = new Dictionary<ParameterKeyInfo, int>();
+                        //find all samplers that have a corresponding texture
+                        int insertOffset = 0;
+                        foreach (var parameter in parameters)
+                        {
+                            if (parameter.Key.Name.Contains(".Sampler"))
+                            {
+                                var texturePinIdx = parameters.IndexOf(p => p.Key.Name == parameter.Key.Name.Replace("Sampler", "Texture"));
+                                if (texturePinIdx >= 0)
+                                {
+                                    samplerPins.Add(parameter, texturePinIdx + insertOffset);
+                                    insertOffset++;
+                                }
+                            }
+                        }
+
+                        //move the sampler pins after the corresponding texture pins
+                        foreach (var samplerPin in samplerPins)
+                        {
+                            parameters.Remove(samplerPin.Key);
+                            parameters.Insert(samplerPin.Value+1, samplerPin.Key);
+                        }
+
+                        foreach (var parameter in parameters)
                         {
                             var key = parameter.Key;
                             var name = key.Name;
@@ -457,7 +483,7 @@ namespace VL.Stride.Rendering
                             {
                                 var pinName = "";
                                 if (shaderMetadata.Category.StartsWith("Source"))
-                                    pinName = name.Replace(effectName + ".", "");
+                                    pinName = key.GetPinName(usedNames);
                                 else
                                     pinName = ++_textureCount == 1 ? textureInputName : $"{textureInputName} {_textureCount}";
                                 usedNames.Add(pinName);
@@ -484,7 +510,7 @@ namespace VL.Stride.Rendering
                         _inputs.Add(
                             _outputTextureInput = new PinDescription<Texture>("Output Texture") 
                             { 
-                                Summary = "The texture to render to. If not set the node creates its own output texture based on the input texture.",
+                                Summary = "The texture to render to. If not set, the node creates its own output texture based on the input texture.",
                                 Remarks = "The provided texture must be a render target.",
                                 IsVisible = false
                             });
