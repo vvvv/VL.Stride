@@ -141,7 +141,7 @@ namespace VL.Stride.Shaders.ShaderFX
                 var mixin = new ShaderMixinSource();
                 mixin.AddComposition("Root", shaderSource);
 
-                computeEffect.Parameters.Set(ComputeFXKeys.ComputeFXRoot, mixin);
+                computeEffect.Parameters.Set(ComputeFXGraphKeys.ComputeFXRoot, mixin);
             }
             return computeEffect;
         }
@@ -187,7 +187,7 @@ namespace VL.Stride.Shaders.ShaderFX
                 mixin.AddComposition("VertexRoot", vertexShaderSource);
                 mixin.AddComposition("PixelRoot", pixelShaderSource);
 
-                effectImageShader.Parameters.Set(ShaderFXKeys.ShaderFXRoot, mixin);
+                effectImageShader.Parameters.Set(ShaderFXGraphKeys.ShaderFXRoot, mixin);
             }
             return effectImageShader;
         }

@@ -17,7 +17,7 @@ using Buffer = Stride.Graphics.Buffer;
 using Stride.Rendering.ComputeEffect;
 namespace VL.Stride.Effects.ComputeFX
 {
-    [DataContract]public partial class ComputeFXKeys : ShaderMixinParameters
+    [DataContract]public partial class ComputeFXGraphKeys : ShaderMixinParameters
     {
         public static readonly PermutationParameterKey<ShaderSource> ComputeFXRoot = ParameterKeys.NewPermutation<ShaderSource>();
     };
@@ -31,7 +31,7 @@ namespace VL.Stride.Effects.ComputeFX
                 mixin.AddMacro("ThreadNumberY", context.GetParam(ComputeEffectShaderKeys.ThreadNumbers).Y);
                 mixin.AddMacro("ThreadNumberZ", context.GetParam(ComputeEffectShaderKeys.ThreadNumbers).Z);
                 context.Mixin(mixin, "ComputeFXGraph");
-                context.Mixin(mixin, context.GetParam(ComputeFXKeys.ComputeFXRoot));
+                context.Mixin(mixin, context.GetParam(ComputeFXGraphKeys.ComputeFXRoot));
             }
 
             [ModuleInitializer]
