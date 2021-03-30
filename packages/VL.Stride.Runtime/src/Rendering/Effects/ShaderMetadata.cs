@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Stride.Core.IO;
 using Stride.Rendering;
 using Stride.Core.Shaders.Ast.Stride;
+using Stride.Shaders.Compiler;
 
 namespace VL.Stride.Rendering
 {
@@ -87,7 +88,7 @@ namespace VL.Stride.Rendering
             StrideAttributes.AvailableAttributes.Add(EnumTypeName);
         }
 
-        public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider)
+        public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider, EffectCompiler effectCompiler)
         {
             //create metadata with default values
             var shaderMetadata = new ShaderMetadata();
@@ -95,7 +96,7 @@ namespace VL.Stride.Rendering
             var inputFileName = EffectUtils.GetPathOfSdslShader(effectName, fileProvider);
 
             //try to populate metdata with information form the shader
-            if (EffectUtils.TryParseEffect(inputFileName, out var shader))
+            if (EffectUtils.TryParseAndAnalyze(effectName, fileProvider, effectCompiler, out var shader))
             {
                 var shaderDecl = GetFistClassDecl(shader.Declarations);
 
