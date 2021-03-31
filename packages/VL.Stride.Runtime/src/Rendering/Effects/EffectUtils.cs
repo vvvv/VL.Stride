@@ -16,6 +16,8 @@ using Stride.Core.Diagnostics;
 using Stride.Shaders;
 using ShaderMacro = Stride.Core.Shaders.Parser.ShaderMacro;
 using System.Reflection;
+using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Ast.Stride;
 
 namespace VL.Stride.Rendering
 {
@@ -77,62 +79,132 @@ namespace VL.Stride.Rendering
             return name;
         }
 
-        public static bool TryParseEffect(this IVirtualFileProvider fileProvider, EffectCompiler effectCompiler, string effectName, out Shader shader)
+        public static ClassType GetFirstClassDecl(this Shader shader)
         {
-            shader = null;
-            var fileName = GetPathOfSdslShader(effectName, fileProvider);
-            if (!string.IsNullOrWhiteSpace(fileName))
-                //return TryParseEffect(fileName, fileProvider, out shader);
-                return TryParseAndAnalyze(effectName, fileProvider, effectCompiler, out shader);
-            else
-                return false;
 
+            var result = shader.Declarations.OfType<ClassType>().FirstOrDefault();
+
+            if (result == null)
+            {
+                var nameSpace = shader.Declarations.OfType<NamespaceBlock>().FirstOrDefault();
+                if (nameSpace != null)
+                {
+                    result = nameSpace.Body.OfType<ClassType>().FirstOrDefault();
+                }
+
+            }
+
+            return result;
         }
 
 
-        public static bool TryParseEffect(string inputFileName, IVirtualFileProvider fileProvider, out Shader shader)
+        public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, out EffectParserResult result)
         {
-            shader = null;
-
-            try
+            result = null;
+            var fileName = GetPathOfSdslShader(effectName, fileProvider);
+            if (!string.IsNullOrWhiteSpace(fileName))
             {
-                ShaderMacro[] macros;
+                var resultRef = new EffectParserResultRef();
+                var success = TryParseEffect(fileName, effectName, fileProvider, resultRef);
+                if (success)
+                    result = resultRef.result;
+                return success;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-                // Changed some keywords to avoid ambiguities with HLSL and improve consistency
-                if (inputFileName != null && Path.GetExtension(inputFileName).ToLowerInvariant() == ".sdfx")
+        static object parserCacheLock = new object();
+        internal static Dictionary<string, EffectParserResult> parserCache = new Dictionary<string, EffectParserResult>();
+        
+        public static void ResetParserCache(string shaderName = null)
+        {
+            lock (parserCacheLock)
+            {
+                if (!string.IsNullOrWhiteSpace(shaderName))
                 {
-                    // SDFX
-                    macros = new[]
-                    {
-                        new ShaderMacro("shader", "effect")
-                    };
+                    parserCache.Remove(shaderName);
                 }
                 else
                 {
-                    // SDSL
-                    macros = new[]
-                    {
-                        new ShaderMacro("class", "shader")
-                    };
-                }
-
-                var mixin = new global::Stride.Shaders.ShaderMixinSource();
-                var mixinParser = new ShaderMixinParser(fileProvider).Parse(mixin);
-                var parsingResult = StrideShaderParser.TryPreProcessAndParse(inputFileName, macros);
-
-                if (parsingResult.HasErrors)
-                {
-                    return false;
-                }
-                else //success
-                {
-                    shader = parsingResult.Shader;
-                    return true;
+                    parserCache.Clear();
                 }
             }
-            catch (Exception)
+        }
+
+        public static bool TryParseEffect(string inputFileName, string shaderName, IVirtualFileProvider fileProvider, EffectParserResultRef resultRef)
+        {
+            lock (parserCacheLock)
             {
-                return false;
+                if (parserCache.TryGetValue(shaderName, out var localResult))
+                {
+                    if (resultRef.result == null)
+                        resultRef.result = localResult;
+                    else
+                        resultRef.result.AddBaseShader(localResult);
+
+                    return true;
+                }
+
+                try
+                {
+                    ShaderMacro[] macros;
+
+                    // Changed some keywords to avoid ambiguities with HLSL and improve consistency
+                    if (inputFileName != null && Path.GetExtension(inputFileName).ToLowerInvariant() == ".sdfx")
+                    {
+                        // SDFX
+                        macros = new[]
+                        {
+                            new ShaderMacro("shader", "effect")
+                        };
+                    }
+                    else
+                    {
+                        // SDSL
+                        macros = new[]
+                        {
+                            new ShaderMacro("class", "shader")
+                        };
+                    }
+
+                    var parsingResult = StrideShaderParser.TryPreProcessAndParse(inputFileName, macros);
+
+                    if (parsingResult.HasErrors)
+                    {
+                        return false;
+                    }
+                    else //success
+                    {
+                        localResult = new EffectParserResult(parsingResult.Shader);
+                        parserCache[shaderName] = localResult;
+
+                        if (resultRef.result == null)
+                            resultRef.result = localResult;
+                        else
+                            resultRef.result.AddBaseShader(localResult);
+
+                        // base shaders
+                        var baseShaders = localResult.Shader.GetFirstClassDecl().BaseClasses;
+                        foreach (var baseClass in baseShaders)
+                        {
+                            var baseShaderName = baseClass.Name.Text;
+                            var fileName = GetPathOfSdslShader(baseShaderName, fileProvider);
+                            if (!string.IsNullOrWhiteSpace(fileName))
+                            {
+                                TryParseEffect(fileName, baseShaderName, fileProvider, resultRef);
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                } 
             }
         }
 
@@ -150,67 +222,75 @@ namespace VL.Stride.Rendering
 
         public static bool TryParseAndAnalyze(string shaderName, IVirtualFileProvider fileProvider, EffectCompiler effectCompiler, out Shader shader)
         {
-            var effectParameters = effectCompilerParameters.Value;
-            var log = new LoggerResult();
-
-
-            var source = new ShaderClassSource(shaderName);
-            var mixinTree = new ShaderMixinSource();
-            mixinTree.Mixins.Add(source);
-            var shaderMixinSource = mixinTree;
-            var fullEffectName = mixinTree.Name;
-
-            // Make a copy of shaderMixinSource. Use deep clone since shaderMixinSource can be altered during compilation (e.g. macros)
-            var shaderMixinSourceCopy = new ShaderMixinSource();
-            shaderMixinSourceCopy.DeepCloneFrom(shaderMixinSource);
-            shaderMixinSource = shaderMixinSourceCopy;
-
-            // Generate platform-specific macros
-            switch (effectParameters.Platform)
+            shader = null;
+            try
             {
-                case GraphicsPlatform.Direct3D11:
-                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
-                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D11", 1);
-                    break;
-                case GraphicsPlatform.Direct3D12:
-                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
-                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D12", 1);
-                    break;
-                case GraphicsPlatform.OpenGL:
-                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGL", 1);
-                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGLCORE", 1);
-                    break;
-                case GraphicsPlatform.OpenGLES:
-                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGL", 1);
-                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGLES", 1);
-                    break;
-                case GraphicsPlatform.Vulkan:
-                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_VULKAN", 1);
-                    break;
-                default:
-                    throw new NotSupportedException();
+                var effectParameters = effectCompilerParameters.Value;
+                var log = new LoggerResult();
+
+
+                var source = new ShaderClassSource(shaderName);
+                var mixinTree = new ShaderMixinSource();
+                mixinTree.Mixins.Add(source);
+                var shaderMixinSource = mixinTree;
+                var fullEffectName = mixinTree.Name;
+
+                // Make a copy of shaderMixinSource. Use deep clone since shaderMixinSource can be altered during compilation (e.g. macros)
+                var shaderMixinSourceCopy = new ShaderMixinSource();
+                shaderMixinSourceCopy.DeepCloneFrom(shaderMixinSource);
+                shaderMixinSource = shaderMixinSourceCopy;
+
+                // Generate platform-specific macros
+                switch (effectParameters.Platform)
+                {
+                    case GraphicsPlatform.Direct3D11:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D11", 1);
+                        break;
+                    case GraphicsPlatform.Direct3D12:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D12", 1);
+                        break;
+                    case GraphicsPlatform.OpenGL:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGL", 1);
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGLCORE", 1);
+                        break;
+                    case GraphicsPlatform.OpenGLES:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGL", 1);
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGLES", 1);
+                        break;
+                    case GraphicsPlatform.Vulkan:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_VULKAN", 1);
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+
+                // Generate profile-specific macros
+                shaderMixinSource.AddMacro("STRIDE_GRAPHICS_PROFILE", (int)effectParameters.Profile);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_1", (int)GraphicsProfile.Level_9_1);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_2", (int)GraphicsProfile.Level_9_2);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_3", (int)GraphicsProfile.Level_9_3);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_10_0", (int)GraphicsProfile.Level_10_0);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_10_1", (int)GraphicsProfile.Level_10_1);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_0", (int)GraphicsProfile.Level_11_0);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_1", (int)GraphicsProfile.Level_11_1);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_2", (int)GraphicsProfile.Level_11_2);
+
+                // In .sdsl, class has been renamed to shader to avoid ambiguities with HLSL
+                shaderMixinSource.AddMacro("class", "shader");
+
+                var parsingResult = effectCompiler.GetMixinParser().Parse(shaderMixinSource, shaderMixinSource.Macros.ToArray());
+                shader = parsingResult.Shader;
+                //parsingResult.Shader.
+                // Copy log from parser results to output
+                //CopyLogs(parsingResult, log);
+                return true;
             }
-
-            // Generate profile-specific macros
-            shaderMixinSource.AddMacro("STRIDE_GRAPHICS_PROFILE", (int)effectParameters.Profile);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_1", (int)GraphicsProfile.Level_9_1);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_2", (int)GraphicsProfile.Level_9_2);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_3", (int)GraphicsProfile.Level_9_3);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_10_0", (int)GraphicsProfile.Level_10_0);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_10_1", (int)GraphicsProfile.Level_10_1);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_0", (int)GraphicsProfile.Level_11_0);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_1", (int)GraphicsProfile.Level_11_1);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_2", (int)GraphicsProfile.Level_11_2);
-
-            // In .sdsl, class has been renamed to shader to avoid ambiguities with HLSL
-            shaderMixinSource.AddMacro("class", "shader");
-
-            var parsingResult = effectCompiler.GetMixinParser().Parse(shaderMixinSource, shaderMixinSource.Macros.ToArray());
-            shader = parsingResult.Shader;
-            //parsingResult.Shader.
-            // Copy log from parser results to output
-            //CopyLogs(parsingResult, log);
-            return true;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private static ShaderMixinParser GetMixinParser(this EffectCompiler effectCompiler)

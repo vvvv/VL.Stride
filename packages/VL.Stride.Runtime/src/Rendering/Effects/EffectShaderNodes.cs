@@ -108,8 +108,6 @@ namespace VL.Stride.Rendering
 
             var compiler = effectSystem.Compiler;
 
-
-
             const string sdslFileFilter = "*.sdsl";
             const string drawFXSuffix = "_DrawFX";
             const string computeFXSuffix = "_ComputeFX";
@@ -122,10 +120,7 @@ namespace VL.Stride.Rendering
             else
                 fileProvider = contentManager.FileProvider;
 
-            var effectCompiler = new EffectCompiler(fileProvider)
-            {
-                SourceDirectories = { EffectCompilerBase.DefaultSourceShaderFolder },
-            };
+            //EffectUtils.InvalidateParserCache();
 
             foreach (var file in fileProvider.ListFiles(EffectCompilerBase.DefaultSourceShaderFolder, sdslFileFilter, VirtualSearchOption.TopDirectoryOnly))
             {
@@ -144,7 +139,7 @@ namespace VL.Stride.Rendering
                     var name = GetNodeName(effectName, textureFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
 
-                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, fileProvider, effectCompiler);
+                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, fileProvider);
 
                     IVLNodeDescription shaderNodeDescription;
                     yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName, shaderMetadata);
@@ -205,7 +200,11 @@ namespace VL.Stride.Rendering
                 {
                     invalidated = Observable.Merge(invalidated, NodeBuilding.WatchDir(shadersPath)
                         .Where(e => Path.GetFileNameWithoutExtension(e.Name) == watchName)
-                        .Do(_ => ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { watchName })));
+                        .Do(_ =>
+                        {
+                            ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { watchName });
+                            EffectUtils.ResetParserCache(watchName);
+                        }));
                 }
                 try
                 {

@@ -88,17 +88,15 @@ namespace VL.Stride.Rendering
             StrideAttributes.AvailableAttributes.Add(EnumTypeName);
         }
 
-        public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider, EffectCompiler effectCompiler)
+        public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider)
         {
             //create metadata with default values
             var shaderMetadata = new ShaderMetadata();
 
-            var inputFileName = EffectUtils.GetPathOfSdslShader(effectName, fileProvider);
-
             //try to populate metdata with information form the shader
-            if (EffectUtils.TryParseAndAnalyze(effectName, fileProvider, effectCompiler, out var shader))
+            if (fileProvider.TryParseEffect(effectName, out var result))
             {
-                var shaderDecl = GetFistClassDecl(shader.Declarations);
+                var shaderDecl = result.Shader.GetFirstClassDecl();
 
                 if (shaderDecl != null)
                 {
@@ -153,21 +151,6 @@ namespace VL.Stride.Rendering
         private static string FirstParamAsString(AttributeDeclaration attr)
         {
             return attr.Parameters.FirstOrDefault()?.Value as string;
-        }
-
-        static ClassType GetFistClassDecl(List<Node> nodes)
-        {
-            return nodes.OfType<ClassType>().FirstOrDefault();
-
-            //TODO: namespace could be surrounding the shader
-            //else if (firstDecl is NamespaceBlock ns)
-            //{
-            //    return GetFistClassDecl(ns.Body);
-            //}
-            //
-            //return null;
-        }
-
-        
+        } 
     }
 }
