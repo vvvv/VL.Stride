@@ -98,16 +98,16 @@ namespace VL.Stride.Rendering
         }
 
 
-        public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, out EffectParserResult result)
+        public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, out ParsedShader result)
         {
             result = null;
             var fileName = GetPathOfSdslShader(effectName, fileProvider);
             if (!string.IsNullOrWhiteSpace(fileName))
             {
-                var resultRef = new EffectParserResultRef();
+                var resultRef = new ParsedShaderRef();
                 var success = TryParseEffect(fileName, effectName, fileProvider, resultRef);
                 if (success)
-                    result = resultRef.result;
+                    result = resultRef.ParsedShader;
                 return success;
             }
             else
@@ -117,7 +117,7 @@ namespace VL.Stride.Rendering
         }
 
         static object parserCacheLock = new object();
-        internal static Dictionary<string, EffectParserResult> parserCache = new Dictionary<string, EffectParserResult>();
+        internal static Dictionary<string, ParsedShader> parserCache = new Dictionary<string, ParsedShader>();
         
         public static void ResetParserCache(string shaderName = null)
         {
@@ -134,16 +134,16 @@ namespace VL.Stride.Rendering
             }
         }
 
-        public static bool TryParseEffect(string inputFileName, string shaderName, IVirtualFileProvider fileProvider, EffectParserResultRef resultRef)
+        public static bool TryParseEffect(string inputFileName, string shaderName, IVirtualFileProvider fileProvider, ParsedShaderRef resultRef)
         {
             lock (parserCacheLock)
             {
                 if (parserCache.TryGetValue(shaderName, out var localResult))
                 {
-                    if (resultRef.result == null)
-                        resultRef.result = localResult;
+                    if (resultRef.ParsedShader == null)
+                        resultRef.ParsedShader = localResult;
                     else
-                        resultRef.result.AddBaseShader(localResult);
+                        resultRef.ParsedShader.AddBaseShader(localResult);
 
                     return true;
                 }
@@ -178,13 +178,13 @@ namespace VL.Stride.Rendering
                     }
                     else //success
                     {
-                        localResult = new EffectParserResult(parsingResult.Shader);
+                        localResult = new ParsedShader(parsingResult.Shader);
                         parserCache[shaderName] = localResult;
 
-                        if (resultRef.result == null)
-                            resultRef.result = localResult;
+                        if (resultRef.ParsedShader == null)
+                            resultRef.ParsedShader = localResult;
                         else
-                            resultRef.result.AddBaseShader(localResult);
+                            resultRef.ParsedShader.AddBaseShader(localResult);
 
                         // base shaders
                         var baseShaders = localResult.Shader.GetFirstClassDecl().BaseClasses;

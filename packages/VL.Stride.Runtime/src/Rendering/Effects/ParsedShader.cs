@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 
 namespace VL.Stride.Rendering
 {
-    public class EffectParserResult
+    public class ParsedShader
     {
         public readonly Shader Shader;
 
         // base shaders
-        public IReadOnlyList<EffectParserResult> BaseShaders => baseShaders;
-        private readonly List<EffectParserResult> baseShaders = new List<EffectParserResult>();
+        public IReadOnlyList<ParsedShader> BaseShaders => baseShaders;
+        private readonly List<ParsedShader> baseShaders = new List<ParsedShader>();
 
         // compositions
         public IReadOnlyList<CompositionInput> Compositions => compositions;
         private readonly List<CompositionInput> compositions;
 
-        public EffectParserResult(Shader shader)
+        public ParsedShader(Shader shader)
         {
             Shader = shader;
             var s = Shader.GetFirstClassDecl();
@@ -32,13 +32,13 @@ namespace VL.Stride.Rendering
                 .ToList();
         }
 
-        public void AddBaseShader(EffectParserResult baseShader)
+        public void AddBaseShader(ParsedShader baseShader)
             => baseShaders.Add(baseShader);
     }
 
-    public class EffectParserResultRef
+    public class ParsedShaderRef
     {
-        public EffectParserResult result;
+        public ParsedShader ParsedShader;
     }
 
     public class CompositionInput
@@ -47,7 +47,7 @@ namespace VL.Stride.Rendering
         public readonly string TypeName;
 
         /// <summary>
-        /// The local index in the shader file.
+        /// The local index of this variable in the shader file.
         /// </summary>
         public readonly int LocalIndex;
 
