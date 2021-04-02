@@ -562,7 +562,7 @@ namespace VL.Stride.Rendering
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
-                                var effect = new TextureFXEffect("TextureFXEffect");
+                                var effect = new TextureFXEffect("TextureFXEffect") { Name = shaderName };
 
                                 BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var textureFXEffectMixin, effect.Parameters);
 
