@@ -14,11 +14,11 @@ using Stride.Shaders;
 using Stride.Core.Mathematics;
 using Buffer = Stride.Graphics.Buffer;
 
-namespace VL.Stride.Effects.TextureFX
+namespace VL.Stride.Effects
 {
     internal static partial class ShaderMixins
     {
-        internal partial class TextureFXEffect  : IShaderMixinBuilder
+        internal partial class DrawFXEffect  : IShaderMixinBuilder
         {
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
@@ -29,7 +29,7 @@ namespace VL.Stride.Effects.TextureFX
             internal static void __Initialize__()
 
             {
-                ShaderMixinManager.Register("TextureFXEffect", new TextureFXEffect());
+                ShaderMixinManager.Register("DrawFXEffect", new DrawFXEffect());
             }
         }
     }

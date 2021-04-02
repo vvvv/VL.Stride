@@ -6,18 +6,4 @@
 // and re-save the associated .sdfx.
 // </auto-generated>
 
-using System;
-using Stride.Core;
-using Stride.Rendering;
-using Stride.Graphics;
-using Stride.Shaders;
-using Stride.Core.Mathematics;
-using Buffer = Stride.Graphics.Buffer;
-
-namespace Stride.Rendering
-{
-    public static partial class FilterBaseKeys
-    {
-        public static readonly ValueParameterKey<Vector4> Control = ParameterKeys.NewValue<Vector4>(new Vector4(1,1,1,1));
-    }
-}
+// Nothing to generate

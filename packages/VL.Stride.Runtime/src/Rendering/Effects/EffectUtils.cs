@@ -187,7 +187,7 @@ namespace VL.Stride.Rendering
                             resultRef.ParsedShader.AddBaseShader(localResult);
 
                         // base shaders
-                        var baseShaders = localResult.Shader.GetFirstClassDecl().BaseClasses;
+                        var baseShaders = localResult.ShaderClass.BaseClasses;
                         foreach (var baseClass in baseShaders)
                         {
                             var baseShaderName = baseClass.Name.Text;

@@ -1,5 +1,8 @@
 ﻿using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Ast.Stride;
+using Stride.Rendering;
+using Stride.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,25 +14,48 @@ namespace VL.Stride.Rendering
     public class ParsedShader
     {
         public readonly Shader Shader;
+        public readonly ClassType ShaderClass;
 
         // base shaders
         public IReadOnlyList<ParsedShader> BaseShaders => baseShaders;
         private readonly List<ParsedShader> baseShaders = new List<ParsedShader>();
 
         // compositions
-        public IReadOnlyList<CompositionInput> Compositions => compositions;
-        private readonly List<CompositionInput> compositions;
+        public IReadOnlyDictionary<string, CompositionInput> Compositions => compositions;
+        private readonly Dictionary<string, CompositionInput> compositions;
+
+        public IReadOnlyDictionary<string, CompositionInput> CompositionsWithBaseShaders => compositionsWithBaseShaders.Value;
+
+        Lazy<IReadOnlyDictionary<string, CompositionInput>> compositionsWithBaseShaders;
+
+        private IEnumerable<CompositionInput> GetCompositionsWithBaseShaders()
+        {
+            foreach (var comp in Compositions)
+            {
+                yield return comp.Value;
+            }
+
+            foreach (var baseClass in BaseShaders)
+            {
+                foreach (var baseComp in baseClass.Compositions)
+                {
+                    yield return baseComp.Value;
+                }
+            }
+        }
 
         public ParsedShader(Shader shader)
         {
             Shader = shader;
-            var s = Shader.GetFirstClassDecl();
-            var compositions = s.Members
+            ShaderClass = Shader.GetFirstClassDecl();
+            compositions = ShaderClass.Members
                 .OfType<Variable>()
                 .Select((v, i) => (v, i))
                 .Where(v => v.v.Qualifiers.Contains(StrideStorageQualifier.Compose))
                 .Select(v => new CompositionInput(v.v, v.i))
-                .ToList();
+                .ToDictionary(v => v.Name);
+
+            compositionsWithBaseShaders = new Lazy<IReadOnlyDictionary<string, CompositionInput>>(() => GetCompositionsWithBaseShaders().ToDictionary(c => c.Name));
         }
 
         public void AddBaseShader(ParsedShader baseShader)
@@ -45,6 +71,8 @@ namespace VL.Stride.Rendering
     {
         public readonly string Name;
         public readonly string TypeName;
+        public readonly PermutationParameterKey<ShaderSource> Key;
+        public readonly Lazy<ShaderSource> DefaultShaderSource;
 
         /// <summary>
         /// The local index of this variable in the shader file.
@@ -55,10 +83,12 @@ namespace VL.Stride.Rendering
 
         public CompositionInput(Variable v, int localIndex)
         {
-            LocalIndex = localIndex;
             Name = v.Name.Text;
             TypeName = v.Type.Name.Text;
+            Key = new PermutationParameterKey<ShaderSource>(Name);
+            LocalIndex = localIndex;
             Variable = v;
+            DefaultShaderSource = new Lazy<ShaderSource>(() => new ShaderClassSource(TypeName));
         }
     }
 }

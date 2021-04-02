@@ -14,10 +14,10 @@ using Stride.Shaders;
 using Stride.Core.Mathematics;
 using Buffer = Stride.Graphics.Buffer;
 
-namespace Stride.Rendering
+namespace VL.Stride.Effects
 {
-    public static partial class TestColKeys
+    public class EffectNodeBaseKeys
     {
-        public static readonly ValueParameterKey<Vector4> TestColor = ParameterKeys.NewValue<Vector4>(new Vector4(1,1,0,1));
-    }
+        public static readonly PermutationParameterKey<ShaderSource> EffectNodeBaseShader = ParameterKeys.NewPermutation<ShaderSource>();
+    };
 }

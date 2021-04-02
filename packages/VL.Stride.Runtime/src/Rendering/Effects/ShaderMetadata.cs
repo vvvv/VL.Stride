@@ -7,7 +7,10 @@ using System.Collections.Generic;
 using Stride.Core.IO;
 using Stride.Rendering;
 using Stride.Core.Shaders.Ast.Stride;
-using Stride.Shaders.Compiler;
+using Stride.Shaders;
+using VL.Stride.Shaders.ShaderFX;
+using Stride.Core.Mathematics;
+using Stride.Rendering.Materials;
 
 namespace VL.Stride.Rendering
 {
@@ -23,10 +26,12 @@ namespace VL.Stride.Rendering
 
         public string Tags { get; private set; }
 
-        public PixelFormat GetPixelFormat(bool hasTextureIn)
+        public ParsedShader ParsedShader { get; private set; }
+
+        public PixelFormat GetPixelFormat(bool isFilter)
         {
-            if (!hasTextureIn && OutputFormat == PixelFormat.None)
-                return PixelFormat.R8G8B8A8_UNorm;
+            if (!isFilter && OutputFormat == PixelFormat.None)
+                return PixelFormat.R8G8B8A8_UNorm_SRgb;
             else 
                 return OutputFormat;
         }
@@ -44,11 +49,17 @@ namespace VL.Stride.Rendering
             return Category;
         }
 
-        Dictionary<string, string> pinEnumAttributes = new Dictionary<string, string>();
+        Dictionary<string, string> pinEnumTypes = new Dictionary<string, string>();
+        HashSet<string> optionalPins = new HashSet<string>();
 
-        private void AddEnumAttribute(string name, string enumTypeName)
+        private void AddEnumTypePinAttribute(string name, string enumTypeName)
         {
-            pinEnumAttributes[name] = enumTypeName;
+            pinEnumTypes[name] = enumTypeName;
+        }
+
+        private void AddOptionalPinAttribute(string name)
+        {
+            optionalPins.Add(name);
         }
 
         /// <summary>
@@ -56,7 +67,7 @@ namespace VL.Stride.Rendering
         /// </summary>
         public Type GetPinType(ParameterKey key)
         {
-            if (pinEnumAttributes.TryGetValue(key.Name, out var enumTypeName))
+            if (pinEnumTypes.TryGetValue(key.Name, out var enumTypeName))
             {
                 try
                 {
@@ -70,7 +81,42 @@ namespace VL.Stride.Rendering
                 }
             }
 
+            if (key.PropertyType == typeof(ShaderSource))
+            {
+                if (ParsedShader.CompositionsWithBaseShaders.TryGetValue(key.GetVariableName(), out var composition))
+                {
+                    if (knownShaderFXTypes.TryGetValue(composition.TypeName, out var type))
+                    {
+                        return type;
+                    }
+                }
+
+                return typeof(IComputeNode);
+            }
+
             return null;
+        }
+
+        static Dictionary<string, Type> knownShaderFXTypes = new Dictionary<string, Type>()
+        {
+            { "ComputeVoid", typeof(ComputeVoid) },
+            { "ComputeFloat", typeof(SetVar<float>) },
+            { "ComputeFloat2", typeof(SetVar<Vector2>) },
+            { "ComputeFloat3", typeof(SetVar<Vector3>) },
+            { "ComputeFloat4", typeof(SetVar<Vector4>) },
+            { "ComputeMatrix", typeof(SetVar<Matrix>) },
+            { "ComputeInt", typeof(SetVar<int>) },
+            { "ComputeInt2", typeof(SetVar<Int2>) },
+            { "ComputeInt3", typeof(SetVar<Int3>) },
+            { "ComputeInt4", typeof(SetVar<Int4>) },
+        };
+
+        /// <summary>
+        /// Determines whether the specified pin with the given key is optional.
+        /// </summary>
+        public bool IsOptional(ParameterKey key)
+        {
+            return optionalPins.Contains(key.Name);
         }
 
         //shader
@@ -82,10 +128,15 @@ namespace VL.Stride.Rendering
 
         //pin
         const string EnumTypeName = "EnumType";
+        const string OptionalName = "Optional";
 
+        /// <summary>
+        /// Registers the additional stride shader attributes. Avoids writing them to the final shader, which would create an error in the native platform compiler.
+        /// </summary>
         public static void RegisterAdditionalShaderAttributes()
         {
             StrideAttributes.AvailableAttributes.Add(EnumTypeName);
+            StrideAttributes.AvailableAttributes.Add(OptionalName);
         }
 
         public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider)
@@ -96,7 +147,8 @@ namespace VL.Stride.Rendering
             //try to populate metdata with information form the shader
             if (fileProvider.TryParseEffect(effectName, out var result))
             {
-                var shaderDecl = result.Shader.GetFirstClassDecl();
+                shaderMetadata.ParsedShader = result;
+                var shaderDecl = result.ShaderClass;
 
                 if (shaderDecl != null)
                 {
@@ -135,8 +187,11 @@ namespace VL.Stride.Rendering
                             {
                                 case EnumTypeName:
                                     var enumTypeName = FirstParamAsString(attr);
-                                    shaderMetadata.AddEnumAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text, enumTypeName);
-                                    break;                              
+                                    shaderMetadata.AddEnumTypePinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text, enumTypeName);
+                                    break;
+                                case OptionalName:
+                                    shaderMetadata.AddOptionalPinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text);
+                                    break;
                                 default:
                                     break;
                             }
@@ -151,6 +206,6 @@ namespace VL.Stride.Rendering
         private static string FirstParamAsString(AttributeDeclaration attr)
         {
             return attr.Parameters.FirstOrDefault()?.Value as string;
-        } 
+        }
     }
 }

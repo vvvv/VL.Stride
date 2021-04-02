@@ -6,6 +6,11 @@ using Stride.Rendering;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using System.Runtime.CompilerServices;
+using Stride.Rendering.Materials;
+using VL.Stride.Shaders.ShaderFX;
+using VL.Stride.Shaders.ShaderFX.Control;
+using Stride.Shaders;
+using Stride.Rendering.Materials.ComputeColors;
 
 namespace VL.Stride.Rendering
 {
@@ -81,17 +86,32 @@ namespace VL.Stride.Rendering
 
     static class EffectPins
     {
-        public static IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey, object value, Type type)
+        public static IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey, object value, Type typeInPatch)
         {
             if (key is ValueParameterKey<Color4> colorKey)
                 return new ColorParameterPin(parameters, colorKey, graphicsDevice.ColorSpace, (Color4)value);
 
             var argument = key.GetType().GetGenericArguments()[0];
 
-            if (type.IsEnum)
+            if (typeInPatch.IsEnum)
             {
                 var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateEnumPin), BindingFlags.Static | BindingFlags.Public);
-                return createPinMethod.MakeGenericMethod(argument, type).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+                return createPinMethod.MakeGenericMethod(argument, typeInPatch).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+            }
+
+            if (argument == typeof(ShaderSource))
+            {
+                if (typeInPatch.IsGenericType && typeInPatch.GetGenericTypeDefinition() == typeof(SetVar<>))
+                {
+                    var typeParam = typeInPatch.GetGenericArguments()[0];
+                    var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateGPUValueSinkPin), BindingFlags.Static | BindingFlags.Public);
+                    return createPinMethod.MakeGenericMethod(typeParam).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+                }
+                else
+                {
+                    var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateShaderFXPin), BindingFlags.Static | BindingFlags.Public);
+                    return createPinMethod.MakeGenericMethod(typeof(IComputeNode)).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+                }
             }
 
             if (isPermutationKey)
@@ -127,6 +147,16 @@ namespace VL.Stride.Rendering
         public static IVLPin CreateEnumPin<T, TEnum>(ParameterCollection parameters, ValueParameterKey<T> key, TEnum value) where T : unmanaged where TEnum : unmanaged
         {
             return new EnumParameterPin<T, TEnum>(parameters, key, value);
+        }
+
+        public static IVLPin CreateShaderFXPin<T>(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key, T value) where T : class, IComputeNode
+        {
+            return new ShaderFXPin<T>(parameters, key, value);
+        }
+
+        public static IVLPin CreateGPUValueSinkPin<T>(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key, SetVar<T> value)
+        {
+            return new GPUValueSinkPin<T>(parameters, key, value);
         }
 
         public static IVLPin CreateValuePin<T>(ParameterCollection parameters, ValueParameterKey<T> key, T value) where T : struct
@@ -323,6 +353,92 @@ namespace VL.Stride.Rendering
         {
             get => Value;
             set => Value = (T)value;
+        }
+    }
+
+    abstract class ShaderFXPin : ParameterPin
+    {
+        public readonly PermutationParameterKey<ShaderSource> Key;
+
+        public ShaderFXPin(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key)
+            : base(parameters, key)
+        {
+            Key = key;
+        }
+
+        public bool HasChanged { get; protected set; } = true;
+
+        public void GenerateAndSetShaderSource(ShaderMixinSource mixin, ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            var shaderSource = GetShaderSource(context, baseKeys);
+            Parameters.Set(Key, shaderSource);
+            mixin.Compositions[Key.Name] = shaderSource;
+        }
+
+        protected abstract ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys);
+
+    }
+
+    class ShaderFXPin<TShaderClass> : ShaderFXPin, IVLPin<TShaderClass> where TShaderClass : class, IComputeNode
+    {
+        private TShaderClass internalValue;
+        protected TShaderClass defaultValue;
+
+        public ShaderFXPin(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key, TShaderClass value)
+            : base(parameters, key)
+        {
+            Value = value;
+            defaultValue = value;
+        }
+
+        public TShaderClass Value
+        {
+            get => internalValue;
+            set
+            {
+                if (internalValue != value)
+                {
+                    internalValue = value;
+                    HasChanged = true;
+                }
+                else
+                {
+                    HasChanged = false;
+                }
+            }
+        }
+
+        object IVLPin.Value
+        {
+            get => Value;
+            set => Value = (TShaderClass)value;
+        }
+
+        protected override ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            if (this.Value is ComputeNode shaderNode)
+            {
+                return shaderNode.GenerateShaderSource(context, baseKeys);
+            }
+
+            return null;
+        }
+    }
+
+    sealed class GPUValueSinkPin<T> : ShaderFXPin<SetVar<T>>
+    {
+        public GPUValueSinkPin(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key, SetVar<T> value) 
+            : base(parameters, key, value)
+        {
+        }
+
+        protected override ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            var input = this.Value ?? ShaderFXUtils.Constant<T>(default);
+            var getter = ShaderFXUtils.GetVarValue(input);
+            var graph = ShaderGraph.BuildFinalShaderGraph(getter);
+            var finalVar = new Do<T>(graph, getter);
+            return finalVar.GenerateShaderSource(context, baseKeys);
         }
     }
 
