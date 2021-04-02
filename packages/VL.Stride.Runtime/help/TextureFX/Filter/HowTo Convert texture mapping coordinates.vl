@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="Hf32SdJhAs1OblerMLg1KE" LanguageVersion="2021.4.0.25" Version="0.128">
+<Document xmlns:p="property" Id="Hf32SdJhAs1OblerMLg1KE" LanguageVersion="2021.4.0.30" Version="0.128">
   <Patch Id="CqEjel6vUB0Ls12PE4UVpj">
     <Canvas Id="Ay0GUWPdCD6MmAsWXwzj9S" DefaultCategory="Stride.Textures.TextureFX" CanvasType="FullCategory" />
     <!--
@@ -84,7 +84,7 @@
             <Pin Id="N8u8V4CafA3NTr5nRysih7" Name="Is Loading" Kind="OutputPin" />
             <Pin Id="IdQJV23ninSQLnouAN4y5P" Name="Already Loaded" Kind="OutputPin" />
           </Node>
-          <Pad Id="AdG4n8QmyesLsQlOI88W3T" Comment="Path" Bounds="107,198,96,18" ShowValueBox="true" isIOBox="true" Value="..\..\src\Resources\Textures\cartesian.png">
+          <Pad Id="AdG4n8QmyesLsQlOI88W3T" Comment="Path" Bounds="107,198,96,18" ShowValueBox="true" isIOBox="true" Value="..\..\..\src\Resources\Textures\cartesian.png">
             <p:TypeAnnotation LastCategoryFullName="IO" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>
@@ -161,10 +161,11 @@
           <Node Bounds="105,308,265,19" Id="Gku5Mj6G5cNLuLxQHh1ojt">
             <p:NodeReference LastCategoryFullName="Stride.Textures.Filter" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessNode" Name="Coordinates (Polar)" />
+              <Choice Kind="ProcessNode" Name="Coordinates" />
             </p:NodeReference>
             <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
             <Pin Id="PwG21anBX8CLdiBoN5PJ4n" Name="Input" Kind="InputPin" />
+            <Pin Id="Bq2i7uhYJopPULxXVs2fie" Name="Type" Kind="InputPin" />
             <Pin Id="Rxl6XeKv0FhLvEsj0qSGrU" Name="Interpolation" Kind="InputPin" />
             <Pin Id="TJNPBXbwhoJMDWFTcZkQ70" Name="Repeats" Kind="InputPin" />
             <Pin Id="KS3TNBKfYjtPihNYtN0czJ" Name="Clamp" Kind="InputPin" />
@@ -180,13 +181,14 @@
             <Pin Id="Gcb5NTezucfOqSKx20ppIE" Name="Apply" Kind="InputPin" />
             <Pin Id="RfmXopQdm2nMHgBZWmQlGd" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="302,351,265,19" Id="KOjX6Az0Iv3L9VkwYRPk7c">
+          <Node Bounds="303,370,265,19" Id="KOjX6Az0Iv3L9VkwYRPk7c">
             <p:NodeReference LastCategoryFullName="Stride.Textures.Filter" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessNode" Name="Coordinates (Cartesian)" />
+              <Choice Kind="ProcessNode" Name="Coordinates" />
             </p:NodeReference>
             <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
             <Pin Id="A6YN7pyRB4COcyZdd4KqjF" Name="Input" Kind="InputPin" />
+            <Pin Id="SJLq3JhmQW7P3gXt7746Tc" Name="Type" Kind="InputPin" />
             <Pin Id="ALofs3hBT3BP2GFCdXnnS9" Name="Interpolation" Kind="InputPin" />
             <Pin Id="Bi33TVlSLfyQXSrKAjQITg" Name="Repeats" Kind="InputPin" />
             <Pin Id="I81UeSaimkoMACRDxS8TQ0" Name="Clamp" Kind="InputPin" />
@@ -202,6 +204,16 @@
             <Pin Id="NIxsvRWWY0EOs1Bggp1Fci" Name="Apply" Kind="InputPin" />
             <Pin Id="GBnvfz1IXctOi4NsIQmvLt" Name="Output" Kind="OutputPin" />
           </Node>
+          <Pad Id="AJ9lrtxXSpWMYviFEnbZeJ" Comment="Type" Bounds="158,285,71,15" ShowValueBox="true" isIOBox="true" Value="Polar">
+            <p:TypeAnnotation LastCategoryFullName="Stride.Textures.Filter" LastSymbolSource="VL.Stride.Rendering.vl">
+              <Choice Kind="TypeFlag" Name="CoordinatesType" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Pad Id="BBYgRucAZXSQQHC6WxsBZi" Comment="Type" Bounds="352,348,71,15" ShowValueBox="true" isIOBox="true" Value="0">
+            <p:TypeAnnotation LastCategoryFullName="Stride.Textures.Filter" LastSymbolSource="VL.Stride.Rendering.vl">
+              <Choice Kind="TypeFlag" Name="CoordinatesType" />
+            </p:TypeAnnotation>
+          </Pad>
         </Canvas>
         <Patch Id="EeYifYoEpnRNyJtIx9QDx7" Name="Create" />
         <Patch Id="TvSP2TbZlZlPnECnVS9Z9O" Name="Update" />
@@ -216,10 +228,12 @@
         <Link Id="KW7l3foyLkSNsll8kKCzFN" Ids="GBnvfz1IXctOi4NsIQmvLt,DuOufaI2jvNNXRf395BnqI" />
         <Link Id="GOP14By9q98ONhGbT04H77" Ids="N3A7hOf99ugQQneVifp72U,PwG21anBX8CLdiBoN5PJ4n" />
         <Link Id="QenLOIqI2U6NEJMDSa4gKL" Ids="RfmXopQdm2nMHgBZWmQlGd,A6YN7pyRB4COcyZdd4KqjF" />
+        <Link Id="CkHwCKbZgwAMW0AaGdqjb0" Ids="AJ9lrtxXSpWMYviFEnbZeJ,Bq2i7uhYJopPULxXVs2fie" />
+        <Link Id="GigWvu0M28PNddQPgzn7Hk" Ids="BBYgRucAZXSQQHC6WxsBZi,SJLq3JhmQW7P3gXt7746Tc" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="UpzMcgYcSeUMeMYKGJjyjj" Location="VL.Stride" Version="0.9.124-g9f226f2ed3" />
-  <NugetDependency Id="DgmOWrKQ8ZHMICtHFERV9W" Location="VL.CoreLib" Version="2021.3.0-0063-ga70592155c" />
-  <NugetDependency Id="QLVVHTDx4QBLtIECtRU3m9" Location="VL.Skia" Version="2021.3.0-0063-ga70592155c" />
+  <NugetDependency Id="UpzMcgYcSeUMeMYKGJjyjj" Location="VL.Stride" Version="0.9.138-g1defaaf5c4" />
+  <NugetDependency Id="DgmOWrKQ8ZHMICtHFERV9W" Location="VL.CoreLib" Version="2021.4.0-0030-gf9a882289a" />
+  <NugetDependency Id="QLVVHTDx4QBLtIECtRU3m9" Location="VL.Skia" Version="2021.4.0-0030-gf9a882289a" />
 </Document>
