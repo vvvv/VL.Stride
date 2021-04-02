@@ -1,13 +1,17 @@
-﻿using Stride.Core.Shaders.Ast;
+﻿using Stride.Core.Mathematics;
+using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Ast.Stride;
 using Stride.Rendering;
+using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VL.Stride.Shaders.ShaderFX;
 
 namespace VL.Stride.Rendering
 {
@@ -72,7 +76,6 @@ namespace VL.Stride.Rendering
         public readonly string Name;
         public readonly string TypeName;
         public readonly PermutationParameterKey<ShaderSource> Key;
-        public readonly Lazy<ShaderSource> DefaultShaderSource;
 
         /// <summary>
         /// The local index of this variable in the shader file.
@@ -88,7 +91,104 @@ namespace VL.Stride.Rendering
             Key = new PermutationParameterKey<ShaderSource>(Name);
             LocalIndex = localIndex;
             Variable = v;
-            DefaultShaderSource = new Lazy<ShaderSource>(() => new ShaderClassSource(TypeName));
+        }
+
+        // cache
+        ShaderSource defaultShaderSource;
+        ComputeNode defaultComputeNode;
+
+        public ComputeNode GetDefaultComputeNode()
+        {
+            if (defaultComputeNode != null)
+                return defaultComputeNode;
+
+            if (knownShaderFXTypeInputs.TryGetValue(TypeName, out var compDefault))
+            {
+                var boxedDefaultValue = compDefault.BoxedDefault;
+
+                if (Variable.TryGetAttribute(ShaderMetadata.DefaultName, out var attribute))
+                {
+                    boxedDefaultValue = attribute.ParseBoxed(compDefault.ValueType);
+                }
+
+                defaultComputeNode = compDefault.Factory(boxedDefaultValue);
+                return defaultComputeNode;
+            }
+
+            return null;        
+        }
+
+        public ShaderSource GetDefaultShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            if (defaultShaderSource != null)
+                return defaultShaderSource;
+
+            var defaultNode = GetDefaultComputeNode();
+
+            if (defaultNode != null)
+            {
+                defaultShaderSource = defaultNode.GenerateShaderSource(context, baseKeys);
+                return defaultShaderSource;
+            }
+            else
+            {
+                defaultShaderSource = new ShaderClassSource(TypeName);
+                return defaultShaderSource;
+            }
+        }
+
+        static Dictionary<string, CompDefault> knownShaderFXTypeInputs = new Dictionary<string, CompDefault>()
+        {
+            { "ComputeVoid", new CompDefaultVoid() },
+            { "ComputeFloat", new CompDefaultValue<float>() },
+            { "ComputeFloat2", new CompDefaultValue<Vector2>() },
+            { "ComputeFloat3", new CompDefaultValue<Vector3>() },
+            { "ComputeFloat4", new CompDefaultValue<Vector4>() },
+            { "ComputeMatrix", new CompDefaultValue<Matrix>() },
+            { "ComputeBool", new CompDefaultValue<bool>() },
+            { "ComputeInt", new CompDefaultValue<int>() },
+            { "ComputeInt2", new CompDefaultValue<Int2>() },
+            { "ComputeInt3", new CompDefaultValue<Int3>() },
+            { "ComputeInt4", new CompDefaultValue<Int4>() },
+            { "ComputeUInt", new CompDefaultValue<uint>() },
+        };
+
+        abstract class CompDefault
+        {
+            public readonly object BoxedDefault;
+            public readonly Func<object, ComputeNode> Factory;
+            public readonly Type ValueType;
+
+            public CompDefault(object defaultValue, Func<object, ComputeNode> factory, Type valueType)
+            {
+                BoxedDefault = defaultValue;
+                Factory = factory;
+                ValueType = valueType;
+            }
+        }
+
+        class CompDefaultVoid : CompDefault
+        {
+            public CompDefaultVoid()
+                : base(null, _ => new ComputeOrder(), null)
+            {
+            }
+        }
+
+        class CompDefaultValue<T> : CompDefault where T : struct
+        {
+            public CompDefaultValue(T defaultValue = default)
+                : base(defaultValue, BuildInput, typeof(T))
+            {
+            }
+
+            static ComputeNode BuildInput(object boxedDefaultValue)
+            {
+                var input = new InputValue<T>();
+                 if (boxedDefaultValue is T defaultValue)
+                    input.Input = defaultValue;
+                return input;
+            }
         }
     }
 }

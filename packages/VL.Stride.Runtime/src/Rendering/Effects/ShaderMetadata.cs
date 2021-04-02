@@ -65,8 +65,9 @@ namespace VL.Stride.Rendering
         /// <summary>
         /// Gets the type of the pin, if overwritten by an attribute, e.g. int -> enum.
         /// </summary>
-        public Type GetPinType(ParameterKey key)
+        public Type GetPinType(ParameterKey key, out object boxedDefaultValue)
         {
+            boxedDefaultValue = null;
             if (pinEnumTypes.TryGetValue(key.Name, out var enumTypeName))
             {
                 try
@@ -85,6 +86,7 @@ namespace VL.Stride.Rendering
             {
                 if (ParsedShader.CompositionsWithBaseShaders.TryGetValue(key.GetVariableName(), out var composition))
                 {
+                    boxedDefaultValue = composition.GetDefaultComputeNode();
                     if (knownShaderFXTypes.TryGetValue(composition.TypeName, out var type))
                     {
                         return type;
@@ -105,10 +107,12 @@ namespace VL.Stride.Rendering
             { "ComputeFloat3", typeof(SetVar<Vector3>) },
             { "ComputeFloat4", typeof(SetVar<Vector4>) },
             { "ComputeMatrix", typeof(SetVar<Matrix>) },
+            { "ComputeBool", typeof(SetVar<bool>) },
             { "ComputeInt", typeof(SetVar<int>) },
             { "ComputeInt2", typeof(SetVar<Int2>) },
             { "ComputeInt3", typeof(SetVar<Int3>) },
             { "ComputeInt4", typeof(SetVar<Int4>) },
+            { "ComputeUInt", typeof(SetVar<uint>) },
         };
 
         /// <summary>
@@ -120,15 +124,16 @@ namespace VL.Stride.Rendering
         }
 
         //shader
-        const string CategoryName = "Category";
-        const string SummaryName = "Summary";
-        const string RemarksName = "Remarks";
-        const string TagsName = "Tags";
-        const string OutputFormatName = "OutputFormat";
+        public const string CategoryName = "Category";
+        public const string SummaryName = "Summary";
+        public const string RemarksName = "Remarks";
+        public const string TagsName = "Tags";
+        public const string OutputFormatName = "OutputFormat";
 
         //pin
-        const string EnumTypeName = "EnumType";
-        const string OptionalName = "Optional";
+        public const string EnumTypeName = "EnumType";
+        public const string OptionalName = "Optional";
+        public const string DefaultName = "Default";
 
         /// <summary>
         /// Registers the additional stride shader attributes. Avoids writing them to the final shader, which would create an error in the native platform compiler.
@@ -137,6 +142,7 @@ namespace VL.Stride.Rendering
         {
             StrideAttributes.AvailableAttributes.Add(EnumTypeName);
             StrideAttributes.AvailableAttributes.Add(OptionalName);
+            StrideAttributes.AvailableAttributes.Add(DefaultName);
         }
 
         public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider)
@@ -158,19 +164,19 @@ namespace VL.Stride.Rendering
                         switch (attr.Name)
                         {
                             case CategoryName:
-                                shaderMetadata.Category = FirstParamAsString(attr);
+                                shaderMetadata.Category = attr.ParseString();
                                 break;
                             case SummaryName:
-                                shaderMetadata.Summary = FirstParamAsString(attr);
+                                shaderMetadata.Summary = attr.ParseString();
                                 break;
                             case RemarksName:
-                                shaderMetadata.Remarks = FirstParamAsString(attr);
+                                shaderMetadata.Remarks = attr.ParseString();
                                 break;
                             case TagsName:
-                                shaderMetadata.Tags = FirstParamAsString(attr);
+                                shaderMetadata.Tags = attr.ParseString();
                                 break;
                             case OutputFormatName:
-                                if (Enum.TryParse<PixelFormat>(FirstParamAsString(attr), true, out var pixelFormat))
+                                if (Enum.TryParse<PixelFormat>(attr.ParseString(), true, out var pixelFormat))
                                     shaderMetadata.OutputFormat = pixelFormat;
                                 break;
                             default:
@@ -179,18 +185,21 @@ namespace VL.Stride.Rendering
                     }
 
                     //pins
-                    foreach (var pinDecl in shaderDecl.Members.OfType<Variable>())
+                    foreach (var pinDecl in shaderDecl.Members.OfType<Variable>().Where(v => !v.Qualifiers.Contains(StrideStorageQualifier.Compose)))
                     {
                         foreach (var attr in pinDecl.Attributes.OfType<AttributeDeclaration>())
                         {
                             switch (attr.Name)
                             {
                                 case EnumTypeName:
-                                    var enumTypeName = FirstParamAsString(attr);
+                                    var enumTypeName = attr.ParseString();
                                     shaderMetadata.AddEnumTypePinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text, enumTypeName);
                                     break;
                                 case OptionalName:
                                     shaderMetadata.AddOptionalPinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text);
+                                    break;
+                                case DefaultName:
+                                    // handled in composition parsing
                                     break;
                                 default:
                                     break;
@@ -203,9 +212,6 @@ namespace VL.Stride.Rendering
             return shaderMetadata;
         }
 
-        private static string FirstParamAsString(AttributeDeclaration attr)
-        {
-            return attr.Parameters.FirstOrDefault()?.Value as string;
-        }
+       
     }
 }

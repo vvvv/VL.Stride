@@ -18,6 +18,7 @@ using ShaderMacro = Stride.Core.Shaders.Parser.ShaderMacro;
 using System.Reflection;
 using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Ast.Stride;
+using VL.Lang;
 
 namespace VL.Stride.Rendering
 {
@@ -79,24 +80,7 @@ namespace VL.Stride.Rendering
             return name;
         }
 
-        public static ClassType GetFirstClassDecl(this Shader shader)
-        {
-
-            var result = shader.Declarations.OfType<ClassType>().FirstOrDefault();
-
-            if (result == null)
-            {
-                var nameSpace = shader.Declarations.OfType<NamespaceBlock>().FirstOrDefault();
-                if (nameSpace != null)
-                {
-                    result = nameSpace.Body.OfType<ClassType>().FirstOrDefault();
-                }
-
-            }
-
-            return result;
-        }
-
+        
 
         public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, out ParsedShader result)
         {

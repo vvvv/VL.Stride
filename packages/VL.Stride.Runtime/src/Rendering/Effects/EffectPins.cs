@@ -11,6 +11,7 @@ using VL.Stride.Shaders.ShaderFX;
 using VL.Stride.Shaders.ShaderFX.Control;
 using Stride.Shaders;
 using Stride.Rendering.Materials.ComputeColors;
+using System.Linq;
 
 namespace VL.Stride.Rendering
 {
@@ -104,8 +105,10 @@ namespace VL.Stride.Rendering
                 if (typeInPatch.IsGenericType && typeInPatch.GetGenericTypeDefinition() == typeof(SetVar<>))
                 {
                     var typeParam = typeInPatch.GetGenericArguments()[0];
+                    var createSetVarMethod = typeof(ShaderFXUtils).GetMethods().First(m => m.Name == nameof(ShaderFXUtils.DeclAndSetVar) && m.GetParameters().Length == 1);
+                    value = createSetVarMethod.MakeGenericMethod(typeParam).Invoke(null, new[] { value });
                     var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateGPUValueSinkPin), BindingFlags.Static | BindingFlags.Public);
-                    return createPinMethod.MakeGenericMethod(typeParam).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+                    return createPinMethod.MakeGenericMethod(typeParam).Invoke(null, new[] { parameters, key, value }) as IVLPin;
                 }
                 else
                 {
@@ -366,13 +369,14 @@ namespace VL.Stride.Rendering
             Key = key;
         }
 
-        public bool HasChanged { get; protected set; } = true;
+        public bool ShaderSourceChanged { get; protected set; } = true;
 
         public void GenerateAndSetShaderSource(ShaderMixinSource mixin, ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
             var shaderSource = GetShaderSource(context, baseKeys);
             Parameters.Set(Key, shaderSource);
             mixin.Compositions[Key.Name] = shaderSource;
+            ShaderSourceChanged = false;
         }
 
         protected abstract ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys);
@@ -399,11 +403,7 @@ namespace VL.Stride.Rendering
                 if (internalValue != value)
                 {
                     internalValue = value;
-                    HasChanged = true;
-                }
-                else
-                {
-                    HasChanged = false;
+                    ShaderSourceChanged = true;
                 }
             }
         }
@@ -421,7 +421,7 @@ namespace VL.Stride.Rendering
                 return shaderNode.GenerateShaderSource(context, baseKeys);
             }
 
-            return null;
+            return defaultValue.GenerateShaderSource(context, baseKeys);
         }
     }
 
@@ -434,11 +434,16 @@ namespace VL.Stride.Rendering
 
         protected override ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            var input = this.Value ?? ShaderFXUtils.Constant<T>(default);
-            var getter = ShaderFXUtils.GetVarValue(input);
-            var graph = ShaderGraph.BuildFinalShaderGraph(getter);
-            var finalVar = new Do<T>(graph, getter);
-            return finalVar.GenerateShaderSource(context, baseKeys);
+            if (Value != null)
+            {
+                var input = Value;
+                var getter = ShaderFXUtils.GetVarValue(input);
+                var graph = ShaderGraph.BuildFinalShaderGraph(getter);
+                var finalVar = new Do<T>(graph, getter);
+                return finalVar.GenerateShaderSource(context, baseKeys);
+            }
+
+            return base.GetShaderSource(context, baseKeys);
         }
     }
 
