@@ -421,7 +421,7 @@ namespace VL.Stride.Rendering
                 return shaderNode.GenerateShaderSource(context, baseKeys);
             }
 
-            return defaultValue.GenerateShaderSource(context, baseKeys);
+            return defaultValue?.GenerateShaderSource(context, baseKeys);
         }
     }
 

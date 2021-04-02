@@ -102,20 +102,28 @@ namespace VL.Stride.Rendering
             if (defaultComputeNode != null)
                 return defaultComputeNode;
 
-            if (knownShaderFXTypeInputs.TryGetValue(TypeName, out var compDefault))
+            try
             {
-                var boxedDefaultValue = compDefault.BoxedDefault;
-
-                if (Variable.TryGetAttribute(ShaderMetadata.DefaultName, out var attribute))
+                if (knownShaderFXTypeInputs.TryGetValue(TypeName, out var compDefault))
                 {
-                    boxedDefaultValue = attribute.ParseBoxed(compDefault.ValueType);
+                    var boxedDefaultValue = compDefault.BoxedDefault;
+
+                    if (Variable.TryGetAttribute(ShaderMetadata.DefaultName, out var attribute))
+                    {
+                        boxedDefaultValue = attribute.ParseBoxed(compDefault.ValueType);
+                    }
+
+                    defaultComputeNode = compDefault.Factory(boxedDefaultValue);
+                    return defaultComputeNode;
                 }
 
-                defaultComputeNode = compDefault.Factory(boxedDefaultValue);
+                defaultComputeNode = new ShaderSourceComputeNode(new ShaderClassSource(TypeName));
                 return defaultComputeNode;
             }
-
-            return null;        
+            catch
+            {
+                return null;
+            }
         }
 
         public ShaderSource GetDefaultShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
@@ -188,6 +196,19 @@ namespace VL.Stride.Rendering
                  if (boxedDefaultValue is T defaultValue)
                     input.Input = defaultValue;
                 return input;
+            }
+        }
+
+        class ShaderSourceComputeNode : ComputeNode
+        {
+            readonly ShaderSource shaderSource;
+
+            public ShaderSourceComputeNode(ShaderSource shader)
+                => shaderSource = shader;
+
+            public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+            {
+                return shaderSource;
             }
         }
     }
