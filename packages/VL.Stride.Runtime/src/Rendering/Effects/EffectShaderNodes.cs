@@ -631,11 +631,7 @@ namespace VL.Stride.Rendering
                                 return nodeBuildContext.Node(
                                     inputs: inputs,
                                     outputs: new[] { effectOutput },
-                                    update: () =>
-                                    {
-
-
-                                    },
+                                    update: default,
                                     dispose: () =>
                                     {
                                         effect.Dispose();
