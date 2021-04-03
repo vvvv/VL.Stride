@@ -165,8 +165,7 @@ namespace VL.Stride.Rendering
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
                     var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, fileProvider);
 
-                    yield return NewComputeEffectShaderNode(shaderNodeName, effectName, shaderMetadata);
-                    //ComputeFX node
+                    //yield return NewShaderFXNode(shaderNodeName, effectName, shaderMetadata);
                 }
             }
 
@@ -226,9 +225,9 @@ namespace VL.Stride.Rendering
                 {
                     invalidated = Observable.Merge(invalidated, NodeBuilding.WatchDir(shadersPath)
                         .Where(e => watchNames.Contains(Path.GetFileNameWithoutExtension(e.Name)))
-                        .Do(_ =>
+                        .Do(e =>
                         {
-                            ((EffectCompilerBase)effectSystem.Compiler).ResetCache(watchNames);
+                            ((EffectCompilerBase)effectSystem.Compiler).ResetCache(new HashSet<string>() { Path.GetFileNameWithoutExtension(e.Name) });
                             foreach (var watchName in watchNames)
                             {
                                 EffectUtils.ResetParserCache(watchName);
@@ -834,18 +833,26 @@ namespace VL.Stride.Rendering
         //used for shader source generation
         static MaterialComputeColorKeys baseKeys = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
 
-        private static void UpdateCompositions(IEnumerable<ShaderFXPin> compositionPins, GraphicsDevice graphicsDevice, ParameterCollection parameters, ShaderMixinSource mixin)
+        private static void UpdateCompositions(IReadOnlyList<ShaderFXPin> compositionPins, GraphicsDevice graphicsDevice, ParameterCollection parameters, ShaderMixinSource mixin)
         {
-            if (compositionPins.Any(cp => cp.ShaderSourceChanged))
+            var anyChanged = false;
+            for (int i = 0; i < compositionPins.Count; i++)
+            {
+                anyChanged |= compositionPins[i].ShaderSourceChanged;
+            }
+
+            if (anyChanged)
             {
                 var context = new ShaderGeneratorContext(graphicsDevice)
                 {
                     Parameters = parameters,
                 };
 
-                foreach (var cp in compositionPins)
+                for (int i = 0; i < compositionPins.Count; i++)
                 {
-                    cp.GenerateAndSetShaderSource(mixin, context, baseKeys);
+                    var cp = compositionPins[i];
+                    if (cp.ShaderSourceChanged)
+                        cp.GenerateAndSetShaderSource(mixin, context, baseKeys);
                 }
             }
         }
