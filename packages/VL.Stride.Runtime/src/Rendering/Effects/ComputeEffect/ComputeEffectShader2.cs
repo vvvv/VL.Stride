@@ -136,7 +136,6 @@ namespace VL.Stride.Rendering.ComputeEffect
                 return;
 
             using (Profiler.Begin(profilingKey))
-            using (context.QueryManager.BeginProfile(Color.Green, profilingKey))
             {
                 var effectUpdated = false;
                 try
