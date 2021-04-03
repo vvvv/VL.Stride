@@ -40,8 +40,8 @@
     <!--<PackageIcon>stride_package_logo.png</PackageIcon>-->
 
     <!-- Check whether we're in our private repo -->
-    <InPrivateRepo>true</InPrivateRepo>
-    <InPrivateRepo Condition="'$(SolutionName)' == 'VL.Stride'">false</InPrivateRepo>
+    <InPrivateRepo>false</InPrivateRepo>
+    <InPrivateRepo Condition="Exists('$(MsBuildThisFileDirectory)..\..\VL.Core')">true</InPrivateRepo>
     <PackageOutputPath Condition="$(InPrivateRepo)">$(MsBuildThisFileDirectory)..\..\packages-build\</PackageOutputPath>
 
     <Configurations>Debug;Release;Packages</Configurations>
