@@ -585,7 +585,8 @@ namespace VL.Stride.Rendering
                         var _inputs = shaderDescription.Inputs.ToList();
 
                         var hasTextureInput = false;
-                        if (!shaderMetadata.Category.StartsWith("Source"))
+                        var category = shaderMetadata.Category;
+                        if (category == null || !category.StartsWith("Source"))
                             hasTextureInput = _inputs.Any(p => p.Type == typeof(Texture) && p.Name != "Output Texture");
 
                         var defaultSize = hasTextureInput ? Int2.Zero : new Int2(512);
