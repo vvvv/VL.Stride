@@ -39,6 +39,18 @@ namespace VL.Stride.Rendering
             return attr.Parameters.FirstOrDefault()?.Value as string;
         }
 
+        public static bool ParseBool(this AttributeDeclaration attr, int index = 0)
+        {
+            if (attr.Parameters.Count > index)
+            {
+                if (bool.TryParse(attr.Parameters[index].Text, out var value))
+                {
+                    return value;
+                }
+            }
+            return default;
+        }
+
         public static float ParseFloat(this AttributeDeclaration attr, int index = 0)
         {
             if (attr.Parameters.Count > index)
@@ -118,6 +130,24 @@ namespace VL.Stride.Rendering
 
             if (type == typeof(Vector4))
                 return attr.ParseVector4();
+
+            if (type == typeof(bool))
+                return attr.ParseBool();
+
+            if (type == typeof(int))
+                return attr.ParseInt();
+
+            if (type == typeof(Int2))
+                return attr.ParseInt2();
+
+            if (type == typeof(Int3))
+                return attr.ParseInt3();
+
+            if (type == typeof(Int4))
+                return attr.ParseInt4();
+
+            if (type == typeof(uint))
+                return attr.ParseUInt();
 
             if (type == typeof(string))
                 return attr.ParseString();
