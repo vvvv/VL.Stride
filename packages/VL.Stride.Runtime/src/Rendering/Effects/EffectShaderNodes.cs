@@ -329,7 +329,8 @@ namespace VL.Stride.Rendering
                                 continue;
                             }
 
-                            _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count));
+                            var typeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
+                            _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch));
                         }
 
                         if (needsWorld)
@@ -394,11 +395,10 @@ namespace VL.Stride.Rendering
                         var _parameters = new ParameterCollection();
                         _parameters.Set(ComputeShaderBaseKeys.ThreadGroupCountGlobal, Int3.One);
                         _parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, Int3.One);
-                        _parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, shaderName);
 
-                        //BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource, _parameters);
+                        BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource, _parameters);
 
-                        var (_effect, _messages, _invalidated) = CreateEffectInstance("ComputeEffectShader", shaderMetadata, _parameters, baseShaderName: shaderName);
+                        var (_effect, _messages, _invalidated) = CreateEffectInstance("ComputeFXEffect", shaderMetadata, _parameters, baseShaderName: shaderName);
 
                         var _dispatcherInput = new PinDescription<IComputeEffectDispatcher>("Dispatcher");
                         var _threadNumbersInput = new PinDescription<Int3>("Thread Group Size", Int3.One);
@@ -419,7 +419,8 @@ namespace VL.Stride.Rendering
                             var key = parameter.Key;
                             var name = key.Name;
 
-                            _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count));
+                            var typeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
+                            _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch));
                         }
 
                         IVLPinDescription _enabledInput;
@@ -434,29 +435,30 @@ namespace VL.Stride.Rendering
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
                                 var renderContext = RenderContext.GetShared(gameHandle.Resource.Services);
-                                var shader = new ComputeEffectShader2(renderContext, shaderName);
+                                var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
+                                var effect = new ComputeEffectShader2(renderContext, shaderName, mixinParams);
                                 var inputs = new List<IVLPin>();
                                 var enabledInput = default(IVLPin);
                                 foreach (var _input in _inputs)
                                 {
                                     // Handle the predefined pins first
                                     if (_input == _dispatcherInput)
-                                        inputs.Add(nodeBuildContext.Input<IComputeEffectDispatcher>(setter: v => shader.Dispatcher = v));
+                                        inputs.Add(nodeBuildContext.Input<IComputeEffectDispatcher>(setter: v => effect.Dispatcher = v));
                                     else if (_input == _threadNumbersInput)
-                                        inputs.Add(nodeBuildContext.Input<Int3>(setter: v => shader.ThreadGroupSize = v));
+                                        inputs.Add(nodeBuildContext.Input<Int3>(setter: v => effect.ThreadGroupSize = v));
                                     else if (_input == _enabledInput)
-                                        inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => shader.Enabled = v, shader.Enabled));
+                                        inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => effect.Enabled = v, effect.Enabled));
                                     else if (_input is ParameterPinDescription parameterPinDescription)
-                                        inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, shader.Parameters));
+                                        inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, effect.Parameters));
                                 }
 
                                 var compositionPins = inputs.OfType<ShaderFXPin>().ToList();
 
                                 var effectOutput = nodeBuildContext.Output(() =>
                                 {
-                                    //UpdateCompositions(compositionPins, graphicsDevice, shader.Parameters, shaderMixinSource);
+                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, shaderMixinSource);
 
-                                    return shader;
+                                    return effect;
                                 });
 
                                 return nodeBuildContext.Node(
@@ -465,7 +467,7 @@ namespace VL.Stride.Rendering
                                     update: default,
                                     dispose: () =>
                                     {
-                                        shader.Dispose();
+                                        effect.Dispose();
                                         gameHandle.Dispose();
                                     });
                             },

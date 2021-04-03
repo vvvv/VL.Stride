@@ -32,9 +32,11 @@ namespace VL.Stride.Rendering.ComputeEffect
 
         public string LastError { get; private set; }
 
-        public ComputeEffectShader2(RenderContext context, string name)
-            : base(context, name)
+        public ComputeEffectShader2(RenderContext context, string name, ParameterCollection mixinParams)
+            : base(name)
         {
+            Parameters = mixinParams;
+            Initialize(context);
         }
 
         /// <summary>
@@ -60,12 +62,11 @@ namespace VL.Stride.Rendering.ComputeEffect
             pipelineState = new MutablePipelineState(Context.GraphicsDevice);
 
             // Setup the effect compiler
-            EffectInstance = new DynamicEffectInstance("ComputeEffectShader", Parameters);
+            EffectInstance = new DynamicEffectInstance("ComputeFXEffect", Parameters);
 
             // We give ComputeEffectShader a higher priority, since they are usually executed serially and blocking
             EffectInstance.EffectCompilerParameters.TaskPriority = -1;
 
-            Parameters.Set(ComputeEffectShaderKeys.ComputeShaderName, Name);
             Parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, new Int3(1));
 
             EffectInstance.Initialize(Context.Services);
