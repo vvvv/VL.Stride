@@ -416,12 +416,7 @@ namespace VL.Stride.Rendering
 
         protected override ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            if (this.Value is ComputeNode shaderNode)
-            {
-                return shaderNode.GenerateShaderSource(context, baseKeys);
-            }
-
-            return defaultValue?.GenerateShaderSource(context, baseKeys);
+            return Value?.GenerateShaderSource(context, baseKeys) ?? defaultValue?.GenerateShaderSource(context, baseKeys);
         }
     }
 

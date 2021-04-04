@@ -95,9 +95,9 @@ namespace VL.Stride.Rendering
 
         // cache
         ShaderSource defaultShaderSource;
-        ComputeNode defaultComputeNode;
+        IComputeNode defaultComputeNode;
 
-        public ComputeNode GetDefaultComputeNode()
+        public IComputeNode GetDefaultComputeNode()
         {
             if (defaultComputeNode != null)
                 return defaultComputeNode;
@@ -164,10 +164,10 @@ namespace VL.Stride.Rendering
         abstract class CompDefault
         {
             public readonly object BoxedDefault;
-            public readonly Func<object, ComputeNode> Factory;
+            public readonly Func<object, IComputeNode> Factory;
             public readonly Type ValueType;
 
-            public CompDefault(object defaultValue, Func<object, ComputeNode> factory, Type valueType)
+            public CompDefault(object defaultValue, Func<object, IComputeNode> factory, Type valueType)
             {
                 BoxedDefault = defaultValue;
                 Factory = factory;
@@ -190,7 +190,7 @@ namespace VL.Stride.Rendering
             {
             }
 
-            static ComputeNode BuildInput(object boxedDefaultValue)
+            static IComputeNode BuildInput(object boxedDefaultValue)
             {
                 var input = new InputValue<T>();
                  if (boxedDefaultValue is T defaultValue)
@@ -199,16 +199,21 @@ namespace VL.Stride.Rendering
             }
         }
 
-        class ShaderSourceComputeNode : ComputeNode
+        class ShaderSourceComputeNode : IComputeNode
         {
             readonly ShaderSource shaderSource;
 
             public ShaderSourceComputeNode(ShaderSource shader)
                 => shaderSource = shader;
 
-            public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+            public ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
             {
                 return shaderSource;
+            }
+
+            public IEnumerable<IComputeNode> GetChildren(object context = null)
+            {
+                return Enumerable.Empty<IComputeNode>();
             }
         }
     }
