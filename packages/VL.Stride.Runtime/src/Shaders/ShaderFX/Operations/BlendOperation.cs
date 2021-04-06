@@ -31,7 +31,6 @@ namespace VL.Stride.Shaders.ShaderFX
             opMixin.AddComposition("color2", rightColor);
 
             var result = new ShaderClassSource("ColorToFloat4").CreateMixin();
-
             result.AddComposition("Value", opMixin);
 
             return result;

@@ -1,0 +1,13 @@
+﻿shader ComputeColorLerp : ComputeFloat4
+{
+   compose ComputeColor color1;
+    compose ComputeColor color2;
+
+    override float4 Compute()
+    {
+        float4 backColor = color1.Compute();
+        float4 frontColor = color2.Compute();
+
+        return lerp(backColor, frontColor, 0.5);
+    }
+};
