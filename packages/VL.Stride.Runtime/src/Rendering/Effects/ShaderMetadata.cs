@@ -11,6 +11,7 @@ using Stride.Shaders;
 using VL.Stride.Shaders.ShaderFX;
 using Stride.Core.Mathematics;
 using Stride.Rendering.Materials;
+using System.ComponentModel;
 
 namespace VL.Stride.Rendering
 {
@@ -51,12 +52,29 @@ namespace VL.Stride.Rendering
             return Category;
         }
 
-        Dictionary<string, string> pinEnumTypes = new Dictionary<string, string>();
+        Dictionary<string, EnumMetadata> pinEnumTypes = new Dictionary<string, EnumMetadata>();
         HashSet<string> optionalPins = new HashSet<string>();
 
-        private void AddEnumTypePinAttribute(string name, string enumTypeName)
+        private void AddEnumTypePinAttribute(string name, string enumTypeName, Expression initialValue)
         {
-            pinEnumTypes[name] = enumTypeName;
+            var type = Type.GetType(enumTypeName);
+            if (type != null && type.IsEnum)
+            {
+                object initalVal = Activator.CreateInstance(type);
+                if (initialValue is LiteralExpression literal)
+                {
+                    var defaultText = literal.Text;
+                    var converter = TypeDescriptor.GetConverter(Enum.GetUnderlyingType(type));
+
+                    if (converter != null && converter.IsValid(defaultText))
+                    {
+                        var underVal = converter.ConvertFromString(defaultText);
+                        initalVal = Enum.ToObject(type, underVal);
+                    }
+                }
+
+                pinEnumTypes[name] = new EnumMetadata(type, initalVal);
+            }
         }
 
         private void AddOptionalPinAttribute(string name)
@@ -72,16 +90,8 @@ namespace VL.Stride.Rendering
             boxedDefaultValue = null;
             if (pinEnumTypes.TryGetValue(key.Name, out var enumTypeName))
             {
-                try
-                {
-                    var type = Type.GetType(enumTypeName);
-                    if (type != null && type.IsEnum)
-                        return type;
-                }
-                catch (Exception)
-                {
-
-                }
+                boxedDefaultValue = enumTypeName.defaultValue;
+                return enumTypeName.typeName;
             }
 
             if (key.PropertyType == typeof(ShaderSource))
@@ -139,7 +149,7 @@ namespace VL.Stride.Rendering
         public const string DefaultName = "Default";
 
         /// <summary>
-        /// Registers the additional stride shader attributes. Avoids writing them to the final shader, which would create an error in the native platform compiler.
+        /// Registers the additional stride variable attributes. Avoids writing them to the final shader, which would create an error in the native platform compiler.
         /// </summary>
         public static void RegisterAdditionalShaderAttributes()
         {
@@ -198,14 +208,13 @@ namespace VL.Stride.Rendering
                             switch (attr.Name)
                             {
                                 case EnumTypeName:
-                                    var enumTypeName = attr.ParseString();
-                                    shaderMetadata.AddEnumTypePinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text, enumTypeName);
+                                    shaderMetadata.AddEnumTypePinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text, attr.ParseString(), pinDecl.InitialValue);
                                     break;
                                 case OptionalName:
                                     shaderMetadata.AddOptionalPinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text);
                                     break;
                                 case DefaultName:
-                                    // handled in composition parsing
+                                    // handled in composition parsing in ParseShader.cs
                                     break;
                                 default:
                                     break;
@@ -218,6 +227,16 @@ namespace VL.Stride.Rendering
             return shaderMetadata;
         }
 
-       
+        class EnumMetadata
+        {
+            public readonly Type typeName;
+            public readonly object defaultValue;
+
+            public EnumMetadata(Type enumType, object boxedDefaultValue)
+            {
+                typeName = enumType;
+                defaultValue = boxedDefaultValue;
+            }
+        }
     }
 }
