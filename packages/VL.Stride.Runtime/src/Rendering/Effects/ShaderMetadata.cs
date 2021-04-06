@@ -28,6 +28,8 @@ namespace VL.Stride.Rendering
 
         public ParsedShader ParsedShader { get; private set; }
 
+        public bool IsTextureSource { get; private set; }
+
         public PixelFormat GetPixelFormat(bool isFilter)
         {
             if (!isFilter && OutputFormat == PixelFormat.None)
@@ -129,6 +131,7 @@ namespace VL.Stride.Rendering
         public const string RemarksName = "Remarks";
         public const string TagsName = "Tags";
         public const string OutputFormatName = "OutputFormat";
+        public const string TextureSourceName = "TextureSource";
 
         //pin
         public const string EnumTypeName = "EnumType";
@@ -178,6 +181,9 @@ namespace VL.Stride.Rendering
                             case OutputFormatName:
                                 if (Enum.TryParse<PixelFormat>(attr.ParseString(), true, out var pixelFormat))
                                     shaderMetadata.OutputFormat = pixelFormat;
+                                break;
+                            case TextureSourceName:
+                                shaderMetadata.IsTextureSource = true;
                                 break;
                             default:
                                 break;

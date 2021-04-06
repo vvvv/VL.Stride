@@ -656,17 +656,16 @@ namespace VL.Stride.Rendering
 
                         var _inputs = shaderDescription.Inputs.ToList();
 
-                        var hasTextureInput = false;
-                        var category = shaderMetadata.Category;
-                        if (category == null || !category.StartsWith("Source"))
-                            hasTextureInput = _inputs.Any(p => p.Type == typeof(Texture) && p.Name != "Output Texture");
+                        var isFilterOrMixer = false;
+                        if (!shaderMetadata.IsTextureSource)
+                            isFilterOrMixer = _inputs.Any(p => p.Type == typeof(Texture) && p.Name != "Output Texture");
 
-                        var defaultSize = hasTextureInput ? Int2.Zero : new Int2(512);
-                        var defaultFormat = shaderMetadata.GetPixelFormat(hasTextureInput);
+                        var defaultSize = isFilterOrMixer ? Int2.Zero : new Int2(512);
+                        var defaultFormat = shaderMetadata.GetPixelFormat(isFilterOrMixer);
 
-                        var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = !hasTextureInput };
-                        var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = !hasTextureInput };
-                        if (hasTextureInput)
+                        var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = !isFilterOrMixer };
+                        var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = !isFilterOrMixer };
+                        if (isFilterOrMixer)
                         {
                             // Filter or Mixer
                             _inputs.Insert(_inputs.Count - 1, _outputSize);
@@ -703,7 +702,7 @@ namespace VL.Stride.Rendering
 
                                 var outputSize = nodeBuildContext.Input(defaultSize);
                                 var outputFormat = nodeBuildContext.Input(defaultFormat);
-                                if (hasTextureInput)
+                                if (isFilterOrMixer)
                                 {
                                     inputs.Insert(inputs.Count - 1, outputSize);
                                     inputs.Insert(inputs.Count - 1, outputFormat);
@@ -727,7 +726,7 @@ namespace VL.Stride.Rendering
 
                                     if (!enabledInput.Value)
                                     {
-                                        if (hasTextureInput)
+                                        if (isFilterOrMixer)
                                             return inputTexture; // By pass
                                         else
                                             return output1.texture; // Last result
