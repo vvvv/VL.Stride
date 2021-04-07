@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader DropShadow_TextureFX : TextureFX
+shader DropShadow_TextureFX : FilterBase
 {
     float Blur = 0.5f;
     float Offset = 0.05f;
@@ -13,7 +13,7 @@ shader DropShadow_TextureFX : TextureFX
     float Alpha = 1.0f;
     float Extension = 0.0f;
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

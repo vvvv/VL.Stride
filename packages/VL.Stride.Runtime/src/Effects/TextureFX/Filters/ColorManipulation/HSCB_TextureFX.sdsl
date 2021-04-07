@@ -1,6 +1,6 @@
 ﻿[Category("Filter.Experimental")]
 [Summary("")]
-shader HSCB_TextureFX : TextureFX
+shader HSCB_TextureFX : FilterBase
 {
     float Hue = .0f;
     float HueCycles = 1.0f;
@@ -9,9 +9,9 @@ shader HSCB_TextureFX : TextureFX
     float Contrast = .0f;
     float Brightness = .0f;
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
-        float4 c = InTex();
+        float4 c = tex0col;
         float3 h = base.RGBtoHSL(c.rgb);
         h.y = pow(h.y, pow(2, SaturationBalance)) * Saturation;
         // todo debug: disable saturation below to see the glitches again

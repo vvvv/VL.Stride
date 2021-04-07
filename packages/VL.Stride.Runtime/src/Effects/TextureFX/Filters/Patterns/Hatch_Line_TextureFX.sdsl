@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Hatch_Line_TextureFX : TextureFX
+shader Hatch_Line_TextureFX : FilterBase
 {
     [Color]
     float4 BackgroundColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -22,7 +22,7 @@ shader Hatch_Line_TextureFX : TextureFX
         return float2(cos(a) * x.x+sin(a) * x.y, cos(a)*x.y - sin(a)*x.x);
     }
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

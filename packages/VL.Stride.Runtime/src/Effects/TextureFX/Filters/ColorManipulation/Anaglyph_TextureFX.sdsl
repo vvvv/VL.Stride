@@ -3,13 +3,13 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Anaglyph_TextureFX : TextureFX
+shader Anaglyph_TextureFX : FilterBaes
 {
     float Boost = 1.0f;
     float Distance = 0.1f;
     float MapBlur = 0.1f;
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

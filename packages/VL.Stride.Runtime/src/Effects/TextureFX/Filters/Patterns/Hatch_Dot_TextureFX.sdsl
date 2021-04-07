@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Hatch_Dot_TextureFX : TextureFX
+shader Hatch_Dot_TextureFX : FilterBase
 {
     [Color]
     float4 BackgroundColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -11,7 +11,7 @@ shader Hatch_Dot_TextureFX : TextureFX
     float4 HatchColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float Threshold  = 10.0f;
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

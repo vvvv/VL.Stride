@@ -3,13 +3,13 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader BackgroundSubstraction_TextureFX : TextureFX
+shader BackgroundSubstraction_TextureFX : FilterBase
 {
     float Threshold <float uimin=0.0;float uimax=1.0;> = 0.05f;
     float Softness <float uimin=0.0;float uimax=1.0;> = 0.05f;
     bool Invert;
    
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
     

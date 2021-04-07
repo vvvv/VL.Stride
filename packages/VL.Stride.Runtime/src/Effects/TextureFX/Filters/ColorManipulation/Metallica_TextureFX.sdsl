@@ -35,12 +35,12 @@ shader Metallica_TextureFX : FilterBase
 
     #define gam(x,y) sign(x)*pow(abs(x),(y))
 
-    float4 Filter(float4 col)
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;
     
-        col = 0;
+        float4 col = 0;
         float lod = log2(max(R.x, R.y));
         float kk = 0;
 

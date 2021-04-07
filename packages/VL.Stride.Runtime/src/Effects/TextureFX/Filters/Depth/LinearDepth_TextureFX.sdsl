@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader LinearDepth_TextureFX : TextureFX
+shader LinearDepth_TextureFX : FilterBase
 {
     #define IS_ORTHO(P) (round(P._34)==0&&round(P._44)==1)
     #define linstep(a,b,x) saturate((x-a)/(b-a))
@@ -22,7 +22,7 @@ shader LinearDepth_TextureFX : TextureFX
         AddressV=CLAMP;
     };
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

@@ -1,4 +1,4 @@
-﻿shader KeyingBase : TextureFX
+﻿shader KeyingBase : FilterBase
 {
 
     // the variables to tweak the keying
@@ -20,12 +20,10 @@
     // the distance function
     abstract float CalcKeyDist(float4 col);
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
-        float4 col = InTex();
-
         // get distance to key
-        float dist = CalcKeyDist(col);
+        float dist = CalcKeyDist(tex0col);
 
         // get mask
         float mask = CalcMask(dist);

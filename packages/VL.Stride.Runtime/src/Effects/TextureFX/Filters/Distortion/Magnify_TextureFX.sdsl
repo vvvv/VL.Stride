@@ -6,7 +6,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Magnify_TextureFX : TextureFX
+shader Magnify_TextureFX : FilterBase
 {
 
     float2 Center = float2(0.5f, 0.5f);
@@ -14,7 +14,7 @@ shader Magnify_TextureFX : TextureFX
     float Magnification = 2.0f;
     float OuterRadius = 0.5f;
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         

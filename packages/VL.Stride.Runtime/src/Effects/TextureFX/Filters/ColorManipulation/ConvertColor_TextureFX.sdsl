@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader ConvertColor_TextureFX : TextureFX
+shader ConvertColor_TextureFX : FilterBase
 {
     [EnumType("VL.Stride.Effects.TextureFX.ConvertColorType")]
     int Type;
@@ -63,7 +63,7 @@ shader ConvertColor_TextureFX : TextureFX
         return float4(h.xyz, 1);
     }
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float4 col = Texture0.SampleLevel(Sampler0, uv, 0);

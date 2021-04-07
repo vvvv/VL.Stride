@@ -1,6 +1,6 @@
 ﻿[Category("Filter.Experimental")]
 [Summary("")]
-shader RampColor_TextureFX : TextureFX
+shader RampColor_TextureFX : FilterBase
 {
     [EnumType("VL.Stride.Effects.TextureFX.RampColorType")]
     int Type;
@@ -51,9 +51,9 @@ shader RampColor_TextureFX : TextureFX
         );
     }
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
-        float4 c = InTex();
+        float4 c = tex0col;
         float pa = c.a;
 
         switch((uint)Type%4)
