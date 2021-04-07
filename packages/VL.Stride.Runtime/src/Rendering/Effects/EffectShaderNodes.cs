@@ -548,7 +548,7 @@ namespace VL.Stride.Rendering
                             if (key.PropertyType == typeof(Texture))
                             {
                                 var pinName = "";
-                                if (shaderMetadata.Category.StartsWith("Source"))
+                                if (shaderMetadata.IsTextureSource)
                                     pinName = key.GetPinName(usedNames);
                                 else
                                     pinName = ++_textureCount == 1 ? textureInputName : $"{textureInputName} {_textureCount}";
@@ -656,15 +656,12 @@ namespace VL.Stride.Rendering
 
                         var _inputs = shaderDescription.Inputs.ToList();
 
-                        var isFilterOrMixer = false;
-                        if (!shaderMetadata.IsTextureSource)
-                            isFilterOrMixer = _inputs.Any(p => p.Type == typeof(Texture) && p.Name != "Output Texture");
-
+                        var isFilterOrMixer = !shaderMetadata.IsTextureSource;
                         var defaultSize = isFilterOrMixer ? Int2.Zero : new Int2(512);
                         var defaultFormat = shaderMetadata.GetPixelFormat(isFilterOrMixer);
 
-                        var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = !isFilterOrMixer };
-                        var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = !isFilterOrMixer };
+                        var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = shaderMetadata.IsTextureSource };
+                        var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = shaderMetadata.IsTextureSource };
                         if (isFilterOrMixer)
                         {
                             // Filter or Mixer
