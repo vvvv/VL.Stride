@@ -1,6 +1,6 @@
 ﻿[Category("Filter.Experimental")]
 [Summary("")]
-shader Tunnels_TextureFX : TextureFX
+shader Tunnels_TextureFX : FilterBase
 {
 	[EnumType("VL.Stride.Effects.TextureFX.TunnelType")]
     int Type;
@@ -43,7 +43,7 @@ shader Tunnels_TextureFX : TextureFX
 		return float3(uv, y);
 	}
 
-	stage override float4 Shading()
+	float4 Filter(float4 tex0col)
 	{
 		float2 p = -1.0 + 2.0 * streams.TexCoord;
 		float3 tunnel;	

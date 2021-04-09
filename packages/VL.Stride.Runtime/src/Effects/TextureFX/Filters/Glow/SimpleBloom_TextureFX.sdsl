@@ -3,12 +3,12 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader SimpleBloom_TextureFX : TextureFX
+shader SimpleBloom_TextureFX : FilterBase
 {
     float size = 1;
     float intensity = 0.35f;
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
        float4 sum = float4(0,0,0,0);
        float2 texcoord = streams.TexCoord;

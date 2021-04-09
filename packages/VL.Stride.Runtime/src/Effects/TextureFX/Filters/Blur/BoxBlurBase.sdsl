@@ -1,14 +1,14 @@
 ﻿// By Daniel Ilett implementation at:
 // https://danielilett.com/2019-05-08-tut1-3-smo-blur/
 
-shader BoxBlurBase : TextureFX
+shader BoxBlurBase : FilterBase
 {
     int KernelSize = 3;
     float Strength = 1;
 
     abstract float2 GetSampleOffset(float2 texelSize, float i);
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float3 sum = float3(0.0, 0.0, 0.0);
 

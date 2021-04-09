@@ -1,6 +1,6 @@
 ﻿[Category("Filter.Experimental")]
 [Summary("")]
-shader Levels_TextureFX : TextureFX
+shader Levels_TextureFX : FilterBase
 {
     [EnumType("VL.Stride.Effects.TextureFX.LevelsClampType")]
     int Type;
@@ -32,9 +32,9 @@ shader Levels_TextureFX : TextureFX
         return saturate(col);
     }
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
-        float4 c = InTex();
+        float4 c = tex0col;
         float4 fromDelta = fromWhite - fromBlack;
         float4 cMin = c - fromBlack;
         c = cMin / fromDelta;

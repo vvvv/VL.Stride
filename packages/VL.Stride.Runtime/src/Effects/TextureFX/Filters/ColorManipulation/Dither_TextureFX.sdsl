@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Dither_TextureFX : TextureFX
+shader Dither_TextureFX : FilterBase
 {
     float Threshhold = 6.5f;
     
@@ -54,7 +54,7 @@ shader Dither_TextureFX : TextureFX
         }
     }   
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

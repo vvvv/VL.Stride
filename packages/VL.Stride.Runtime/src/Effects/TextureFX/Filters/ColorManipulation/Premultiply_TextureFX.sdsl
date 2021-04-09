@@ -1,10 +1,9 @@
 ﻿[Category("Filter.Experimental")]
 [Summary("")]
-shader Premultiply_TextureFX : TextureFX
+shader Premultiply_TextureFX : FilterBase
 {
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
-        float4 c = InTex();
-        return float4(c.rgb * c.a, c.a);
+        return float4(tex0col.rgb * tex0col.a, tex0col.a);
     }
 };

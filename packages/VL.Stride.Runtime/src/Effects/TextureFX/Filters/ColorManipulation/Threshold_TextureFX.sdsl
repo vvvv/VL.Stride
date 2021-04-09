@@ -1,6 +1,6 @@
 ﻿[Category("Filter.Experimental")]
 [Summary("")]
-shader Threshold_TextureFX : TextureFX
+shader Threshold_TextureFX : FilterBase
 {
     [Color]
     float4 ColorA = float4(0, 0, 0, 1);
@@ -11,9 +11,9 @@ shader Threshold_TextureFX : TextureFX
     bool Invert;
     bool Antialiasing;
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
-        float4 c = InTex();
+        float4 c = tex0col;
         float f = c.r;
         float th = (Threshold - 0.5) * 1.001 + 0.5;
         float fmth = f-th;

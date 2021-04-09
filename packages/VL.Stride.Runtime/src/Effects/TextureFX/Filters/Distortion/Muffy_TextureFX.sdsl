@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Muffy_TextureFX : TextureFX
+shader Muffy_TextureFX : FilterBase
 {
     float RingAmount = 2.5f;
     float RingSize = 2.0f;
@@ -16,7 +16,7 @@ shader Muffy_TextureFX : TextureFX
          AddressV = MIRROR;
     };
   
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
 

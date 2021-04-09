@@ -1,10 +1,10 @@
 ﻿[Category("Filter.Experimental")]
 [Summary("")]
-shader Blur_TextureFX : TextureFX
+shader Blur_TextureFX : FilterBase
 {
     float Strength;
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 R = 1/Texture0TexelSize;
         float4 map = InTex2();

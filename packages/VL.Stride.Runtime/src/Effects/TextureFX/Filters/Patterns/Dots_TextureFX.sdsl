@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Dots_TextureFX : TextureFX
+shader Dots_TextureFX : FilterBase
 {
     int2 PixelSize = float2(32.0f, 32.0f); //mh?
     bool Alpha = false;
@@ -16,7 +16,7 @@ shader Dots_TextureFX : TextureFX
         return max(p.x, max(p.y, p.z));
     }
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

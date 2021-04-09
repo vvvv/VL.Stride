@@ -1,6 +1,6 @@
 ﻿[Category("Filter.Experimental")]
 [Summary("")]
-shader Posterize_RGB_TextureFX : TextureFX
+shader Posterize_RGB_TextureFX : FilterBase
 {
     float4 Levels = float4(4,4,4,4);
     bool Alpha = false;
@@ -16,9 +16,9 @@ shader Posterize_RGB_TextureFX : TextureFX
 	    return (floor(c)-ph+saturate((frac(c)-.5)/(.00001+Smooth)+.5))/(max(Levels,0)+.000000001);
     }
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
-        float4 c = InTex();
+        float4 c = tex0col;
         float2 vp = streams.TexCoord;
         float pa = c.a;
         c = Posterizer(c,vp);

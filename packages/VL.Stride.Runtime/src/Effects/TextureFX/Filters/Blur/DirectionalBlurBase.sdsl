@@ -3,7 +3,7 @@
 
 [Category("Filter")]
 [Summary("")]
-shader DirectionalBlurBase : TextureFX
+shader DirectionalBlurBase : FilterBase
 {
     float2 Direction = float2(.25f, 0.0f);
     float SampleCenter = 0.5f;
@@ -12,7 +12,7 @@ shader DirectionalBlurBase : TextureFX
 
     abstract float BlurPass(float2 uv, int iter);
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

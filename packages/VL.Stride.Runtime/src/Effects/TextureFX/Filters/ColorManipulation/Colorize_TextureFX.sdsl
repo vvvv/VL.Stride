@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Colorize_TextureFX : TextureFX
+shader Colorize_TextureFX : FilterBase
 {
     [Color] 
     float4 ColorA  = float4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -12,7 +12,7 @@ shader Colorize_TextureFX : TextureFX
     [Color] 
     float4 ColorC  = float4(1.0f, 0.0f, 1.0f, 1.0f);
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float lum = length(Texture0.Sample(Sampler0, uv).rgb);

@@ -3,14 +3,14 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader CrossStitch_TextureFX : TextureFX
+shader CrossStitch_TextureFX : FilterBase
 {
     [Color]
     float4 Color = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float StitchSize = 10.0f;
     bool Invert = false;
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

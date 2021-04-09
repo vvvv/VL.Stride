@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader ChannelKeying_TextureFX : TextureFX
+shader ChannelKeying_TextureFX : FilterBase
 {
     float Threshold = 0.3f;
     float Smooth = 0.1f;
@@ -73,7 +73,7 @@ shader ChannelKeying_TextureFX : TextureFX
         return keyer(col, map, base.RGBtoHSV(map.xyz).y);
     }
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     { 
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;

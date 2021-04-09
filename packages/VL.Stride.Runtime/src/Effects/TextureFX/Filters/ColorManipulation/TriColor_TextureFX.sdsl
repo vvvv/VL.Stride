@@ -3,7 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader TriColor_TextureFX : TextureFX
+shader TriColor_TextureFX : FilterBase
 {
     [Color]
     float4 ColorA = float4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -21,7 +21,7 @@ shader TriColor_TextureFX : TextureFX
     #define linstep(a, b, x) (saturate((x-a)/(b-a)))
     #define linstepf(a, b, x) (((x-a)/(b-a)))
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;
