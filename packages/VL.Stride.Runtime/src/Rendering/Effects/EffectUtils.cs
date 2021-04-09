@@ -24,11 +24,14 @@ namespace VL.Stride.Rendering
 {
     static class EffectUtils
     {
-        public static string GetPathOfSdslShader(string effectName, IVirtualFileProvider fileProvider)
+        public static string GetPathOfSdslShader(string effectName, IVirtualFileProvider fileProvider, IVirtualFileProvider dbFileProvider = null)
         {
             var path = EffectCompilerBase.GetStoragePathFromShaderType(effectName);
             if (fileProvider.TryGetFileLocation(path, out var filePath, out _, out _))
-                return filePath;
+            {
+                if (File.Exists(filePath))
+                    return filePath;
+            }
 
             var pathUrl = path + "/path";
             if (fileProvider.FileExists(pathUrl))
@@ -39,6 +42,9 @@ namespace VL.Stride.Rendering
                     return reader.ReadToEnd();
                 }
             }
+
+            if (dbFileProvider != null)
+                return GetPathOfSdslShader(effectName, dbFileProvider);
 
             return null;
         }
@@ -79,8 +85,6 @@ namespace VL.Stride.Rendering
                 return name.Substring(dotIndex + 1);
             return name;
         }
-
-        
 
         public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, out ParsedShader result)
         {

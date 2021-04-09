@@ -29,6 +29,8 @@ using VL.Stride.Effects.TextureFX;
 using VL.Stride.Engine;
 using VL.Stride.Rendering.ComputeEffect;
 using VL.Stride.Shaders;
+using VL.Stride.Shaders.ShaderFX;
+using static VL.Core.NodeBuilding;
 
 namespace VL.Stride.Rendering
 {
@@ -118,10 +120,11 @@ namespace VL.Stride.Rendering
 
             // Traverse either the "shaders" folder in the database or in the given path (if present)
             IVirtualFileProvider fileProvider = default;
+            var dbFileProvider = effectSystem.FileProvider; //should include current path
             if (path != null)
                 fileProvider = new FileSystemProvider(null, path);
             else
-                fileProvider = contentManager.FileProvider;
+                fileProvider = dbFileProvider;
 
             EffectUtils.ResetParserCache();
 
@@ -133,7 +136,7 @@ namespace VL.Stride.Rendering
                     // Shader only for now
                     var name = GetNodeName(effectName, drawFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
-                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, fileProvider);
+                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, dbFileProvider);
 
                     yield return NewDrawEffectShaderNode(shaderNodeName, effectName, shaderMetadata);
                     //DrawFX node
@@ -142,7 +145,7 @@ namespace VL.Stride.Rendering
                 {
                     var name = GetNodeName(effectName, textureFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
-                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, fileProvider);
+                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, dbFileProvider);
 
                     IVLNodeDescription shaderNodeDescription;
                     yield return shaderNodeDescription = NewImageEffectShaderNode(shaderNodeName, effectName, shaderMetadata);
@@ -153,7 +156,7 @@ namespace VL.Stride.Rendering
                     // Shader only for now
                     var name = GetNodeName(effectName, computeFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
-                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, fileProvider);
+                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, dbFileProvider);
 
                     yield return NewComputeEffectShaderNode(shaderNodeName, effectName, shaderMetadata);
                     //ComputeFX node
@@ -163,9 +166,9 @@ namespace VL.Stride.Rendering
                     // Shader only
                     var name = GetNodeName(effectName, shaderFXSuffix);
                     var shaderNodeName = new NameAndVersion($"{name.NamePart}Shader", name.VersionPart);
-                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, fileProvider);
+                    var shaderMetadata = ShaderMetadata.CreateMetadata(effectName, dbFileProvider);
 
-                    //yield return NewShaderFXNode(shaderNodeName, effectName, shaderMetadata);
+                    yield return NewShaderFXNode(shaderNodeName, effectName, shaderMetadata);
                 }
             }
 
@@ -285,8 +288,8 @@ namespace VL.Stride.Rendering
                         continue;
 
                     // Skip well known parameters
-                    if (WellKnownParameters.PerFrameMap.ContainsKey(name) 
-                        || WellKnownParameters.PerViewMap.ContainsKey(name) 
+                    if (WellKnownParameters.PerFrameMap.ContainsKey(name)
+                        || WellKnownParameters.PerViewMap.ContainsKey(name)
                         || WellKnownParameters.TexturingMap.ContainsKey(name))
                         continue;
 
@@ -476,6 +479,83 @@ namespace VL.Stride.Rendering
                     });
             }
 
+            IVLNodeDescription NewShaderFXNode(NameAndVersion name, string shaderName, ShaderMetadata shaderMetadata)
+            {
+                return factory.NewNodeDescription(
+                    name: name,
+                    category: "Stride.Rendering.Experimental.ShaderFX",
+                    fragmented: true,
+                    init: buildContext =>
+                    {
+                        var outputType = shaderMetadata.GetShaderFXOutputType(out var innerType);
+                        var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
+                        var (_effect, _messages, _invalidated) = CreateEffectInstance("DrawFXEffect", shaderMetadata, mixinParams, baseShaderName: shaderName);
+
+                        var _inputs = new List<IVLPinDescription>();
+                        var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", outputType) };
+
+                        var usedNames = new HashSet<string>();
+                        var needsWorld = false;
+                        foreach (var parameter in GetParameters(_effect))
+                        {
+                            var key = parameter.Key;
+                            var name = key.Name;
+
+                            if (WellKnownParameters.PerDrawMap.ContainsKey(name))
+                            {
+                                // Expose World only - all other world dependent parameters we can compute on our own
+                                needsWorld = true;
+                                continue;
+                            }
+
+                            var typeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
+                            _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch));
+                        }
+
+                        if (needsWorld)
+                            _inputs.Add(new ParameterPinDescription(usedNames, TransformationKeys.World));
+
+                        return buildContext.Implementation(
+                            inputs: _inputs,
+                            outputs: _outputs,
+                            messages: _messages,
+                            newNode: nodeBuildContext =>
+                            {
+                                var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
+                                var game = gameHandle.Resource;
+                                var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
+
+                                var effect = new ShaderFXNodeState(shaderName);
+
+                                var inputs = new List<IVLPin>();
+                                foreach (var _input in _inputs)
+                                {
+                                    if (_input is ParameterPinDescription parameterPinDescription)
+                                        inputs.Add(parameterPinDescription.CreatePin(game.GraphicsDevice, mixinParams));
+                                }
+
+                                var compositionPins = inputs.OfType<ShaderFXPin>().ToList();
+
+                                var outputMaker = typeof(EffectShaderNodes).GetMethod(nameof(BuildOutput), BindingFlags.Static | BindingFlags.NonPublic);
+                                outputMaker = outputMaker.MakeGenericMethod(outputType, innerType);
+                                outputMaker.Invoke(null, new object[] { nodeBuildContext, effect, compositionPins });
+                                //NodeInstanceBuildContext context, ShaderFXNodeState nodeState, IReadOnlyList<ShaderFXPin> compositionPins
+
+                                return nodeBuildContext.Node(
+                                    inputs: inputs,
+                                    outputs: new[] { effect.OutputPin },
+                                    update: default,
+                                    dispose: () =>
+                                    {
+                                        gameHandle.Dispose();
+                                    });
+                            },
+                            invalidated: _invalidated,
+                            openEditor: () => OpenEditor(shaderName)
+                        );
+                    });
+            }
+
             const string textureInputName = "Input";
             const string samplerInputName = "Sampler";
 
@@ -492,7 +572,7 @@ namespace VL.Stride.Rendering
                     {
 
                         var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
-                        
+
                         var (_effect, _messages, _invalidated) = CreateEffectInstance("TextureFXEffect", shaderMetadata, mixinParams, baseShaderName: shaderName);
 
                         var _inputs = new List<IVLPinDescription>();
@@ -800,6 +880,11 @@ namespace VL.Stride.Rendering
             }
         }
 
+        private static IVLNodeDescription NewShaderFXNode(NameAndVersion shaderNodeName, string effectName, ShaderMetadata shaderMetadata)
+        {
+            throw new NotImplementedException();
+        }
+
         private static ParameterCollection BuildBaseMixin(string shaderName, ShaderMetadata shaderMetadata, GraphicsDevice graphicsDevice, out ShaderMixinSource effectInstanceMixin, ParameterCollection parameters = null)
         {
             effectInstanceMixin = new ShaderMixinSource();
@@ -828,7 +913,7 @@ namespace VL.Stride.Rendering
         //used for shader source generation
         static MaterialComputeColorKeys baseKeys = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
 
-        private static void UpdateCompositions(IReadOnlyList<ShaderFXPin> compositionPins, GraphicsDevice graphicsDevice, ParameterCollection parameters, ShaderMixinSource mixin)
+        private static bool UpdateCompositions(IReadOnlyList<ShaderFXPin> compositionPins, GraphicsDevice graphicsDevice, ParameterCollection parameters, ShaderMixinSource mixin)
         {
             var anyChanged = false;
             for (int i = 0; i < compositionPins.Count; i++)
@@ -849,10 +934,76 @@ namespace VL.Stride.Rendering
                     if (cp.ShaderSourceChanged)
                         cp.GenerateAndSetShaderSource(mixin, context, baseKeys);
                 }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        static GenericComputeNode<T> BuildGenericComputeNode<T>(string shaderName, IEnumerable<KeyValuePair<string, IComputeNode>> comps)
+        {
+            //var concreteNodeType = typeof(GenericComputeNode<>).MakeGenericType(innerType);
+            //var constr = concreteNodeType.GetConstructor(new Type[]
+            //{
+            //    typeof(Func<ShaderGeneratorContext, MaterialComputeColorKeys, ShaderClassCode>),
+            //    typeof(IEnumerable<KeyValuePair<string, IComputeNode>>)
+            //});
+
+            Func<ShaderGeneratorContext, MaterialComputeColorKeys, ShaderClassCode> createFunc = (c, k) => new ShaderClassSource(shaderName);
+
+            return new GenericComputeNode<T>(createFunc, comps);
+        }
+
+
+        static void BuildOutput<T, TInner>(NodeInstanceBuildContext context, ShaderFXNodeState nodeState, IReadOnlyList<ShaderFXPin> compositionPins)
+        {
+            Func<T> getOutput = () =>
+            {
+                var anyChanged = false;
+                for (int i = 0; i < compositionPins.Count; i++)
+                {
+                    anyChanged |= compositionPins[i].ShaderSourceChanged;
+                    compositionPins[i].ShaderSourceChanged = false; //change seen
+                }
+
+                if (anyChanged)
+                {
+                    Func<ShaderFXPin, KeyValuePair<string, IComputeNode>> f = p => new KeyValuePair<string, IComputeNode>(p.Key.Name, ((IVLPin)p).Value as IComputeNode);
+
+                    var newNode = BuildGenericComputeNode<TInner>(nodeState.ShaderName, compositionPins.Select(p => new KeyValuePair<string, IComputeNode>(p.Key.Name, p.GetValueOrDefaultValue())));
+                    nodeState.CurrentComputeNode = newNode;
+                    nodeState.CurrentOutputValue = ShaderFXUtils.DeclAndSetVar(nodeState.ShaderName, newNode);
+                }
+
+                var node = (GenericComputeNode<TInner>)nodeState.CurrentComputeNode;
+                //node.
+
+                return (T)nodeState.CurrentOutputValue;
+            };
+
+            nodeState.OutputPin = context.Output(getOutput);
+        }
+
+        class ShaderFXNodeState
+        {
+            public readonly string ShaderName;
+            public IVLPin OutputPin;
+            public object CurrentOutputValue;
+            public object CurrentComputeNode;
+
+            public ShaderFXNodeState(string shaderName)
+            {
+                ShaderName = shaderName;
+            }
+
+            public void SetNewComputeNode(object computeNode)
+            {
+                CurrentComputeNode = computeNode;
             }
         }
 
-        static IVLPin ToOutput<T>(NodeBuilding.NodeInstanceBuildContext c, T value, Action getter)
+        static IVLPin ToOutput<T>(NodeInstanceBuildContext c, T value, Action getter)
         {
             return c.Output(() =>
             {

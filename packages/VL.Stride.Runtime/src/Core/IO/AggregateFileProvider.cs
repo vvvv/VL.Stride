@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace VL.Stride.Core.IO
@@ -63,6 +64,32 @@ namespace VL.Stride.Core.IO
                     if (provider.DirectoryExists(url))
                         return true;
                 return false;
+            }
+        }
+
+        public override string[] ListFiles(string url, string searchPattern, VirtualSearchOption searchOption)
+        {
+            return ListFilesInternal(url, searchPattern, searchOption).ToArray();
+        }
+
+        IEnumerable<string> ListFilesInternal(string url, string searchPattern, VirtualSearchOption searchOption)
+        {
+            lock (virtualFileProviders)
+            {
+                foreach (var provider in virtualFileProviders)
+                {
+                    var result = new string[0];
+                    try
+                    {
+                        result = provider.ListFiles(url, searchPattern, searchOption);
+                    }
+                    catch (Exception) { }
+
+                    foreach (var filePath in result)
+                    {
+                        yield return filePath;
+                    }
+                }
             }
         }
 

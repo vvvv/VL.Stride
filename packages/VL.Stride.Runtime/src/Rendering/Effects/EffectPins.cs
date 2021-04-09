@@ -369,7 +369,7 @@ namespace VL.Stride.Rendering
             Key = key;
         }
 
-        public bool ShaderSourceChanged { get; protected set; } = true;
+        public bool ShaderSourceChanged { get; set; } = true;
 
         public void GenerateAndSetShaderSource(ShaderMixinSource mixin, ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
@@ -381,6 +381,7 @@ namespace VL.Stride.Rendering
 
         protected abstract ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys);
 
+        public abstract IComputeNode GetValueOrDefaultValue();
     }
 
     class ShaderFXPin<TShaderClass> : ShaderFXPin, IVLPin<TShaderClass> where TShaderClass : class, IComputeNode
@@ -406,6 +407,11 @@ namespace VL.Stride.Rendering
                     ShaderSourceChanged = true;
                 }
             }
+        }
+
+        public override IComputeNode GetValueOrDefaultValue()
+        {
+            return internalValue ?? defaultValue;
         }
 
         object IVLPin.Value
