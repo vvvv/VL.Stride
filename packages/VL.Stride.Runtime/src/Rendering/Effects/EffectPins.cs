@@ -435,16 +435,11 @@ namespace VL.Stride.Rendering
 
         protected override ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            if (Value != null)
-            {
-                var input = Value;
-                var getter = ShaderFXUtils.GetVarValue(input);
-                var graph = ShaderGraph.BuildFinalShaderGraph(getter);
-                var finalVar = new Do<T>(graph, getter);
-                return finalVar.GenerateShaderSource(context, baseKeys);
-            }
-
-            return base.GetShaderSource(context, baseKeys);
+            var input = Value ?? defaultValue;
+            var getter = input.GetVarValue();
+            var graph = ShaderGraph.BuildFinalShaderGraph(getter);
+            var finalVar = new Do<T>(graph, getter);
+            return finalVar.GenerateShaderSource(context, baseKeys);
         }
     }
 

@@ -19,6 +19,7 @@ using System.Reflection;
 using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Ast.Stride;
 using VL.Lang;
+using System.Diagnostics;
 
 namespace VL.Stride.Rendering
 {
@@ -94,6 +95,7 @@ namespace VL.Stride.Rendering
             {
                 var resultRef = new ParsedShaderRef();
                 var success = TryParseEffect(fileName, effectName, fileProvider, resultRef);
+                Debug.Assert(resultRef.ParentShaders.Count == 0);
                 if (success)
                     result = resultRef.ParsedShader;
                 return success;
@@ -129,9 +131,22 @@ namespace VL.Stride.Rendering
                 if (parserCache.TryGetValue(shaderName, out var localResult))
                 {
                     if (resultRef.ParsedShader == null)
+                    {
                         resultRef.ParsedShader = localResult;
+                    }
                     else
-                        resultRef.ParsedShader.AddBaseShader(localResult);
+                    {
+                        foreach (var parentShader in resultRef.ParentShaders)
+                        {
+                            parentShader.AddBaseShader(localResult);
+
+                            // also add all base shaders of this base shader
+                            foreach (var baseShader in localResult.BaseShaders)
+                            {
+                                parentShader.AddBaseShader(baseShader);
+                            } 
+                        }
+                    }
 
                     return true;
                 }
@@ -167,12 +182,17 @@ namespace VL.Stride.Rendering
                     else //success
                     {
                         localResult = new ParsedShader(parsingResult.Shader);
-                        parserCache[shaderName] = localResult;
 
+                        foreach (var parentShader in resultRef.ParentShaders)
+                        {
+                            parentShader.AddBaseShader(localResult);
+                        }
+
+                        // original shader
                         if (resultRef.ParsedShader == null)
                             resultRef.ParsedShader = localResult;
-                        else
-                            resultRef.ParsedShader.AddBaseShader(localResult);
+
+                        resultRef.ParentShaders.Push(localResult);
 
                         // base shaders
                         var baseShaders = localResult.ShaderClass.BaseClasses;
@@ -186,6 +206,8 @@ namespace VL.Stride.Rendering
                             }
                         }
 
+                        resultRef.ParentShaders.Pop();
+                        parserCache[shaderName] = localResult;
                         return true;
                     }
                 }
