@@ -63,12 +63,22 @@ namespace VL.Stride.Rendering
         }
 
         public void AddBaseShader(ParsedShader baseShader)
-            => baseShaders.Add(baseShader);
+        {
+            if (!baseShaders.Contains(baseShader))
+                baseShaders.Add(baseShader);
+
+        }
+
+        public override string ToString()
+        {
+            return ShaderClass?.ToString() ?? base.ToString();
+        }
     }
 
     public class ParsedShaderRef
     {
         public ParsedShader ParsedShader;
+        public Stack<ParsedShader> ParentShaders = new Stack<ParsedShader>();
     }
 
     public class CompositionInput
