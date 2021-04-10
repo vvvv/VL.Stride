@@ -2,6 +2,7 @@
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Ast.Stride;
+using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Materials.ComputeColors;
@@ -69,6 +70,45 @@ namespace VL.Stride.Rendering
 
         }
 
+        public IEnumerable<ParameterKey> GetUniformInputs()
+        {
+            var variables = ShaderClass.Members.OfType<Variable>();
+
+            foreach (var v in variables)
+            {
+                var type = v.Type;
+                var keyName = ShaderClass.Name + "." + v.Name;
+
+                switch (type)
+                {
+                    case ScalarType s when s.Name.Text == "float":
+                        yield return new ValueParameterKey<float>(keyName);
+                        break;
+                    case TypeName n when n.Name.Text == "float4":
+                        yield return new ValueParameterKey<Vector4>(keyName);
+                        break;
+                    case TypeName m when m.Name.Text == "float4x4":
+                        yield return new ValueParameterKey<Matrix>(keyName);
+                        break;
+                    case TextureType t:
+                        yield return new ObjectParameterKey<Texture>(keyName);
+                        break;
+                    default:
+                        break;
+                }
+
+                //(v.InitialValue as Literal).Value;
+            }
+        }
+
+        //static ParameterKey<T> CreateParameterKey<T>(string name, )
+        //{
+        //    if (typeof(T).IsValueType)
+        //        return new ValueParameterKey<T>(name);
+        //    else
+        //        return new ObjectParameterKey<T>(name);
+        //}
+
         public override string ToString()
         {
             return ShaderClass?.ToString() ?? base.ToString();
@@ -79,6 +119,13 @@ namespace VL.Stride.Rendering
     {
         public ParsedShader ParsedShader;
         public Stack<ParsedShader> ParentShaders = new Stack<ParsedShader>();
+    }
+
+    public class UniformInput
+    {
+        public string Name;
+        public Type Type;
+
     }
 
     public class CompositionInput

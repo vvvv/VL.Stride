@@ -180,7 +180,7 @@ namespace VL.Stride.Rendering
 
     abstract class ParameterPin
     {
-        public readonly ParameterCollection Parameters;
+        public ParameterCollection Parameters;
         public readonly ParameterKey ParameterKey;
 
         public ParameterPin(ParameterCollection parameters, ParameterKey key)
@@ -376,12 +376,12 @@ namespace VL.Stride.Rendering
             var shaderSource = GetShaderSource(context, baseKeys);
             Parameters.Set(Key, shaderSource);
             mixin.Compositions[Key.Name] = shaderSource;
-            ShaderSourceChanged = false;
+            ShaderSourceChanged = false; //change seen
         }
 
         protected abstract ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys);
 
-        public abstract IComputeNode GetValueOrDefaultValue();
+        public abstract IComputeNode GetValueOrDefault();
     }
 
     class ShaderFXPin<TShaderClass> : ShaderFXPin, IVLPin<TShaderClass> where TShaderClass : class, IComputeNode
@@ -409,7 +409,7 @@ namespace VL.Stride.Rendering
             }
         }
 
-        public override IComputeNode GetValueOrDefaultValue()
+        public override IComputeNode GetValueOrDefault()
         {
             return internalValue ?? defaultValue;
         }
@@ -440,6 +440,12 @@ namespace VL.Stride.Rendering
             var graph = ShaderGraph.BuildFinalShaderGraph(getter);
             var finalVar = new Do<T>(graph, getter);
             return finalVar.GenerateShaderSource(context, baseKeys);
+        }
+
+        public override IComputeNode GetValueOrDefault()
+        {
+            var input = Value ?? defaultValue;
+            return input.GetVarValue();
         }
     }
 
