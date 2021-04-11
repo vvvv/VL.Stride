@@ -64,7 +64,8 @@ namespace VL.Stride.Rendering
             var packsFolder = Path.Combine(PlatformFolders.ApplicationBinaryDirectory, "packs");
             if (Directory.Exists(packsFolder))
             {
-                return Directory.EnumerateDirectories(packsFolder, @"*stride\Assets*", SearchOption.AllDirectories)
+                return Directory.EnumerateDirectories(packsFolder, @"*Assets", SearchOption.AllDirectories)
+                    .Where(p => p.Contains(@"\stride\Assets"))
                     .SelectMany(d => Directory.EnumerateFiles(d, "*.sdsl", SearchOption.AllDirectories))
                     .ToDictionary(fp => Path.GetFileNameWithoutExtension(fp));
             }
