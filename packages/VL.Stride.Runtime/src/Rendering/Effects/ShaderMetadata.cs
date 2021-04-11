@@ -94,7 +94,7 @@ namespace VL.Stride.Rendering
                 return enumTypeName.typeName;
             }
 
-            if (key.PropertyType == typeof(ShaderSource))
+            if (key.PropertyType == typeof(ShaderSource) && ParsedShader != null)
             {
                 if (ParsedShader.CompositionsWithBaseShaders.TryGetValue(key.GetVariableName(), out var composition))
                 {
@@ -110,6 +110,28 @@ namespace VL.Stride.Rendering
 
             return null;
         }
+
+        public Type GetShaderFXOutputType(out Type innerType)
+        {
+            innerType = null;
+            foreach (var baseShader in ParsedShader?.BaseShaders)
+            {
+                var baseName = baseShader?.ShaderClass?.Name;
+                if (!string.IsNullOrWhiteSpace(baseName))
+                {
+                    if (knownShaderFXTypes.TryGetValue(baseName, out var type))
+                    {
+                        if (type.IsGenericType)
+                            innerType = type.GetGenericArguments()[0];
+
+                        return type;
+                    }
+                }
+            }
+
+            return typeof(IComputeNode);
+        }
+
 
         static Dictionary<string, Type> knownShaderFXTypes = new Dictionary<string, Type>()
         {

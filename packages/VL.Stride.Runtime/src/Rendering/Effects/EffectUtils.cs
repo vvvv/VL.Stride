@@ -20,16 +20,20 @@ using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Ast.Stride;
 using VL.Lang;
 using System.Diagnostics;
+using Stride.Core;
 
 namespace VL.Stride.Rendering
 {
     static class EffectUtils
     {
-        public static string GetPathOfSdslShader(string effectName, IVirtualFileProvider fileProvider)
+        public static string GetPathOfSdslShader(string effectName, IVirtualFileProvider fileProvider, IVirtualFileProvider dbFileProvider = null)
         {
             var path = EffectCompilerBase.GetStoragePathFromShaderType(effectName);
             if (fileProvider.TryGetFileLocation(path, out var filePath, out _, out _))
-                return filePath;
+            {
+                if (File.Exists(filePath))
+                    return filePath;
+            }
 
             var pathUrl = path + "/path";
             if (fileProvider.FileExists(pathUrl))
@@ -37,11 +41,38 @@ namespace VL.Stride.Rendering
                 using (var pathStream = fileProvider.OpenStream(pathUrl, VirtualFileMode.Open, VirtualFileAccess.Read))
                 using (var reader = new StreamReader(pathStream))
                 {
-                    return reader.ReadToEnd();
+                    var dbPath = reader.ReadToEnd();
+                    if (File.Exists(dbPath))
+                        return dbPath;
                 }
             }
 
+            if (dbFileProvider != null)
+                return GetPathOfSdslShader(effectName, dbFileProvider);
+
+            //find locally
+            if (LocalShaderFilePaths.TryGetValue(effectName, out var fp))
+                return fp;
+
             return null;
+        }
+
+        static readonly Dictionary<string, string> LocalShaderFilePaths = GetShaders();
+
+        private static Dictionary<string, string> GetShaders()
+        {
+            var packsFolder = Path.Combine(PlatformFolders.ApplicationBinaryDirectory, "packs");
+            if (Directory.Exists(packsFolder))
+            {
+                return Directory.EnumerateDirectories(packsFolder, @"*Assets", SearchOption.AllDirectories)
+                    .Where(p => p.Contains(@"\stride\Assets"))
+                    .SelectMany(d => Directory.EnumerateFiles(d, "*.sdsl", SearchOption.AllDirectories))
+                    .ToDictionary(fp => Path.GetFileNameWithoutExtension(fp));
+            }
+            else
+            {
+                return new Dictionary<string, string>();
+            }
         }
 
         static readonly Regex FCamelCasePattern = new Regex("[a-z][A-Z0-9]", RegexOptions.Compiled);
@@ -80,8 +111,6 @@ namespace VL.Stride.Rendering
                 return name.Substring(dotIndex + 1);
             return name;
         }
-
-        
 
         public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, out ParsedShader result)
         {

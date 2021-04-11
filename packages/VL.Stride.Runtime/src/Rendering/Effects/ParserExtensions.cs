@@ -154,5 +154,55 @@ namespace VL.Stride.Rendering
 
             return defaultVlaue ?? Activator.CreateInstance(type);
         }
+
+        public static T GetDefault<T>(this Variable v)
+        {
+            var inital = v.InitialValue;
+            if (inital != null)
+                return inital.ParseDefault<T>();
+
+            return default;
+        }
+
+        static T ParseDefault<T>(this Expression e)
+        {
+            if (e is LiteralExpression l)
+                return (T)Convert.ChangeType(l.Literal?.Value, typeof(T));
+
+            if (e is MethodInvocationExpression m)
+                return m.ParseMethod<T>();
+
+            return default;
+        }
+
+        static T ParseArg<T>(this MethodInvocationExpression m, int i)
+        {
+            if (m.Arguments.Count > i)
+                return m.Arguments[i].ParseDefault<T>();
+
+            return default;
+        }
+
+        static T ParseMethod<T>(this MethodInvocationExpression m)
+        {
+            var type = typeof(T);
+
+            if (type == typeof(Vector2))
+                return (T)(object)new Vector2(m.ParseArg<float>(0), m.ParseArg<float>(1));
+            if (type == typeof(Vector3))
+                return (T)(object)new Vector3(m.ParseArg<float>(0), m.ParseArg<float>(1), m.ParseArg<float>(2));
+            if (type == typeof(Vector4))
+                return (T)(object)new Vector4(m.ParseArg<float>(0), m.ParseArg<float>(1), m.ParseArg<float>(2), m.ParseArg<float>(3));
+
+            if (type == typeof(Int2))
+                return (T)(object)new Int2(m.ParseArg<int>(0), m.ParseArg<int>(1));
+            if (type == typeof(Int3))
+                return (T)(object)new Int3(m.ParseArg<int>(0), m.ParseArg<int>(1), m.ParseArg<int>(2));
+            if (type == typeof(Int4))
+                return (T)(object)new Int4(m.ParseArg<int>(0), m.ParseArg<int>(1), m.ParseArg<int>(2), m.ParseArg<int>(3));
+
+            return default;
+
+        }
     }
 }
