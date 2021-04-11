@@ -20,6 +20,7 @@ using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Ast.Stride;
 using VL.Lang;
 using System.Diagnostics;
+using Stride.Core;
 
 namespace VL.Stride.Rendering
 {
@@ -40,14 +41,37 @@ namespace VL.Stride.Rendering
                 using (var pathStream = fileProvider.OpenStream(pathUrl, VirtualFileMode.Open, VirtualFileAccess.Read))
                 using (var reader = new StreamReader(pathStream))
                 {
-                    return reader.ReadToEnd();
+                    var dbPath = reader.ReadToEnd();
+                    if (File.Exists(dbPath))
+                        return dbPath;
                 }
             }
 
             if (dbFileProvider != null)
                 return GetPathOfSdslShader(effectName, dbFileProvider);
 
+            //find locally
+            if (LocalShaderFilePaths.TryGetValue(effectName, out var fp))
+                return fp;
+
             return null;
+        }
+
+        static readonly Dictionary<string, string> LocalShaderFilePaths = GetShaders();
+
+        private static Dictionary<string, string> GetShaders()
+        {
+            var packsFolder = Path.Combine(PlatformFolders.ApplicationBinaryDirectory, "packs");
+            if (Directory.Exists(packsFolder))
+            {
+                return Directory.EnumerateDirectories(packsFolder, @"*stride\Assets*", SearchOption.AllDirectories)
+                    .SelectMany(d => Directory.EnumerateFiles(d, "*.sdsl", SearchOption.AllDirectories))
+                    .ToDictionary(fp => Path.GetFileNameWithoutExtension(fp));
+            }
+            else
+            {
+                return new Dictionary<string, string>();
+            }
         }
 
         static readonly Regex FCamelCasePattern = new Regex("[a-z][A-Z0-9]", RegexOptions.Compiled);
