@@ -210,7 +210,7 @@ namespace VL.Stride.Rendering
 
                 var watchNames = new HashSet<string>() { baseShaderName };
 
-                foreach (var baseClass in shaderMetadata.ParsedShader.BaseShaders)
+                foreach (var baseClass in shaderMetadata.ParsedShader?.BaseShaders)
                 {
                     var baseClassPath = baseClass.Shader.Span.Location.FileSource;
                     if (baseClassPath.ToLowerInvariant().Contains("/stride."))
@@ -496,22 +496,7 @@ namespace VL.Stride.Rendering
                         var usedNames = new HashSet<string>();
                         var needsWorld = false;
 
-                        // local input values
-                        foreach (var key in shaderMetadata.ParsedShader.GetUniformInputs())
-                        {
-                            var name = key.Name;
-
-                            if (WellKnownParameters.PerDrawMap.ContainsKey(name))
-                            {
-                                // Expose World only - all other world dependent parameters we can compute on our own
-                                needsWorld = true;
-                                continue;
-                            }
-
-                            var typeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
-                            _inputs.Add(new ParameterPinDescription(usedNames, key, 1, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch));
-                        }
-
+                        
                         foreach (var parameter in GetParameters(_effect))
                         {
                             var key = parameter.Key;
@@ -526,6 +511,25 @@ namespace VL.Stride.Rendering
 
                             var typeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
                             _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch));
+                        }
+
+                        // local input values
+                        foreach (var key in shaderMetadata.ParsedShader?.GetUniformInputs())
+                        {
+                            var name = key.Name;
+
+                            if (WellKnownParameters.PerDrawMap.ContainsKey(name))
+                            {
+                                // Expose World only - all other world dependent parameters we can compute on our own
+                                needsWorld = true;
+                                continue;
+                            }
+
+                            var typeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
+                            if (boxedDefaultValue == null)
+                                boxedDefaultValue = key.DefaultValueMetadata.GetDefaultValue();
+
+                            _inputs.Add(new ParameterPinDescription(usedNames, key, 1, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch));
                         }
 
                         if (needsWorld)
@@ -904,7 +908,7 @@ namespace VL.Stride.Rendering
             };
 
             //add composition parameters to parameters
-            foreach (var compKey in shaderMetadata.ParsedShader.CompositionsWithBaseShaders)
+            foreach (var compKey in shaderMetadata.ParsedShader?.CompositionsWithBaseShaders)
             {
                 var comp = compKey.Value;
                 var shaderSource = comp.GetDefaultShaderSource(context, baseKeys);
@@ -946,19 +950,6 @@ namespace VL.Stride.Rendering
             return false;
         }
 
-        static GenericComputeNode<T> BuildGenericComputeNode<T>(string shaderName, IEnumerable<KeyValuePair<string, IComputeNode>> comps)
-        {
-            //var concreteNodeType = typeof(GenericComputeNode<>).MakeGenericType(innerType);
-            //var constr = concreteNodeType.GetConstructor(new Type[]
-            //{
-            //    typeof(Func<ShaderGeneratorContext, MaterialComputeColorKeys, ShaderClassCode>),
-            //    typeof(IEnumerable<KeyValuePair<string, IComputeNode>>)
-            //});
-
-            return new GenericComputeNode<T>((c, k) => new ShaderClassSource(shaderName), comps);
-        }
-
-
         static void BuildOutput<T, TInner>(NodeBuilding.NodeInstanceBuildContext context, ShaderFXNodeState nodeState, IReadOnlyList<IVLPin> inputPins)
         {
             var compositionPins = inputPins.OfType<ShaderFXPin>().ToList();
@@ -976,25 +967,30 @@ namespace VL.Stride.Rendering
 
                 if (shaderChanged)
                 {
-                    var newNode = BuildGenericComputeNode<TInner>(nodeState.ShaderName, compositionPins.Select(p => new KeyValuePair<string, IComputeNode>(p.Key.Name, p.GetValueOrDefault())));
-                    nodeState.CurrentComputeNode = newNode;
-                    nodeState.CurrentOutputValue = ShaderFXUtils.DeclAndSetVar(nodeState.ShaderName, newNode);
+                    var comps = compositionPins.Select(p => new KeyValuePair<string, IComputeNode>(p.Key.Name, p.GetValueOrDefault()));
+                    var newComputeNode = new GenericComputeNode<TInner>((c, k) => new ShaderClassSource(nodeState.ShaderName), comps);
+                    nodeState.CurrentComputeNode = newComputeNode;
+                    nodeState.CurrentOutputValue = ShaderFXUtils.DeclAndSetVar(nodeState.ShaderName, newComputeNode);
                 }
 
-                // update inputs
+                // update uniform inputs
                 var node = (GenericComputeNode<TInner>)nodeState.CurrentComputeNode;
                 if (node.Parameters != nodeState.CurrentParameters)
                 {
-                    var newParameters = node.Parameters ?? new ParameterCollection();
-                    foreach (var pin in inputs)
+                    var newParameters = node.Parameters ?? nodeState.DefaultParameters;
+                    if (nodeState.CurrentParameters != newParameters)
                     {
-                        var boxedValue = (pin as IVLPin).Value; 
-                        pin.Parameters = newParameters;
-                        if (boxedValue != null)
-                            (pin as IVLPin).Value = boxedValue;
+                        foreach (var pin in inputs)
+                        {
+                            var boxedValue = (pin as IVLPin)?.Value;
+                            pin.Parameters = newParameters;
+                            if (boxedValue != null)
+                                (pin as IVLPin).Value = boxedValue;
+                            
+                        }
+                        nodeState.CurrentParameters = newParameters;
                     }
                 }
-                //node.
 
                 return (T)nodeState.CurrentOutputValue;
             };
@@ -1008,11 +1004,13 @@ namespace VL.Stride.Rendering
             public IVLPin OutputPin;
             public object CurrentOutputValue;
             public object CurrentComputeNode;
+            public readonly ParameterCollection DefaultParameters;
             public ParameterCollection CurrentParameters;
 
             public ShaderFXNodeState(string shaderName, ParameterCollection parameters)
             {
                 ShaderName = shaderName;
+                DefaultParameters = parameters;
                 CurrentParameters = parameters;
             }
         }
