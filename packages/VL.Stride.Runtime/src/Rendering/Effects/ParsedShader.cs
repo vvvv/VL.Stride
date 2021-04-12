@@ -34,6 +34,9 @@ namespace VL.Stride.Rendering
 
         Lazy<IReadOnlyDictionary<string, CompositionInput>> compositionsWithBaseShaders;
 
+        public readonly IReadOnlyList<Variable> Variables;
+        public readonly IReadOnlyDictionary<string, Variable> VariablesByName;
+
         private IEnumerable<CompositionInput> GetCompositionsWithBaseShaders()
         {
             foreach (var comp in Compositions)
@@ -54,8 +57,9 @@ namespace VL.Stride.Rendering
         {
             Shader = shader;
             ShaderClass = Shader.GetFirstClassDecl();
-            compositions = ShaderClass.Members
-                .OfType<Variable>()
+            Variables = ShaderClass.Members.OfType<Variable>().ToList();
+            VariablesByName = Variables.ToDictionary(v => v.Name.Text);
+            compositions = Variables
                 .Select((v, i) => (v, i))
                 .Where(v => v.v.Qualifiers.Contains(StrideStorageQualifier.Compose))
                 .Select(v => new CompositionInput(v.v, v.i))
@@ -73,9 +77,7 @@ namespace VL.Stride.Rendering
 
         public IEnumerable<ParameterKey> GetUniformInputs()
         {
-            var variables = ShaderClass?.Members.OfType<Variable>();
-
-            foreach (var v in variables)
+            foreach (var v in Variables)
             {
                 var type = v.Type;
                 var keyName = ShaderClass.Name + "." + v.Name;
@@ -129,14 +131,6 @@ namespace VL.Stride.Rendering
                 }
             }
         }
-
-        //static ParameterKey<T> CreateParameterKey<T>(string name, )
-        //{
-        //    if (typeof(T).IsValueType)
-        //        return new ValueParameterKey<T>(name);
-        //    else
-        //        return new ObjectParameterKey<T>(name);
-        //}
 
         public override string ToString()
         {

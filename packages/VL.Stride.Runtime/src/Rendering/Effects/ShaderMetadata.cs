@@ -82,6 +82,46 @@ namespace VL.Stride.Rendering
             optionalPins.Add(name);
         }
 
+        Dictionary<string, string> pinSummaries = new Dictionary<string, string>();
+        Dictionary<string, string> pinRemarks = new Dictionary<string, string>();
+
+        private void AddPinSummary(string pinKeyName, string summary)
+        {
+            pinSummaries[pinKeyName] = summary;
+        }
+
+        private void AddPinRemarks(string pinKeyName, string remarks)
+        {
+            pinRemarks[pinKeyName] = remarks;
+        }
+
+        public void GetPinDocuAndVisibility(string name, out string summary, out string remarks, out bool isOptional)
+        {
+            summary = "";
+            remarks = "";
+
+            if (pinSummaries.TryGetValue(name, out var sum))
+                summary = sum;
+
+            if (pinRemarks.TryGetValue(name, out var rem))
+                remarks = rem;
+
+            isOptional = optionalPins.Contains(name);
+
+            // add type in shader to pin summary, if not float or int type
+            var varName = name.Substring(name.LastIndexOf('.') + 1);
+            if (ParsedShader != null && ParsedShader.VariablesByName.TryGetValue(varName, out var variable))
+            {
+                var shaderType = variable.Type.ToString();
+                if (!(shaderType.StartsWith("float", StringComparison.OrdinalIgnoreCase) 
+                    || shaderType.StartsWith("int", StringComparison.OrdinalIgnoreCase)
+                    || shaderType.StartsWith("uint", StringComparison.OrdinalIgnoreCase)
+                    || shaderType.StartsWith("Sampler", StringComparison.OrdinalIgnoreCase)))
+                    summary += (string.IsNullOrWhiteSpace(summary) ? "" : Environment.NewLine) + shaderType;
+            }
+
+        }
+
         /// <summary>
         /// Gets the type of the pin, if overwritten by an attribute, e.g. int -> enum.
         /// </summary>
@@ -175,9 +215,12 @@ namespace VL.Stride.Rendering
         /// </summary>
         public static void RegisterAdditionalShaderAttributes()
         {
+            // only pin attributes need to be registered
             StrideAttributes.AvailableAttributes.Add(EnumTypeName);
             StrideAttributes.AvailableAttributes.Add(OptionalName);
             StrideAttributes.AvailableAttributes.Add(DefaultName);
+            StrideAttributes.AvailableAttributes.Add(SummaryName);
+            StrideAttributes.AvailableAttributes.Add(RemarksName);
         }
 
         public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider)
@@ -234,6 +277,12 @@ namespace VL.Stride.Rendering
                                     break;
                                 case OptionalName:
                                     shaderMetadata.AddOptionalPinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text);
+                                    break;
+                                case SummaryName:
+                                    shaderMetadata.AddPinSummary(shaderDecl.Name.Text + "." + pinDecl.Name.Text, attr.ParseString());
+                                    break;
+                                case RemarksName:
+                                    shaderMetadata.AddPinRemarks(shaderDecl.Name.Text + "." + pinDecl.Name.Text, attr.ParseString());
                                     break;
                                 case DefaultName:
                                     // handled in composition parsing in ParseShader.cs

@@ -83,6 +83,11 @@ namespace VL.Stride.Rendering
         public override Type Type { get; }
         public override object DefaultValueBoxed { get; }
         public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => EffectPins.CreatePin(graphicsDevice, parameters, Key, Count, IsPermutationKey, DefaultValueBoxed, Type);
+
+        public override string ToString()
+        {
+            return "PinDesc: " + Name ?? base.ToString();
+        }
     }
 
     static class EffectPins
