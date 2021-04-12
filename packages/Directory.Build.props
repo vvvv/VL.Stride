@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
+    <!-- In our main repo this should get picked up and import targets which override the build version targets -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..\..))" 
+          Condition="Exists($([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..\..)))" />
   <PropertyGroup>
     <LocalNuGetConfigFile>$(MsBuildThisFileDirectory)NuGet.config</LocalNuGetConfigFile>
     <Year>$([System.DateTime]::Now.ToString('yyyy'))</Year>
