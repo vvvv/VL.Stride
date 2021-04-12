@@ -1,4 +1,4 @@
-[Summary("")]
+[Summary("Multiplies the inputs.")]
 shader MyShaderPart_ShaderFX : ComputeFloat4
 {
     //input for another ShaderFX node
@@ -6,12 +6,12 @@ shader MyShaderPart_ShaderFX : ComputeFloat4
 
     cbuffer PerMaterial //when used in materials
     {
+        [Summary("I could be a composition input.")]
         stage float4 ScalarInput = float4(1, 2, 3, 4); //just for reference, it is easier to create a ComputeFloat shader input and connect a ValueIn or ValueMap node
     }
 
     rgroup PerMaterial //when used in materials
     {
-        [Summary("This buffer is cool!")]
         stage RWBuffer<float> MyBuffer;
     }
 

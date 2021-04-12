@@ -210,14 +210,14 @@ namespace VL.Stride.Rendering
 
                 var watchNames = new HashSet<string>() { baseShaderName };
 
-                foreach (var baseClass in shaderMetadata.ParsedShader?.BaseShaders)
+                foreach (var baseClass in shaderMetadata.ParsedShader?.BaseShaders ?? Enumerable.Empty<ParsedShader>())
                 {
                     var baseClassPath = baseClass.Shader.Span.Location.FileSource;
                     if (baseClassPath.ToLowerInvariant().Contains("/stride."))
                         continue; //in stride package folder
 
                     watchNames.Add(Path.GetFileNameWithoutExtension(baseClassPath));
-                }
+                } 
 
                 IObservable<object> invalidated = modifications.Where(e => watchNames.Contains(Path.GetFileNameWithoutExtension(e.Name)));
                 // Setup our own watcher as Stride doesn't track shaders with errors
@@ -344,6 +344,9 @@ namespace VL.Stride.Rendering
                             inputs: _inputs,
                             outputs: _outputs,
                             messages: _messages,
+                            summary: shaderMetadata.Summary,
+                            remarks: shaderMetadata.Remarks,
+                            tags: shaderMetadata.Tags,
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
@@ -434,6 +437,9 @@ namespace VL.Stride.Rendering
                             inputs: _inputs,
                             outputs: _outputs,
                             messages: _messages,
+                            summary: shaderMetadata.Summary,
+                            remarks: shaderMetadata.Remarks,
+                            tags: shaderMetadata.Tags,
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
@@ -517,7 +523,7 @@ namespace VL.Stride.Rendering
                         }
 
                         // local input values
-                        foreach (var key in shaderMetadata.ParsedShader?.GetUniformInputs())
+                        foreach (var key in shaderMetadata.ParsedShader?.GetUniformInputs() ?? Enumerable.Empty<ParameterKey>())
                         {
                             var name = key.Name;
 
@@ -544,6 +550,9 @@ namespace VL.Stride.Rendering
                             inputs: _inputs,
                             outputs: _outputs,
                             messages: _messages,
+                            summary: shaderMetadata.Summary,
+                            remarks: shaderMetadata.Remarks,
+                            tags: shaderMetadata.Tags,
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
@@ -689,6 +698,9 @@ namespace VL.Stride.Rendering
                             inputs: _inputs,
                             outputs: _outputs,
                             messages: _messages,
+                            summary: shaderMetadata.Summary,
+                            remarks: shaderMetadata.Remarks,
+                            tags: shaderMetadata.Tags,
                             newNode: nodeBuildContext =>
                             {
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
@@ -914,12 +926,15 @@ namespace VL.Stride.Rendering
             };
 
             //add composition parameters to parameters
-            foreach (var compKey in shaderMetadata.ParsedShader?.CompositionsWithBaseShaders)
+            if (shaderMetadata.ParsedShader != null)
             {
-                var comp = compKey.Value;
-                var shaderSource = comp.GetDefaultShaderSource(context, baseKeys);
-                effectInstanceMixin.AddComposition(comp.Name, shaderSource);
-                mixinParams.Set(comp.Key, shaderSource);
+                foreach (var compKey in shaderMetadata.ParsedShader.CompositionsWithBaseShaders)
+                {
+                    var comp = compKey.Value;
+                    var shaderSource = comp.GetDefaultShaderSource(context, baseKeys);
+                    effectInstanceMixin.AddComposition(comp.Name, shaderSource);
+                    mixinParams.Set(comp.Key, shaderSource);
+                } 
             }
 
             return mixinParams;
