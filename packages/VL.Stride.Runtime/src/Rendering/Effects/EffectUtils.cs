@@ -10,15 +10,11 @@ using Stride.Core.IO;
 using System.IO;
 using Stride.Shaders.Compiler;
 using Stride.Core.Shaders.Ast;
-using Stride.Core.Shaders.Parser;
 using Stride.Shaders.Parser;
 using Stride.Core.Diagnostics;
 using Stride.Shaders;
 using ShaderMacro = Stride.Core.Shaders.Parser.ShaderMacro;
 using System.Reflection;
-using Stride.Core.Shaders.Ast.Hlsl;
-using Stride.Core.Shaders.Ast.Stride;
-using VL.Lang;
 using System.Diagnostics;
 using Stride.Core;
 
@@ -56,6 +52,17 @@ namespace VL.Stride.Rendering
 
             return null;
         }
+
+        //code drop: get shader source from data base, is there a more direct way?
+        //public static string GetShaderSourceCode()
+        //{
+        //    var effectCompiler = new EffectCompiler(fileProvider)
+        //    {
+        //        SourceDirectories = { EffectCompilerBase.DefaultSourceShaderFolder },
+        //    };
+        //    var parser = effectCompiler.GetMixinParser();
+        //    var sourceWithHash = parser?.SourceManager?.LoadShaderSource(effectName);
+        //}
 
         static readonly Dictionary<string, string> LocalShaderFilePaths = GetShaders();
 
@@ -314,8 +321,8 @@ namespace VL.Stride.Rendering
 
                 // In .sdsl, class has been renamed to shader to avoid ambiguities with HLSL
                 shaderMixinSource.AddMacro("class", "shader");
-
-                var parsingResult = effectCompiler.GetMixinParser().Parse(shaderMixinSource, shaderMixinSource.Macros.ToArray());
+                var parser = effectCompiler.GetMixinParser();
+                var parsingResult = parser.Parse(shaderMixinSource, shaderMixinSource.Macros.ToArray());
                 shader = parsingResult.Shader;
                 //parsingResult.Shader.
                 // Copy log from parser results to output
@@ -328,7 +335,7 @@ namespace VL.Stride.Rendering
             }
         }
 
-        private static ShaderMixinParser GetMixinParser(this EffectCompiler effectCompiler)
+        public static ShaderMixinParser GetMixinParser(this EffectCompiler effectCompiler)
         {
             var getMixinParser = typeof(EffectCompiler).GetMethod("GetMixinParser", BindingFlags.NonPublic | BindingFlags.Instance);
             return (ShaderMixinParser)getMixinParser.Invoke(effectCompiler, new object[0]);
