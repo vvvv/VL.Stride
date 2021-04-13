@@ -110,8 +110,6 @@ namespace VL.Stride.Rendering
                 if (typeInPatch.IsGenericType && typeInPatch.GetGenericTypeDefinition() == typeof(SetVar<>))
                 {
                     var typeParam = typeInPatch.GetGenericArguments()[0];
-                    var createSetVarMethod = typeof(ShaderFXUtils).GetMethods().First(m => m.Name == nameof(ShaderFXUtils.DeclAndSetVar) && m.GetParameters().Length == 1);
-                    value = createSetVarMethod.MakeGenericMethod(typeParam).Invoke(null, new[] { value });
                     var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateGPUValueSinkPin), BindingFlags.Static | BindingFlags.Public);
                     return createPinMethod.MakeGenericMethod(typeParam).Invoke(null, new[] { parameters, key, value }) as IVLPin;
                 }

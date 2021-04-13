@@ -138,7 +138,7 @@ namespace VL.Stride.Rendering
             {
                 if (ParsedShader.CompositionsWithBaseShaders.TryGetValue(key.GetVariableName(), out var composition))
                 {
-                    boxedDefaultValue = composition.GetDefaultComputeNode();
+                    boxedDefaultValue = composition.GetDefaultComputeNode(forPatch: true);
                     if (knownShaderFXTypes.TryGetValue(composition.TypeName, out var type))
                     {
                         return type;

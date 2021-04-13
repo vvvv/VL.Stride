@@ -176,11 +176,12 @@ namespace VL.Stride.Rendering
         // cache
         ShaderSource defaultShaderSource;
         IComputeNode defaultComputeNode;
+        IComputeNode defaultGetter;
 
-        public IComputeNode GetDefaultComputeNode()
+        public IComputeNode GetDefaultComputeNode(bool forPatch = false)
         {
             if (defaultComputeNode != null)
-                return defaultComputeNode;
+                return forPatch ? defaultComputeNode : defaultGetter ?? defaultComputeNode;
 
             try
             {
@@ -193,8 +194,10 @@ namespace VL.Stride.Rendering
                         boxedDefaultValue = attribute.ParseBoxed(compDefault.ValueType);
                     }
 
-                    defaultComputeNode = compDefault.Factory(boxedDefaultValue);
-                    return defaultComputeNode;
+                    var def = compDefault.Factory(boxedDefaultValue);
+                    defaultComputeNode = def.func;
+                    defaultGetter = def.getter;
+                    return forPatch ? defaultComputeNode : defaultGetter ?? defaultComputeNode;
                 }
 
                 defaultComputeNode = new ShaderSourceComputeNode(new ShaderClassSource(TypeName));
@@ -244,10 +247,10 @@ namespace VL.Stride.Rendering
         abstract class CompDefault
         {
             public readonly object BoxedDefault;
-            public readonly Func<object, IComputeNode> Factory;
+            public readonly Func<object, (IComputeNode func, IComputeNode getter)> Factory;
             public readonly Type ValueType;
 
-            public CompDefault(object defaultValue, Func<object, IComputeNode> factory, Type valueType)
+            public CompDefault(object defaultValue, Func<object, (IComputeNode func, IComputeNode getter)> factory, Type valueType)
             {
                 BoxedDefault = defaultValue;
                 Factory = factory;
@@ -258,7 +261,7 @@ namespace VL.Stride.Rendering
         class CompDefaultVoid : CompDefault
         {
             public CompDefaultVoid()
-                : base(null, _ => new ComputeOrder(), null)
+                : base(null, _ => (new ComputeOrder(), null), null)
             {
             }
         }
@@ -270,12 +273,12 @@ namespace VL.Stride.Rendering
             {
             }
 
-            static IComputeNode BuildInput(object boxedDefaultValue)
+            static (IComputeNode, IComputeNode) BuildInput(object boxedDefaultValue)
             {
                 var input = new InputValue<T>();
                  if (boxedDefaultValue is T defaultValue)
                     input.Input = defaultValue;
-                return input;
+                return (input, ShaderFXUtils.DeclAndSetVar("Default", input));
             }
         }
 
