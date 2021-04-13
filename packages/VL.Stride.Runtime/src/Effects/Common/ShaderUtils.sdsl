@@ -176,6 +176,21 @@ shader ShaderUtils
         return mul(float4(RGB, 1), RGBtoYUVMat).rgb;
     }
 
+    float4 Lerp3(float4 backColor, float4 interColor, float4 frontColor, float mix)
+    {
+        mix = 2*mix;
+
+        float mixBack = 1 - saturate(mix);
+        float mixFront = saturate(mix - 1);
+        float mixInter = 1 - mixBack + mixFront;
+
+        float4 backPart =  mixBack * backColor;
+        float4 interPart = mixInter * interColor;
+        float4 frontPart = mixFront * frontColor;
+
+        return backPart + interPart + frontPart;
+    }
+
     // VALUE UTILS ==============================================================
    
     

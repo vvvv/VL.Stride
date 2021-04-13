@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Blend_TextureFXKeys
+    public static partial class BlendMixer_TextureFXKeys
     {
         public static readonly ValueParameterKey<float> Mix = ParameterKeys.NewValue<float>(0.5f);
     }
