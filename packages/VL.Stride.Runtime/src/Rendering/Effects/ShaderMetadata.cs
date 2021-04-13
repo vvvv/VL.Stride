@@ -95,8 +95,9 @@ namespace VL.Stride.Rendering
             pinRemarks[pinKeyName] = remarks;
         }
 
-        public void GetPinDocuAndVisibility(string name, out string summary, out string remarks, out bool isOptional)
+        public void GetPinDocuAndVisibility(ParameterKey key, out string summary, out string remarks, out bool isOptional)
         {
+            var name = key.Name;
             summary = "";
             remarks = "";
 
@@ -109,7 +110,7 @@ namespace VL.Stride.Rendering
             isOptional = optionalPins.Contains(name);
 
             // add type in shader to pin summary, if not float or int type
-            var varName = name.Substring(name.LastIndexOf('.') + 1);
+            var varName = key.GetVariableName();
             if (ParsedShader != null && ParsedShader.VariablesByName.TryGetValue(varName, out var variable))
             {
                 var shaderType = variable.Type.ToString();

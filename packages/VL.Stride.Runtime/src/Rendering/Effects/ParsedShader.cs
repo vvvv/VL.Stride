@@ -278,7 +278,7 @@ namespace VL.Stride.Rendering
                 var input = new InputValue<T>();
                  if (boxedDefaultValue is T defaultValue)
                     input.Input = defaultValue;
-                return (input, ShaderFXUtils.DeclAndSetVar("Default", input));
+                return (ShaderFXUtils.DeclAndSetVar("Default", input), input);
             }
         }
 

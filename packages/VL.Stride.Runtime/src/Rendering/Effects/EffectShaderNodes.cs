@@ -331,7 +331,7 @@ namespace VL.Stride.Rendering
                             }
 
                             var typeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
-                            shaderMetadata.GetPinDocuAndVisibility(name, out var summary, out var remarks, out var isOptional);
+                            shaderMetadata.GetPinDocuAndVisibility(key, out var summary, out var remarks, out var isOptional);
                             _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch) { IsVisible = !isOptional, Summary = summary, Remarks = remarks });
                         }
 
@@ -425,7 +425,7 @@ namespace VL.Stride.Rendering
                             var name = key.Name;
 
                             var typeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
-                            shaderMetadata.GetPinDocuAndVisibility(name, out var summary, out var remarks, out var isOptional);
+                            shaderMetadata.GetPinDocuAndVisibility(key, out var summary, out var remarks, out var isOptional);
                             _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch) { IsVisible = !isOptional, Summary = summary, Remarks = remarks });
                         }
 
@@ -518,7 +518,7 @@ namespace VL.Stride.Rendering
                             }
 
                             var typeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
-                            shaderMetadata.GetPinDocuAndVisibility(name, out var summary, out var remarks, out var isOptional);
+                            shaderMetadata.GetPinDocuAndVisibility(key, out var summary, out var remarks, out var isOptional);
                             _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch) { IsVisible = !isOptional, Summary = summary, Remarks = remarks });
                         }
 
@@ -538,7 +538,7 @@ namespace VL.Stride.Rendering
                             if (boxedDefaultValue == null)
                                 boxedDefaultValue = key.DefaultValueMetadata.GetDefaultValue();
 
-                            shaderMetadata.GetPinDocuAndVisibility(name, out var summary, out var remarks, out var isOptional);
+                            shaderMetadata.GetPinDocuAndVisibility(key, out var summary, out var remarks, out var isOptional);
 
                             _inputs.Add(new ParameterPinDescription(usedNames, key, 1, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch) { IsVisible = !isOptional, Summary = summary, Remarks = remarks });
                         }
@@ -678,7 +678,7 @@ namespace VL.Stride.Rendering
                                 }
 
                                 var pinTypeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
-                                shaderMetadata.GetPinDocuAndVisibility(name, out var summary, out var remarks, out var isOptionalAttr);
+                                shaderMetadata.GetPinDocuAndVisibility(key, out var summary, out var remarks, out var isOptionalAttr);
                                 _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, name: pinName, defaultValue: boxedDefaultValue, typeInPatch: pinTypeInPatch) { IsVisible = !(isOptional || isOptionalAttr), Summary = summary, Remarks = remarks });
                             }
                         }
