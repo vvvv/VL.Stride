@@ -340,7 +340,7 @@ namespace VL.Stride.Rendering
 
                         _inputs.Add(_parameterSetterInput);
 
-                        return buildContext.Implementation(
+                        return buildContext.NewNode(
                             inputs: _inputs,
                             outputs: _outputs,
                             messages: _messages,
@@ -433,7 +433,7 @@ namespace VL.Stride.Rendering
 
                         _inputs.Add(_enabledInput = new PinDescription<bool>("Enabled", defaultValue: true));
 
-                        return buildContext.Implementation(
+                        return buildContext.NewNode(
                             inputs: _inputs,
                             outputs: _outputs,
                             messages: _messages,
@@ -546,7 +546,7 @@ namespace VL.Stride.Rendering
                         if (needsWorld)
                             _inputs.Add(new ParameterPinDescription(usedNames, TransformationKeys.World));
 
-                        return buildContext.Implementation(
+                        return buildContext.NewNode(
                             inputs: _inputs,
                             outputs: _outputs,
                             messages: _messages,
@@ -694,7 +694,7 @@ namespace VL.Stride.Rendering
                             });
                         _inputs.Add(_enabledInput = new PinDescription<bool>("Enabled", defaultValue: true));
 
-                        return buildContext.Implementation(
+                        return buildContext.NewNode(
                             inputs: _inputs,
                             outputs: _outputs,
                             messages: _messages,
@@ -795,7 +795,7 @@ namespace VL.Stride.Rendering
                             _inputs.Insert(_inputs.Count - 2, _outputFormat);
                         }
 
-                        return buildContext.Implementation(
+                        return buildContext.NewNode(
                             inputs: _inputs,
                             outputs: new[] { buildContext.Pin("Output", typeof(Texture)) },
                             messages: shaderDescription.Messages,
