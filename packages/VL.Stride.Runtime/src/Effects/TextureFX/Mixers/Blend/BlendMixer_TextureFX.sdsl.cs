@@ -18,6 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class BlendMixer_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Mix = ParameterKeys.NewValue<float>(0.5f);
+        public static readonly ValueParameterKey<float> Fader = ParameterKeys.NewValue<float>(0.5f);
     }
 }

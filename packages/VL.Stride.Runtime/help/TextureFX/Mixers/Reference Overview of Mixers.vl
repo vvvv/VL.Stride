@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="VXr620DSwDtMSq7PindDdc" LanguageVersion="2021.4.0.38" Version="0.128">
-  <NugetDependency Id="PlvGPTJMDLJOFSV3TK0PWd" Location="VL.CoreLib" Version="2021.3.0-0063-ga70592155c" />
+<Document xmlns:p="property" Id="VXr620DSwDtMSq7PindDdc" LanguageVersion="2021.4.0.55" Version="0.128">
+  <NugetDependency Id="PlvGPTJMDLJOFSV3TK0PWd" Location="VL.CoreLib" Version="2021.4.0-0055-g3e2beca9a4" />
   <Patch Id="LOYnz7cZcpRPHcgDdapQdf">
     <Canvas Id="Pcnrus3ZorYPqmvZqHFdLH" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory">
       <!--
@@ -43,7 +43,11 @@
             </p:NodeReference>
             <Pin Id="IXshFJM9APsPn6gynBokPz" Name="Time" Kind="InputPin" />
             <Pin Id="CsK7R5d3Fe0Nd6Myfdg6D9" Name="Scale XY" Kind="InputPin" />
-            <Pin Id="NZbAeAVuk7PMqrmSHCxLSf" Name="Color A" Kind="InputPin" />
+            <Pin Id="NZbAeAVuk7PMqrmSHCxLSf" Name="Color A" Kind="InputPin" DefaultValue="0.5700001, 0, 0.06839994, 1">
+              <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="RGBA" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="BMF2bLk53KuPha2fjaKdtU" Name="Color B" Kind="InputPin" />
             <Pin Id="K2fzjw4BSFQPqwQ1KEzg6a" Name="Color C" Kind="InputPin" />
             <Pin Id="U6R2WJarTiVN7wz8lwpfZv" Name="Output Size" Kind="InputPin" />
@@ -100,15 +104,23 @@
             <Pin Id="Bnrv2XJZVMkLMg5LoMFpTY" Name="Apply" Kind="InputPin" />
             <Pin Id="PQSAZLfDixsLaHbJDPpuw8" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="MVGAZU4aVe6M3pOJNjKkk7" Comment="" Bounds="322,353,209,227" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="MVGAZU4aVe6M3pOJNjKkk7" Comment="" Bounds="330,355,193,179" ShowValueBox="true" isIOBox="true" />
           <Node Bounds="538,50,205,19" Id="C4viNTzWXjOLXyHt7XIBLm">
             <p:NodeReference LastCategoryFullName="Stride.Textures.Source" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessNode" Name="Mandelbrot" />
             </p:NodeReference>
             <Pin Id="VzyHr6sIhmUNKTWlEF4Fo1" Name="Transform" Kind="InputPin" />
-            <Pin Id="Uez7ZBENpVUNSndNiWH8bw" Name="Color 1" Kind="InputPin" />
-            <Pin Id="L0ARD9bQZpoO4Hv2TUawem" Name="Color 2" Kind="InputPin" />
+            <Pin Id="Uez7ZBENpVUNSndNiWH8bw" Name="Color 1" Kind="InputPin" DefaultValue="0, 0, 0, 1">
+              <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="RGBA" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="L0ARD9bQZpoO4Hv2TUawem" Name="Color 2" Kind="InputPin" DefaultValue="0, 0.95, 0.4370002, 1">
+              <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="RGBA" />
+              </p:TypeAnnotation>
+            </Pin>
             <Pin Id="Lb125FTmfp5M7DKtutWNaq" Name="Iterations" Kind="InputPin" />
             <Pin Id="QNwvo7onkZ7QC3Qk4GhbhW" Name="Control" Kind="InputPin" />
             <Pin Id="KTse349NLxaOuaPdUmTYm4" Name="Zoom" Kind="InputPin" />
@@ -119,7 +131,7 @@
             <Pin Id="Pk00BL8NdXFPIRCqiAGswd" Name="Enabled" Kind="InputPin" />
             <Pin Id="BrqmdF2GFeeO0XBZ89dgIJ" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="Er8llqLoVUuMCDabByrdFU" Comment="" Bounds="561,351,220,220" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="Er8llqLoVUuMCDabByrdFU" Comment="" Bounds="561,351,190,196" ShowValueBox="true" isIOBox="true" />
           <Pad Id="RQ6q90DfecJM3xiPXnowJR" Comment="" Bounds="365,682,220,220" ShowValueBox="true" isIOBox="true" />
           <Pad Id="GOuRniE01DfPvpEJ1gl6Zk" Comment="Apply" Bounds="690,214,35,35" ShowValueBox="true" isIOBox="true" Value="True">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
@@ -129,8 +141,8 @@
               <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="H6wvcyCr8JpL1ELBs3JbwA" Comment="Texture" Bounds="87,355,220,220" ShowValueBox="true" isIOBox="true" />
-          <Pad Id="NCOlw1fT7htMZlWDO5kpxR" Comment="Fader" Bounds="474,181,35,15" ShowValueBox="true" isIOBox="true" Value="0.37">
+          <Pad Id="H6wvcyCr8JpL1ELBs3JbwA" Comment="" Bounds="87,355,190,198" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="NCOlw1fT7htMZlWDO5kpxR" Comment="Fader" Bounds="498,147,35,15" ShowValueBox="true" isIOBox="true" Value="0.37">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Float32" />
             </p:TypeAnnotation>
@@ -144,19 +156,6 @@
               <Choice Kind="TypeFlag" Name="Float32" />
             </p:TypeAnnotation>
           </Pad>
-          <Node Bounds="88,226,44,19" Id="Rsk9DdxyWonMIyOH9U9D9B">
-            <p:NodeReference LastCategoryFullName="Stride.Textures.Mixer" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
-              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="Blend" />
-              <CategoryReference Kind="Category" Name="Mixer" NeedsToBeDirectParent="true" />
-            </p:NodeReference>
-            <Pin Id="L8TBTg3dMZ6PgY8FWoLlBm" Name="Input" Kind="InputPin" />
-            <Pin Id="LMZL4vG7gnyOubf0l4407l" Name="Input 2" Kind="InputPin" />
-            <Pin Id="VYMEKhjTD61N7B9mymsN9S" Name="Mix" Kind="InputPin" />
-            <Pin Id="EoXVZ9oUOMjM1QJiwtbq68" Name="Blend Result" Kind="InputPin" />
-            <Pin Id="S4u3rnPn0FxPrVldPQ1jui" Name="Apply" Kind="InputPin" />
-            <Pin Id="DpjCXc7npDxOl0L9MoUPoG" Name="Output" Kind="OutputPin" />
-          </Node>
           <Node Bounds="97,614,65,19" Id="FU0sLKYExPDOWAdAa3MK5D">
             <p:NodeReference LastCategoryFullName="Stride.Textures.Mixer" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -174,6 +173,24 @@
             <Pin Id="Aanm2aKCjYdQSXnK9FSiDl" Name="Output" Kind="OutputPin" />
           </Node>
           <Pad Id="NobFBz3nlEdLRkWbGJm8A2" Comment="" Bounds="99,682,220,220" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="MyPL3l4lGdqL4SbKn9IpnG" Comment="Blend Operation" Bounds="129,165,100,15" ShowValueBox="true" isIOBox="true" Value="Difference">
+            <p:TypeAnnotation LastCategoryFullName="VL.Stride.Shaders.ShaderFX" LastSymbolSource="VL.Stride.Runtime.dll">
+              <Choice Kind="TypeFlag" Name="BlendOperator" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Node Bounds="85,232,85,19" Id="D1KBTKakxQnNP2ux5fQKjW">
+            <p:NodeReference LastCategoryFullName="Stride.Textures.Mixer" LastSymbolSource="VL.Stride.Rendering.TextureFX.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessNode" Name="Blend" />
+              <CategoryReference Kind="Category" Name="Mixer" NeedsToBeDirectParent="true" />
+            </p:NodeReference>
+            <Pin Id="IVPow5Q0C5rMOgO7dwoala" Name="Input" Kind="InputPin" />
+            <Pin Id="NW2wSJHmoxoODlkrd4MX6J" Name="Input 2" Kind="InputPin" />
+            <Pin Id="LrUXEMkcxp5P9VZBtfZpMf" Name="Blend Operation" Kind="InputPin" />
+            <Pin Id="CZp034rNEh5OmYdzo6oc5c" Name="Fader" Kind="InputPin" />
+            <Pin Id="Usl0Pn8RsSiM4VlcwrQS5H" Name="Apply" Kind="InputPin" />
+            <Pin Id="OO8QR4sGMBDQcGkU8Kungp" Name="Output" Kind="OutputPin" />
+          </Node>
         </Canvas>
         <Patch Id="MLlfm097pdfOZJwItD631t" Name="Create" />
         <Patch Id="PwJ1xVbiQiSN3Cfm1pWBi8" Name="Update" />
@@ -199,18 +216,20 @@
         <Link Id="SY629c6V7ChQHPCQ7MHsMK" Ids="OQcNAV8tf8IMLSLr5p8xdm,GCafIOSIaRiMXngvP5SGBt" />
         <Link Id="JLNpZ8J7tbLLZcMIhy6iFv" Ids="DYKTwIUHMz0MB9wU8SEaYe,Oerz98ZfJeKLk6O63Y6GML" />
         <Link Id="Q6V2rOxrgEUNvvGz8BKZmH" Ids="BrqmdF2GFeeO0XBZ89dgIJ,UbIrGEAYoYXPom1XtW2nWo" />
-        <Link Id="UyvuFxUqBhzLioYgBR4VRD" Ids="OQcNAV8tf8IMLSLr5p8xdm,L8TBTg3dMZ6PgY8FWoLlBm" />
-        <Link Id="UGlCQhLEgijNoyiyrZGv4s" Ids="GOuRniE01DfPvpEJ1gl6Zk,S4u3rnPn0FxPrVldPQ1jui" />
-        <Link Id="UXJNcXAtLMAPjiCGfuIsNQ" Ids="BrqmdF2GFeeO0XBZ89dgIJ,LMZL4vG7gnyOubf0l4407l" />
         <Link Id="RkekITZXOrpQPDFKTxQect" Ids="OQcNAV8tf8IMLSLr5p8xdm,BWKy95H0r0XOId4visJu2v" />
         <Link Id="AWoL6RFDMtYQaid3soQjqG" Ids="BrqmdF2GFeeO0XBZ89dgIJ,Kz9vJBGpoUdPy4kpdwKO6K" />
         <Link Id="GqZ9XmhX3roPlh9b3Z9LVa" Ids="Aanm2aKCjYdQSXnK9FSiDl,NobFBz3nlEdLRkWbGJm8A2" />
         <Link Id="OPftObZ4KbrM6mHSyUR6CE" Ids="NCOlw1fT7htMZlWDO5kpxR,PF2pbgsWnN7LNoRV3vRzFR" />
         <Link Id="V5kbmGG8FWiNZCKhUbqhlD" Ids="GOuRniE01DfPvpEJ1gl6Zk,DE0D5FmowytMZ2Pd6nG9NL" />
-        <Link Id="U72q7MEvg80QOaQylE3aDc" Ids="DpjCXc7npDxOl0L9MoUPoG,H6wvcyCr8JpL1ELBs3JbwA" />
+        <Link Id="QRLSbGp8iEeMKjv6AdpDAM" Ids="OQcNAV8tf8IMLSLr5p8xdm,IVPow5Q0C5rMOgO7dwoala" />
+        <Link Id="DCEh54U6gjZMUO7lkbfDSM" Ids="BrqmdF2GFeeO0XBZ89dgIJ,NW2wSJHmoxoODlkrd4MX6J" />
+        <Link Id="KuId3MeaFJxN3bIjgWFOq9" Ids="MyPL3l4lGdqL4SbKn9IpnG,LrUXEMkcxp5P9VZBtfZpMf" />
+        <Link Id="A85gwt95QbdNDA8NBAzcbp" Ids="GOuRniE01DfPvpEJ1gl6Zk,Usl0Pn8RsSiM4VlcwrQS5H" />
+        <Link Id="AMQ5IDo4Ey9NNHMqfCAEmb" Ids="OO8QR4sGMBDQcGkU8Kungp,H6wvcyCr8JpL1ELBs3JbwA" />
+        <Link Id="PD0c2mTt6LyOLjDD4QTQt1" Ids="NCOlw1fT7htMZlWDO5kpxR,CZp034rNEh5OmYdzo6oc5c" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="NtpkOuJHz7TQYdDZxbIbe1" Location="VL.CoreLib" Version="2021.3.0-0063-ga70592155c" />
-  <NugetDependency Id="LqDHg9GJnfvLqVT7gNWy0D" Location="VL.Stride" Version="0.9.173-g6aea57c591" />
+  <NugetDependency Id="NtpkOuJHz7TQYdDZxbIbe1" Location="VL.CoreLib" Version="2021.4.0-0055-g3e2beca9a4" />
+  <NugetDependency Id="LqDHg9GJnfvLqVT7gNWy0D" Location="VL.Stride" Version="2021.4.0-0056-gf1f9ba4602" />
 </Document>

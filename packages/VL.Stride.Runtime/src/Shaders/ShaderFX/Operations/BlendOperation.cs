@@ -118,6 +118,11 @@ namespace VL.Stride.Shaders.ShaderFX
         In,
 
         /// <summary>
+        /// Inverse effect from the two textures.
+        /// </summary>
+        Inverse,
+
+        /// <summary>
         /// Lighten effect from the two textures.
         /// </summary>
         Lighten,
@@ -241,6 +246,8 @@ namespace VL.Stride.Shaders.ShaderFX
                     return "ComputeColorIlluminate";
                 case BlendOperator.In:
                     return "ComputeColorIn";
+                case BlendOperator.Inverse:
+                    return "ComputeColorInverse";
                 case BlendOperator.Lighten:
                     return "ComputeColorLighten3ds"; //"ComputeColorLightenMaya" //TODO: change this
                 case BlendOperator.LinearBurn:

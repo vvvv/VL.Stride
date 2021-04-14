@@ -1,4 +1,5 @@
-﻿shader ComputeColorLerp : ComputeFloat4
+﻿//Example of a custom blend operation.
+shader ComputeColorInverse : ComputeFloat4
 {
     compose ComputeColor color1;
     compose ComputeColor color2;
@@ -7,7 +8,7 @@
     {
         float4 backColor = color1.Compute();
         float4 frontColor = color2.Compute();
-        float3 centerColor = (backColor.rgb + frontColor.rgb) * 0.5;
+        float3 centerColor = ((1-backColor.rgb) + (1-frontColor.rgb)) * 0.5;
         return BlendUtils.BasicBlend(backColor, frontColor, centerColor);
     }
 

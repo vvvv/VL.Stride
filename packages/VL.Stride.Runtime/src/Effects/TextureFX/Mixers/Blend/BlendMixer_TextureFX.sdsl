@@ -2,7 +2,7 @@
 [Summary("")]
 shader BlendMixer_TextureFX : TextureFX
 {
-    float Mix = 0.5f;
+    float Fader = 0.5f;
 
     [Default(0.5, 0.5, 0.5, 0.5)]
     compose ComputeFloat4 BlendResult;
@@ -13,6 +13,6 @@ shader BlendMixer_TextureFX : TextureFX
         float4 frontColor = InTex2();
         float4 interColor = BlendResult.Compute();
 
-        return ShaderUtils.Lerp3(backColor, interColor, frontColor, Mix);
+        return ShaderUtils.Lerp3(backColor, interColor, frontColor, Fader);
     }
 };
