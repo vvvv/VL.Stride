@@ -17,6 +17,7 @@ using ShaderMacro = Stride.Core.Shaders.Parser.ShaderMacro;
 using System.Reflection;
 using System.Diagnostics;
 using Stride.Core;
+using Stride.Shaders.Parser.Mixins;
 
 namespace VL.Stride.Rendering
 {
@@ -53,16 +54,36 @@ namespace VL.Stride.Rendering
             return null;
         }
 
-        //code drop: get shader source from data base, is there a more direct way?
-        //public static string GetShaderSourceCode()
-        //{
-        //    var effectCompiler = new EffectCompiler(fileProvider)
-        //    {
-        //        SourceDirectories = { EffectCompilerBase.DefaultSourceShaderFolder },
-        //    };
-        //    var parser = effectCompiler.GetMixinParser();
-        //    var sourceWithHash = parser?.SourceManager?.LoadShaderSource(effectName);
-        //}
+        //get shader source from data base, is there a more direct way?
+        public static string GetShaderSourceCode(string effectName, IVirtualFileProvider fileProvider, ShaderSourceManager shaderSourceManager)
+        {
+            var path = GetPathOfSdslShader(effectName, fileProvider);
+            
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                try
+                {
+                    return File.ReadAllText(path);
+                }
+                catch (Exception)
+                {
+
+                    //fall through
+                }
+            }
+
+            return shaderSourceManager?.LoadShaderSource(effectName).Source;
+        }
+
+        public static ShaderSourceManager GetShaderSourceManager(this IVirtualFileProvider fileProvider)
+        {
+            var effectCompiler = new EffectCompiler(fileProvider)
+            {
+                SourceDirectories = { EffectCompilerBase.DefaultSourceShaderFolder },
+            };
+
+            return effectCompiler.GetMixinParser().SourceManager;
+        }
 
         static readonly Dictionary<string, string> LocalShaderFilePaths = GetShaders();
 
@@ -119,23 +140,16 @@ namespace VL.Stride.Rendering
             return name;
         }
 
-        public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, out ParsedShader result)
+        public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, ShaderSourceManager shaderSourceManager, out ParsedShader result)
         {
             result = null;
-            var fileName = GetPathOfSdslShader(effectName, fileProvider);
-            if (!string.IsNullOrWhiteSpace(fileName))
-            {
-                var resultRef = new ParsedShaderRef();
-                var success = TryParseEffect(fileName, effectName, fileProvider, resultRef);
-                Debug.Assert(resultRef.ParentShaders.Count == 0);
-                if (success)
-                    result = resultRef.ParsedShader;
-                return success;
-            }
-            else
-            {
-                return false;
-            }
+
+            var resultRef = new ParsedShaderRef();
+            var success = TryParseEffect(effectName, fileProvider, shaderSourceManager, resultRef);
+            Debug.Assert(resultRef.ParentShaders.Count == 0);
+            if (success)
+                result = resultRef.ParsedShader;
+            return success;
         }
 
         static object parserCacheLock = new object();
@@ -156,7 +170,7 @@ namespace VL.Stride.Rendering
             }
         }
 
-        public static bool TryParseEffect(string inputFileName, string shaderName, IVirtualFileProvider fileProvider, ParsedShaderRef resultRef)
+        public static bool TryParseEffect(string shaderName, IVirtualFileProvider fileProvider, ShaderSourceManager shaderSourceManager, ParsedShaderRef resultRef)
         {
             lock (parserCacheLock)
             {
@@ -185,27 +199,18 @@ namespace VL.Stride.Rendering
 
                 try
                 {
-                    ShaderMacro[] macros;
 
-                    // Changed some keywords to avoid ambiguities with HLSL and improve consistency
-                    if (inputFileName != null && Path.GetExtension(inputFileName).ToLowerInvariant() == ".sdfx")
+                    // SDSL
+                    var macros = new[]
                     {
-                        // SDFX
-                        macros = new[]
-                        {
-                            new ShaderMacro("shader", "effect")
-                        };
-                    }
-                    else
-                    {
-                        // SDSL
-                        macros = new[]
-                        {
                             new ShaderMacro("class", "shader")
-                        };
-                    }
+                    };
 
-                    var parsingResult = StrideShaderParser.TryPreProcessAndParse(inputFileName, macros);
+                    // get source code
+                    var code = GetShaderSourceCode(shaderName, fileProvider, shaderSourceManager);
+                    var inputFileName = shaderName + ".sdsl";
+
+                    var parsingResult = StrideShaderParser.TryPreProcessAndParse(code, inputFileName, macros);
 
                     if (parsingResult.HasErrors)
                     {
@@ -234,7 +239,7 @@ namespace VL.Stride.Rendering
                             var fileName = GetPathOfSdslShader(baseShaderName, fileProvider);
                             if (!string.IsNullOrWhiteSpace(fileName))
                             {
-                                TryParseEffect(fileName, baseShaderName, fileProvider, resultRef);
+                                TryParseEffect(baseShaderName, fileProvider, shaderSourceManager, resultRef);
                             }
                         }
 
