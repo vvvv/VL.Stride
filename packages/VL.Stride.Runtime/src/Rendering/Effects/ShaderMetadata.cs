@@ -12,6 +12,7 @@ using VL.Stride.Shaders.ShaderFX;
 using Stride.Core.Mathematics;
 using Stride.Rendering.Materials;
 using System.ComponentModel;
+using Stride.Shaders.Parser.Mixins;
 
 namespace VL.Stride.Rendering
 {
@@ -224,13 +225,13 @@ namespace VL.Stride.Rendering
             StrideAttributes.AvailableAttributes.Add(RemarksName);
         }
 
-        public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider)
+        public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider, ShaderSourceManager shaderSourceManager)
         {
             //create metadata with default values
             var shaderMetadata = new ShaderMetadata();
 
             //try to populate metdata with information form the shader
-            if (fileProvider.TryParseEffect(effectName, out var result))
+            if (fileProvider.TryParseEffect(effectName, shaderSourceManager, out var result))
             {
                 shaderMetadata.ParsedShader = result;
                 var shaderDecl = result.ShaderClass;
