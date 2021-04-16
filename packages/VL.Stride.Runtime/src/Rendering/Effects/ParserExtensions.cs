@@ -34,6 +34,9 @@ namespace VL.Stride.Rendering
             return attribute != null;
         }
 
+        public static string GetKeyName(this Variable v, ClassType shader)
+            => shader.Name.Text + "." + v.Name.Text;
+
         public static string ParseString(this AttributeDeclaration attr)
         {
             return attr.Parameters.FirstOrDefault()?.Value as string;

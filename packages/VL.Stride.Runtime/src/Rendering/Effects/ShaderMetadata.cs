@@ -110,13 +110,14 @@ namespace VL.Stride.Rendering
 
             isOptional = optionalPins.Contains(name);
 
-            // add type in shader to pin summary, if not float or int type
+            // add type in shader to pin summary, if not float, int or bool type
             var varName = key.GetVariableName();
             if (ParsedShader != null && ParsedShader.VariablesByName.TryGetValue(varName, out var variable))
             {
                 var shaderType = variable.Type.ToString();
                 if (!(shaderType.StartsWith("float", StringComparison.OrdinalIgnoreCase) 
                     || shaderType.StartsWith("int", StringComparison.OrdinalIgnoreCase)
+                    || shaderType.StartsWith("bool", StringComparison.OrdinalIgnoreCase)
                     || shaderType.StartsWith("uint", StringComparison.OrdinalIgnoreCase)
                     || shaderType.StartsWith("Sampler", StringComparison.OrdinalIgnoreCase)))
                     summary += (string.IsNullOrWhiteSpace(summary) ? "" : Environment.NewLine) + shaderType;
@@ -275,16 +276,16 @@ namespace VL.Stride.Rendering
                             switch (attr.Name)
                             {
                                 case EnumTypeName:
-                                    shaderMetadata.AddEnumTypePinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text, attr.ParseString(), pinDecl.InitialValue);
+                                    shaderMetadata.AddEnumTypePinAttribute(pinDecl.GetKeyName(shaderDecl), attr.ParseString(), pinDecl.InitialValue);
                                     break;
                                 case OptionalName:
-                                    shaderMetadata.AddOptionalPinAttribute(shaderDecl.Name.Text + "." + pinDecl.Name.Text);
+                                    shaderMetadata.AddOptionalPinAttribute(pinDecl.GetKeyName(shaderDecl));
                                     break;
                                 case SummaryName:
-                                    shaderMetadata.AddPinSummary(shaderDecl.Name.Text + "." + pinDecl.Name.Text, attr.ParseString());
+                                    shaderMetadata.AddPinSummary(pinDecl.GetKeyName(shaderDecl), attr.ParseString());
                                     break;
                                 case RemarksName:
-                                    shaderMetadata.AddPinRemarks(shaderDecl.Name.Text + "." + pinDecl.Name.Text, attr.ParseString());
+                                    shaderMetadata.AddPinRemarks(pinDecl.GetKeyName(shaderDecl), attr.ParseString());
                                     break;
                                 case DefaultName:
                                     // handled in composition parsing in ParseShader.cs
