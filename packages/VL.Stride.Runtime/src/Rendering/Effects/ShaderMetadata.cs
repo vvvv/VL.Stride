@@ -120,7 +120,9 @@ namespace VL.Stride.Rendering
                     || shaderType.StartsWith("bool", StringComparison.OrdinalIgnoreCase)
                     || shaderType.StartsWith("uint", StringComparison.OrdinalIgnoreCase)
                     || shaderType.StartsWith("Sampler", StringComparison.OrdinalIgnoreCase)))
+                {
                     summary += (string.IsNullOrWhiteSpace(summary) ? "" : Environment.NewLine) + shaderType;
+                }
             }
 
         }
