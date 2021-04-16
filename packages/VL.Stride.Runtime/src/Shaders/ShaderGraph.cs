@@ -191,5 +191,26 @@ namespace VL.Stride.Shaders.ShaderFX
             }
             return effectImageShader;
         }
+
+        public static ShaderSource ComposeShaderSource(GraphicsDevice graphicsDevice, IComputeNode root)
+        {
+            if (root != null)
+            {
+                try
+                {
+                    var context = new ShaderGeneratorContext(graphicsDevice)
+                    {
+                        Parameters = new ParameterCollection(),
+                    };
+
+                    var key = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
+                    return root.GenerateShaderSource(context, key);
+                }
+                catch (Exception)
+                {
+                }
+            }
+            return null;
+        }
     }
 }

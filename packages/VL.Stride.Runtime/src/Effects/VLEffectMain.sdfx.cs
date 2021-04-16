@@ -36,14 +36,7 @@ namespace VL.Stride.Rendering
                 }
                 if (context.GetParam(VLEffectParameters.EnableExtensionShader))
                 {
-
-                    {
-                        var __mixinToCompose__ = context.GetParam(VLEffectParameters.MaterialExtensionShader);
-                        var __subMixin = new ShaderMixinSource();
-                        context.PushComposition(mixin, "ExtensionShader", __subMixin);
-                        context.Mixin(__subMixin, __mixinToCompose__);
-                        context.PopComposition();
-                    }
+                    context.Mixin(mixin, context.GetParam(VLEffectParameters.MaterialExtensionShader));
                 }
             }
 

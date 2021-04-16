@@ -981,7 +981,7 @@ namespace VL.Stride.Rendering
             Func<T> getOutput = () =>
             {
                 //check shader fx inputs
-                var shaderChanged = false;
+                var shaderChanged = nodeState.CurrentComputeNode == null;
                 for (int i = 0; i < compositionPins.Count; i++)
                 {
                     shaderChanged |= compositionPins[i].ShaderSourceChanged;
@@ -998,7 +998,7 @@ namespace VL.Stride.Rendering
 
                 // update uniform inputs
                 var node = (GenericComputeNode<TInner>)nodeState.CurrentComputeNode;
-                if (node.Parameters != nodeState.CurrentParameters)
+                if (node != null && node.Parameters != nodeState.CurrentParameters)
                 {
                     var newParameters = node.Parameters ?? nodeState.DefaultParameters;
                     if (nodeState.CurrentParameters != newParameters)

@@ -1,19 +1,9 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Stride.Core.Mathematics;
-using Stride.Graphics;
 using Stride.Rendering;
-using Stride.Rendering.Materials;
 
 namespace VL.Stride.Rendering
 {
     /// <summary>
-    /// Custom render feature, that uploads constants needed by the VLEffectMain effect
+    /// Custom render feature, that manages the VLEffectMain effect
     /// </summary>
     public class VLEffectRenderFeature : SubRenderFeature
     {
@@ -48,9 +38,9 @@ namespace VL.Stride.Rendering
                         continue;
 
                     // Generate shader permuatations
-                    var enableByname = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionName);
-                    renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionName, enableByname);
-                    if (enableByname)
+                    var enableByName = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionName);
+                    renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionName, enableByName);
+                    if (enableByName)
                         renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionName, renderMesh.Mesh.Parameters.Get(VLEffectParameters.MaterialExtensionName));
 
                     var enableBySource = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionShader);
