@@ -16,11 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace VL.Stride.Rendering
 {
-    [DataContract]public partial class GameParameters : ShaderMixinParameters
+    [DataContract]public partial class VLEffectParameters : ShaderMixinParameters
     {
-        public static readonly PermutationParameterKey<bool> EnableFog = ParameterKeys.NewPermutation<bool>(true);
-        public static readonly PermutationParameterKey<bool> EnableBend = ParameterKeys.NewPermutation<bool>(true);
-        public static readonly PermutationParameterKey<bool> EnableExtension = ParameterKeys.NewPermutation<bool>(false);
+        public static readonly PermutationParameterKey<bool> EnableExtensionName = ParameterKeys.NewPermutation<bool>(false);
         public static readonly PermutationParameterKey<string> MaterialExtensionName = ParameterKeys.NewPermutation<string>();
         public static readonly PermutationParameterKey<bool> EnableExtensionShader = ParameterKeys.NewPermutation<bool>(false);
         public static readonly PermutationParameterKey<ShaderSource> MaterialExtensionShader = ParameterKeys.NewPermutation<ShaderSource>();
@@ -32,25 +30,21 @@ namespace VL.Stride.Rendering
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
                 context.Mixin(mixin, "StrideForwardShadingEffect");
-                if (context.GetParam(GameParameters.EnableExtension))
+                if (context.GetParam(VLEffectParameters.EnableExtensionName))
                 {
-                    context.Mixin(mixin, context.GetParam(GameParameters.MaterialExtensionName));
-                    if (context.GetParam(GameParameters.EnableExtensionShader))
-                    {
+                    context.Mixin(mixin, context.GetParam(VLEffectParameters.MaterialExtensionName));
+                }
+                if (context.GetParam(VLEffectParameters.EnableExtensionShader))
+                {
 
-                        {
-                            var __mixinToCompose__ = context.GetParam(GameParameters.MaterialExtensionShader);
-                            var __subMixin = new ShaderMixinSource();
-                            context.PushComposition(mixin, "ExtensionShader", __subMixin);
-                            context.Mixin(__subMixin, __mixinToCompose__);
-                            context.PopComposition();
-                        }
+                    {
+                        var __mixinToCompose__ = context.GetParam(VLEffectParameters.MaterialExtensionShader);
+                        var __subMixin = new ShaderMixinSource();
+                        context.PushComposition(mixin, "ExtensionShader", __subMixin);
+                        context.Mixin(__subMixin, __mixinToCompose__);
+                        context.PopComposition();
                     }
                 }
-                if (context.GetParam(GameParameters.EnableBend))
-                    context.Mixin(mixin, "TransformationBendWorld");
-                if (context.GetParam(GameParameters.EnableFog))
-                    context.Mixin(mixin, "FogEffect");
             }
 
             [ModuleInitializer]

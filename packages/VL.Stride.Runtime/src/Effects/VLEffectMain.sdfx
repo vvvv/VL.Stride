@@ -1,0 +1,31 @@
+// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+namespace VL.Stride.Rendering
+{
+    params VLEffectParameters
+    {
+        bool EnableExtensionName = false;
+        string MaterialExtensionName;
+        bool EnableExtensionShader = false;
+        ShaderSource MaterialExtensionShader;
+    
+    }
+
+    effect VLEffectMain
+    {
+        using params VLEffectParameters;
+        
+        mixin StrideForwardShadingEffect;
+
+        if (VLEffectParameters.EnableExtensionName)
+        {
+            mixin VLEffectParameters.MaterialExtensionName;
+        }
+
+        if (VLEffectParameters.EnableExtensionShader)
+        {
+            mixin compose ExtensionShader = VLEffectParameters.MaterialExtensionShader;
+        }
+    };
+}

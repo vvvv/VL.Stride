@@ -19,30 +19,12 @@ namespace VL.Stride.Rendering
     {
         private StaticObjectPropertyKey<RenderEffect> renderEffectKey;
 
-        private ConstantBufferOffsetReference fog;
-        private ConstantBufferOffsetReference bend;
-
-        // Constant buffer layout for FogEffect
-        private struct PerDrawFog
-        {
-            public Color4 FogColor;
-
-            public float fogNearPlaneZ;
-            public float fogFarPlaneZ;
-
-            public float fogNearPlaneY;
-            public float fogFarPlaneY;
-        }
-
         /// <inheritdoc/>
         protected override void InitializeCore()
         {
             base.InitializeCore();
 
             renderEffectKey = ((RootEffectRenderFeature)RootRenderFeature).RenderEffectKey;
-
-            fog = ((RootEffectRenderFeature)RootRenderFeature).CreateDrawCBufferOffsetSlot(FogEffectKeys.FogColor.Name);
-            bend = ((RootEffectRenderFeature)RootRenderFeature).CreateDrawCBufferOffsetSlot(TransformationBendWorldKeys.DeformFactorX.Name);
         }
 
         /// <inheritdoc/>
@@ -66,51 +48,15 @@ namespace VL.Stride.Rendering
                         continue;
 
                     // Generate shader permuatations
-                    renderEffect.EffectValidator.ValidateParameter(GameParameters.EnableBend, renderMesh.Mesh.Parameters.Get(GameParameters.EnableBend));
-                    renderEffect.EffectValidator.ValidateParameter(GameParameters.EnableFog, renderMesh.Mesh.Parameters.Get(GameParameters.EnableFog));
-                    renderEffect.EffectValidator.ValidateParameter(GameParameters.EnableExtension, renderMesh.Mesh.Parameters.Get(GameParameters.EnableExtension));
-                    renderEffect.EffectValidator.ValidateParameter(GameParameters.MaterialExtensionName, renderMesh.Mesh.Parameters.Get(GameParameters.MaterialExtensionName));
-                    renderEffect.EffectValidator.ValidateParameter(GameParameters.EnableExtensionShader, renderMesh.Mesh.Parameters.Get(GameParameters.EnableExtensionShader));
-                    renderEffect.EffectValidator.ValidateParameter(GameParameters.MaterialExtensionShader, renderMesh.Mesh.Parameters.Get(GameParameters.MaterialExtensionShader));
-                }
-            }
-        }
+                    var enableByname = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionName);
+                    renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionName, enableByname);
+                    if (enableByname)
+                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionName, renderMesh.Mesh.Parameters.Get(VLEffectParameters.MaterialExtensionName));
 
-        /// <inheritdoc/>
-        public override unsafe void Prepare(RenderDrawContext context)
-        {
-            foreach (var renderNode in ((RootEffectRenderFeature)RootRenderFeature).RenderNodes)
-            {
-                var perDrawLayout = renderNode.RenderEffect.Reflection.PerDrawLayout;
-                if (perDrawLayout == null)
-                    continue;
-
-                var mappedCB = renderNode.Resources.ConstantBuffer.Data;
-                var renderMesh = (RenderMesh)renderNode.RenderObject;
-                var parameters = renderMesh.Mesh.Parameters;
-
-                // Upload fog parameters
-                var fogOffset = perDrawLayout.GetConstantBufferOffset(fog);
-                if (fogOffset != -1)
-                {
-                    var perDraw = (PerDrawFog*)((byte*)mappedCB + fogOffset);
-                    *perDraw = new PerDrawFog
-                    {
-                        FogColor = parameters.Get(FogEffectKeys.FogColor),
-                        fogNearPlaneZ = parameters.Get(FogEffectKeys.fogNearPlaneZ),
-                        fogFarPlaneZ = parameters.Get(FogEffectKeys.fogFarPlaneZ),
-                        fogNearPlaneY = parameters.Get(FogEffectKeys.fogNearPlaneY),
-                        fogFarPlaneY = parameters.Get(FogEffectKeys.fogFarPlaneY)
-                    };
-                }
-
-                // Upload world bending parameters
-                var bendOffset = perDrawLayout.GetConstantBufferOffset(bend);
-                if (bendOffset != -1)
-                {
-                    var perDraw = (float*)((byte*)mappedCB + bendOffset);
-                    *perDraw++ = parameters.Get(TransformationBendWorldKeys.DeformFactorX);
-                    *perDraw = parameters.Get(TransformationBendWorldKeys.DeformFactorY);
+                    var enableBySource = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionShader);
+                    renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionShader, enableBySource);
+                    if (enableBySource)
+                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionShader, renderMesh.Mesh.Parameters.Get(VLEffectParameters.MaterialExtensionShader));
                 }
             }
         }

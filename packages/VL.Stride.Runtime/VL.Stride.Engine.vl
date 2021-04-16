@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2021.3.0.64" Version="0.128">
-  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2021.3.0-0061-gda7d0b07e5" />
+<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2021.4.0.63" Version="0.128">
+  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2021.4.0-0063-g41f5cfd2bb" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="AM1t0H80MmiNL9vQcGuPCN" Name="Cameras" Position="253,169">
@@ -3434,8 +3434,6 @@
                   <CategoryReference Kind="Category" Name="Primitive" />
                   <Choice Kind="RegionFlag" Name="Region (Stateless)" Fixed="true" />
                 </p:NodeReference>
-                <Pin Id="VOuVkjJeiYoQUrjBGYaBjT" Name="Force New Instance" Kind="InputPin" />
-                <Pin Id="KZCWCbNYZfvML2qDukO7mU" Name="Singleton" Kind="OutputPin" />
                 <Patch Id="CHw15HKevQeMCd0H71gSCp" Name="Producer" ManuallySortedPins="true">
                   <Pin Id="OZOh5scWrBPM3IsbydvCnw" Name="Result" Kind="OutputPin" />
                   <ControlPoint Id="Vvk5XRhrp9JPWkdffYcPvs" Bounds="2041,261" />
@@ -3462,6 +3460,9 @@
                     <Pin Id="FoBvEPcn3uiPVkAOu5ZGoE" Name="Result" Kind="OutputPin" />
                   </Node>
                 </Patch>
+                <Pin Id="VOuVkjJeiYoQUrjBGYaBjT" Name="Force New Instance" Kind="InputPin" />
+                <Pin Id="C6BZocoNjwFPmyKlya7Zl3" Name="On Stop" Kind="InputPin" />
+                <Pin Id="KZCWCbNYZfvML2qDukO7mU" Name="Singleton" Kind="OutputPin" />
               </Node>
               <Link Id="EHaIGNM7MaBNUeratjwr0U" Ids="Vvk5XRhrp9JPWkdffYcPvs,OZOh5scWrBPM3IsbydvCnw" IsHidden="true" />
               <ControlPoint Id="Ni7LCW5ABWZNev3iqMLhOP" Bounds="2022,294" />
@@ -14850,6 +14851,7 @@
                 <Pin Id="HzQpEcVLWYvOCYlKhpbxyO" Name="Input 5" Kind="InputPin" />
                 <Pin Id="B9aUqjXaeMoMxvJ29HxN25" Name="Input 6" Kind="InputPin" />
                 <Pin Id="QiRJYSEAXejM4qH87S1b50" Name="Input 7" Kind="InputPin" />
+                <Pin Id="SGNiboDgUQpLlkk3USYHme" Name="Input 8" Kind="InputPin" />
               </Node>
               <Node Bounds="260,414,129,19" Id="CpwAqktWfbaMZRuu4eG0lv">
                 <p:NodeReference LastCategoryFullName="Stride.Rendering.RenderFeatures" LastSymbolSource="VL.Stride.Rendering.Nodes">
@@ -15443,13 +15445,20 @@
               </Node>
               <Pad Id="QLm2FRQ4STNPbMgz16DiOU" SlotId="B0VbGvWrQxDPEq0bcdodY4" Bounds="2305,715" />
               <ControlPoint Id="FYfWNBMNUe3LJAp4IR13tR" Bounds="1276,50" />
+              <Node Bounds="399,637,118,19" Id="BbTxDRRqBmvQDMQfo8DOrI">
+                <p:NodeReference LastCategoryFullName="Stride.Rendering.RenderFeatures" LastSymbolSource="VL.Stride.Rendering.Nodes">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="ProcessNode" Name="VLEffectRenderFeature" />
+                </p:NodeReference>
+                <Pin Id="UXbmHkdRpAiLv5nLHOANsj" Name="Output" Kind="OutputPin" />
+              </Node>
             </Canvas>
             <Patch Id="PLPxDGpVRO9Lb4DjE7jQ5I" Name="Create" ParticipatingElements="AAKE0TdyTtyPedU3sh0vkV">
               <Pin Id="VUq2PQApo6lQA4Iudk8L0N" Name="Render Stages" Kind="InputPin" />
             </Patch>
             <Patch Id="AuRBxeWQ2vxLQjh6HmfDOp" Name="Update" ManuallySortedPins="true">
               <Pin Id="SdN4SCW8YRJQPUG7LqlYvT" Name="Root Render Features" Kind="OutputPin" Bounds="594,955" />
-              <Pin Id="Jhzqrv3seP4Myj9G8gJ2mw" Name="Model Effect Name" Kind="InputPin" DefaultValue="StrideForwardShadingEffect">
+              <Pin Id="Jhzqrv3seP4Myj9G8gJ2mw" Name="Model Effect Name" Kind="InputPin" DefaultValue="VLEffectMain">
                 <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                   <Choice Kind="TypeFlag" Name="String" />
                 </p:TypeAnnotation>
@@ -15581,6 +15590,7 @@
             <Link Id="RKgtMUVGg0JN1IRkd103qU" Ids="VUq2PQApo6lQA4Iudk8L0N,FYfWNBMNUe3LJAp4IR13tR" IsHidden="true" />
             <Link Id="UiOxcYf2eUzNc7w1dzNByN" Ids="FYfWNBMNUe3LJAp4IR13tR,EMF48eDmQoTNaU0CQxSSRT" />
             <Link Id="IeW9bvy72LdLf5Iog6e4rS" Ids="OUQiw0ON5rFNi4FCjv1kKZ,JM4kxPdyi6ZNydS2odzoUB" />
+            <Link Id="S9zFT6wc6mRMrGqZHbaeJe" Ids="UXbmHkdRpAiLv5nLHOANsj,SGNiboDgUQpLlkk3USYHme" />
           </Patch>
         </Node>
         <!--
@@ -15863,6 +15873,7 @@
               <ControlPoint Id="UQrvKaaflJiL6D3IrpHx09" Bounds="746,477" />
               <ControlPoint Id="MoQJD8Gjf0sMizqx6o8iYv" Bounds="828,580" />
               <ControlPoint Id="CN60OQ1R5U9LuCRL5sbnCN" Bounds="812,553" />
+              <ControlPoint Id="CptoBKgxDXzORWoXqlEE4i" Bounds="479,612" />
             </Canvas>
             <Patch Id="J3T7lGDmuSvOLoH2kISj4E" Name="Create" />
             <Patch Id="CzfUcdjLw27N28qZbSMhzo" Name="Update" ParticipatingElements="CyvuIdHT3JALsAl5XKwh1N" ManuallySortedPins="true">
@@ -15879,6 +15890,7 @@
               <Pin Id="Bw7heioXYaXPBU20xrjtdc" Name="Render Group Mask" Kind="InputPin" Bounds="617,633" />
               <Pin Id="K1ioz3DMaZaPNR7vHA5QVy" Name="Output" Kind="OutputPin" Bounds="223,783" />
               <Pin Id="Bh7TcDNnbIzOLUSZbvvd8T" Name="Edit Mode" Kind="InputPin" />
+              <Pin Id="EvP4UqekwUoM7Q83cNzv0Y" Name="Model Effect Name" Kind="InputPin" Bounds="870,554" />
             </Patch>
             <Link Id="KqQuuyRj3FBMs7HwFR7rKl" Ids="ICWZJiPAWKQN3SHBhiVCQS,OhCfXJjfE1ENAVBRLWrGZ9" IsHidden="true" />
             <Link Id="EkXFVorx1KnOerz8mPxEBT" Ids="K3hx0RJXx22K94zfdovyCG,A623F5xPYfnPViPbrFhvHA" IsFeedback="true" />
@@ -15952,6 +15964,8 @@
             <Link Id="FAajoVG1xpAM3eunODl5YS" Ids="OjRxCbxIGoROfjn2r6KwAu,A623F5xPYfnPViPbrFhvHA" />
             <Link Id="AAW8u8lGf0MMqoiOjQjRgH" Ids="CN60OQ1R5U9LuCRL5sbnCN,Q4Z6rxg3YxiQZUMi7OV3tf" />
             <Link Id="D1pYXQR5GlwO1ffdcIrHSk" Ids="ACdPxj8U5HzP2YtN90sIAZ,CN60OQ1R5U9LuCRL5sbnCN" IsHidden="true" />
+            <Link Id="J0MIcGSQHNiPt2hkM7MVnJ" Ids="EvP4UqekwUoM7Q83cNzv0Y,CptoBKgxDXzORWoXqlEE4i" IsHidden="true" />
+            <Link Id="K45cUYOlwPmPezTwjqtY5c" Ids="CptoBKgxDXzORWoXqlEE4i,P2PDUhg5emJMr0waXLxO4s" />
           </Patch>
         </Node>
         <!--
@@ -19647,7 +19661,7 @@
               <Pin Id="Dg91VmLgq1TL7VSS6M5d0p" Name="Color" Kind="OutputPin" />
               <Pin Id="NWI5Tg06oIFLS1noxhHjQ4" Name="Depth" Kind="OutputPin" />
             </Node>
-            <ControlPoint Id="QqowJ4cdTxDPS9EYxY5w05" Bounds="658,603" />
+            <ControlPoint Id="QqowJ4cdTxDPS9EYxY5w05" Bounds="757,598" />
             <Node Bounds="373,436,105,19" Id="DZcky4OFScFMvW4ZS8zYBc">
               <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Engine.vl">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -19661,14 +19675,13 @@
               <Pin Id="Q6NbmzwnjeNMaaJrzDkt0c" Name="Enable Default Post Effects" Kind="InputPin" />
               <Pin Id="RtyAVW2SYfbNxqFL3j3hvN" Name="Render Group Mask" Kind="InputPin" />
               <Pin Id="VuxhYadgIhTLhsop7Aqchb" Name="Edit Mode" Kind="InputPin" />
+              <Pin Id="Hk3BaVGJQGWMDmtYNvhyy8" Name="Model Effect Name" Kind="InputPin" />
               <Pin Id="ASTKQNPiGD9N7IjeBhpo3y" Name="MSAALevel" Kind="InputPin" />
               <Pin Id="E9ZlSKiyuBGQWxWwYNyuDJ" Name="MSAAResolver" Kind="InputPin" />
               <Pin Id="LTY6KmVO3cENrzOPbUVduL" Name="Light Shafts" Kind="InputPin" />
               <Pin Id="QFZyurwIJ21M7kQI0oOvJt" Name="VR Settings" Kind="InputPin" />
               <Pin Id="JzycrUe0pdWOUpVYJbHtVa" Name="Subsurface Scattering Blur Settings" Kind="InputPin" />
-              <Pin Id="UjhEq13uPE4LZak2weLzHc" Name="SetSubsurfaceScatteringBlurEffect" Kind="InputPin" />
               <Pin Id="MdS9TBGUsDDM0quVmFMb45" Name="Bind Depth As Resource During Transparent Rendering" Kind="InputPin" />
-              <Pin Id="HQMYTTgGziKOWMKWbTVgfB" Name="SetBindDepthDuringTransparentStage" Kind="InputPin" />
               <Pin Id="TsJHjTgsYF1LBJALTBeGGp" Name="Output" Kind="OutputPin" />
             </Node>
             <ControlPoint Id="BtPLB8MZaLFQWQwM2m2yX3" Bounds="456,255" />
@@ -19677,7 +19690,6 @@
             <ControlPoint Id="RhYW1ijvOFjPABVMaQjbOD" Bounds="600,407" />
             <ControlPoint Id="BwAtwIYBnj7NmiyXrBbfTa" Bounds="619,464" />
             <ControlPoint Id="TBRPH9jUcPFM335IaZFlEA" Bounds="639,492" />
-            <ControlPoint Id="RXqfng0RjTuLnFvkfCrLNB" Bounds="494,299" />
             <ControlPoint Id="KjHPWmlLhjWMrwJlrBmVib" Bounds="413,217" />
             <ControlPoint Id="Hw1gIq8ONAGNvOifS2AmC2" Bounds="434,238" />
             <ControlPoint Id="JXgqB9Vn2oFPDH0u5fsf1S" Bounds="514,321" />
@@ -19692,7 +19704,13 @@
               </p:ValueBoxSettings>
             </Pad>
             <ControlPoint Id="UdvBpy81r1oL8nlrxFobyq" Bounds="754,488" />
-            <ControlPoint Id="MS4RWKihdxXOM7VksGLWNo" Bounds="554,338" />
+            <ControlPoint Id="NUbtQisvkA1PuuoGRKHADF" Bounds="546,350" />
+            <ControlPoint Id="SjOHZ4cAEkBQEI4zPBQPQn" Bounds="897,262" />
+            <ControlPoint Id="AuQXNirAlOhNAKkh6GEvA0" Bounds="917,287" />
+            <ControlPoint Id="CIehfndWqdgMVjAL2uB4Dc" Bounds="863,221" />
+            <ControlPoint Id="FZShCdfue5cM3pfzLpv7Oa" Bounds="883,240" />
+            <ControlPoint Id="BFwNLlpiprXPpDFxl5X6oO" Bounds="959,328" />
+            <ControlPoint Id="Trz0szayOeaP3xzIJLa1oG" Bounds="940,308" />
           </Canvas>
           <Patch Id="FJa37JChaCoLAjzlfpyTX0" Name="Create" />
           <Patch Id="TPmTy1LYN0nOISRjRGyvMq" Name="Update" ManuallySortedPins="true">
@@ -19710,19 +19728,14 @@
                 <Choice Kind="TypeFlag" Name="PixelFormat" />
               </p:TypeAnnotation>
             </Pin>
-            <Pin Id="FBc4xynT5fPL2cthnwS10y" Name="VR Settings" Kind="InputPin" Bounds="434,344" Visibility="Optional" />
             <Pin Id="HlWlTxJGamkPkP9MwFj6Uw" Name="Render Group Mask" Kind="InputPin" Bounds="519,377" Visibility="Optional" />
-            <Pin Id="MtjS0QrjUmlMTBpw8o4YbG" Name="Light Shafts" Kind="InputPin" Bounds="554,338" Visibility="Optional" />
+            <Pin Id="PNf09G29RY4MkggNVKShXM" Name="Model Effect Name" Kind="InputPin" Bounds="870,554" Visibility="Optional" />
             <Pin Id="NEVlY8DLSE3Lo1thKUapPd" Name="Enabled" Kind="InputPin" Bounds="745,481" />
             <Pin Id="IaWNiZSaxBQNBQpSRt0gNT" Name="Output" Kind="OutputPin" Bounds="404,481" />
             <Pin Id="AQ3ERdCOKYELQl5DFWYVkM" Name="Depth" Kind="OutputPin" Bounds="377,834" />
           </Patch>
           <Link Id="V0NOYTyOeGROlf4VUcLEdy" Ids="My2E6K07Q3GOXsAAfAFyp0,IaWNiZSaxBQNBQpSRt0gNT" IsHidden="true" />
           <Link Id="AvaMfu8sIPfL2x4s7NZUc8" Ids="T2GdLz1vb2MLFIfkH6NoLg,CF0lMcFAbSzLtTxQw1uT0N" IsHidden="true" />
-          <ProcessDefinition Id="QoIf4PbnW5PNXQEe8skvjI">
-            <Fragment Id="EpVn0FSZBhVORsWCtqlD19" Patch="FJa37JChaCoLAjzlfpyTX0" Enabled="true" />
-            <Fragment Id="DTW3Xu7fToMNaxXSc4COEB" Patch="TPmTy1LYN0nOISRjRGyvMq" Enabled="true" />
-          </ProcessDefinition>
           <Link Id="K1FlyaOFdSFQbV99pOda5Z" Ids="Dg91VmLgq1TL7VSS6M5d0p,My2E6K07Q3GOXsAAfAFyp0" />
           <Link Id="CvSxRd2rzmkQZYJ0ztGO5j" Ids="NWI5Tg06oIFLS1noxhHjQ4,QqowJ4cdTxDPS9EYxY5w05" />
           <Link Id="Dr5lCu8ni5rLU2EBIYtPba" Ids="QqowJ4cdTxDPS9EYxY5w05,AQ3ERdCOKYELQl5DFWYVkM" IsHidden="true" />
@@ -19739,8 +19752,6 @@
           <Link Id="I7t3WbsBYvuQLBoFmFz5fV" Ids="MH6JYn88wtjL2Lxj5rlEvp,BwAtwIYBnj7NmiyXrBbfTa" IsHidden="true" />
           <Link Id="N4wjTMjqIa8OGQJPhbriBj" Ids="TBRPH9jUcPFM335IaZFlEA,JyCBW1pNITILfxMcEIuH6E" />
           <Link Id="Q25gWGD1PoYOwUNnzQcQXe" Ids="ALyFayeTkXcOgsrU1tTFIF,TBRPH9jUcPFM335IaZFlEA" IsHidden="true" />
-          <Link Id="JE3D0oa2oqSL7TvDB34lP4" Ids="RXqfng0RjTuLnFvkfCrLNB,QFZyurwIJ21M7kQI0oOvJt" />
-          <Link Id="J0V6mL9YPDgMpeVajqmCRV" Ids="FBc4xynT5fPL2cthnwS10y,RXqfng0RjTuLnFvkfCrLNB" IsHidden="true" />
           <Link Id="RXKaLQnEQILOGJXxBJB3NO" Ids="CF0lMcFAbSzLtTxQw1uT0N,ETTRQ92RgInQUMoCJeGPkg" />
           <Link Id="N8gn0K0sG6HM32zobV8BMt" Ids="KjHPWmlLhjWMrwJlrBmVib,H1rCzIcSZ1cNIWalbGVNya" />
           <Link Id="SbuxM7H69vxNl9pqAzEMzv" Ids="S0YBH4hR5GkLv0bnI0oDpd,KjHPWmlLhjWMrwJlrBmVib" IsHidden="true" />
@@ -19752,8 +19763,49 @@
           <Link Id="T8AoSlkhlrqLEecxGehAs6" Ids="IlOc2ihRz8yPa2ccqs8s1m,Q2Ins7vO7DDNv8m4vmFwYC" IsHidden="true" />
           <Link Id="QZTKuiFWM6kMKFNwbHUtWH" Ids="UdvBpy81r1oL8nlrxFobyq,BPIJLQBITQTME6JhY19qQS" />
           <Link Id="NSPlec7Ve2xMd5dW1AU4QJ" Ids="NEVlY8DLSE3Lo1thKUapPd,UdvBpy81r1oL8nlrxFobyq" IsHidden="true" />
-          <Link Id="C0YeyeBqvpiPexbZFZh36K" Ids="MS4RWKihdxXOM7VksGLWNo,LTY6KmVO3cENrzOPbUVduL" />
-          <Link Id="KN5iVznIkG7LbRCqQLIKqa" Ids="MtjS0QrjUmlMTBpw8o4YbG,MS4RWKihdxXOM7VksGLWNo" IsHidden="true" />
+          <Link Id="GM53x62b2KAOwxRQZzCfqk" Ids="PNf09G29RY4MkggNVKShXM,NUbtQisvkA1PuuoGRKHADF" IsHidden="true" />
+          <Link Id="Rgxzp0OB1ilPmVerHVPXEl" Ids="NUbtQisvkA1PuuoGRKHADF,Hk3BaVGJQGWMDmtYNvhyy8" />
+          <Patch Id="Vac3tFv7OkcMGLzXlvb9xq" Name="SetLightShafts">
+            <Pin Id="AC4UNWx61fqOA1Nc72DoxI" MergeId="33236" Name="Light Shafts" Kind="InputPin" Visibility="Optional" />
+          </Patch>
+          <Patch Id="ONIJTPdEin8PscoYz6XfHf" Name="SetVRSettings">
+            <Pin Id="CuQxL6swAlNLCJzrQFJ3Xe" MergeId="33240" Name="VR Settings" Kind="InputPin" Visibility="Optional" />
+          </Patch>
+          <Patch Id="PNtPXkFLlYzPIV54rfZkKq" Name="SetSubsurfaceScatteringBlurEffect">
+            <Pin Id="PAItKE9aOSvL06Gji2UBim" MergeId="33246" Name="Subsurface Scattering Blur Settings" Kind="InputPin" Visibility="Optional" />
+          </Patch>
+          <Patch Id="E88c4stniXTN3DCtCPNrhi" Name="SetMSAA">
+            <Pin Id="Kltn9Au0BJbLwQOmcuLLkJ" MergeId="33252" Name="MSAALevel" Kind="InputPin" DefaultValue="X4" Visibility="Optional">
+              <p:TypeAnnotation LastCategoryFullName="Stride.Graphics" LastSymbolSource="Stride.Graphics.dll">
+                <Choice Kind="TypeFlag" Name="MultisampleCount" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="Sb2YpcEd8mTNn0USgSyVOe" MergeId="33256" Name="MSAAResolver" Kind="InputPin" Visibility="Optional" />
+          </Patch>
+          <Patch Id="Tl8xbT0OkQrL99YXFwCrPn" Name="SetBindDepthDuringTransparentStage">
+            <Pin Id="SPCc11Cm49TMMrWOKZsnGz" MergeId="33263" Name="Bind Depth As Resource During Transparent Rendering" Kind="InputPin" Visibility="Optional" />
+          </Patch>
+          <Link Id="P9ER43PK7t7L4xrLBCFre7" Ids="AC4UNWx61fqOA1Nc72DoxI,SjOHZ4cAEkBQEI4zPBQPQn" IsHidden="true" />
+          <Link Id="RL43GllUd43ORNRTHcnfY3" Ids="CuQxL6swAlNLCJzrQFJ3Xe,AuQXNirAlOhNAKkh6GEvA0" IsHidden="true" />
+          <Link Id="AoxPvIchd1DMCjEUdagaju" Ids="Kltn9Au0BJbLwQOmcuLLkJ,CIehfndWqdgMVjAL2uB4Dc" IsHidden="true" />
+          <Link Id="UhMxKmHynjSMO6NQkmFyRC" Ids="Sb2YpcEd8mTNn0USgSyVOe,FZShCdfue5cM3pfzLpv7Oa" IsHidden="true" />
+          <Link Id="K17yPw5ulDVQdkrELtpVAh" Ids="SPCc11Cm49TMMrWOKZsnGz,BFwNLlpiprXPpDFxl5X6oO" IsHidden="true" />
+          <Link Id="DJLDYuVcaTVOBd8tCfxkcn" Ids="PAItKE9aOSvL06Gji2UBim,Trz0szayOeaP3xzIJLa1oG" IsHidden="true" />
+          <Link Id="EpaGWs9yL9OQRWKy5wNSa9" Ids="CIehfndWqdgMVjAL2uB4Dc,ASTKQNPiGD9N7IjeBhpo3y" />
+          <Link Id="Exrd24j6WnZPLtiApdqWrY" Ids="FZShCdfue5cM3pfzLpv7Oa,E9ZlSKiyuBGQWxWwYNyuDJ" />
+          <Link Id="BhkDaKMWtgKNtW4jxGH43r" Ids="SjOHZ4cAEkBQEI4zPBQPQn,LTY6KmVO3cENrzOPbUVduL" />
+          <Link Id="Gw0FBhIkAZ5L7OInHzn3Dc" Ids="Trz0szayOeaP3xzIJLa1oG,JzycrUe0pdWOUpVYJbHtVa" />
+          <Link Id="G0j1kv19Ws8MJqtVs4vlK9" Ids="BFwNLlpiprXPpDFxl5X6oO,MdS9TBGUsDDM0quVmFMb45" />
+          <Link Id="OabhwyYIczEQaqErrwTawu" Ids="AuQXNirAlOhNAKkh6GEvA0,QFZyurwIJ21M7kQI0oOvJt" />
+          <ProcessDefinition Id="QoIf4PbnW5PNXQEe8skvjI">
+            <Fragment Id="EpVn0FSZBhVORsWCtqlD19" Patch="FJa37JChaCoLAjzlfpyTX0" Enabled="true" />
+            <Fragment Id="DTW3Xu7fToMNaxXSc4COEB" Patch="TPmTy1LYN0nOISRjRGyvMq" Enabled="true" />
+            <Fragment Id="MHSRFarCS5TPvZ7o3UQJnN" Patch="E88c4stniXTN3DCtCPNrhi" Enabled="true" />
+            <Fragment Id="DaeEPNGABTjMjHk0cpA2Ld" Patch="Vac3tFv7OkcMGLzXlvb9xq" Enabled="true" />
+            <Fragment Id="FcgPgsNzO5QLildh6zeUl8" Patch="ONIJTPdEin8PscoYz6XfHf" Enabled="true" />
+            <Fragment Id="GVJVmLNfLG1OmSBsyIPLeY" Patch="PNtPXkFLlYzPIV54rfZkKq" Enabled="true" />
+            <Fragment Id="Ik1axBJb9WpO3TkHzYtAGw" Patch="Tl8xbT0OkQrL99YXFwCrPn" Enabled="true" />
+          </ProcessDefinition>
         </Patch>
       </Node>
       <Canvas Id="MKmM0Ave3vHO11LTnci5su" Name="Physics" Position="251,342">
@@ -21624,8 +21676,8 @@
                 <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
               </p:ValueBoxSettings>
             </Pad>
-            <ControlPoint Id="NDj2tJlJB2AMXzeb8y1jpk" Bounds="490,237" />
-            <ControlPoint Id="LQ0pbO4oukVNSVMXyDPZJx" Bounds="573,318" />
+            <ControlPoint Id="NDj2tJlJB2AMXzeb8y1jpk" Bounds="485,194" />
+            <ControlPoint Id="LQ0pbO4oukVNSVMXyDPZJx" Bounds="568,275" />
             <Node Bounds="480,529,205,19" Id="ELyPDBsFGrUPmNM9jXpzb1">
               <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Engine.vl">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -21639,6 +21691,7 @@
               <Pin Id="CO6Rf2YCXpPOKSbFdIonJM" Name="Enable Default Post Effects" Kind="InputPin" />
               <Pin Id="HkpVRp7MUIRLhOn7a8dhao" Name="Render Group Mask" Kind="InputPin" />
               <Pin Id="NLEqM0GX4BGPKL9wiODXzt" Name="Edit Mode" Kind="InputPin" />
+              <Pin Id="UUXGcceHZThOWVnuQLozR9" Name="Model Effect Name" Kind="InputPin" />
               <Pin Id="ObvztYFymZpNdBZN71etf7" Name="MSAALevel" Kind="InputPin" />
               <Pin Id="LmvfhYL3BOsMrBBCsVfqrJ" Name="MSAAResolver" Kind="InputPin" />
               <Pin Id="EF40KCbBNyUPChLVHfADdF" Name="Light Shafts" Kind="InputPin" />
@@ -21647,12 +21700,12 @@
               <Pin Id="FxR9BlQwIzvOuh0XKka2xs" Name="Bind Depth As Resource During Transparent Rendering" Kind="InputPin" />
               <Pin Id="RfW0I1Wjtk0OpYyyRRFf2l" Name="Output" Kind="OutputPin" />
             </Node>
-            <ControlPoint Id="Tjs8aaaYLINQayjigMTFuj" Bounds="534,263" />
-            <ControlPoint Id="O47KDr3owUhQcN9cnrGbZf" Bounds="558,298" />
+            <ControlPoint Id="Tjs8aaaYLINQayjigMTFuj" Bounds="522,223" />
+            <ControlPoint Id="O47KDr3owUhQcN9cnrGbZf" Bounds="544,250" />
             <ControlPoint Id="PQP1TZ2S1W3MLWD5fLOMfF" Bounds="362,732" />
             <ControlPoint Id="Q3O2d1CyOULPIxcSKWLEcf" Bounds="329,701" />
             <ControlPoint Id="TZfMyfX2rqJM11U0su2g39" Bounds="845,737" />
-            <ControlPoint Id="VxHj0XquA3kNJIqYwR7RO6" Bounds="612,379" />
+            <ControlPoint Id="VxHj0XquA3kNJIqYwR7RO6" Bounds="607,336" />
             <Node Bounds="219,330,209,88" Id="JhGoT8aH3cBOwhIT6H4UOT">
               <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="VL.CoreLib.dll">
                 <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
@@ -21731,7 +21784,7 @@
               <Pin Id="IyK2OxEjvtWLlHoxIxXsFX" Name="Input 2" Kind="InputPin" />
               <Pin Id="NJxx9OPqh2RP7bkY7DjLNa" Name="Output" Kind="StateOutputPin" />
             </Node>
-            <ControlPoint Id="KGqYDP8qA9rLvR5YMRR0Qp" Bounds="591,344" />
+            <ControlPoint Id="KGqYDP8qA9rLvR5YMRR0Qp" Bounds="586,301" />
             <ControlPoint Id="O2clCaNxUgzQXT1Eo9rUs8" Bounds="119,459" />
             <ControlPoint Id="CvNisdXaqO9LpQiIZRGho7" Bounds="575,825" />
             <ControlPoint Id="EehkFgavn2rMQdIIeu59wH" Bounds="766,825" />
@@ -21744,6 +21797,7 @@
             <ControlPoint Id="DXGyS6vUKGcMBG3BhN6Adw" Bounds="760,510" />
             <ControlPoint Id="B0fF6iNZd6BMup6lSUCef1" Bounds="272,831" />
             <ControlPoint Id="F0ICA9wCXwCPwMN141dGHe" Bounds="741,490" />
+            <ControlPoint Id="Mql7wdXUaRULouesZSL31N" Bounds="644,373" />
           </Canvas>
           <Link Id="JKnUileeJ7FNJsu7KpPf94" Ids="G7SBfHwE22bMfljT0fnHrW,EEQ60u0n9ATNadblUovIX7" IsHidden="true" />
           <Link Id="ToLCItn5JyDMzpOHiAEnJu" Ids="RzkQ5YRhHQALLkSoQA085R,Hdw9ETxxng9OxCDbLeNcTB" IsHidden="true" />
@@ -21802,6 +21856,7 @@
             <Pin Id="OdtcufxruVdOXfirNVP9ON" Name="Enable Default Post Effects" Kind="InputPin" Bounds="922,222" />
             <Pin Id="HUr2xXI8joHL6ReqkbLNo2" Name="Render Group Mask" Kind="InputPin" Bounds="818,356" Visibility="Optional" />
             <Pin Id="EHHN6Q6Fql1LQTtTNzu1h2" Name="Enable Keyboard Shortcuts" Kind="InputPin" Bounds="642,1" />
+            <Pin Id="AU195mYajhNLbGiGelQYhj" Name="Model Effect Name" Kind="InputPin" Bounds="870,554" Visibility="Optional" />
             <Pin Id="G7SBfHwE22bMfljT0fnHrW" Name="Enabled" Kind="InputPin" DefaultValue="True">
               <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Boolean" />
@@ -21897,6 +21952,8 @@
           </ProcessDefinition>
           <Link Id="O9XgrRpq4KXNdalBXGSfdZ" Ids="FIp6arg1yMgPn3qYG9UTGG,F0ICA9wCXwCPwMN141dGHe" IsHidden="true" />
           <Link Id="JxE7xAssQDtQEIZjhUHK1G" Ids="F0ICA9wCXwCPwMN141dGHe,A54gLUzP0nONNcITcBimPU" />
+          <Link Id="UmqBn7W4SCANVeDn2ySzA4" Ids="AU195mYajhNLbGiGelQYhj,Mql7wdXUaRULouesZSL31N" IsHidden="true" />
+          <Link Id="FL4TvfaQlVWOU2XMOoJewt" Ids="Mql7wdXUaRULouesZSL31N,UUXGcceHZThOWVnuQLozR9" />
         </Patch>
       </Node>
       <!--
@@ -23703,8 +23760,8 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="NPPs0gHWhhDLwbJWw9C5Qt" Location="VL.Core" Version="2021.3.0-0061-gda7d0b07e5" />
-  <NugetDependency Id="DpOkG08YmwMOrERTyWIWIl" Location="VL.EditingFramework" Version="2021.3.0-0061-gda7d0b07e5" />
+  <NugetDependency Id="NPPs0gHWhhDLwbJWw9C5Qt" Location="VL.Core" Version="2021.4.0-0063-g41f5cfd2bb" />
+  <NugetDependency Id="DpOkG08YmwMOrERTyWIWIl" Location="VL.EditingFramework" Version="2021.4.0-0063-g41f5cfd2bb" />
   <PlatformDependency Id="OPlGizMUnBvPvn5XHsJ8EW" Location="./src/bin/Debug/netstandard2.0/VL.Stride.Runtime.dll" />
   <PlatformDependency Id="PNVK9A76J93L79pFuBD4B3" Location="../TestGame/Bin/Windows/Debug/Stride.Games.dll" />
   <PlatformDependency Id="Lg8KGAfsRcwOnEfRhBsBQG" Location="../TestGame/Bin/Windows/Debug/Stride.Engine.dll" />
@@ -23712,7 +23769,7 @@
   <DocumentDependency Id="I9kZBuopBpePX7pwvio3o3" Location="./VL.Stride.Input.vl" />
   <DocumentDependency Id="IDoNCTKSzHfQQlS52M4MXv" Location="./VL.Stride.Rendering.vl" IsFriend="true" />
   <PlatformDependency Id="H2f8MXufRYpPuRjIjOK3q3" Location="../TestGame/Bin/Windows/Debug/Stride.Core.Mathematics.dll" />
-  <NugetDependency Id="IHEIDRov8LFO2eD48F4Hs0" Location="VL.Lang" Version="2021.3.0-0061-gda7d0b07e5" />
+  <NugetDependency Id="IHEIDRov8LFO2eD48F4Hs0" Location="VL.Lang" Version="2021.4.0-0063-g41f5cfd2bb" />
   <DocumentDependency Id="GILZwUe2iGgPKA8BP1W5y0" Location="./VL.Stride.Games.vl" />
   <DocumentDependency Id="GWdYb2ByA41MUfWOOserWC" Location="./VL.Stride.Rendering.Instancer.vl" />
   <DocumentDependency Id="LWxCxaUoeDdLDEIgLy5CeO" Location="./VL.Stride.Graphics.vl" />
