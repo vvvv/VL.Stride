@@ -5,10 +5,17 @@ using VL.Core;
 using Stride.Rendering;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
+using System.Runtime.CompilerServices;
+using Stride.Rendering.Materials;
+using VL.Stride.Shaders.ShaderFX;
+using VL.Stride.Shaders.ShaderFX.Control;
+using Stride.Shaders;
+using Stride.Rendering.Materials.ComputeColors;
+using System.Linq;
 
 namespace VL.Stride.Rendering
 {
-    abstract class EffectPinDescription : IVLPinDescription, IInfo
+    abstract class EffectPinDescription : IVLPinDescription, IInfo, IVLPinDescriptionWithVisibility
     {
         public abstract string Name { get; }
         public abstract Type Type { get; }
@@ -16,6 +23,8 @@ namespace VL.Stride.Rendering
 
         public string Summary { get; set; }
         public string Remarks { get; set; }
+
+        public bool IsVisible { get; set; } = true;
 
         object IVLPinDescription.DefaultValue => DefaultValueBoxed;
 
@@ -44,13 +53,13 @@ namespace VL.Stride.Rendering
         public readonly int Count;
         public readonly bool IsPermutationKey;
 
-        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, int count = 1, object defaultValue = null, bool isPermutationKey = false)
+        public ParameterPinDescription(HashSet<string> usedNames, ParameterKey key, int count = 1, object defaultValue = null, bool isPermutationKey = false, string name = null, Type typeInPatch = null)
         {
             Key = key;
             IsPermutationKey = isPermutationKey;
             Count = count;
-            Name = key.GetPinName(usedNames);
-            var elementType = key.PropertyType;
+            Name = name ?? key.GetPinName(usedNames);
+            var elementType = typeInPatch ?? key.PropertyType;
             defaultValue = defaultValue ?? key.DefaultValueMetadata?.GetDefaultValue();
             // TODO: This should be fixed in Stride
             if (key.PropertyType == typeof(Matrix))
@@ -73,17 +82,44 @@ namespace VL.Stride.Rendering
         public override string Name { get; }
         public override Type Type { get; }
         public override object DefaultValueBoxed { get; }
-        public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => EffectPins.CreatePin(graphicsDevice, parameters, Key, Count, IsPermutationKey, DefaultValueBoxed);
+        public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => EffectPins.CreatePin(graphicsDevice, parameters, Key, Count, IsPermutationKey, DefaultValueBoxed, Type);
+
+        public override string ToString()
+        {
+            return "PinDesc: " + Name ?? base.ToString();
+        }
     }
 
     static class EffectPins
     {
-        public static IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey, object value)
+        public static IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters, ParameterKey key, int count, bool isPermutationKey, object value, Type typeInPatch)
         {
             if (key is ValueParameterKey<Color4> colorKey)
                 return new ColorParameterPin(parameters, colorKey, graphicsDevice.ColorSpace, (Color4)value);
 
             var argument = key.GetType().GetGenericArguments()[0];
+
+            if (typeInPatch.IsEnum)
+            {
+                var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateEnumPin), BindingFlags.Static | BindingFlags.Public);
+                return createPinMethod.MakeGenericMethod(argument, typeInPatch).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+            }
+
+            if (argument == typeof(ShaderSource))
+            {
+                if (typeInPatch.IsGenericType && typeInPatch.GetGenericTypeDefinition() == typeof(SetVar<>))
+                {
+                    var typeParam = typeInPatch.GetGenericArguments()[0];
+                    var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateGPUValueSinkPin), BindingFlags.Static | BindingFlags.Public);
+                    return createPinMethod.MakeGenericMethod(typeParam).Invoke(null, new[] { parameters, key, value }) as IVLPin;
+                }
+                else
+                {
+                    var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreateShaderFXPin), BindingFlags.Static | BindingFlags.Public);
+                    return createPinMethod.MakeGenericMethod(typeof(IComputeNode)).Invoke(null, new object[] { parameters, key, value }) as IVLPin;
+                }
+            }
+
             if (isPermutationKey)
             {
                 var createPinMethod = typeof(EffectPins).GetMethod(nameof(CreatePermutationPin), BindingFlags.Static | BindingFlags.Public);
@@ -114,6 +150,21 @@ namespace VL.Stride.Rendering
             return new PermutationParameterPin<T>(parameters, key, value);
         }
 
+        public static IVLPin CreateEnumPin<T, TEnum>(ParameterCollection parameters, ValueParameterKey<T> key, TEnum value) where T : unmanaged where TEnum : unmanaged
+        {
+            return new EnumParameterPin<T, TEnum>(parameters, key, value);
+        }
+
+        public static IVLPin CreateShaderFXPin<T>(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key, T value) where T : class, IComputeNode
+        {
+            return new ShaderFXPin<T>(parameters, key, value);
+        }
+
+        public static IVLPin CreateGPUValueSinkPin<T>(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key, SetVar<T> value)
+        {
+            return new GPUValueSinkPin<T>(parameters, key, value);
+        }
+
         public static IVLPin CreateValuePin<T>(ParameterCollection parameters, ValueParameterKey<T> key, T value) where T : struct
         {
             return new ValueParameterPin<T>(parameters, key, value);
@@ -132,7 +183,7 @@ namespace VL.Stride.Rendering
 
     abstract class ParameterPin
     {
-        public readonly ParameterCollection Parameters;
+        public ParameterCollection Parameters;
         public readonly ParameterKey ParameterKey;
 
         public ParameterPin(ParameterCollection parameters, ParameterKey key)
@@ -202,6 +253,34 @@ namespace VL.Stride.Rendering
         {
             get => Value;
             set => Value = (T)value;
+        }
+    }
+
+    class EnumParameterPin<T, TEnum> : ParameterPin, IVLPin<TEnum> where T : unmanaged where TEnum : unmanaged
+    {
+        public readonly ValueParameterKey<T> Key;
+
+        public EnumParameterPin(ParameterCollection parameters, ValueParameterKey<T> key, TEnum value)
+            : base(parameters, key)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+
+        public TEnum Value
+        {
+            get
+            {
+                T val = Parameters.Get(Key);
+                return Unsafe.As<T, TEnum>(ref val);
+            }
+            set => Parameters.Set(Key, Unsafe.As<TEnum, T>(ref value));
+        }
+
+        object IVLPin.Value
+        {
+            get => Value;
+            set => Value = (TEnum)value;
         }
     }
 
@@ -280,6 +359,96 @@ namespace VL.Stride.Rendering
         {
             get => Value;
             set => Value = (T)value;
+        }
+    }
+
+    abstract class ShaderFXPin : ParameterPin
+    {
+        public readonly PermutationParameterKey<ShaderSource> Key;
+
+        public ShaderFXPin(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key)
+            : base(parameters, key)
+        {
+            Key = key;
+        }
+
+        public bool ShaderSourceChanged { get; set; } = true;
+
+        public void GenerateAndSetShaderSource(ShaderMixinSource mixin, ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            var shaderSource = GetShaderSource(context, baseKeys);
+            Parameters.Set(Key, shaderSource);
+            mixin.Compositions[Key.Name] = shaderSource;
+            ShaderSourceChanged = false; //change seen
+        }
+
+        protected abstract ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys);
+
+        public abstract IComputeNode GetValueOrDefault();
+    }
+
+    class ShaderFXPin<TShaderClass> : ShaderFXPin, IVLPin<TShaderClass> where TShaderClass : class, IComputeNode
+    {
+        private TShaderClass internalValue;
+        protected TShaderClass defaultValue;
+
+        public ShaderFXPin(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key, TShaderClass value)
+            : base(parameters, key)
+        {
+            Value = value;
+            defaultValue = value;
+        }
+
+        public TShaderClass Value
+        {
+            get => internalValue;
+            set
+            {
+                if (internalValue != value)
+                {
+                    internalValue = value;
+                    ShaderSourceChanged = true;
+                }
+            }
+        }
+
+        public override IComputeNode GetValueOrDefault()
+        {
+            return internalValue ?? defaultValue;
+        }
+
+        object IVLPin.Value
+        {
+            get => Value;
+            set => Value = (TShaderClass)value;
+        }
+
+        protected override ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            return Value?.GenerateShaderSource(context, baseKeys) ?? defaultValue?.GenerateShaderSource(context, baseKeys);
+        }
+    }
+
+    sealed class GPUValueSinkPin<T> : ShaderFXPin<SetVar<T>>
+    {
+        public GPUValueSinkPin(ParameterCollection parameters, PermutationParameterKey<ShaderSource> key, SetVar<T> value) 
+            : base(parameters, key, value)
+        {
+        }
+
+        protected override ShaderSource GetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            var input = Value ?? defaultValue;
+            var getter = input.GetVarValue();
+            var graph = ShaderGraph.BuildFinalShaderGraph(getter);
+            var finalVar = new Do<T>(graph, getter);
+            return finalVar.GenerateShaderSource(context, baseKeys);
+        }
+
+        public override IComputeNode GetValueOrDefault()
+        {
+            var input = Value ?? defaultValue;
+            return input.GetVarValue();
         }
     }
 

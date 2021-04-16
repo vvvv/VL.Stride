@@ -1,0 +1,84 @@
+// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Filter/ConvertColor.tfx
+
+[Category("Filter.Experimental")]
+[Summary("")]
+shader ConvertColor_TextureFX : FilterBase
+{
+    [EnumType("VL.Stride.Effects.TextureFX.ConvertColorType")]
+    int Type;
+    
+    float4 ConvertAlpha(float4 col)
+    {
+        return float4(col.aaa, 1);
+    }
+
+    float4 ConvertRed(float4 col)
+    {
+        return float4(col.rrr, 1);
+    }
+
+    float4 ConvertGreen(float4 col)
+    {
+        return float4(col.ggg, 1);
+    }
+
+    float4 ConvertBlue(float4 col)
+    {
+        return float4(col.bbb, 1);
+    }
+
+    float4 ConvertHue(float4 col)
+    {
+        float3 h = RGBtoHSV(col.rgb);
+
+        return float4(h.xxx, 1);
+    }
+
+    float4 ConvertSaturation(float4 col)
+    {
+        float3 h = RGBtoHSV(col.rgb);
+
+        return float4(h.yyy, 1);
+    }
+
+    float4 ConvertValue(float4 col)
+    {
+        float3 h = RGBtoHSV(col.rgb);
+
+        return float4(h.zzz, 1);
+    }
+
+    float4 ConvertHSVtoRGB(float4 col)
+    {
+        float3 h = HSVtoRGB(col.rgb);
+
+        return float4(h.xyz, 1);
+    }
+
+    float4 ConvertRGBtoHSV(float4 col)
+    {
+        float3 h = RGBtoHSV(col.rgb);
+
+        return float4(h.xyz, 1);
+    }
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+        float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
+        
+        switch((uint)Type%9)
+        {
+            case 0 : return ConvertAlpha(col);
+            case 1 : return ConvertRed(col);
+            case 2 : return ConvertGreen(col);
+            case 3 : return ConvertBlue(col);
+            case 4 : return ConvertHue(col);
+            case 5 : return ConvertSaturation(col);
+            case 6 : return ConvertValue(col);
+            case 7 : return ConvertHSVtoRGB(col);
+            case 8 : return ConvertRGBtoHSV(col);
+        }
+    }
+};

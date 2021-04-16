@@ -1,0 +1,35 @@
+// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Filter/BlurDirectional.tfx
+
+[Category("Filter")]
+[Summary("")]
+shader DirectionalBlurBase : FilterBase
+{
+    float2 Direction = float2(.25f, 0.0f);
+    float SampleCenter = 0.5f;
+    //Keep Aspect Ratio
+    bool Aspect = false;
+
+    abstract float BlurPass(float2 uv, int iter);
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+        float2 R = 1/Texture0TexelSize;
+
+        float2 asp = lerp(1, R.x/R, Aspect);
+
+        int iter = 16;
+        float ctrl = BlurPass(uv, iter);
+        float4 col = 0;
+
+        for (float i=0; i<1; i+=1./iter)
+        {   
+            col += Texture0.SampleLevel(Sampler0, ((uv-.5)/asp + Direction*float2(1,-1) * ctrl * (i-.5-SampleCenter/2))*asp+.5, 0);
+        }
+        
+        col = col/iter;
+        return col;
+    }
+
+};

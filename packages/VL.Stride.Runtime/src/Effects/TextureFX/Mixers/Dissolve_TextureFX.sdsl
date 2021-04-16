@@ -1,0 +1,30 @@
+// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Mixer/Dissolve.tfx
+
+[Category("Mixer.Experimental")]
+[Summary("")]
+shader Dissolve_TextureFX : TextureFX
+{
+    float Fader = 0.5f;
+    float RandomSeed = 0.5f;
+
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord;
+
+        float noise = dot(Texture2.SampleLevel(Sampler2, uv + RandomSeed, 0), 0.33);
+
+        float4 col;
+
+        if((saturate(noise)-.5)*.99 + .5 > Fader)
+        {
+            col = InTex();
+        }
+        else
+        {
+            col = InTex2();
+        }
+
+        return col;
+    }
+};

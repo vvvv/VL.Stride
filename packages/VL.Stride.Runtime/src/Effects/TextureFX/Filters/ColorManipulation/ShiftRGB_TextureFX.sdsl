@@ -1,4 +1,6 @@
-﻿shader ShiftRGB_TextureFX : TextureFX
+﻿[Category("Filter.Experimental")]
+[Summary("")]
+shader ShiftRGB_TextureFX : FilterBase
 {
     float Direction = 0.25f;
     float Shift = 0.1f;
@@ -8,20 +10,20 @@
     // and i am not sure how it works
     float4 sm(float4 m[16],float i)
     {
-	    return float4(HSVtoRGB(float3(Hue,0,0)+ RGBtoHSV(lerp(m[floor(i)],m[ceil(i)],frac(i)).xyz)),1);
+        return float4(HSVtoRGB(float3(Hue,0,0)+ RGBtoHSV(lerp(m[floor(i)],m[ceil(i)],frac(i)).xyz)),1);
     }
 
     float4 ts(Texture2D tex2d, float2 uv, float2 offset)
     {
-	    float2 dir = sin((Direction + float2(0, .25)) * 2 * acos(-1));
-	    uv += dir * offset;
-        float3 col = tex2d.SampleLevel(LinearSampler, uv, 0).rgb;
-	    return float4(base.HSVtoRGB(float3(Hue,0,0) + base.RGBtoHSV(col)), 1);
+        float2 dir = sin((Direction + float2(0, .25)) * 2 * acos(-1));
+        uv += dir * offset;
+        float3 col = tex2d.SampleLevel(Sampler0, uv, 0).rgb;
+        return float4(base.HSVtoRGB(float3(Hue,0,0) + base.RGBtoHSV(col)), 1);
     }
 
-    stage override float4 Shading()
+    float4 Filter(float4 tex0col)
     {
-        float4 c = InTex();
+        float4 c = tex0col;
         float2 uv0 = streams.Texturing.TexCoord;
         /* 
         so in the original shader shift is multipled by a sampled control texture (tex1)

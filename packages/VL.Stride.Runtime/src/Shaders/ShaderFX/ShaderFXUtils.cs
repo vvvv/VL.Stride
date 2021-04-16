@@ -36,6 +36,14 @@ namespace VL.Stride.Shaders.ShaderFX
         public static SetVar<T> SetSemantic<T>(IComputeValue<T> value, string semantic, string name = "SemanticValue")
             => new SetVar<T>(value, new DeclSemantic<T>(semantic, name));
 
+
+        public static SetVar<T> InputValue<T>(T value) where T : struct
+        {
+            var input = new InputValue<T>();
+            input.Input = value;
+            return DeclAndSetVar("Input", input);
+        }
+
         /// <summary>
         /// Declare a shader variable with name "Var" and initialize it with a value.
         /// </summary>

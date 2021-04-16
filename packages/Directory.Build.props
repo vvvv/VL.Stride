@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
+    <!-- In our main repo this should get picked up and import targets which override the build version targets -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..\..))" 
+          Condition="Exists($([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..\..)))" />
   <PropertyGroup>
     <LocalNuGetConfigFile>$(MsBuildThisFileDirectory)NuGet.config</LocalNuGetConfigFile>
     <Year>$([System.DateTime]::Now.ToString('yyyy'))</Year>
@@ -39,7 +42,7 @@
     <!-- Disabled for now as it causes old nuget API to crash when used as source package -->
     <!--<PackageIcon>stride_package_logo.png</PackageIcon>-->
 
-    <!-- Check for .git/HEAD to determine whether we're in our private repo -->
+    <!-- Check whether we're in our private repo -->
     <InPrivateRepo>false</InPrivateRepo>
     <InPrivateRepo Condition="'$(SolutionName)' == 'VL'">true</InPrivateRepo>
     <PackageOutputPath Condition="$(InPrivateRepo)">$(MsBuildThisFileDirectory)..\..\packages-build\</PackageOutputPath>

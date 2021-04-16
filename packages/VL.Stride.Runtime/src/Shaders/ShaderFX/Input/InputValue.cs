@@ -9,7 +9,7 @@ namespace VL.Stride.Shaders.ShaderFX
 {
     public class InputValue<T> : ComputeValue<T> where T : struct
     {
-        public InputValue(ValueParameterKey<T> key, string constantBufferName)
+        public InputValue(ValueParameterKey<T> key = null, string constantBufferName = null)
         {
             Key = key;
             ConstantBufferName = constantBufferName;
@@ -74,7 +74,7 @@ namespace VL.Stride.Shaders.ShaderFX
             }
 
             compiled = true;
-            //no shader source to create here, only the key
+
             return shaderClassSource;
         }
 
