@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="VrqUJQ3uGtCMllR01SpQZ8" LanguageVersion="2021.4.0.58" Version="0.128">
+<Document xmlns:p="property" Id="VrqUJQ3uGtCMllR01SpQZ8" LanguageVersion="2021.4.0.63" Version="0.128">
   <NugetDependency Id="EX4WQqp7RfDOkpC9NB2i7Y" Location="VL.CoreLib" Version="2021.4.0-0058-gf3b0e60c5c" />
   <Patch Id="VsaXdR4Oj6GOzw0tduUk7L">
     <Canvas Id="HQQG7R2X3VVOypmZGDhuu5" DefaultCategory="Main" CanvasType="FullCategory" />
@@ -15,11 +15,6 @@
       </p:NodeReference>
       <Patch Id="RNd03Vai2b0LlVvwM5Enlf">
         <Canvas Id="MiKsePUEtTyOkCkhguJh6D" CanvasType="Group">
-          <Pad Id="TjhbZausCZ2PemhZL2QD8O" Comment="Scale XY" Bounds="278,255,35,28" ShowValueBox="true" isIOBox="true" Value="10, 10">
-            <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="TypeFlag" Name="Vector2" />
-            </p:TypeAnnotation>
-          </Pad>
           <Node Bounds="244,205,63,19" Id="TduIV9e1ZIdPP6015jt3mM">
             <p:NodeReference LastCategoryFullName="Animation" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -33,14 +28,14 @@
             <Pin Id="A37NxUz6RzLOxheb4pODKE" Name="Reset" Kind="InputPin" />
             <Pin Id="GxKo0GGHITpNBDsd1K6pOw" Name="Time" Kind="OutputPin" />
           </Node>
-          <Node Bounds="244,308,145,19" Id="C6RkTJaOWM0PWjBdq4ZD57">
+          <Node Bounds="244,353,165,19" Id="C6RkTJaOWM0PWjBdq4ZD57">
             <p:NodeReference LastCategoryFullName="Stride.Textures.Source" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessNode" Name="Liquish" />
             </p:NodeReference>
             <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
             <Pin Id="NHuGX9KqfWCQXJITVrYoQJ" Name="Time" Kind="InputPin" />
-            <Pin Id="GC2wVQ8UD1JOxDeUFuTDUj" Name="Scale XY" Kind="InputPin" />
+            <Pin Id="TTm4vdPcML7PWkqEqC1Uac" Name="Scale" Kind="InputPin" />
             <Pin Id="BMHksXtLBbaOy5fj6klq3i" Name="Color A" Kind="InputPin" />
             <Pin Id="Hz3RBRgXEaKNQWCxrnqRIz" Name="Color B" Kind="InputPin" />
             <Pin Id="BT2y8XaV1N2NFCXtI1Ie4Z" Name="Color C" Kind="InputPin" />
@@ -54,7 +49,7 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="TextureWindow" />
             </p:NodeReference>
-            <Pin Id="ApAhdNLgPBBQIPtRazNnqS" Name="Bounds" Kind="InputPin" DefaultValue="1041, 86, 460, 432">
+            <Pin Id="ApAhdNLgPBBQIPtRazNnqS" Name="Bounds" Kind="InputPin" DefaultValue="1139, 92, 460, 432">
               <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Rectangle" />
               </p:TypeAnnotation>
@@ -78,6 +73,26 @@
             <Pin Id="G2CVz3oMFj7MbBGYz9qjma" Name="Client Bounds" Kind="OutputPin" />
             <Pin Id="DXfXPTANwdJQHcMFyYs63N" Name="Input Source" Kind="OutputPin" />
           </Node>
+          <Pad Id="S3vnegJYyj4MY2q0BTfmoF" Comment="Scale" Bounds="344,208,35,28" ShowValueBox="true" isIOBox="true" Value="5, 5">
+            <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="Vector2" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Pad Id="FnYiq9KRNMvPnJSU4lsGIR" Comment="Color A" Bounds="351,250,136,15" ShowValueBox="true" isIOBox="true" Value="0, 0, 0, 1">
+            <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="RGBA" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Pad Id="Ny9hozhrc5rOQSP5CMF5iJ" Comment="Color B" Bounds="356,277,136,15" ShowValueBox="true" isIOBox="true" Value="1, 1, 1, 1">
+            <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="RGBA" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Pad Id="Bpfoe4IfTczQVGGCbhOHeE" Comment="Color C" Bounds="363,306,136,15" ShowValueBox="true" isIOBox="true" Value="0.5, 0, 0.15, 1">
+            <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="RGBA" />
+            </p:TypeAnnotation>
+          </Pad>
         </Canvas>
         <Patch Id="QhjWIHQmsTMLjFw2y5ZYB6" Name="Create" />
         <Patch Id="BUfnhNo8LSGOLf5kf1LBlk" Name="Update" />
@@ -86,11 +101,14 @@
           <Fragment Id="LwHC6ntxbMKMzr27IWbOGB" Patch="BUfnhNo8LSGOLf5kf1LBlk" Enabled="true" />
         </ProcessDefinition>
         <Link Id="ITpx61RoWkIN3bvx9Nr2OE" Ids="GxKo0GGHITpNBDsd1K6pOw,NHuGX9KqfWCQXJITVrYoQJ" />
-        <Link Id="ERBImHjmKWqMJVahaqRicL" Ids="TjhbZausCZ2PemhZL2QD8O,GC2wVQ8UD1JOxDeUFuTDUj" />
         <Link Id="KcJ5CKNDVSdL9UvWjdWeNI" Ids="TaADqYpEpuKM5Wi9LUSQBS,BfOjAET5AP5PyCfjQjpH3Q" />
+        <Link Id="S531wzve4mRNMMrBPK4qMY" Ids="S3vnegJYyj4MY2q0BTfmoF,TTm4vdPcML7PWkqEqC1Uac" />
+        <Link Id="TO3gZsnekWpM88QHBo6w2N" Ids="FnYiq9KRNMvPnJSU4lsGIR,BMHksXtLBbaOy5fj6klq3i" />
+        <Link Id="SuTteXCuAOULJSJEqsAXYb" Ids="Ny9hozhrc5rOQSP5CMF5iJ,Hz3RBRgXEaKNQWCxrnqRIz" />
+        <Link Id="C40l4pojwLQLJfRWvDUFSk" Ids="Bpfoe4IfTczQVGGCbhOHeE,BT2y8XaV1N2NFCXtI1Ie4Z" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="KejqP9eAj0nMzjuMF92Dop" Location="VL.Stride" Version="2021.4.0-0058-gf3b0e60c5c" />
+  <NugetDependency Id="KejqP9eAj0nMzjuMF92Dop" Location="VL.Stride" Version="2021.4.0-0065-g8a02f1e104" />
   <NugetDependency Id="VN0MBKjK3CSNi9DnEOej1d" Location="VL.Skia" Version="2021.4.0-0058-gf3b0e60c5c" />
 </Document>
