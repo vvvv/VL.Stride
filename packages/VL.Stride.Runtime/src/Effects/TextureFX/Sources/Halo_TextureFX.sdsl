@@ -9,12 +9,12 @@ shader Halo_TextureFX : TextureFX
     matrix Transform;
 
     [Color]
-    float4 BackgroundColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 BackgroundColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
     [Color]
     float4 HaloColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
     float Gamma = 0.5f;
-    float MaxColor = 10.0f;
-    stage Texture2D GradientTexture;
+    [Summary("Only relevant for 'Spike' type")]
+    float MaxColor = 1.0f;
 
     [EnumType("VL.Stride.Effects.TextureFX.HaloType")]
     int Type = 0;
@@ -46,16 +46,6 @@ shader Halo_TextureFX : TextureFX
         return min(MaxColor, c);
     }
 
-    float4 Textured(float f, float g)
-    {
-        f = GradientTexture.SampleLevel(LinearSampler, f.x*2, 0);
-        f = sign(f) * pow(abs(f), g);
-        
-        float4 c = lerp(HaloColor, BackgroundColor, f);
-
-        return min(MaxColor, c);
-    }
-
     stage override float4 Shading()
     {
         float2 uv = streams.TexCoord;
@@ -69,13 +59,12 @@ shader Halo_TextureFX : TextureFX
         float g = Gamma/(1.00001-Gamma);
         f = saturate(1 - 2*f);
 
-         switch(Type)
-         {
+        switch(Type)
+        {
             case 0 : col = Linear(f, g); break;
             case 1 : col = Smooth(f, g); break;
             case 2 : col = Spike(d, f, g); break;
-            case 3 : col = Textured(f, g); break;
-         }
+        }
 
         return col;
     }
