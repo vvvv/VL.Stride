@@ -1,14 +1,14 @@
 [Category("Mixer.Experimental")]
+[Tags("blend, fade")]
 [Summary("")]
-shader Blood_TextureFX : TextureFX
+shader Blood_TextureFX : MixerBase
 {
-    float Fader = 0.5f;
-    float RandomSeed = 0.5f;
+    float RandomSeed = 0;
 
-    stage override float4 Shading()
+    float4 Mix(float4 tex0col, float4 tex2col, float fader)
     {
         float2 uv = streams.TexCoord;
-        float offset = min(Fader+Fader*Texture0.SampleLevel(Sampler0, float2(uv.x, RandomSeed), 0).r, 1.0);
+        float offset = min(fader + fader * Texture0.SampleLevel(Sampler0, float2(uv.x, RandomSeed), 0).r, 1.0);
         uv.y -= offset;
 
         if(uv.y > 0.0)

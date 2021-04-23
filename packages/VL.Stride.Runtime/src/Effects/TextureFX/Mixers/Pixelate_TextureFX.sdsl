@@ -13,28 +13,27 @@
  // why not
 
 [Category("Mixer.Experimental")]
+[Tags("blend, fade, mosaic")]
 [Summary("")]
-shader Pixelate_TextureFX : TextureFX
+shader Pixelate_TextureFX : MixerBase
 {
-    float Fader;
-
-    stage override float4 Shading()
+    float4 Mix(float4 tex0col, float4 tex2col, float fader)
     {
         float pixels;
         float segment_progress;
-        if (Fader < 0.5)
+        if (fader < 0.5)
         {
-            segment_progress = 1 - Fader * 2;
+            segment_progress = 1 - fader * 2;
         }
         else
         {		
-            segment_progress = (Fader - 0.5) * 2;
+            segment_progress = (fader - 0.5) * 2;
         }
         pixels = 5 + 1000 * segment_progress * segment_progress;
         float2 newUV = round(streams.TexCoord * pixels) / pixels;	
         float4 c1 = Texture0.SampleLevel(Sampler0, newUV, 0);
         float4 c2 = Texture1.SampleLevel(Sampler1, newUV, 0);
-        float lerp_progress = saturate((Fader - 0.4) / 0.2);
+        float lerp_progress = saturate((fader - 0.4) / 0.2);
         return lerp(c1,c2, lerp_progress);	
     }
 };
