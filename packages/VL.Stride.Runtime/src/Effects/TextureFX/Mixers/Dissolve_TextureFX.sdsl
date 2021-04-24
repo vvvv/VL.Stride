@@ -2,13 +2,13 @@
 // https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Mixer/Dissolve.tfx
 
 [Category("Mixer.Experimental")]
+[Tags("blend, fade")]
 [Summary("")]
-shader Dissolve_TextureFX : TextureFX
+shader Dissolve_TextureFX : MixerBase
 {
-    float Fader = 0.5f;
-    float RandomSeed = 0.5f;
+    float RandomSeed = 0;
 
-    stage override float4 Shading()
+    float4 Mix(float4 tex0col, float4 tex2col, float fader)
     {
         float2 uv = streams.TexCoord;
 
@@ -16,13 +16,13 @@ shader Dissolve_TextureFX : TextureFX
 
         float4 col;
 
-        if((saturate(noise)-.5)*.99 + .5 > Fader)
+        if((saturate(noise)-.5)*.99 + .5 > fader)
         {
-            col = InTex();
+            col = tex0col;
         }
         else
         {
-            col = InTex2();
+            col = tex2col;
         }
 
         return col;

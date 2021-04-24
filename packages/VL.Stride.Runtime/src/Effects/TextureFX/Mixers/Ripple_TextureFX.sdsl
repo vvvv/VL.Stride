@@ -2,16 +2,16 @@
 // https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Mixer/Ripple.tfx
 
 [Category("Mixer.Experimental")]
+[Tags("blend, fade")]
 [Summary("")]
-shader Ripple_TextureFX : TextureFX
+shader Ripple_TextureFX : MixerBase
 {
-    float Fader = 0.5f;
     float Frequency = 20.0f;
     float Speed = 10.0f;
     float Amplitude = 0.05f;
     float2 Center = float2(0.5f, 0.5f); 
 
-    stage override float4 Shading()
+    float4 Mix(float4 tex0col, float4 tex2col, float fader)
     {
         float2 uv = streams.TexCoord;
         
@@ -19,9 +19,9 @@ shader Ripple_TextureFX : TextureFX
         float distanceFromCenter = length(toUV);
         float2 normToUV = toUV / distanceFromCenter;
 
-        float wave = cos(Frequency * distanceFromCenter - Speed * Fader);
-        float offset1 = Fader * wave * Amplitude;
-        float offset2 = (1.0 - Fader) * wave * Amplitude;
+        float wave = cos(Frequency * distanceFromCenter - Speed * fader);
+        float offset1 = fader * wave * Amplitude;
+        float offset2 = (1.0 - fader) * wave * Amplitude;
         
         float2 newUV1 = Center + normToUV * (distanceFromCenter + offset1);
         float2 newUV2 = Center + normToUV * (distanceFromCenter + offset2);
@@ -29,6 +29,6 @@ shader Ripple_TextureFX : TextureFX
         float4 c1 = Texture0.SampleLevel(Sampler0, newUV1, 0); 
         float4 c2 = Texture1.SampleLevel(Sampler1, newUV2, 0);
 
-        return lerp(c1, c2, Fader);
+        return lerp(c1, c2, fader);
     }
 };

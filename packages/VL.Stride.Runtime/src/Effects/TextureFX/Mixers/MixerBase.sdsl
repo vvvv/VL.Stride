@@ -1,0 +1,15 @@
+﻿shader MixerBase : TextureFX
+{
+    [Default(0.5f)]
+    compose ComputeFloat Fader;
+
+    abstract float4 Mix(float4 tex0col, float4 tex2col, float fader);
+
+    stage override float4 Shading()
+    {
+        float4 col = InTex();
+        float4 col2 = InTex2();
+
+        return Mix(col, col2, Fader.Compute());
+    }
+};
