@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Palette_TextureFXKeys
+    public static partial class ColorPalette_TextureFXKeys
     {
         public static readonly ValueParameterKey<Matrix> Transform = ParameterKeys.NewValue<Matrix>();
         public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>(0);
