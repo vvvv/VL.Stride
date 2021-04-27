@@ -33,55 +33,51 @@ namespace VL.Stride.Rendering
 {
     static class EffectShaderNodes
     {
-        public static void Register(IVLFactory services)
+        public static NodeBuilding.FactoryImpl Init(IVLNodeDescriptionFactory factory)
         {
             ShaderMetadata.RegisterAdditionalShaderAttributes();
 
-            services.RegisterNodeFactory("VL.Stride.Rendering.EffectShaderNodes",
-                init: factory =>
+            var nodes = GetNodeDescriptions(factory).ToImmutableArray();
+            return NodeBuilding.NewFactoryImpl(nodes, forPath: path => factory =>
+            {
+                // In case "shaders" directory gets added or deleted invalidate the whole factory
+                var invalidated = NodeBuilding.WatchDir(path)
+                    .Where(e => (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed) && e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
+
+                // File provider crashes if directory doesn't exist :/
+                var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
+                if (Directory.Exists(shadersPath))
                 {
-                    var nodes = GetNodeDescriptions(factory).ToImmutableArray();
-                    return NodeBuilding.NewFactoryImpl(nodes, forPath: path => factory =>
+                    try
                     {
-                        // In case "shaders" directory gets added or deleted invalidate the whole factory
-                        var invalidated = NodeBuilding.WatchDir(path)
-                            .Where(e => (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed) && e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
-
-                        // File provider crashes if directory doesn't exist :/
-                        var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
-                        if (Directory.Exists(shadersPath))
-                        {
-                            try
+                        var nodes = GetNodeDescriptions(factory, path, shadersPath);
+                        // Additionaly watch out for new/deleted/renamed files
+                        invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
+                            .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed)
+                            // Check for shader files only. Editor (like VS) create lot's of other temporary files.
+                            .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
+                        return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
+                            export: c =>
                             {
-                                var nodes = GetNodeDescriptions(factory, path, shadersPath);
-                                // Additionaly watch out for new/deleted/renamed files
-                                invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
-                                    .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed)
-                                    // Check for shader files only. Editor (like VS) create lot's of other temporary files.
-                                    .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
-                                return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
-                                    export: c =>
-                                    {
-                                        // Copy all shaders to the project directory
-                                        var assetsFolder = Path.Combine(c.DirectoryPath, "Assets");
-                                        Directory.CreateDirectory(assetsFolder);
-                                        foreach (var f in Directory.EnumerateFiles(shadersPath))
-                                        {
-                                            if (string.Equals(Path.GetExtension(f), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(f), ".sdfx", StringComparison.OrdinalIgnoreCase))
-                                                File.Copy(f, Path.Combine(assetsFolder, Path.GetFileName(f)), overwrite: true);
-                                        }
-                                    });
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                                // When deleting a folder we can run into this one
-                            }
-                        }
+                                // Copy all shaders to the project directory
+                                var assetsFolder = Path.Combine(c.DirectoryPath, "Assets");
+                                Directory.CreateDirectory(assetsFolder);
+                                foreach (var f in Directory.EnumerateFiles(shadersPath))
+                                {
+                                    if (string.Equals(Path.GetExtension(f), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(f), ".sdfx", StringComparison.OrdinalIgnoreCase))
+                                        File.Copy(f, Path.Combine(assetsFolder, Path.GetFileName(f)), overwrite: true);
+                                }
+                            });
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // When deleting a folder we can run into this one
+                    }
+                }
 
-                        // Just watch for changes
-                        return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
-                    });
-                });
+                // Just watch for changes
+                return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
+            });
         }
 
         static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory, string path = default, string shadersPath = default)
