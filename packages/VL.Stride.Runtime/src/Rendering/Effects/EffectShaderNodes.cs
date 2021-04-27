@@ -23,6 +23,7 @@ using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Model;
 using VL.Stride.Core;
+using VL.Stride.Graphics;
 using VL.Stride.Effects;
 using VL.Stride.Engine;
 using VL.Stride.Rendering.ComputeEffect;
@@ -779,11 +780,13 @@ namespace VL.Stride.Rendering
 
                         var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = shaderMetadata.IsTextureSource };
                         var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = shaderMetadata.IsTextureSource };
+                        var _renderFormat = new PinDescription<PixelFormat>("Render Format", PixelFormat.None) { IsVisible = false, Summary = "Allows to specify a render format that is differet to the output format" };
                         if (isFilterOrMixer)
                         {
                             // Filter or Mixer
                             _inputs.Insert(_inputs.Count - 1, _outputSize);
                             _inputs.Insert(_inputs.Count - 1, _outputFormat);
+                            _inputs.Insert(_inputs.Count - 1, _renderFormat);
 
                             // Replace Enabled with Apply
                             var _enabledPinIndex = _inputs.IndexOf(p => p.Name == Enabled);
@@ -795,6 +798,7 @@ namespace VL.Stride.Rendering
                             // Pure source
                             _inputs.Insert(_inputs.Count - 2, _outputSize);
                             _inputs.Insert(_inputs.Count - 2, _outputFormat);
+                            _inputs.Insert(_inputs.Count - 2, _renderFormat);
                         }
 
                         return buildContext.NewNode(
@@ -816,24 +820,28 @@ namespace VL.Stride.Rendering
 
                                 var outputSize = nodeBuildContext.Input(defaultSize);
                                 var outputFormat = nodeBuildContext.Input(defaultFormat);
+                                var renderFormat = nodeBuildContext.Input(PixelFormat.None);
                                 if (isFilterOrMixer)
                                 {
                                     inputs.Insert(inputs.Count - 1, outputSize);
                                     inputs.Insert(inputs.Count - 1, outputFormat);
+                                    inputs.Insert(inputs.Count - 1, renderFormat);
                                 }
                                 else
                                 {
                                     inputs.Insert(inputs.Count - 2, outputSize);
                                     inputs.Insert(inputs.Count - 2, outputFormat);
+                                    inputs.Insert(inputs.Count - 2, renderFormat);
                                 }
 
                                 var gameHandle = nodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
                                 var scheduler = game.Services.GetService<SchedulerSystem>();
                                 var graphicsDevice = game.GraphicsDevice;
+
                                 // Remove this once FrameDelay can deal with textures properly
-                                var output1 = default(((Int2 size, PixelFormat format) desc, Texture texture));
-                                var output2 = default(((Int2 size, PixelFormat format) desc, Texture texture));
+                                var output1 = default(((Int2 size, PixelFormat format, PixelFormat renderFormat) desc, Texture texture, Texture view));
+                                var output2 = default(((Int2 size, PixelFormat format, PixelFormat renderFormat) desc, Texture texture, Texture view));
                                 var mainOutput = nodeBuildContext.Output<Texture>(getter: () =>
                                 {
                                     var inputTexture = textureInput?.Value as Texture;
@@ -851,11 +859,11 @@ namespace VL.Stride.Rendering
                                     {
                                         // No output texture is provided, generate one
                                         const TextureFlags textureFlags = TextureFlags.ShaderResource | TextureFlags.RenderTarget;
-                                        var desc = (size: Int2.One, format: PixelFormat.R8G8B8A8_UNorm);
+                                        var desc = (size: Int2.One, format: defaultFormat, renderFormat: PixelFormat.None);
                                         if (inputTexture != null)
                                         {
                                             // Base it on the input texture
-                                            desc = (new Int2(inputTexture.Width, inputTexture.Height), inputTexture.Format);
+                                            desc = (new Int2(inputTexture.Width, inputTexture.Height), inputTexture.Format, PixelFormat.None);
 
                                             // Watch out for feedback loops
                                             if (inputTexture == output1.texture)
@@ -871,16 +879,41 @@ namespace VL.Stride.Rendering
                                             desc.size.Y = outputSize.Value.Y;
                                         if (outputFormat.Value != PixelFormat.None)
                                             desc.format = outputFormat.Value;
+                                        if (renderFormat.Value != PixelFormat.None)
+                                            desc.renderFormat = renderFormat.Value;
 
                                         // Ensure we have an output of proper size
-                                        if (desc != output1.desc)
+                                        if (desc != output1.desc || output1.view == null)
                                         {
+                                            output1.view?.Dispose();
                                             output1.texture?.Dispose();
                                             output1.desc = desc;
+
                                             if (desc != default)
-                                                output1.texture = Texture.New2D(graphicsDevice, desc.size.X, desc.size.Y, desc.format, textureFlags);
+                                            {
+                                                if (desc.renderFormat != PixelFormat.None 
+                                                && desc.renderFormat != desc.format 
+                                                && desc.renderFormat.BlockSize() == desc.format.BlockSize()
+                                                && desc.format.TryToTypeless(out var typelessFormat))
+                                                {
+                                                    var td = TextureDescription.New2D(desc.size.X, desc.size.Y, typelessFormat, textureFlags);
+                                                    var tvd = new TextureViewDescription() { Format = desc.format, Flags = textureFlags };
+                                                    var rvd = new TextureViewDescription() { Format = desc.renderFormat, Flags = textureFlags };
+
+                                                    output1.texture = Texture.New(graphicsDevice, td, tvd);
+                                                    output1.view = output1.texture.ToTextureView(rvd);
+                                                }
+                                                else
+                                                {
+                                                    output1.texture = Texture.New2D(graphicsDevice, desc.size.X, desc.size.Y, desc.format, textureFlags);
+                                                    output1.view = output1.texture;
+                                                }
+                                            }
                                             else
+                                            {
                                                 output1.texture = null;
+                                                output1.view = null;
+                                            }
                                         }
 
                                         // Select it
@@ -888,11 +921,11 @@ namespace VL.Stride.Rendering
                                     }
 
                                     var effect = node.Outputs[0].Value as TextureFXEffect;
-                                    if (scheduler != null && effect != null && outputTexture != null)
+                                    if (scheduler != null && effect != null && output1.texture != null && output1.view != null)
                                     {
-                                        effect.SetOutput(outputTexture);
+                                        effect.SetOutput(output1.view);
                                         scheduler.Schedule(effect);
-                                        return outputTexture;
+                                        return output1.texture;
                                     }
 
                                     return null;
@@ -902,7 +935,9 @@ namespace VL.Stride.Rendering
                                     outputs: new[] { mainOutput },
                                     dispose: () =>
                                     {
+                                        output1.view?.Dispose();
                                         output1.texture?.Dispose();
+                                        output2.view?.Dispose();
                                         output2.texture?.Dispose();
                                         gameHandle.Dispose();
                                         node.Dispose();

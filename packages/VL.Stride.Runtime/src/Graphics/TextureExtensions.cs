@@ -14,6 +14,29 @@ namespace VL.Stride.Graphics
 {
     public static class TextureExtensions
     {
+
+        public static bool TryToTypeless(this StridePixelFormat format, out StridePixelFormat typelessFormat)
+        {
+            typelessFormat = format;
+
+            var fs = Enum.GetName(typeof(StridePixelFormat), format);
+            var idx = fs.IndexOf('_');
+            
+            if (idx > 0)
+            {
+                fs = fs.Remove(idx);
+                fs += "_Typeless";
+
+                if (Enum.TryParse<StridePixelFormat>(fs, out var newFormat))
+                {
+                    typelessFormat = newFormat;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Copies the <paramref name="fromData"/> to the given <paramref name="buffer"/> on GPU memory.
         /// </summary>
