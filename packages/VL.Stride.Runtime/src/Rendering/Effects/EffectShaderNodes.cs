@@ -720,6 +720,8 @@ namespace VL.Stride.Rendering
 
             public EffectInstance SetParameters(RenderView renderView, RenderDrawContext renderDrawContext)
             {
+                EffectInstance.UpdateEffect(renderDrawContext.GraphicsDevice);
+
                 var parameters = EffectInstance.Parameters;
                 try
                 {
