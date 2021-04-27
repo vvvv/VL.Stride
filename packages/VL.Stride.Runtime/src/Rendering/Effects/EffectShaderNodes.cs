@@ -231,8 +231,7 @@ namespace VL.Stride.Rendering
                             {
                                 EffectUtils.ResetParserCache(watchName);
                             }
-                        }))
-                        .Throttle(TimeSpan.FromSeconds(5));
+                        }));
                 }
 
                 try
