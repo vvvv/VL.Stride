@@ -50,16 +50,17 @@ namespace VL.Stride.Core
 
         void RegisterNodeFactories(IVLFactory services)
         {
-            // Cache the factories in a static field - their node definitions will never change.
+            // Use our own static node factory cache to manage the lifetime of our factories. The cache provided by VL itself is only per compilation.
+            // The node factory cache will invalidate itself in case a factory or one of its nodes invalidates.
             // Not doing so can cause the hotswap to exchange nodes thereby causing weired crashes when for example
             // one of those nodes being re-created is the graphics compositor.
 
-            RegisterStaticNodeFactory(ref graphicsNodes, services, "VL.Stride.Graphics.Nodes", nodeFactory =>
+            RegisterStaticNodeFactory(services, "VL.Stride.Graphics.Nodes", nodeFactory =>
             {
                 return GraphicsNodes.GetNodeDescriptions(nodeFactory);
             });
 
-            RegisterStaticNodeFactory(ref renderingNodes, services, "VL.Stride.Rendering.Nodes", nodeFactory =>
+            RegisterStaticNodeFactory(services, "VL.Stride.Rendering.Nodes", nodeFactory =>
             {
                 return MaterialNodes.GetNodeDescriptions(nodeFactory)
                     .Concat(LightNodes.GetNodeDescriptions(nodeFactory))
@@ -67,30 +68,28 @@ namespace VL.Stride.Core
                     .Concat(RenderingNodes.GetNodeDescriptions(nodeFactory));
             });
 
-            RegisterStaticNodeFactory(ref engineNode, services, "VL.Stride.Engine.Nodes", nodeFactory =>
+            RegisterStaticNodeFactory(services, "VL.Stride.Engine.Nodes", nodeFactory =>
             {
                 return EngineNodes.GetNodeDescriptions(nodeFactory)
                     .Concat(PhysicsNodes.GetNodeDescriptions(nodeFactory))
                     .Concat(VRNodes.GetNodeDescriptions(nodeFactory))
                     ;
-
             });
 
-            EffectShaderNodes.Register(services);
+            RegisterStaticNodeFactory(services, "VL.Stride.Rendering.EffectShaderNodes", init: EffectShaderNodes.Init);
         }
 
-        void RegisterStaticNodeFactory(ref IVLNodeDescriptionFactory location, IVLFactory services, string name, Func<IVLNodeDescriptionFactory, IEnumerable<IVLNodeDescription>> factory)
+        void RegisterStaticNodeFactory(IVLFactory services, string name, Func<IVLNodeDescriptionFactory, IEnumerable<IVLNodeDescription>> init)
         {
-            services.RegisterNodeFactory(location ?? (location = NodeBuilding.NewNodeFactory(services, name, nodeFactory =>
-            {
-                var nodes = ImmutableArray.CreateBuilder<IVLNodeDescription>();
-
-                nodes.AddRange(factory(nodeFactory));
-
-                return NodeBuilding.NewFactoryImpl(nodes.ToImmutable());
-            })));
+            RegisterStaticNodeFactory(services, name, nodeFactory => NodeBuilding.NewFactoryImpl(init(nodeFactory).ToImmutableArray()));
         }
 
-        static IVLNodeDescriptionFactory graphicsNodes, renderingNodes, engineNode;
+        void RegisterStaticNodeFactory(IVLFactory services, string name, Func<IVLNodeDescriptionFactory, NodeBuilding.FactoryImpl> init)
+        {
+            var cachedFactory = staticCache.GetOrAdd(name, () => NodeBuilding.NewNodeFactory(services, name, init));
+            services.RegisterNodeFactory(cachedFactory);
+        }
+
+        static readonly NodeFactoryCache staticCache = new NodeFactoryCache();
     }
 }

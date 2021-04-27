@@ -110,6 +110,7 @@ namespace VL.Stride.Rendering.Materials
                 name: "Material", 
                 category: materialAdvancedCategory,
                 ctor: ctx => new MaterialBuilder(ctx),
+                copyOnWrite: false,
                 hasStateOutput: false)
                 .AddCachedInput(nameof(MaterialBuilder.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
                 .AddCachedInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
