@@ -19,15 +19,15 @@ namespace VL.Stride.Graphics
         {
             typelessFormat = format;
 
-            var fs = Enum.GetName(typeof(StridePixelFormat), format);
-            var idx = fs.IndexOf('_');
+            var formatString = Enum.GetName(typeof(StridePixelFormat), format);
+            var idx = formatString.IndexOf('_');
             
             if (idx > 0)
             {
-                fs = fs.Remove(idx);
-                fs += "_Typeless";
+                formatString = formatString.Remove(idx);
+                formatString += "_Typeless";
 
-                if (Enum.TryParse<StridePixelFormat>(fs, out var newFormat))
+                if (Enum.TryParse<StridePixelFormat>(formatString, out var newFormat))
                 {
                     typelessFormat = newFormat;
                     return true;

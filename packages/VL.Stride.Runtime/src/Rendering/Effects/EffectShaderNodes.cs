@@ -771,11 +771,11 @@ namespace VL.Stride.Rendering
 
                         var isFilterOrMixer = !shaderMetadata.IsTextureSource;
                         var defaultSize = isFilterOrMixer ? Int2.Zero : new Int2(512);
-                        var defaultFormat = shaderMetadata.GetPixelFormat(isFilterOrMixer);
+                        shaderMetadata.GetPixelFormats(isFilterOrMixer, out var defaultFormat, out var defaultRenderFormat);
 
                         var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = shaderMetadata.IsTextureSource };
                         var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = shaderMetadata.IsTextureSource };
-                        var _renderFormat = new PinDescription<PixelFormat>("Render Format", PixelFormat.None) { IsVisible = false, Summary = "Allows to specify a render format that is differet to the output format" };
+                        var _renderFormat = new PinDescription<PixelFormat>("Render Format", defaultRenderFormat) { IsVisible = false, Summary = "Allows to specify a render format that is differet to the output format" };
                         if (isFilterOrMixer)
                         {
                             // Filter or Mixer
@@ -815,7 +815,7 @@ namespace VL.Stride.Rendering
 
                                 var outputSize = nodeBuildContext.Input(defaultSize);
                                 var outputFormat = nodeBuildContext.Input(defaultFormat);
-                                var renderFormat = nodeBuildContext.Input(PixelFormat.None);
+                                var renderFormat = nodeBuildContext.Input(defaultRenderFormat);
                                 if (isFilterOrMixer)
                                 {
                                     inputs.Insert(inputs.Count - 1, outputSize);
@@ -854,7 +854,7 @@ namespace VL.Stride.Rendering
                                     {
                                         // No output texture is provided, generate one
                                         const TextureFlags textureFlags = TextureFlags.ShaderResource | TextureFlags.RenderTarget;
-                                        var desc = (size: Int2.One, format: defaultFormat, renderFormat: PixelFormat.None);
+                                        var desc = (size: Int2.One, format: defaultFormat, renderFormat: defaultRenderFormat);
                                         if (inputTexture != null)
                                         {
                                             // Base it on the input texture
@@ -878,7 +878,7 @@ namespace VL.Stride.Rendering
                                             desc.renderFormat = renderFormat.Value;
 
                                         // Ensure we have an output of proper size
-                                        if (desc != output1.desc || output1.view == null)
+                                        if (desc != output1.desc)
                                         {
                                             output1.view?.Dispose();
                                             output1.texture?.Dispose();
@@ -916,7 +916,7 @@ namespace VL.Stride.Rendering
                                     }
 
                                     var effect = node.Outputs[0].Value as TextureFXEffect;
-                                    if (scheduler != null && effect != null && output1.texture != null && output1.view != null)
+                                    if (scheduler != null && effect != null && output1.texture != null)
                                     {
                                         effect.SetOutput(output1.view);
                                         scheduler.Schedule(effect);

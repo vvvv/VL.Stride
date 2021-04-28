@@ -20,6 +20,8 @@ namespace VL.Stride.Rendering
     {
         public PixelFormat OutputFormat { get; private set; } = PixelFormat.None;
 
+        public PixelFormat RenderFormat { get; private set; } = PixelFormat.None;
+
         public string Category { get; private set; }
 
         public string Summary { get; private set; }
@@ -32,12 +34,27 @@ namespace VL.Stride.Rendering
 
         public bool IsTextureSource { get; private set; }
 
-        public PixelFormat GetPixelFormat(bool isFilter)
+        public bool IsSRgb { get; private set; }
+
+        public void GetPixelFormats(bool isFilterOrMixer, out PixelFormat outputFormat, out PixelFormat renderFormat)
         {
-            if (!isFilter && OutputFormat == PixelFormat.None)
-                return PixelFormat.R8G8B8A8_UNorm_SRgb;
-            else 
-                return OutputFormat;
+            if (!isFilterOrMixer)
+            {
+                if (OutputFormat == PixelFormat.None)
+                    outputFormat = PixelFormat.R8G8B8A8_UNorm_SRgb;
+                else
+                    outputFormat = OutputFormat;
+
+                if (IsSRgb && RenderFormat == PixelFormat.None)
+                    renderFormat = outputFormat.ToNonSRgb();
+                else
+                    renderFormat = RenderFormat;
+            }
+            else
+            {
+                outputFormat = OutputFormat;
+                renderFormat = RenderFormat;
+            }
         }
 
         public string GetCategory(string prefix)
@@ -208,7 +225,9 @@ namespace VL.Stride.Rendering
         public const string RemarksName = "Remarks";
         public const string TagsName = "Tags";
         public const string OutputFormatName = "OutputFormat";
+        public const string RenderFormatName = "RenderFormat";
         public const string TextureSourceName = "TextureSource";
+        public const string IsSRgbName = "IsSRgb";
 
         //pin
         public const string EnumTypeName = "EnumType";
@@ -259,11 +278,18 @@ namespace VL.Stride.Rendering
                                 shaderMetadata.Tags = attr.ParseString();
                                 break;
                             case OutputFormatName:
-                                if (Enum.TryParse<PixelFormat>(attr.ParseString(), true, out var pixelFormat))
-                                    shaderMetadata.OutputFormat = pixelFormat;
+                                if (Enum.TryParse<PixelFormat>(attr.ParseString(), true, out var outputFormat))
+                                    shaderMetadata.OutputFormat = outputFormat;
+                                break;
+                            case RenderFormatName:
+                                if (Enum.TryParse<PixelFormat>(attr.ParseString(), true, out var renderFormat))
+                                    shaderMetadata.RenderFormat = renderFormat;
                                 break;
                             case TextureSourceName:
                                 shaderMetadata.IsTextureSource = true;
+                                break;
+                            case IsSRgbName:
+                                shaderMetadata.IsSRgb = true;
                                 break;
                             default:
                                 break;
