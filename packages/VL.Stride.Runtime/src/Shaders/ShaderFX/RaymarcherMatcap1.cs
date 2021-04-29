@@ -14,6 +14,8 @@ namespace VL.Stride.Shaders.ShaderFX
 {
     public class RaymarcherMatcap : Funk1In1Out<Vector2, Vector4>
     {
+        readonly ObjectParameterUpdater<Texture> updater = new ObjectParameterUpdater<Texture>();
+
         public RaymarcherMatcap(string functionName, IEnumerable<KeyValuePair<string, IComputeNode>> inputs)
             : base(functionName, inputs)
         {
@@ -24,30 +26,12 @@ namespace VL.Stride.Shaders.ShaderFX
         /// </summary>
         public Texture Input
         {
-            get => inputValue;
-
-            set
-            {
-                if ((inputValue != value) || compiled)
-                {
-                    this.inputValue = value;
-
-                    if (Parameters != null && UsedKey != null)
-                        Parameters.Set(UsedKey, inputValue);
-
-                    compiled = false;
-                }
-            }
+            get => updater.Value;
+            set => updater.Value = value;
         }
 
         public ObjectParameterKey<Texture> UsedKey { get; protected set; }
         public ObjectParameterKey<Texture> Key { get; }
-
-        private Texture inputValue;
-
-        ParameterCollection Parameters;
-        bool compiled;
-
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
@@ -55,10 +39,8 @@ namespace VL.Stride.Shaders.ShaderFX
 
             UsedKey = Key ?? TexturingKeys.Texture0;
 
-            context.Parameters.Set(UsedKey, Input);
-
-            // remember parameters for updates from main loop 
-            Parameters = context.Parameters;
+            //track parameter collection
+            updater.Track(context, UsedKey);
 
             //compose if necessary
             if (Inputs != null && Inputs.Any())

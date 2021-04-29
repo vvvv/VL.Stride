@@ -17,6 +17,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reflection;
 using VL.Core;
@@ -366,7 +367,7 @@ namespace VL.Stride.Rendering
 
                                 var effectOutput = nodeBuildContext.Output<IEffect>(() =>
                                 {
-                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, shaderMixinSource);
+                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, shaderMixinSource, effect.Subscriptions);
 
                                     return effect;
                                 });
@@ -463,7 +464,7 @@ namespace VL.Stride.Rendering
 
                                 var effectOutput = nodeBuildContext.Output(() =>
                                 {
-                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, shaderMixinSource);
+                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, shaderMixinSource, effect.Subscriptions);
 
                                     return effect;
                                 });
@@ -556,8 +557,8 @@ namespace VL.Stride.Rendering
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
 
-                                var tempParameters = new ParameterCollection(); // will be replaced by parametrs of sink node
-                                var nodeState = new ShaderFXNodeState(shaderName, tempParameters);
+                                var tempParameters = new ParameterCollection(); // only needed for pin construction - parameter updater will later take care of multiple sinks
+                                var nodeState = new ShaderFXNodeState(shaderName);
 
                                 var inputs = new List<IVLPin>();
                                 foreach (var _input in _inputs)
@@ -739,7 +740,7 @@ namespace VL.Stride.Rendering
 
                                 var effectOutput = ToOutput(nodeBuildContext, effect, () =>
                                 {
-                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, textureFXEffectMixin);
+                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, textureFXEffectMixin, effect.Subscriptions);
                                 });
                                 return nodeBuildContext.Node(
                                     inputs: inputs,
@@ -975,7 +976,7 @@ namespace VL.Stride.Rendering
         //used for shader source generation
         static MaterialComputeColorKeys baseKeys = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
 
-        private static bool UpdateCompositions(IReadOnlyList<ShaderFXPin> compositionPins, GraphicsDevice graphicsDevice, ParameterCollection parameters, ShaderMixinSource mixin)
+        private static bool UpdateCompositions(IReadOnlyList<ShaderFXPin> compositionPins, GraphicsDevice graphicsDevice, ParameterCollection parameters, ShaderMixinSource mixin, CompositeDisposable subscriptions)
         {
             var anyChanged = false;
             for (int i = 0; i < compositionPins.Count; i++)
@@ -985,17 +986,20 @@ namespace VL.Stride.Rendering
 
             if (anyChanged)
             {
-                var context = new ShaderGeneratorContext(graphicsDevice)
-                {
-                    Parameters = parameters,
-                };
+                // Disposes all current subscriptions. So for example all data bindings between the sources and our parameter collection
+                // gets removed.
+                subscriptions.Clear();
 
+                var context = ShaderGraph.NewShaderGeneratorContext(graphicsDevice, parameters, subscriptions);
+
+                var updatedMixin = new ShaderMixinSource();
+                updatedMixin.DeepCloneFrom(mixin);
                 for (int i = 0; i < compositionPins.Count; i++)
                 {
                     var cp = compositionPins[i];
-                    if (cp.ShaderSourceChanged)
-                        cp.GenerateAndSetShaderSource(mixin, context, baseKeys);
+                    cp.GenerateAndSetShaderSource(updatedMixin, context, baseKeys);
                 }
+                parameters.Set(EffectNodeBaseKeys.EffectNodeBaseShader, updatedMixin);
 
                 return true;
             }
@@ -1003,10 +1007,11 @@ namespace VL.Stride.Rendering
             return false;
         }
 
+        // For example T = SetVar<Vector3> and TInner = Vector3
         static void BuildOutput<T, TInner>(NodeBuilding.NodeInstanceBuildContext context, ShaderFXNodeState nodeState, IReadOnlyList<IVLPin> inputPins)
         {
             var compositionPins = inputPins.OfType<ShaderFXPin>().ToList();
-            var inputs = inputPins.OfType<ParameterPin>().Where(p => !(p is ShaderFXPin)).ToList();
+            var inputs = inputPins.OfType<ParameterPin>().ToList();
 
             Func<T> getOutput = () =>
             {
@@ -1021,28 +1026,20 @@ namespace VL.Stride.Rendering
                 if (shaderChanged)
                 {
                     var comps = compositionPins.Select(p => new KeyValuePair<string, IComputeNode>(p.Key.Name, p.GetValueOrDefault()));
-                    var newComputeNode = new GenericComputeNode<TInner>((c, k) => new ShaderClassSource(nodeState.ShaderName), comps);
-                    nodeState.CurrentComputeNode = newComputeNode;
-                    nodeState.CurrentOutputValue = ShaderFXUtils.DeclAndSetVar(nodeState.ShaderName, newComputeNode);
-                }
 
-                // update uniform inputs
-                var node = (GenericComputeNode<TInner>)nodeState.CurrentComputeNode;
-                if (node != null && node.Parameters != nodeState.CurrentParameters)
-                {
-                    var newParameters = node.Parameters ?? nodeState.DefaultParameters;
-                    if (nodeState.CurrentParameters != newParameters)
-                    {
-                        foreach (var pin in inputs)
+                    var newComputeNode = new GenericComputeNode<TInner>(
+                        getShaderSource: (c, k) =>
                         {
-                            var boxedValue = (pin as IVLPin)?.Value;
-                            pin.Parameters = newParameters;
-                            if (boxedValue != null)
-                                (pin as IVLPin).Value = boxedValue;
-                            
-                        }
-                        nodeState.CurrentParameters = newParameters;
-                    }
+                            //let the pins subscribe to the parameter collection of the sink
+                            foreach (var pin in inputs)
+                                pin.SubscribeTo(c);
+
+                            return new ShaderClassSource(nodeState.ShaderName);
+                        },
+                        inputs: comps);
+
+                    nodeState.CurrentComputeNode = newComputeNode;
+                    nodeState.CurrentOutputValue = ShaderFXUtils.DeclAndSetVar(nodeState.ShaderName + "Result", newComputeNode);
                 }
 
                 return (T)nodeState.CurrentOutputValue;
@@ -1057,14 +1054,10 @@ namespace VL.Stride.Rendering
             public IVLPin OutputPin;
             public object CurrentOutputValue;
             public object CurrentComputeNode;
-            public readonly ParameterCollection DefaultParameters;
-            public ParameterCollection CurrentParameters;
 
-            public ShaderFXNodeState(string shaderName, ParameterCollection parameters)
+            public ShaderFXNodeState(string shaderName)
             {
                 ShaderName = shaderName;
-                DefaultParameters = parameters;
-                CurrentParameters = parameters;
             }
         }
 
@@ -1122,10 +1115,13 @@ namespace VL.Stride.Rendering
 
             public ParameterCollection Parameters => EffectInstance.Parameters;
 
+            internal readonly CompositeDisposable Subscriptions = new CompositeDisposable();
+
             public Action<ParameterCollection, RenderView, RenderDrawContext> ParameterSetter { get; set; }
 
             public void Dispose()
             {
+                Subscriptions.Dispose();
                 EffectInstance.Dispose();
             }
 

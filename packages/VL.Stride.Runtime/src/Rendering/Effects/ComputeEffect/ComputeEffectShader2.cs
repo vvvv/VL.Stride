@@ -1,4 +1,5 @@
-﻿using Stride.Core.Diagnostics;
+﻿using Stride.Core;
+using Stride.Core.Diagnostics;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering;
@@ -7,6 +8,7 @@ using Stride.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using VL.Lib.Control;
 
 namespace VL.Stride.Rendering.ComputeEffect
@@ -36,8 +38,11 @@ namespace VL.Stride.Rendering.ComputeEffect
             : base(name)
         {
             Parameters = mixinParams;
+            Subscriptions.DisposeBy(this);
             Initialize(context);
         }
+
+        internal readonly CompositeDisposable Subscriptions = new CompositeDisposable();
 
         /// <summary>
         /// The current effect instance.

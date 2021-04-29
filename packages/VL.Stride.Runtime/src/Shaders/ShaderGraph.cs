@@ -16,11 +16,18 @@ using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
 using Buffer = Stride.Graphics.Buffer;
 using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
+using System.Reactive.Disposables;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
     public static class ShaderGraph
     {
+        /// <summary>
+        /// Gives access to the <see cref="CompositeDisposable"/> whose lifetime is tied to the graph being built.
+        /// See https://github.com/vvvv/VL.Stride/pull/451 for details.
+        /// </summary>
+        internal static readonly PropertyKey<CompositeDisposable> GraphSubscriptions = new PropertyKey<CompositeDisposable>(nameof(GraphSubscriptions), typeof(ShaderGraph));
+
         public static IComputeVoid SomeComputeFXGraph(Buffer buffer)
         {
             var bufferDecl = new DeclBuffer();
@@ -130,10 +137,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
             if (root != null)
             {
-                var context = new ShaderGeneratorContext(graphicsDevice)
-                {
-                    Parameters = computeEffect.Parameters,
-                };
+                var context = NewShaderGeneratorContext(graphicsDevice, computeEffect.Parameters, computeEffect.Subscriptions);
 
                 var key = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
                 var shaderSource = root.GenerateShaderSource(context, key);
@@ -152,10 +156,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
             if (root != null)
             {
-                var context = new ShaderGeneratorContext(graphicsDevice)
-                {
-                    Parameters = effectImageShader.Parameters,
-                };
+                var context = NewShaderGeneratorContext(graphicsDevice, effectImageShader.Parameters, effectImageShader.Subscriptions);
 
                 var key = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
                 var shaderSource = root.GenerateShaderSource(context, key);
@@ -170,14 +171,11 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public static DynamicEffectInstance ComposeDrawShader(GraphicsDevice graphicsDevice, IComputeValue<Vector4> vertexRoot, IComputeValue<Vector4> pixelRoot)
         {
-            var effectImageShader = new DynamicEffectInstance("ShaderFXGraphEffect");
+            var effectImageShader = new DynamicDrawEffectInstance("ShaderFXGraphEffect");
 
             if (vertexRoot != null && pixelRoot != null)
             {
-                var context = new ShaderGeneratorContext(graphicsDevice)
-                {
-                    Parameters = effectImageShader.Parameters,
-                };
+                var context = NewShaderGeneratorContext(graphicsDevice, effectImageShader.Parameters, effectImageShader.Subscriptions);
 
                 var key = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
                 var vertexShaderSource = vertexRoot.GenerateShaderSource(context, key);
@@ -192,16 +190,28 @@ namespace VL.Stride.Shaders.ShaderFX
             return effectImageShader;
         }
 
-        public static ShaderSource ComposeShaderSource(GraphicsDevice graphicsDevice, IComputeNode root)
+        class DynamicDrawEffectInstance : DynamicEffectInstance
+        {
+            internal readonly CompositeDisposable Subscriptions = new CompositeDisposable();
+
+            public DynamicDrawEffectInstance(string effectName, ParameterCollection parameters = null) : base(effectName, parameters)
+            {
+            }
+
+            protected override void Destroy()
+            {
+                Subscriptions.Dispose();
+                base.Destroy();
+            }
+        }
+
+        public static ShaderSource ComposeShaderSource(GraphicsDevice graphicsDevice, IComputeNode root, CompositeDisposable subscriptions)
         {
             if (root != null)
             {
                 try
                 {
-                    var context = new ShaderGeneratorContext(graphicsDevice)
-                    {
-                        Parameters = new ParameterCollection(),
-                    };
+                    var context = NewShaderGeneratorContext(graphicsDevice, new ParameterCollection(), subscriptions);
 
                     var key = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
                     return root.GenerateShaderSource(context, key);
@@ -211,6 +221,21 @@ namespace VL.Stride.Shaders.ShaderFX
                 }
             }
             return null;
+        }
+
+        internal static ShaderGeneratorContext NewShaderGeneratorContext(GraphicsDevice graphicsDevice, ParameterCollection parameters, CompositeDisposable subscriptions)
+        {
+            var context = new ShaderGeneratorContext(graphicsDevice)
+            {
+                Parameters = parameters
+            };
+            context.Tags.Set(GraphSubscriptions, subscriptions);
+            return context;
+        }
+
+        internal static bool TryGetSubscriptions(this ShaderGeneratorContext context, out CompositeDisposable subscriptions)
+        {
+            return context.Tags.TryGetValue(GraphSubscriptions, out subscriptions);
         }
     }
 }

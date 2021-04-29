@@ -1,4 +1,6 @@
 using System;
+using System.Reactive.Disposables;
+using Stride.Core;
 using Stride.Rendering;
 using Stride.Rendering.Images;
 
@@ -11,8 +13,11 @@ namespace VL.Stride.Rendering
 
         public TextureFXEffect(string effectName = null, bool delaySetRenderTargets = false)
             : base(effectName, delaySetRenderTargets)
-        { 
+        {
+            Subscriptions.DisposeBy(this);
         }
+
+        internal readonly CompositeDisposable Subscriptions = new CompositeDisposable();
 
         public bool IsOutputAssigned => OutputCount > 0 && GetOutput(0) != null;
 
