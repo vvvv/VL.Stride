@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Text;
 using System.Threading.Tasks;
 using Stride.Core.Serialization;
@@ -8,6 +9,7 @@ using Stride.Core.Serialization.Contents;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
+using VL.Stride.Shaders.ShaderFX;
 
 namespace VL.Stride.Rendering
 {
@@ -54,11 +56,33 @@ namespace VL.Stride.Rendering
         }
 
         /// <summary>
-        /// Same as Material.New loading referenced content in parameter collection (like EnvironmentLightingDFG_LUT)
+        /// Same as Material.New but also loading referenced content in parameter collection (like EnvironmentLightingDFG_LUT)
+        /// as well as setting the <see cref="ShaderGraph.GraphSubscriptions"/> on the used <see cref="MaterialGeneratorContext"/>.
         /// </summary>
-        public static Material New(GraphicsDevice device, MaterialDescriptor descriptor, ContentManager content)
+        public static Material New(GraphicsDevice device, MaterialDescriptor descriptor, ContentManager content, CompositeDisposable subscriptions)
         {
-            var m = Material.New(device, descriptor);
+            if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
+            if (subscriptions == null) throw new ArgumentNullException(nameof(subscriptions));
+
+            // The descriptor is not assigned to the material because
+            // 1) we don't know whether it will mutate and be used to generate another material
+            // 2) we don't wanna hold on to memory we actually don't need
+            var context = new MaterialGeneratorContext(new Material(), device)
+            {
+                GraphicsProfile = device.Features.RequestedProfile,
+            };
+
+            // Allows nodes in the graph to tie the lifetime of services to the graph itself
+            context.Tags.Set(ShaderGraph.GraphSubscriptions, subscriptions);
+
+            var result = MaterialGenerator.Generate(descriptor, context, string.Format("{0}:RuntimeMaterial", descriptor.MaterialId));
+
+            if (result.HasErrors)
+            {
+                throw new InvalidOperationException(string.Format("Error when creating the material [{0}]", result.ToText()));
+            }
+
+            var m = result.Material;
 
             // Attach the descriptor (not sure why Stride is not doing that on its own) as its needed for material layers
             m.Descriptor = descriptor;

@@ -9,6 +9,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Buffer = Stride.Graphics.Buffer;
+using System.Reactive.Disposables;
+using Stride.Core;
 
 namespace VL.Stride.Shaders
 {
@@ -21,6 +23,8 @@ namespace VL.Stride.Shaders
         public ComputeEffectDispatcher(RenderContext context, string effectName = "ComputeEffectShader")
             : base(context, null)
         {
+            Subscriptions.DisposeBy(this);
+
             pipelineState = new MutablePipelineState(context.GraphicsDevice);
 
             // Setup the effect compiler
@@ -35,6 +39,8 @@ namespace VL.Stride.Shaders
 
             SetDefaultParameters();
         }
+
+        internal readonly CompositeDisposable Subscriptions = new CompositeDisposable();
 
         /// <summary>
         /// The current effect instance.
