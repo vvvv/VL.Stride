@@ -18,7 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class Ripple_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Fader = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> Frequency = ParameterKeys.NewValue<float>(20.0f);
         public static readonly ValueParameterKey<float> Speed = ParameterKeys.NewValue<float>(10.0f);
         public static readonly ValueParameterKey<float> Amplitude = ParameterKeys.NewValue<float>(0.05f);
