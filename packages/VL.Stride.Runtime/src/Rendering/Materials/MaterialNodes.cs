@@ -7,6 +7,7 @@ using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Basics.Resources;
 
@@ -110,6 +111,7 @@ namespace VL.Stride.Rendering.Materials
                 name: "Material", 
                 category: materialAdvancedCategory,
                 ctor: ctx => new MaterialBuilder(ctx),
+                copyOnWrite: false,
                 hasStateOutput: false)
                 .AddCachedInput(nameof(MaterialBuilder.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
                 .AddCachedInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
@@ -146,60 +148,6 @@ namespace VL.Stride.Rendering.Materials
                 .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.NormalDistribution), x => x.NormalDistribution.ToEnum(), (x, v) => x.NormalDistribution = v.ToFunction(), i.NormalDistribution.ToEnum())
                 .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.Environment), x => x.Environment.ToEnum(), (x, v) => x.Environment = v.ToFunction(), i.Environment.ToEnum());
         }
-
-        class LiveComputeFloat : ComputeFloat
-        {
-            public ParameterCollection Parameters { get; private set; }
-
-            public void SetValue(float value)
-            {
-                Value = value;
-                // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
-                if (UsedKey is ValueParameterKey<float> floatKey)
-                    Parameters?.Set(floatKey, value);
-            }
-
-            public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
-            {
-                var shaderSource = base.GenerateShaderSource(context, baseKeys);
-                Parameters = context.Parameters;
-                // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
-                //Accessor = context.Parameters.GetAccessor(UsedKey as ValueParameterKey<float>);
-                return shaderSource;
-            }
-        }
-
-        class LiveComputeColor : ComputeColor
-        {
-            private ParameterCollection UsedParameters;
-            private ColorSpace UsedColorSpace;
-
-            public void SetValue(Color4 value)
-            {
-                Value = value; // Already takes care of color space conversion when generating the shader
-                if (UsedParameters != null)
-                {
-                    // But when setting it later while the shader is running (live) we need to do it on our own
-                    value = value.ToColorSpace(UsedColorSpace);
-                    if (PremultiplyAlpha)
-                        value = Color4.PremultiplyAlpha(value);
-
-                    // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
-                    if (UsedKey is ValueParameterKey<Color4> color4Key)
-                        UsedParameters.Set(color4Key, ref value);
-                    else if (UsedKey is ValueParameterKey<Color3> color3Key)
-                        UsedParameters.Set(color3Key, value.ToColor3());
-                }
-            }
-
-            public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
-            {
-                var shaderSource = base.GenerateShaderSource(context, baseKeys);
-                UsedColorSpace = context.ColorSpace;
-                UsedParameters = context.Parameters;
-                return shaderSource;
-            }
-        }
     }
 
     /// <summary>
@@ -209,6 +157,7 @@ namespace VL.Stride.Rendering.Materials
     {
         readonly MaterialAttributes @default = new MaterialAttributes();
         readonly IResourceHandle<Game> gameHandle;
+        readonly SerialDisposable subscriptions = new SerialDisposable();
 
         public MaterialBuilder(NodeContext nodeContext)
         {
@@ -217,6 +166,7 @@ namespace VL.Stride.Rendering.Materials
 
         public void Dispose()
         {
+            subscriptions.Dispose();
             gameHandle.Dispose();
         }
 
@@ -270,7 +220,9 @@ namespace VL.Stride.Rendering.Materials
                 Layers = Layers
             };
             var game = gameHandle.Resource;
-            return MaterialExtensions.New(game.GraphicsDevice, descriptor, game.Content);
+            var s = new CompositeDisposable();
+            subscriptions.Disposable = s;
+            return MaterialExtensions.New(game.GraphicsDevice, descriptor, game.Content, s);
         }
     }
 

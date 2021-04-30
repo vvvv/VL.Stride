@@ -17,12 +17,14 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reflection;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Model;
 using VL.Stride.Core;
+using VL.Stride.Graphics;
 using VL.Stride.Effects;
 using VL.Stride.Engine;
 using VL.Stride.Rendering.ComputeEffect;
@@ -33,55 +35,51 @@ namespace VL.Stride.Rendering
 {
     static class EffectShaderNodes
     {
-        public static void Register(IVLFactory services)
+        public static NodeBuilding.FactoryImpl Init(IVLNodeDescriptionFactory factory)
         {
             ShaderMetadata.RegisterAdditionalShaderAttributes();
 
-            services.RegisterNodeFactory("VL.Stride.Rendering.EffectShaderNodes",
-                init: factory =>
+            var nodes = GetNodeDescriptions(factory).ToImmutableArray();
+            return NodeBuilding.NewFactoryImpl(nodes, forPath: path => factory =>
+            {
+                // In case "shaders" directory gets added or deleted invalidate the whole factory
+                var invalidated = NodeBuilding.WatchDir(path)
+                    .Where(e => (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed) && e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
+
+                // File provider crashes if directory doesn't exist :/
+                var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
+                if (Directory.Exists(shadersPath))
                 {
-                    var nodes = GetNodeDescriptions(factory).ToImmutableArray();
-                    return NodeBuilding.NewFactoryImpl(nodes, forPath: path => factory =>
+                    try
                     {
-                        // In case "shaders" directory gets added or deleted invalidate the whole factory
-                        var invalidated = NodeBuilding.WatchDir(path)
-                            .Where(e => (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed) && e.Name == EffectCompilerBase.DefaultSourceShaderFolder);
-
-                        // File provider crashes if directory doesn't exist :/
-                        var shadersPath = Path.Combine(path, EffectCompilerBase.DefaultSourceShaderFolder);
-                        if (Directory.Exists(shadersPath))
-                        {
-                            try
+                        var nodes = GetNodeDescriptions(factory, path, shadersPath);
+                        // Additionaly watch out for new/deleted/renamed files
+                        invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
+                            .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed)
+                            // Check for shader files only. Editor (like VS) create lot's of other temporary files.
+                            .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
+                        return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
+                            export: c =>
                             {
-                                var nodes = GetNodeDescriptions(factory, path, shadersPath);
-                                // Additionaly watch out for new/deleted/renamed files
-                                invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
-                                    .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed)
-                                    // Check for shader files only. Editor (like VS) create lot's of other temporary files.
-                                    .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
-                                return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
-                                    export: c =>
-                                    {
-                                        // Copy all shaders to the project directory
-                                        var assetsFolder = Path.Combine(c.DirectoryPath, "Assets");
-                                        Directory.CreateDirectory(assetsFolder);
-                                        foreach (var f in Directory.EnumerateFiles(shadersPath))
-                                        {
-                                            if (string.Equals(Path.GetExtension(f), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(f), ".sdfx", StringComparison.OrdinalIgnoreCase))
-                                                File.Copy(f, Path.Combine(assetsFolder, Path.GetFileName(f)), overwrite: true);
-                                        }
-                                    });
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                                // When deleting a folder we can run into this one
-                            }
-                        }
+                                // Copy all shaders to the project directory
+                                var assetsFolder = Path.Combine(c.DirectoryPath, "Assets");
+                                Directory.CreateDirectory(assetsFolder);
+                                foreach (var f in Directory.EnumerateFiles(shadersPath))
+                                {
+                                    if (string.Equals(Path.GetExtension(f), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(f), ".sdfx", StringComparison.OrdinalIgnoreCase))
+                                        File.Copy(f, Path.Combine(assetsFolder, Path.GetFileName(f)), overwrite: true);
+                                }
+                            });
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // When deleting a folder we can run into this one
+                    }
+                }
 
-                        // Just watch for changes
-                        return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
-                    });
-                });
+                // Just watch for changes
+                return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
+            });
         }
 
         static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory, string path = default, string shadersPath = default)
@@ -234,8 +232,7 @@ namespace VL.Stride.Rendering
                             {
                                 EffectUtils.ResetParserCache(watchName);
                             }
-                        }))
-                        .Throttle(TimeSpan.FromSeconds(5));
+                        }));
                 }
 
                 try
@@ -370,7 +367,7 @@ namespace VL.Stride.Rendering
 
                                 var effectOutput = nodeBuildContext.Output<IEffect>(() =>
                                 {
-                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, shaderMixinSource);
+                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, shaderMixinSource, effect.Subscriptions);
 
                                     return effect;
                                 });
@@ -467,7 +464,7 @@ namespace VL.Stride.Rendering
 
                                 var effectOutput = nodeBuildContext.Output(() =>
                                 {
-                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, shaderMixinSource);
+                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, shaderMixinSource, effect.Subscriptions);
 
                                     return effect;
                                 });
@@ -560,8 +557,8 @@ namespace VL.Stride.Rendering
                                 var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
 
-                                var tempParameters = new ParameterCollection(); // will be replaced by parametrs of sink node
-                                var nodeState = new ShaderFXNodeState(shaderName, tempParameters);
+                                var tempParameters = new ParameterCollection(); // only needed for pin construction - parameter updater will later take care of multiple sinks
+                                var nodeState = new ShaderFXNodeState(shaderName);
 
                                 var inputs = new List<IVLPin>();
                                 foreach (var _input in _inputs)
@@ -743,7 +740,7 @@ namespace VL.Stride.Rendering
 
                                 var effectOutput = ToOutput(nodeBuildContext, effect, () =>
                                 {
-                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, textureFXEffectMixin);
+                                    UpdateCompositions(compositionPins, graphicsDevice, effect.Parameters, textureFXEffectMixin, effect.Subscriptions);
                                 });
                                 return nodeBuildContext.Node(
                                     inputs: inputs,
@@ -775,15 +772,17 @@ namespace VL.Stride.Rendering
 
                         var isFilterOrMixer = !shaderMetadata.IsTextureSource;
                         var defaultSize = isFilterOrMixer ? Int2.Zero : new Int2(512);
-                        var defaultFormat = shaderMetadata.GetPixelFormat(isFilterOrMixer);
+                        shaderMetadata.GetPixelFormats(isFilterOrMixer, out var defaultFormat, out var defaultRenderFormat);
 
                         var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = shaderMetadata.IsTextureSource };
                         var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = false };
+                        var _renderFormat = new PinDescription<PixelFormat>("Render Format", defaultRenderFormat) { IsVisible = false, Summary = "Allows to specify a render format that is differet to the output format" };
                         if (isFilterOrMixer)
                         {
                             // Filter or Mixer
                             _inputs.Insert(_inputs.Count - 1, _outputSize);
                             _inputs.Insert(_inputs.Count - 1, _outputFormat);
+                            _inputs.Insert(_inputs.Count - 1, _renderFormat);
 
                             // Replace Enabled with Apply
                             var _enabledPinIndex = _inputs.IndexOf(p => p.Name == Enabled);
@@ -795,6 +794,7 @@ namespace VL.Stride.Rendering
                             // Pure source
                             _inputs.Insert(_inputs.Count - 2, _outputSize);
                             _inputs.Insert(_inputs.Count - 2, _outputFormat);
+                            _inputs.Insert(_inputs.Count - 2, _renderFormat);
                         }
 
                         return buildContext.NewNode(
@@ -816,24 +816,28 @@ namespace VL.Stride.Rendering
 
                                 var outputSize = nodeBuildContext.Input(defaultSize);
                                 var outputFormat = nodeBuildContext.Input(defaultFormat);
+                                var renderFormat = nodeBuildContext.Input(defaultRenderFormat);
                                 if (isFilterOrMixer)
                                 {
                                     inputs.Insert(inputs.Count - 1, outputSize);
                                     inputs.Insert(inputs.Count - 1, outputFormat);
+                                    inputs.Insert(inputs.Count - 1, renderFormat);
                                 }
                                 else
                                 {
                                     inputs.Insert(inputs.Count - 2, outputSize);
                                     inputs.Insert(inputs.Count - 2, outputFormat);
+                                    inputs.Insert(inputs.Count - 2, renderFormat);
                                 }
 
                                 var gameHandle = nodeContext.GetGameHandle();
                                 var game = gameHandle.Resource;
                                 var scheduler = game.Services.GetService<SchedulerSystem>();
                                 var graphicsDevice = game.GraphicsDevice;
+
                                 // Remove this once FrameDelay can deal with textures properly
-                                var output1 = default(((Int2 size, PixelFormat format) desc, Texture texture));
-                                var output2 = default(((Int2 size, PixelFormat format) desc, Texture texture));
+                                var output1 = default(((Int2 size, PixelFormat format, PixelFormat renderFormat) desc, Texture texture, Texture view));
+                                var output2 = default(((Int2 size, PixelFormat format, PixelFormat renderFormat) desc, Texture texture, Texture view));
                                 var mainOutput = nodeBuildContext.Output<Texture>(getter: () =>
                                 {
                                     var inputTexture = textureInput?.Value as Texture;
@@ -851,11 +855,11 @@ namespace VL.Stride.Rendering
                                     {
                                         // No output texture is provided, generate one
                                         const TextureFlags textureFlags = TextureFlags.ShaderResource | TextureFlags.RenderTarget;
-                                        var desc = (size: Int2.One, format: PixelFormat.R8G8B8A8_UNorm);
+                                        var desc = (size: Int2.One, format: defaultFormat, renderFormat: defaultRenderFormat);
                                         if (inputTexture != null)
                                         {
                                             // Base it on the input texture
-                                            desc = (new Int2(inputTexture.Width, inputTexture.Height), inputTexture.Format);
+                                            desc = (new Int2(inputTexture.Width, inputTexture.Height), inputTexture.Format, PixelFormat.None);
 
                                             // Watch out for feedback loops
                                             if (inputTexture == output1.texture)
@@ -871,16 +875,41 @@ namespace VL.Stride.Rendering
                                             desc.size.Y = outputSize.Value.Y;
                                         if (outputFormat.Value != PixelFormat.None)
                                             desc.format = outputFormat.Value;
+                                        if (renderFormat.Value != PixelFormat.None)
+                                            desc.renderFormat = renderFormat.Value;
 
                                         // Ensure we have an output of proper size
                                         if (desc != output1.desc)
                                         {
+                                            output1.view?.Dispose();
                                             output1.texture?.Dispose();
                                             output1.desc = desc;
+
                                             if (desc != default)
-                                                output1.texture = Texture.New2D(graphicsDevice, desc.size.X, desc.size.Y, desc.format, textureFlags);
+                                            {
+                                                if (desc.renderFormat != PixelFormat.None 
+                                                && desc.renderFormat != desc.format 
+                                                && desc.renderFormat.BlockSize() == desc.format.BlockSize()
+                                                && desc.format.TryToTypeless(out var typelessFormat))
+                                                {
+                                                    var td = TextureDescription.New2D(desc.size.X, desc.size.Y, typelessFormat, textureFlags);
+                                                    var tvd = new TextureViewDescription() { Format = desc.format, Flags = textureFlags };
+                                                    var rvd = new TextureViewDescription() { Format = desc.renderFormat, Flags = textureFlags };
+
+                                                    output1.texture = Texture.New(graphicsDevice, td, tvd);
+                                                    output1.view = output1.texture.ToTextureView(rvd);
+                                                }
+                                                else
+                                                {
+                                                    output1.texture = Texture.New2D(graphicsDevice, desc.size.X, desc.size.Y, desc.format, textureFlags);
+                                                    output1.view = output1.texture;
+                                                }
+                                            }
                                             else
+                                            {
                                                 output1.texture = null;
+                                                output1.view = null;
+                                            }
                                         }
 
                                         // Select it
@@ -888,11 +917,11 @@ namespace VL.Stride.Rendering
                                     }
 
                                     var effect = node.Outputs[0].Value as TextureFXEffect;
-                                    if (scheduler != null && effect != null && outputTexture != null)
+                                    if (scheduler != null && effect != null && output1.texture != null)
                                     {
-                                        effect.SetOutput(outputTexture);
+                                        effect.SetOutput(output1.view);
                                         scheduler.Schedule(effect);
-                                        return outputTexture;
+                                        return output1.texture;
                                     }
 
                                     return null;
@@ -902,7 +931,9 @@ namespace VL.Stride.Rendering
                                     outputs: new[] { mainOutput },
                                     dispose: () =>
                                     {
+                                        output1.view?.Dispose();
                                         output1.texture?.Dispose();
+                                        output2.view?.Dispose();
                                         output2.texture?.Dispose();
                                         gameHandle.Dispose();
                                         node.Dispose();
@@ -945,7 +976,7 @@ namespace VL.Stride.Rendering
         //used for shader source generation
         static MaterialComputeColorKeys baseKeys = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
 
-        private static bool UpdateCompositions(IReadOnlyList<ShaderFXPin> compositionPins, GraphicsDevice graphicsDevice, ParameterCollection parameters, ShaderMixinSource mixin)
+        private static bool UpdateCompositions(IReadOnlyList<ShaderFXPin> compositionPins, GraphicsDevice graphicsDevice, ParameterCollection parameters, ShaderMixinSource mixin, CompositeDisposable subscriptions)
         {
             var anyChanged = false;
             for (int i = 0; i < compositionPins.Count; i++)
@@ -955,17 +986,20 @@ namespace VL.Stride.Rendering
 
             if (anyChanged)
             {
-                var context = new ShaderGeneratorContext(graphicsDevice)
-                {
-                    Parameters = parameters,
-                };
+                // Disposes all current subscriptions. So for example all data bindings between the sources and our parameter collection
+                // gets removed.
+                subscriptions.Clear();
 
+                var context = ShaderGraph.NewShaderGeneratorContext(graphicsDevice, parameters, subscriptions);
+
+                var updatedMixin = new ShaderMixinSource();
+                updatedMixin.DeepCloneFrom(mixin);
                 for (int i = 0; i < compositionPins.Count; i++)
                 {
                     var cp = compositionPins[i];
-                    if (cp.ShaderSourceChanged)
-                        cp.GenerateAndSetShaderSource(mixin, context, baseKeys);
+                    cp.GenerateAndSetShaderSource(updatedMixin, context, baseKeys);
                 }
+                parameters.Set(EffectNodeBaseKeys.EffectNodeBaseShader, updatedMixin);
 
                 return true;
             }
@@ -973,10 +1007,11 @@ namespace VL.Stride.Rendering
             return false;
         }
 
+        // For example T = SetVar<Vector3> and TInner = Vector3
         static void BuildOutput<T, TInner>(NodeBuilding.NodeInstanceBuildContext context, ShaderFXNodeState nodeState, IReadOnlyList<IVLPin> inputPins)
         {
             var compositionPins = inputPins.OfType<ShaderFXPin>().ToList();
-            var inputs = inputPins.OfType<ParameterPin>().Where(p => !(p is ShaderFXPin)).ToList();
+            var inputs = inputPins.OfType<ParameterPin>().ToList();
 
             Func<T> getOutput = () =>
             {
@@ -991,28 +1026,20 @@ namespace VL.Stride.Rendering
                 if (shaderChanged)
                 {
                     var comps = compositionPins.Select(p => new KeyValuePair<string, IComputeNode>(p.Key.Name, p.GetValueOrDefault()));
-                    var newComputeNode = new GenericComputeNode<TInner>((c, k) => new ShaderClassSource(nodeState.ShaderName), comps);
-                    nodeState.CurrentComputeNode = newComputeNode;
-                    nodeState.CurrentOutputValue = ShaderFXUtils.DeclAndSetVar(nodeState.ShaderName, newComputeNode);
-                }
 
-                // update uniform inputs
-                var node = (GenericComputeNode<TInner>)nodeState.CurrentComputeNode;
-                if (node != null && node.Parameters != nodeState.CurrentParameters)
-                {
-                    var newParameters = node.Parameters ?? nodeState.DefaultParameters;
-                    if (nodeState.CurrentParameters != newParameters)
-                    {
-                        foreach (var pin in inputs)
+                    var newComputeNode = new GenericComputeNode<TInner>(
+                        getShaderSource: (c, k) =>
                         {
-                            var boxedValue = (pin as IVLPin)?.Value;
-                            pin.Parameters = newParameters;
-                            if (boxedValue != null)
-                                (pin as IVLPin).Value = boxedValue;
-                            
-                        }
-                        nodeState.CurrentParameters = newParameters;
-                    }
+                            //let the pins subscribe to the parameter collection of the sink
+                            foreach (var pin in inputs)
+                                pin.SubscribeTo(c);
+
+                            return new ShaderClassSource(nodeState.ShaderName);
+                        },
+                        inputs: comps);
+
+                    nodeState.CurrentComputeNode = newComputeNode;
+                    nodeState.CurrentOutputValue = ShaderFXUtils.DeclAndSetVar(nodeState.ShaderName + "Result", newComputeNode);
                 }
 
                 return (T)nodeState.CurrentOutputValue;
@@ -1027,14 +1054,10 @@ namespace VL.Stride.Rendering
             public IVLPin OutputPin;
             public object CurrentOutputValue;
             public object CurrentComputeNode;
-            public readonly ParameterCollection DefaultParameters;
-            public ParameterCollection CurrentParameters;
 
-            public ShaderFXNodeState(string shaderName, ParameterCollection parameters)
+            public ShaderFXNodeState(string shaderName)
             {
                 ShaderName = shaderName;
-                DefaultParameters = parameters;
-                CurrentParameters = parameters;
             }
         }
 
@@ -1092,15 +1115,20 @@ namespace VL.Stride.Rendering
 
             public ParameterCollection Parameters => EffectInstance.Parameters;
 
+            internal readonly CompositeDisposable Subscriptions = new CompositeDisposable();
+
             public Action<ParameterCollection, RenderView, RenderDrawContext> ParameterSetter { get; set; }
 
             public void Dispose()
             {
+                Subscriptions.Dispose();
                 EffectInstance.Dispose();
             }
 
             public EffectInstance SetParameters(RenderView renderView, RenderDrawContext renderDrawContext)
             {
+                EffectInstance.UpdateEffect(renderDrawContext.GraphicsDevice);
+
                 var parameters = EffectInstance.Parameters;
                 try
                 {

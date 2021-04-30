@@ -1,12 +1,14 @@
 ﻿using Stride.Rendering;
 using Stride.Rendering.Materials;
 using Stride.Shaders;
+using System;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
-    public class DeclResource<T> : ComputeNode<T>, IComputeVoid where T : class
+    public class DeclResource<T> : ComputeNode<T>, IComputeVoid
+        where T : class
     {
-        protected T resource;
+        readonly ObjectParameterUpdater<T> updater = new ObjectParameterUpdater<T>();
         readonly string resourceGroupName;
 
         public DeclResource(string resourceGroupName = null)
@@ -19,34 +21,18 @@ namespace VL.Stride.Shaders.ShaderFX
         /// </summary>
         public T Resource
         {
-            get => resource;
-
-            set
-            {
-                if (resource != value || compiled)
-                {
-                    resource = value;
-
-                    if (Parameters != null && Key != null)
-                        Parameters.Set(Key, resource);
-                }
-            }
+            get => updater.Value;
+            set => updater.Value = value;
         }
 
-        public ObjectParameterKey<T> Key { get; protected set; }
-        ParameterCollection Parameters;
-        private bool compiled;
+        public ObjectParameterKey<T> Key { get; private set; }
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
             Key = context.GetKeyForContext(this, Key);
 
-            context.Parameters.Set(Key, Resource);
-
-            // remember parameters for updates from main loop 
-            Parameters = context.Parameters;
-
-            compiled = true;
+            //track the parameter collection
+            updater.Track(context, Key);
 
             //no shader source to create here, only the key
             return new ShaderClassSource("ComputeVoid");

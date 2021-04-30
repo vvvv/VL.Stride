@@ -1,61 +1,43 @@
 using Stride.Rendering;
 using Stride.Rendering.Materials;
 using Stride.Shaders;
-using Buffer = Stride.Graphics.Buffer;
 using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
-
 
 namespace VL.Stride.Shaders.ShaderFX
 {
-    public class InputValue<T> : ComputeValue<T> where T : struct
+    public class InputValue<T> : ComputeValue<T>
+        where T : struct
     {
+        private readonly ValueParameterUpdater<T> updater = new ValueParameterUpdater<T>();
+
         public InputValue(ValueParameterKey<T> key = null, string constantBufferName = null)
         {
             Key = key;
             ConstantBufferName = constantBufferName;
         }
 
-        private T inputValue;
-
         /// <summary>
         /// Can be updated from mainloop
         /// </summary>
         public T Input
         { 
-            get => inputValue;
-
-            set
-            {
-                if (!inputValue.Equals(value) || compiled)
-                {
-                    this.inputValue = value;
-
-                    if (Parameters != null && UsedKey != null)
-                        Parameters.Set(UsedKey, inputValue);
-
-                    compiled = false;
-                }
-            }
+            get => updater.Value;
+            set => updater.Value = value;
         }
 
-        public ValueParameterKey<T> UsedKey { get; protected set; }
         public ValueParameterKey<T> Key { get; }
         public string ConstantBufferName { get; private set; }
 
-        ParameterCollection Parameters;
-        bool compiled;
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-
             ShaderClassSource shaderClassSource;
 
             if (Key == null)
             {
-                UsedKey = GetInputKey(context);
-                context.Parameters.Set(UsedKey, Input);
+                var usedKey = GetInputKey(context);
 
-                // remember parameters for updates from main loop 
-                Parameters = context.Parameters;
+                // keep track of the parameters
+                updater.Track(context, usedKey);
 
                 // find constant buffer name
                 var constantBufferName = ConstantBufferName;
@@ -65,15 +47,13 @@ namespace VL.Stride.Shaders.ShaderFX
                     constantBufferName = context is MaterialGeneratorContext ? "PerMaterial" : "PerUpdate";
                 }
 
-                shaderClassSource = GetShaderSourceForType<T>("Input", UsedKey, constantBufferName);
+                shaderClassSource = GetShaderSourceForType<T>("Input", usedKey, constantBufferName);
             }
             else
             {
-                UsedKey = Key;
-                shaderClassSource = GetShaderSourceForType<T>("InputKey", UsedKey);
+                shaderClassSource = GetShaderSourceForType<T>("InputKey", Key);
             }
 
-            compiled = true;
 
             return shaderClassSource;
         }

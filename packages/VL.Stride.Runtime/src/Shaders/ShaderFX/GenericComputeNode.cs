@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using NUnit.Framework;
+using System.Reactive.Disposables;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
 using Stride.Shaders;
@@ -11,27 +11,37 @@ namespace VL.Stride.Shaders.ShaderFX
 {
     public class GenericComputeNode<TOut> : ComputeValue<TOut>
     {
-        public GenericComputeNode(Func<ShaderGeneratorContext, MaterialComputeColorKeys, ShaderClassCode> getShaderSource,
+        ShaderClassCode shaderClass;
+
+        public GenericComputeNode(
+            Func<ShaderGeneratorContext, MaterialComputeColorKeys, ShaderClassCode> getShaderSource,
             IEnumerable<KeyValuePair<string, IComputeNode>> inputs)
         {
             Inputs = inputs?.Where(input => !string.IsNullOrWhiteSpace(input.Key) && input.Value != null).ToList();
             GetShaderSource = getShaderSource;
+            ParameterCollections = ImmutableArray<ParameterCollection>.Empty;
         }
 
         public Func<ShaderGeneratorContext, MaterialComputeColorKeys, ShaderClassCode> GetShaderSource { get; }
 
+        public ImmutableArray<ParameterCollection> ParameterCollections { get; private set; }
+
         public IEnumerable<KeyValuePair<string, IComputeNode>> Inputs { get; }
 
-        public ParameterCollection Parameters => parameters;
         public ShaderClassCode ShaderClass => shaderClass;
-
-        ParameterCollection parameters;
-        ShaderClassCode shaderClass;
 
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
-            parameters = context.Parameters;
             shaderClass = GetShaderSource(context, baseKeys);
+
+            // TODO: Remove me - didn't know that this was already deprecated
+            //store the parameters - accessed by various patches (look for InputParameterManager)
+            var parameters = context.Parameters;
+            if (context.TryGetSubscriptions(out var s))
+            {
+                ParameterCollections = ParameterCollections.Add(parameters);
+                s.Add(Disposable.Create(() => ParameterCollections = ParameterCollections.Remove(parameters)));
+            }
 
             //compose if necessary
             if (Inputs != null && Inputs.Any())
