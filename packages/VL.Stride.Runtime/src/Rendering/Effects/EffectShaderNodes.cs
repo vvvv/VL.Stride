@@ -775,7 +775,7 @@ namespace VL.Stride.Rendering
                         shaderMetadata.GetPixelFormats(isFilterOrMixer, out var defaultFormat, out var defaultRenderFormat);
 
                         var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = shaderMetadata.IsTextureSource };
-                        var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = shaderMetadata.IsTextureSource };
+                        var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = false };
                         var _renderFormat = new PinDescription<PixelFormat>("Render Format", defaultRenderFormat) { IsVisible = false, Summary = "Allows to specify a render format that is differet to the output format" };
                         if (isFilterOrMixer)
                         {

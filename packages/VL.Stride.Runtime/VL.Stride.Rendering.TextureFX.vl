@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="BzGvoB2aLhzP7WO4jVw5sI" LanguageVersion="2021.4.0.55" Version="0.128">
-  <NugetDependency Id="QNDaxjZxapFM8KPBDLuO6H" Location="VL.CoreLib" Version="2021.4.0-0055-g3e2beca9a4" />
+<Document xmlns:p="property" Id="BzGvoB2aLhzP7WO4jVw5sI" LanguageVersion="2021.4.0.65" Version="0.128">
+  <NugetDependency Id="QNDaxjZxapFM8KPBDLuO6H" Location="VL.CoreLib" Version="2021.4.0-0058-gf3b0e60c5c" />
   <Patch Id="G28kmfwtWsRPWb67PHzP5Y">
     <Canvas Id="TtPf6YeHIWxLlrjYVAmnpJ" DefaultCategory="Stride.Textures" CanvasType="FullCategory">
       <Canvas Id="DeZbgFI9bq4OVIMbH1taT6" Name="Filter" Position="248,318">
@@ -684,6 +684,125 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
+          <!--
+
+    ************************ Glow ************************
+
+-->
+          <Node Name="Glow" Bounds="325,311" Id="GhXCiMpCT7uPqdtlbsOO3o">
+            <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+              <Choice Kind="ContainerDefinition" Name="Process" />
+            </p:NodeReference>
+            <Patch Id="Pc4TP1MpK11MT98Gw46XWp">
+              <Canvas Id="GFVZxnDaYPFMo2mEBBF4Ci" CanvasType="Group">
+                <Node Bounds="166,350,85,19" AutoConnect="true" Id="BpwgMDdracBL5xNAeQ1kSO">
+                  <p:NodeReference LastCategoryFullName="Stride.Textures.Filter" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <Choice Kind="ProcessNode" Name="GlowPre" />
+                  </p:NodeReference>
+                  <Pin Id="LTuEOzuxrZOQI9OFxHGhbF" Name="Input" Kind="InputPin" />
+                  <Pin Id="J3mGJRdNIjsNDEB75NxAzE" Name="Amount" Kind="InputPin" />
+                  <Pin Id="DDh9da0L51nQGyNJ2YYOFj" Name="Shape" Kind="InputPin" />
+                  <Pin Id="JnUt3jpa8sKPwOBJciHKBZ" Name="Highlight Boost" Kind="InputPin" />
+                  <Pin Id="D9XccTtJvrANDPG3UodcJB" Name="Exposure" Kind="InputPin" />
+                  <Pin Id="HOpspsruGuROznA7UR5P3y" Name="Saturation" Kind="InputPin" />
+                  <Pin Id="JfpUIGh8Ln7MZdJuUSBiM7" Name="Auto Exposure Factor" Kind="InputPin" />
+                  <Pin Id="HDt54SThN0UPxCUWwHuwtQ" Name="Max Radius" Kind="InputPin" />
+                  <Pin Id="QcTlrYdofpSLIxPnbFajv0" Name="Pre Blur Width" Kind="InputPin" />
+                  <Pin Id="JPWM8gR0ydPPfWHy8sZlzM" Name="Control" Kind="InputPin" />
+                  <Pin Id="ToJaV3i8A4VNnnP7dCCvjP" Name="Output Texture" Kind="InputPin" />
+                  <Pin Id="NYdsBtL6YOGPenAFf0pGWx" Name="Output Size" Kind="InputPin" />
+                  <Pin Id="P43ZVCvCFkVOboZNcDa6q5" Name="Output Format" Kind="InputPin" />
+                  <Pin Id="JscrLfMStMWMQ0ppMeRXv7" Name="Render Format" Kind="InputPin" />
+                  <Pin Id="VoJpYGPMIkfM07r8XJ317C" Name="Apply" Kind="InputPin" />
+                  <Pin Id="TN0gWjgpZAIOuOH0cEypvO" Name="Output" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="166,408,145,19" AutoConnect="true" Id="OAqTmaYPc6HPmwDglnOkU5">
+                  <p:NodeReference LastCategoryFullName="Stride.Textures.Filter" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <Choice Kind="ProcessNode" Name="GlowMain" />
+                  </p:NodeReference>
+                  <Pin Id="OAaIkAaJfvWQOXMAP2TNre" Name="Input" Kind="InputPin" />
+                  <Pin Id="PtBoPLZBRppM62IMMVYEax" Name="Sampler" Kind="InputPin" />
+                  <Pin Id="Dr7hjJRtdMqMpya7CSYhl8" Name="Input 2" Kind="InputPin" />
+                  <Pin Id="Sd1urkiiZvyMilBFU73teO" Name="Amount" Kind="InputPin" />
+                  <Pin Id="SxTAOJniWmDNT9LmULVISj" Name="Shape" Kind="InputPin" />
+                  <Pin Id="DGVA559Bmb7LfL6j3PGlzP" Name="Highlight Boost" Kind="InputPin" />
+                  <Pin Id="E5a5UaLWXj3MXPvraBcZjw" Name="Exposure" Kind="InputPin" />
+                  <Pin Id="NQaklectHy6NQeiNO59ysR" Name="Saturation" Kind="InputPin" />
+                  <Pin Id="CxLxh2Myy22P0gx9xyqKOr" Name="Auto Exposure Factor" Kind="InputPin" />
+                  <Pin Id="F6UanNOb461LXueZzq34o8" Name="Max Radius" Kind="InputPin" />
+                  <Pin Id="GgLNYqDdH0SQXhEcmvBCwz" Name="Pre Blur Width" Kind="InputPin" />
+                  <Pin Id="R0zYZqQuqdFPxwp07l6WYK" Name="Control" Kind="InputPin" />
+                  <Pin Id="AqRHxXmQ88XOX6i47kyhfR" Name="Output Texture" Kind="InputPin" />
+                  <Pin Id="GPnEKNJAwtqLQ2TyUWClVi" Name="Output Size" Kind="InputPin" />
+                  <Pin Id="GsnqxfByYMnMSNEllwuEQd" Name="Output Format" Kind="InputPin" />
+                  <Pin Id="M6H6cWrXDIMOvnrkPQI0Jq" Name="Render Format" Kind="InputPin" />
+                  <Pin Id="VXS0zA75wcRPhg3rvSQ06L" Name="Apply" Kind="InputPin" />
+                  <Pin Id="Rkg4LdwmtXPNnB8HdBDpFB" Name="Output" Kind="OutputPin" />
+                </Node>
+                <Node Bounds="166,470,305,19" AutoConnect="true" Id="J3KTppyxuR1LoJNIV04EJD">
+                  <p:NodeReference LastCategoryFullName="Stride.Textures.Filter" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
+                    <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                    <Choice Kind="ProcessNode" Name="GlowMix" />
+                  </p:NodeReference>
+                  <Pin Id="P9O7r50I2NuP2YFvj2sbDK" Name="Input" Kind="InputPin" />
+                  <Pin Id="TketPPjL9x5NmvHk7zLQnD" Name="Sampler" Kind="InputPin" />
+                  <Pin Id="AsoDBQrdSrLOgb9TVsbnNO" Name="Input 2" Kind="InputPin" />
+                  <Pin Id="I0YGw86nHRgNU3GEChYH2H" Name="Sampler 2" Kind="InputPin" />
+                  <Pin Id="EV6IRV4e6NEPDuoQLQmsHe" Name="Amount" Kind="InputPin" />
+                  <Pin Id="KTgLYMULPM7PIb1DT783eL" Name="Shape" Kind="InputPin" />
+                  <Pin Id="A17f0wwzhT9QK0CzcV2C1E" Name="Highlight Boost" Kind="InputPin" />
+                  <Pin Id="Al6frjoE817P50G1UK0mZN" Name="Exposure" Kind="InputPin" />
+                  <Pin Id="V1SaNVgFUCILVLf7TYJVKu" Name="Saturation" Kind="InputPin" />
+                  <Pin Id="EqGfsK51rBuQV4UJTcDdWD" Name="Auto Exposure Factor" Kind="InputPin" />
+                  <Pin Id="IqJIRhi16smON8OOOthoHc" Name="Max Radius" Kind="InputPin" />
+                  <Pin Id="H9CweUGfNPRNbtokN23c8c" Name="Pre Blur Width" Kind="InputPin" />
+                  <Pin Id="SbuC2sL7AKJMKxtwshngAE" Name="Control" Kind="InputPin" />
+                  <Pin Id="Pqht4b7tkBSLi86I6fGYWg" Name="Output Texture" Kind="InputPin" />
+                  <Pin Id="MpLqMopserxPiCbRuZdw1c" Name="Output Size" Kind="InputPin" />
+                  <Pin Id="TPOlQRmhehhOjnbEzEsQ1I" Name="Output Format" Kind="InputPin" />
+                  <Pin Id="IhyVmFU9OFfQRipESdTnFy" Name="Render Format" Kind="InputPin" />
+                  <Pin Id="K5T4I8LaCYXObQjzo2E1wy" Name="Apply" Kind="InputPin" />
+                  <Pin Id="V46aUGue22yPZ29DzeJJ5D" Name="Output" Kind="OutputPin" />
+                </Node>
+                <ControlPoint Id="TwS53cmSvIMOjjKTeWwGij" Bounds="125,302" />
+                <Pad Id="O9HBHzK04COQKZ0Vtu6mJ6" SlotId="IdBAwSFOkIiMNCxy120ITU" Bounds="263,442" />
+              </Canvas>
+              <ProcessDefinition Id="MIKFSR2DLUhNWPvjvH9OZp">
+                <Fragment Id="KmpQiZDug0WQP9CooxPBww" Patch="NZnSxh1JJpGMMzFQmpdx4W" Enabled="true" />
+                <Fragment Id="F1Iz0lfDTZwMpfj7T9aqR2" Patch="C3mXlQv8IN0P0X2rFvm2Sl" Enabled="true" />
+              </ProcessDefinition>
+              <Link Id="DGnRo9wc2elMRcOmoiL5VH" Ids="Rkg4LdwmtXPNnB8HdBDpFB,P9O7r50I2NuP2YFvj2sbDK" />
+              <Link Id="B9cLp3C7GtbO6Yk2j8YJhO" Ids="TwS53cmSvIMOjjKTeWwGij,LTuEOzuxrZOQI9OFxHGhbF" />
+              <Link Id="QKnWW3FycvYPKnB1dhYneb" Ids="AQ2AmLkNe5RPf0wneZMhXM,TwS53cmSvIMOjjKTeWwGij" IsHidden="true" />
+              <Link Id="NsdwieErbAsNR0l2XlQbWE" Ids="TwS53cmSvIMOjjKTeWwGij,AsoDBQrdSrLOgb9TVsbnNO" />
+              <Link Id="MT6N6xym4GfNIqXij7JU3Y" Ids="TN0gWjgpZAIOuOH0cEypvO,OAaIkAaJfvWQOXMAP2TNre" />
+              <Slot Id="IdBAwSFOkIiMNCxy120ITU" Name="Sampler 2" />
+              <Link Id="LSDDD011DkhOCNtMHngVZ7" Ids="O9HBHzK04COQKZ0Vtu6mJ6,I0YGw86nHRgNU3GEChYH2H" />
+              <Link Id="BwsoiDsxODAOyuauw74Iik" Ids="TwS53cmSvIMOjjKTeWwGij,Dr7hjJRtdMqMpya7CSYhl8" />
+              <Patch Id="NZnSxh1JJpGMMzFQmpdx4W" Name="Create" />
+              <Patch Id="C3mXlQv8IN0P0X2rFvm2Sl" Name="Update" ManuallySortedPins="true">
+                <Pin Id="AQ2AmLkNe5RPf0wneZMhXM" Name="Input" Kind="InputPin" Bounds="115,269" />
+                <Pin Id="C9czFOGImriLZWwmzyfVqg" Name="Sampler" Kind="InputPin" Visibility="Optional" />
+                <Pin Id="Iwydq8Shk2FQYd4rQKWMIs" Name="Amount" Kind="InputPin" />
+                <Pin Id="VRbzzfAnM1fM2f7CBe8Hwd" Name="Shape" Kind="InputPin" />
+                <Pin Id="U3BQzJgVKqBQLqzFOhdvhl" Name="Highlight Boost" Kind="InputPin" />
+                <Pin Id="B5EDghcIj5TM2yhEAW6YTd" Name="Exposure" Kind="InputPin" />
+                <Pin Id="PJaBWxvhic3L7vPU6luWeU" Name="Saturation" Kind="InputPin" />
+                <Pin Id="DQZIlpLTIQILZbSMansLdf" Name="Auto Exposure Factor" Kind="InputPin" />
+                <Pin Id="HEx7VLTDq6gLkUOp3GvusO" Name="Pre Blur Width" Kind="InputPin" Visibility="Optional" />
+                <Pin Id="Ly2YVkTIZE5PAUbBRIqz0l" Name="Max Radius" Kind="InputPin" Visibility="Optional" />
+                <Pin Id="GjQEfyMGOc1M9ZEQ7Pxeob" Name="Control" Kind="InputPin" />
+                <Pin Id="Cjv3Py5aM3ILcbqZtZ7TzL" Name="Output Texture" Kind="InputPin" Visibility="Optional" />
+                <Pin Id="LQ1MOSIfq5MOrTEAiyznOD" Name="Output Size" Kind="InputPin" Visibility="Optional" />
+                <Pin Id="BMYqYSFWOj4NO08SXFcmbz" Name="Output Format" Kind="InputPin" Visibility="Optional" />
+                <Pin Id="FuPfhwZSyXrQCsPhrgmNoI" Name="Render Format" Kind="InputPin" Visibility="Optional" />
+                <Pin Id="RNaJaay7HM4QRCsepZm6uf" Name="Apply" Kind="InputPin" />
+                <Pin Id="SMIwy3bvVAfNSzwAMad0fB" Name="Output" Kind="OutputPin" />
+              </Patch>
+            </Patch>
+          </Node>
         </Canvas>
       </Canvas>
       <Canvas Id="UIY9lpdq5mMOPRgijvMD0P" Name="Mixer" Position="248,370">
@@ -2046,7 +2165,7 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="K08TNIU8XTsLzsNUwzw82F" Location="VL.Skia" Version="2021.4.0-0055-g3e2beca9a4" />
+  <NugetDependency Id="K08TNIU8XTsLzsNUwzw82F" Location="VL.Skia" Version="2021.4.0-0058-gf3b0e60c5c" />
   <DocumentDependency Id="Msnm4D4Er8bLmlwC1L1XQc" Location="./VL.Stride.Graphics.vl" />
   <DocumentDependency Id="M6gCO22oHy1LhLzIK6RyS2" Location="./VL.Stride.Rendering.vl" IsFriend="true" />
   <PlatformDependency Id="QFvbyrdEV0NLXzcTARn7Xg" Location="./src/bin/Debug/netstandard2.0/VL.Stride.Runtime.dll" />

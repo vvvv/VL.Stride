@@ -16,11 +16,11 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Ripple_TextureFXKeys
+    public static partial class Undistort_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Frequency = ParameterKeys.NewValue<float>(20.0f);
-        public static readonly ValueParameterKey<float> Speed = ParameterKeys.NewValue<float>(10.0f);
-        public static readonly ValueParameterKey<float> Amplitude = ParameterKeys.NewValue<float>(0.05f);
-        public static readonly ValueParameterKey<Vector2> Center = ParameterKeys.NewValue<Vector2>(new Vector2(0.5f,0.5f));
+        public static readonly ValueParameterKey<Vector2> FocalLength = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<Vector2> PrincipalPoint = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<Vector4> Distortion = ParameterKeys.NewValue<Vector4>();
+        public static readonly ValueParameterKey<Vector2> Resolution = ParameterKeys.NewValue<Vector2>();
     }
 }
