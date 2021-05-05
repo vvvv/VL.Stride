@@ -859,7 +859,7 @@ namespace VL.Stride.Rendering
                                         if (inputTexture != null)
                                         {
                                             // Base it on the input texture
-                                            desc = (new Int2(inputTexture.Width, inputTexture.Height), inputTexture.Format, PixelFormat.None);
+                                            desc = (new Int2(inputTexture.ViewWidth, inputTexture.ViewHeight), inputTexture.ViewFormat, PixelFormat.None);
 
                                             // Watch out for feedback loops
                                             if (inputTexture == output1.texture)
