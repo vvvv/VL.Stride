@@ -34,7 +34,7 @@ namespace VL.Stride.Rendering
 
         public bool IsTextureSource { get; private set; }
 
-        public bool IsSRgb { get; private set; }
+        public bool DontApplySRgbCurveOnWrite { get; private set; }
 
         public void GetPixelFormats(bool isFilterOrMixer, out PixelFormat outputFormat, out PixelFormat renderFormat)
         {
@@ -45,7 +45,7 @@ namespace VL.Stride.Rendering
                 else
                     outputFormat = OutputFormat;
 
-                if (IsSRgb && RenderFormat == PixelFormat.None)
+                if (DontApplySRgbCurveOnWrite && RenderFormat == PixelFormat.None)
                     renderFormat = outputFormat.ToNonSRgb();
                 else
                     renderFormat = RenderFormat;
@@ -227,7 +227,7 @@ namespace VL.Stride.Rendering
         public const string OutputFormatName = "OutputFormat";
         public const string RenderFormatName = "RenderFormat";
         public const string TextureSourceName = "TextureSource";
-        public const string IsSRgbName = "IsSRgb";
+        public const string DontApplySRgbCurveOnWriteName = "DontApplySRgbCurveOnWrite";
 
         //pin
         public const string EnumTypeName = "EnumType";
@@ -288,8 +288,8 @@ namespace VL.Stride.Rendering
                             case TextureSourceName:
                                 shaderMetadata.IsTextureSource = true;
                                 break;
-                            case IsSRgbName:
-                                shaderMetadata.IsSRgb = true;
+                            case DontApplySRgbCurveOnWriteName:
+                                shaderMetadata.DontApplySRgbCurveOnWrite = true;
                                 break;
                             default:
                                 break;
