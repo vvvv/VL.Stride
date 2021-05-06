@@ -19,7 +19,7 @@ namespace Stride.Rendering
     public static partial class Liquish_TextureFXKeys
     {
         public static readonly ValueParameterKey<float> Time = ParameterKeys.NewValue<float>();
-        public static readonly ValueParameterKey<Vector2> ScaleXY = ParameterKeys.NewValue<Vector2>(new Vector2(10.0f,10.0f));
+        public static readonly ValueParameterKey<Vector2> Scale = ParameterKeys.NewValue<Vector2>(new Vector2(5.0f,5.0f));
         public static readonly ValueParameterKey<Color4> ColorA = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,1.0f));
         public static readonly ValueParameterKey<Color4> ColorB = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
         public static readonly ValueParameterKey<Color4> ColorC = ParameterKeys.NewValue<Color4>(new Color4(0.5f,0.0f,0.15f,1.0f));

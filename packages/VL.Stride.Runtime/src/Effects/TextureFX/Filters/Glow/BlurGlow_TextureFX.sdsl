@@ -20,11 +20,11 @@ shader BlurGlow_TextureFX : FilterBase
         float4 col = 0;
         float kk = 0;
 
-        for(float i = 0; i < min(lod-(1-Radius*lod), 14); i++)
+        for(float i = 0; i < min(lod - (1 - Radius * lod), 14); i++)
         {
             float4 nc = Texture0.SampleLevel(Sampler0, uv, 1+i);
-            float k = pow (2, i*Shape-lod+1) * saturate(Radius*lod-i+1);
-            col += nc*k;
+            float k = pow(2, i * Shape - lod + 1) * saturate(Radius * lod - i + 1);
+            col += nc * k;
             kk += k;
         }
 
