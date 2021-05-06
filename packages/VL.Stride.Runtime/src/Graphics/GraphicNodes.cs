@@ -154,6 +154,40 @@ namespace VL.Stride.Graphics
                 .AddCachedInput(nameof(DepthStencilStateDescription.StencilWriteMask), x => x.v.StencilWriteMask, (x, v) => x.v.StencilWriteMask = v, byte.MaxValue)
                 .AddStateOutput();
 
+            yield return factory.NewDescriptionNode(graphicsCategory, TextureDescription.New2D(512, 512, PixelFormat.R8G8B8A8_UNorm_SRgb))
+                .AddCachedInput(nameof(TextureDescription.Dimension), x => x.v.Dimension, (x, v) => x.v.Dimension = v, TextureDimension.Texture2D)
+                .AddCachedInput(nameof(TextureDescription.Width), x => x.v.Width, (x, v) => x.v.Width = v, 512)
+                .AddCachedInput(nameof(TextureDescription.Height), x => x.v.Height, (x, v) => x.v.Height = v, 512)
+                .AddCachedInput(nameof(TextureDescription.Depth), x => x.v.Depth, (x, v) => x.v.Depth = v, 1)
+                .AddCachedInput(nameof(TextureDescription.ArraySize), x => x.v.ArraySize, (x, v) => x.v.ArraySize = v, 1)
+                .AddCachedInput(nameof(TextureDescription.MipLevels), x => x.v.MipLevels, (x, v) => x.v.MipLevels = v, 1)
+                .AddCachedInput(nameof(TextureDescription.Format), x => x.v.Format, (x, v) => x.v.Format = v, PixelFormat.R8G8B8A8_UNorm_SRgb)
+                .AddCachedInput(nameof(TextureDescription.MultisampleCount), x => x.v.MultisampleCount, (x, v) => x.v.MultisampleCount = v, MultisampleCount.None)
+                .AddCachedInput(nameof(TextureDescription.Usage), x => x.v.Usage, (x, v) => x.v.Usage = v, GraphicsResourceUsage.Default)
+                .AddCachedInput(nameof(TextureDescription.Flags), x => x.v.Flags, (x, v) => x.v.Flags = v, TextureFlags.ShaderResource)
+                .AddCachedInput(nameof(TextureDescription.Options), x => x.v.Options, (x, v) => x.v.Options = v, TextureOptions.None)
+                .AddStateOutput();
+
+            yield return factory.NewDescriptionNode(graphicsCategory, new TextureViewDescription() { Format = PixelFormat.R8G8B8A8_UNorm_SRgb, Type = ViewType.Full })
+               .AddCachedInput(nameof(TextureViewDescription.Format), x => x.v.Format, (x, v) => x.v.Format = v, PixelFormat.R8G8B8A8_UNorm_SRgb)
+               .AddCachedInput(nameof(TextureViewDescription.MipLevel), x => x.v.MipLevel, (x, v) => x.v.MipLevel = v, 0)
+               .AddCachedInput(nameof(TextureViewDescription.ArraySlice), x => x.v.ArraySlice, (x, v) => x.v.ArraySlice = v, 0)
+               .AddCachedInput(nameof(TextureViewDescription.Flags), x => x.v.Flags, (x, v) => x.v.Flags = v, TextureFlags.ShaderResource)
+               .AddCachedInput(nameof(TextureViewDescription.Type), x => x.v.Type, (x, v) => x.v.Type = v, ViewType.Full)
+               .AddStateOutput();
+
+            yield return factory.NewDescriptionNode(graphicsCategory, new BufferDescription(64, BufferFlags.ShaderResource, GraphicsResourceUsage.Default))
+                .AddCachedInput(nameof(BufferDescription.SizeInBytes), x => x.v.SizeInBytes, (x, v) => x.v.SizeInBytes = v, 64)
+                .AddCachedInput(nameof(BufferDescription.StructureByteStride), x => x.v.StructureByteStride, (x, v) => x.v.StructureByteStride = v, 0)
+                .AddCachedInput(nameof(BufferDescription.Usage), x => x.v.Usage, (x, v) => x.v.Usage = v, GraphicsResourceUsage.Default)
+                .AddCachedInput(nameof(BufferDescription.BufferFlags), x => x.v.BufferFlags, (x, v) => x.v.BufferFlags = v, BufferFlags.ShaderResource)
+                .AddStateOutput();
+
+            yield return factory.NewDescriptionNode(graphicsCategory, new BufferViewDescription() { Flags = BufferFlags.ShaderResource, Format = PixelFormat.None })
+               .AddCachedInput(nameof(BufferViewDescription.Flags), x => x.v.Flags, (x, v) => x.v.Flags = v, BufferFlags.ShaderResource)
+               .AddCachedInput(nameof(BufferViewDescription.Format), x => x.v.Format, (x, v) => x.v.Format = v, PixelFormat.None)
+               .AddStateOutput();
+
             yield return factory.NewDescriptionNode(graphicsCategory,
                 new DepthStencilStencilOpDescription()
                 {
