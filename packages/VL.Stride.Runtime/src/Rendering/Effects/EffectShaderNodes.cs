@@ -885,7 +885,7 @@ namespace VL.Stride.Rendering
                                             output1.texture?.Dispose();
                                             output1.desc = desc;
 
-                                            if (desc != default)
+                                            if (desc.format != PixelFormat.None && desc.size.X > 0 && desc.size.Y > 0)
                                             {
                                                 if (desc.renderFormat != PixelFormat.None 
                                                 && desc.renderFormat != desc.format 
@@ -911,9 +911,11 @@ namespace VL.Stride.Rendering
                                                 output1.view = null;
                                             }
                                         }
-
-                                        // Select it
-                                        outputTexture = output1.texture;
+                                    }
+                                    else //output texture set by patch
+                                    {
+                                        output1.texture = outputTexture;
+                                        output1.view = outputTexture;
                                     }
 
                                     var effect = node.Outputs[0].Value as TextureFXEffect;
