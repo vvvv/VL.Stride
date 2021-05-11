@@ -59,7 +59,7 @@ namespace VL.Stride.Rendering
         /// Same as Material.New but also loading referenced content in parameter collection (like EnvironmentLightingDFG_LUT)
         /// as well as setting the <see cref="ShaderGraph.GraphSubscriptions"/> on the used <see cref="MaterialGeneratorContext"/>.
         /// </summary>
-        public static Material New(GraphicsDevice device, MaterialDescriptor descriptor, ContentManager content, CompositeDisposable subscriptions)
+        internal static Material New(GraphicsDevice device, MaterialDescriptor descriptor, ContentManager content, CompositeDisposable subscriptions)
         {
             if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
             if (subscriptions == null) throw new ArgumentNullException(nameof(subscriptions));
