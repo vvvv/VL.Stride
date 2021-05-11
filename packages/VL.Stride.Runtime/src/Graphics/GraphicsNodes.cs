@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Basics.Resources;
+using Buffer = Stride.Graphics.Buffer;
 
 namespace VL.Stride.Graphics
 {
@@ -201,6 +202,20 @@ namespace VL.Stride.Graphics
                .AddCachedInput(nameof(BufferViewDescription.Format), x => x.v.Format, (x, v) => x.v.Format = v, PixelFormat.None)
                .AddStateOutput();
 
+            yield return factory.NewNode(
+                name: "Buffer",
+                category: graphicsCategory,
+                ctor: ctx => new BufferBuilder(ctx),
+                copyOnWrite: false,
+                hasStateOutput: false)
+                .AddCachedInput(nameof(BufferBuilder.Description), x => x.Description, (x, v) => x.Description = v)
+                .AddCachedInput(nameof(BufferBuilder.ViewDescription), x => x.ViewDescription, (x, v) => x.ViewDescription = v)
+                .AddCachedInput(nameof(BufferBuilder.InitalData), x => x.InitalData, (x, v) => x.InitalData = v)
+                .AddCachedInput(nameof(BufferBuilder.ViewDescription2), x => x.ViewDescription2, (x, v) => x.ViewDescription2 = v)
+                .AddInput(nameof(BufferBuilder.Recreate), x => x.Recreate, (x, v) => x.Recreate = v)
+                .AddOutput("Output", x => x.Buffer)
+                .AddOutput("View 2", x => x.BufferView2);
+
             yield return factory.NewDescriptionNode(graphicsCategory,
                 new DepthStencilStencilOpDescription()
                 {
@@ -326,6 +341,139 @@ namespace VL.Stride.Graphics
                 catch
                 {
                     texture = null;
+                }
+            }
+        }
+
+        class BufferBuilder
+        {
+            private BufferDescription description;
+            private BufferViewDescription viewDescription;
+            private BufferViewDescription viewDescription2;
+            private IntPtr initalData;
+            private bool needsRebuild = true;
+            private bool needsView2Rebuild = true;
+            private Buffer buffer;
+            private Buffer bufferView2;
+            internal bool Recreate;
+            private readonly IResourceHandle<Game> gameHandle;
+
+            public Buffer Buffer
+            {
+                get
+                {
+                    if (needsRebuild || Recreate)
+                    {
+                        RebuildBuffer();
+                        needsView2Rebuild = true;
+                        needsRebuild = false;
+                    }
+                    return buffer;
+                }
+
+                private set => buffer = value;
+            }
+
+            public Buffer BufferView2
+            {
+                get
+                {
+                    if (needsView2Rebuild)
+                    {
+                        RebuildBufferView2();
+                        needsView2Rebuild = false;
+                    }
+                    return bufferView2;
+                }
+
+                private set => bufferView2 = value;
+            }
+
+            public BufferDescription Description
+            {
+                get => description;
+                set
+                {
+                    description = value;
+                    needsRebuild = true;
+                }
+            }
+
+            public BufferViewDescription ViewDescription
+            {
+                get => viewDescription;
+                set
+                {
+                    viewDescription = value;
+                    needsRebuild = true;
+                }
+            }
+
+            public BufferViewDescription ViewDescription2
+            {
+                get => viewDescription2;
+                set
+                {
+                    viewDescription2 = value;
+                    needsView2Rebuild = true;
+                }
+            }
+
+            public IntPtr InitalData
+            {
+                get => initalData;
+                set
+                {
+                    initalData = value;
+                    needsRebuild = true;
+                }
+            }
+
+            public BufferBuilder(NodeContext nodeContext)
+            {
+                gameHandle = nodeContext.GetGameHandle();
+            }
+
+            public void Dispose()
+            {
+                buffer?.Dispose();
+                bufferView2?.Dispose();
+                gameHandle.Dispose();
+            }
+
+            private void RebuildBuffer()
+            {
+                try
+                {
+                    buffer?.Dispose();
+                    buffer = null;
+                    var game = gameHandle.Resource;
+                    buffer = BufferExtensions.New(game.GraphicsDevice, description, viewDescription, initalData);
+                }
+                catch
+                {
+                    buffer = null;
+                }
+            }
+
+            private void RebuildBufferView2()
+            {
+                try
+                {
+                    if (viewDescription2.Flags != BufferFlags.None)
+                    {
+                        bufferView2 ??= new Buffer();
+                        var game = gameHandle.Resource;
+                        bufferView2 = BufferExtensions.ToBufferView(bufferView2, buffer, viewDescription2, game.GraphicsDevice); 
+                    }
+                    else
+                    {
+                        bufferView2 = null;
+                    }
+                }
+                catch
+                {
+                    bufferView2 = null;
                 }
             }
         }
