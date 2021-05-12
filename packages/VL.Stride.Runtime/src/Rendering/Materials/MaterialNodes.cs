@@ -117,7 +117,16 @@ namespace VL.Stride.Rendering.Materials
                 .AddCachedInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
                 .AddCachedInput(nameof(MaterialBuilder.Misc), x => x.Misc, (x, v) => x.Misc = v)
                 .AddCachedListInput(nameof(MaterialBuilder.Layers), x => x.Layers)
-                .AddCachedOutput("Output", x => x.ToMaterial());        
+                .AddCachedOutput("Output", x => x.ToMaterial());
+
+            yield return nodeFactory.NewNode(
+                name: "Material (Descriptor Internal)",
+                category: materialAdvancedCategory,
+                ctor: ctx => new MaterialBuilder_FromDescriptor(ctx),
+                copyOnWrite: false,
+                hasStateOutput: false)
+                .AddCachedInput(nameof(MaterialBuilder_FromDescriptor.Descriptor), x => x.Descriptor, (x, v) => x.Descriptor = v)
+                .AddCachedOutput("Output", x => x.ToMaterial());
         }
 
         static StrideNodeDesc<T> NewMaterialNode<T>(this IVLNodeDescriptionFactory nodeFactory, string name, string category)
@@ -156,18 +165,16 @@ namespace VL.Stride.Rendering.Materials
     internal class MaterialBuilder : IDisposable
     {
         readonly MaterialAttributes @default = new MaterialAttributes();
-        readonly IResourceHandle<Game> gameHandle;
-        readonly SerialDisposable subscriptions = new SerialDisposable();
+        readonly MaterialBuilder_FromDescriptor builder;
 
         public MaterialBuilder(NodeContext nodeContext)
         {
-            gameHandle = nodeContext.GetGameHandle();
+            builder = new MaterialBuilder_FromDescriptor(nodeContext);
         }
 
         public void Dispose()
         {
-            subscriptions.Dispose();
-            gameHandle.Dispose();
+            builder.Dispose();
         }
 
         /// <summary>
@@ -219,10 +226,41 @@ namespace VL.Stride.Rendering.Materials
                 Attributes = ToMaterialAttributes(),
                 Layers = Layers
             };
+            builder.Descriptor = descriptor;
+            return builder.ToMaterial();
+        }
+    }
+
+    /// <summary>
+    /// A material defines the appearance of a 3D model surface and how it reacts to light.
+    /// </summary>
+    internal class MaterialBuilder_FromDescriptor : IDisposable
+    {
+        readonly IResourceHandle<Game> gameHandle;
+        readonly SerialDisposable subscriptions = new SerialDisposable();
+
+        public MaterialBuilder_FromDescriptor(NodeContext nodeContext)
+        {
+            gameHandle = nodeContext.GetGameHandle();
+        }
+
+        public void Dispose()
+        {
+            subscriptions.Dispose();
+            gameHandle.Dispose();
+        }
+
+        /// <summary>
+        /// The material descriptor.
+        /// </summary>
+        public MaterialDescriptor Descriptor { get; set; }
+
+        public Material ToMaterial()
+        {
             var game = gameHandle.Resource;
             var s = new CompositeDisposable();
             subscriptions.Disposable = s;
-            return MaterialExtensions.New(game.GraphicsDevice, descriptor, game.Content, s);
+            return MaterialExtensions.New(game.GraphicsDevice, Descriptor ?? new MaterialDescriptor(), game.Content, s);
         }
     }
 
