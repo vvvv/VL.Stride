@@ -9,8 +9,8 @@ shader BlendMixer_TextureFX : TextureFX
 
     stage override float4 Shading()
     {
-        float4 backColor = InTex();
-        float4 frontColor = InTex2();
+        float4 backColor = InTex0();
+        float4 frontColor = InTex1();
         float4 interColor = BlendResult.Compute();
 
         return ShaderUtils.Lerp3(backColor, interColor, frontColor, Fader);

@@ -7,7 +7,7 @@ shader Blur_TextureFX : FilterBase
     float4 Filter(float4 tex0col)
     {
         float2 R = 1/Texture0TexelSize;
-        float4 map = InTex2();
+        float4 map = InTex1();
         map = max(map.x, max(map.y, map.z)) * map.a;
         float lod = 1 + map.x * (Strength) * log2(max(R.x, R.y));
         float4 c = 0;
