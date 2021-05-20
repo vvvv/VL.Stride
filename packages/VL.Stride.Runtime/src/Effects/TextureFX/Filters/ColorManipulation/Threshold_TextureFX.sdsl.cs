@@ -23,6 +23,6 @@ namespace Stride.Rendering
         public static readonly ValueParameterKey<float> Threshold = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> Smooth = ParameterKeys.NewValue<float>(0.02f);
         public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
-        public static readonly ValueParameterKey<bool> AntiAliasing = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<bool> Antialiasing = ParameterKeys.NewValue<bool>();
     }
 }

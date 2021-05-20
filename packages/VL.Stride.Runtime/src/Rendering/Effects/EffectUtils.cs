@@ -6,11 +6,103 @@ using VL.Core;
 using Stride.Core.Mathematics;
 using Stride.Rendering;
 using Stride.Graphics;
+using Stride.Core.IO;
+using System.IO;
+using Stride.Shaders.Compiler;
+using Stride.Core.Shaders.Ast;
+using Stride.Shaders.Parser;
+using Stride.Core.Diagnostics;
+using Stride.Shaders;
+using ShaderMacro = Stride.Core.Shaders.Parser.ShaderMacro;
+using System.Reflection;
+using System.Diagnostics;
+using Stride.Core;
+using Stride.Shaders.Parser.Mixins;
 
 namespace VL.Stride.Rendering
 {
     static class EffectUtils
     {
+        public static string GetPathOfSdslShader(string effectName, IVirtualFileProvider fileProvider, IVirtualFileProvider dbFileProvider = null)
+        {
+            var path = EffectCompilerBase.GetStoragePathFromShaderType(effectName);
+            if (fileProvider.TryGetFileLocation(path, out var filePath, out _, out _))
+            {
+                if (File.Exists(filePath))
+                    return filePath;
+            }
+
+            var pathUrl = path + "/path";
+            if (fileProvider.FileExists(pathUrl))
+            {
+                using (var pathStream = fileProvider.OpenStream(pathUrl, VirtualFileMode.Open, VirtualFileAccess.Read))
+                using (var reader = new StreamReader(pathStream))
+                {
+                    var dbPath = reader.ReadToEnd();
+                    if (File.Exists(dbPath))
+                        return dbPath;
+                }
+            }
+
+            if (dbFileProvider != null)
+                return GetPathOfSdslShader(effectName, dbFileProvider);
+
+            //find locally
+            if (LocalShaderFilePaths.TryGetValue(effectName, out var fp))
+                return fp;
+
+            return null;
+        }
+
+        //get shader source from data base, is there a more direct way?
+        public static string GetShaderSourceCode(string effectName, IVirtualFileProvider fileProvider, ShaderSourceManager shaderSourceManager)
+        {
+            var path = GetPathOfSdslShader(effectName, fileProvider);
+            
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                try
+                {
+                    return File.ReadAllText(path);
+                }
+                catch (Exception)
+                {
+
+                    //fall through
+                }
+            }
+
+            return shaderSourceManager?.LoadShaderSource(effectName).Source;
+        }
+
+        public static ShaderSourceManager GetShaderSourceManager(this IVirtualFileProvider fileProvider)
+        {
+            var effectCompiler = new EffectCompiler(fileProvider)
+            {
+                SourceDirectories = { EffectCompilerBase.DefaultSourceShaderFolder },
+            };
+
+            return effectCompiler.GetMixinParser().SourceManager;
+        }
+
+        static readonly Dictionary<string, string> LocalShaderFilePaths = GetShaders();
+
+        private static Dictionary<string, string> GetShaders()
+        {
+            var packsFolder = Path.Combine(PlatformFolders.ApplicationBinaryDirectory, "packs");
+            if (Directory.Exists(packsFolder))
+            {
+                return Directory.EnumerateDirectories(packsFolder, @"*Assets", SearchOption.AllDirectories)
+                    .Where(p => p.Contains(@"\stride\Assets"))
+                    .SelectMany(d => Directory.EnumerateFiles(d, "*.sdsl", SearchOption.AllDirectories))
+                    .ToDictionary(fp => Path.GetFileNameWithoutExtension(fp));
+            }
+            else
+            {
+                return new Dictionary<string, string>();
+            }
+        }
+
         static readonly Regex FCamelCasePattern = new Regex("[a-z][A-Z0-9]", RegexOptions.Compiled);
 
         public static void SelectPin<TPin>(this IVLPin[] pins, IVLPinDescription description, ref TPin pin) where TPin : Pin
@@ -46,6 +138,212 @@ namespace VL.Stride.Rendering
             if (dotIndex >= 0)
                 return name.Substring(dotIndex + 1);
             return name;
+        }
+
+        public static bool TryParseEffect(this IVirtualFileProvider fileProvider, string effectName, ShaderSourceManager shaderSourceManager, out ParsedShader result)
+        {
+            result = null;
+
+            var resultRef = new ParsedShaderRef();
+            var success = TryParseEffect(effectName, fileProvider, shaderSourceManager, resultRef);
+            Debug.Assert(resultRef.ParentShaders.Count == 0);
+            if (success)
+                result = resultRef.ParsedShader;
+            return success;
+        }
+
+        static object parserCacheLock = new object();
+        internal static Dictionary<string, ParsedShader> parserCache = new Dictionary<string, ParsedShader>();
+        
+        public static void ResetParserCache(string shaderName = null)
+        {
+            lock (parserCacheLock)
+            {
+                if (!string.IsNullOrWhiteSpace(shaderName))
+                {
+                    parserCache.Remove(shaderName);
+                }
+                else
+                {
+                    parserCache.Clear();
+                }
+            }
+        }
+
+        public static bool TryParseEffect(string shaderName, IVirtualFileProvider fileProvider, ShaderSourceManager shaderSourceManager, ParsedShaderRef resultRef)
+        {
+            lock (parserCacheLock)
+            {
+                if (parserCache.TryGetValue(shaderName, out var localResult))
+                {
+                    if (resultRef.ParsedShader == null)
+                    {
+                        resultRef.ParsedShader = localResult;
+                    }
+                    else
+                    {
+                        foreach (var parentShader in resultRef.ParentShaders)
+                        {
+                            parentShader.AddBaseShader(localResult);
+
+                            // also add all base shaders of this base shader
+                            foreach (var baseShader in localResult.BaseShaders)
+                            {
+                                parentShader.AddBaseShader(baseShader);
+                            } 
+                        }
+                    }
+
+                    return true;
+                }
+
+                try
+                {
+
+                    // SDSL
+                    var macros = new[]
+                    {
+                            new ShaderMacro("class", "shader")
+                    };
+
+                    // get source code
+                    var code = GetShaderSourceCode(shaderName, fileProvider, shaderSourceManager);
+                    var inputFileName = shaderName + ".sdsl";
+
+                    var parsingResult = StrideShaderParser.TryPreProcessAndParse(code, inputFileName, macros);
+
+                    if (parsingResult.HasErrors)
+                    {
+                        return false;
+                    }
+                    else //success
+                    {
+                        localResult = new ParsedShader(parsingResult.Shader);
+
+                        foreach (var parentShader in resultRef.ParentShaders)
+                        {
+                            parentShader.AddBaseShader(localResult);
+                        }
+
+                        // original shader
+                        if (resultRef.ParsedShader == null)
+                            resultRef.ParsedShader = localResult;
+
+                        resultRef.ParentShaders.Push(localResult);
+
+                        // base shaders
+                        var baseShaders = localResult.ShaderClass.BaseClasses;
+                        foreach (var baseClass in baseShaders)
+                        {
+                            var baseShaderName = baseClass.Name.Text;
+                            var fileName = GetPathOfSdslShader(baseShaderName, fileProvider);
+                            if (!string.IsNullOrWhiteSpace(fileName))
+                            {
+                                TryParseEffect(baseShaderName, fileProvider, shaderSourceManager, resultRef);
+                            }
+                        }
+
+                        resultRef.ParentShaders.Pop();
+                        parserCache[shaderName] = localResult;
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                } 
+            }
+        }
+
+
+        static Lazy<EffectCompilerParameters> effectCompilerParameters = new Lazy<EffectCompilerParameters>(() =>
+        {
+            return new EffectCompilerParameters
+            {
+                Platform = GraphicsPlatform.Direct3D11,
+                Profile = GraphicsProfile.Level_11_0,
+                Debug = true,
+                OptimizationLevel = 0,
+            };
+        });
+
+        public static bool TryParseAndAnalyze(string shaderName, IVirtualFileProvider fileProvider, EffectCompiler effectCompiler, out Shader shader)
+        {
+            shader = null;
+            try
+            {
+                var effectParameters = effectCompilerParameters.Value;
+                var log = new LoggerResult();
+
+
+                var source = new ShaderClassSource(shaderName);
+                var mixinTree = new ShaderMixinSource();
+                mixinTree.Mixins.Add(source);
+                var shaderMixinSource = mixinTree;
+                var fullEffectName = mixinTree.Name;
+
+                // Make a copy of shaderMixinSource. Use deep clone since shaderMixinSource can be altered during compilation (e.g. macros)
+                var shaderMixinSourceCopy = new ShaderMixinSource();
+                shaderMixinSourceCopy.DeepCloneFrom(shaderMixinSource);
+                shaderMixinSource = shaderMixinSourceCopy;
+
+                // Generate platform-specific macros
+                switch (effectParameters.Platform)
+                {
+                    case GraphicsPlatform.Direct3D11:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D11", 1);
+                        break;
+                    case GraphicsPlatform.Direct3D12:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D12", 1);
+                        break;
+                    case GraphicsPlatform.OpenGL:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGL", 1);
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGLCORE", 1);
+                        break;
+                    case GraphicsPlatform.OpenGLES:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGL", 1);
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_OPENGLES", 1);
+                        break;
+                    case GraphicsPlatform.Vulkan:
+                        shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_VULKAN", 1);
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+
+                // Generate profile-specific macros
+                shaderMixinSource.AddMacro("STRIDE_GRAPHICS_PROFILE", (int)effectParameters.Profile);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_1", (int)GraphicsProfile.Level_9_1);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_2", (int)GraphicsProfile.Level_9_2);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_3", (int)GraphicsProfile.Level_9_3);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_10_0", (int)GraphicsProfile.Level_10_0);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_10_1", (int)GraphicsProfile.Level_10_1);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_0", (int)GraphicsProfile.Level_11_0);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_1", (int)GraphicsProfile.Level_11_1);
+                shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_2", (int)GraphicsProfile.Level_11_2);
+
+                // In .sdsl, class has been renamed to shader to avoid ambiguities with HLSL
+                shaderMixinSource.AddMacro("class", "shader");
+                var parser = effectCompiler.GetMixinParser();
+                var parsingResult = parser.Parse(shaderMixinSource, shaderMixinSource.Macros.ToArray());
+                shader = parsingResult.Shader;
+                //parsingResult.Shader.
+                // Copy log from parser results to output
+                //CopyLogs(parsingResult, log);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static ShaderMixinParser GetMixinParser(this EffectCompiler effectCompiler)
+        {
+            var getMixinParser = typeof(EffectCompiler).GetMethod("GetMixinParser", BindingFlags.NonPublic | BindingFlags.Instance);
+            return (ShaderMixinParser)getMixinParser.Invoke(effectCompiler, new object[0]);
         }
     }
 

@@ -7,6 +7,7 @@ using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Basics.Resources;
 
@@ -110,12 +111,22 @@ namespace VL.Stride.Rendering.Materials
                 name: "Material", 
                 category: materialAdvancedCategory,
                 ctor: ctx => new MaterialBuilder(ctx),
+                copyOnWrite: false,
                 hasStateOutput: false)
                 .AddCachedInput(nameof(MaterialBuilder.Geometry), x => x.Geometry, (x, v) => x.Geometry = v)
                 .AddCachedInput(nameof(MaterialBuilder.Shading), x => x.Shading, (x, v) => x.Shading = v)
                 .AddCachedInput(nameof(MaterialBuilder.Misc), x => x.Misc, (x, v) => x.Misc = v)
                 .AddCachedListInput(nameof(MaterialBuilder.Layers), x => x.Layers)
-                .AddCachedOutput("Output", x => x.ToMaterial());        
+                .AddCachedOutput("Output", x => x.ToMaterial());
+
+            yield return nodeFactory.NewNode(
+                name: "Material (Descriptor Internal)",
+                category: materialAdvancedCategory,
+                ctor: ctx => new MaterialBuilder_FromDescriptor(ctx),
+                copyOnWrite: false,
+                hasStateOutput: false)
+                .AddCachedInput(nameof(MaterialBuilder_FromDescriptor.Descriptor), x => x.Descriptor, (x, v) => x.Descriptor = v)
+                .AddCachedOutput("Output", x => x.ToMaterial());
         }
 
         static StrideNodeDesc<T> NewMaterialNode<T>(this IVLNodeDescriptionFactory nodeFactory, string name, string category)
@@ -146,60 +157,6 @@ namespace VL.Stride.Rendering.Materials
                 .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.NormalDistribution), x => x.NormalDistribution.ToEnum(), (x, v) => x.NormalDistribution = v.ToFunction(), i.NormalDistribution.ToEnum())
                 .AddCachedInput(nameof(MaterialSpecularMicrofacetModelFeature.Environment), x => x.Environment.ToEnum(), (x, v) => x.Environment = v.ToFunction(), i.Environment.ToEnum());
         }
-
-        class LiveComputeFloat : ComputeFloat
-        {
-            public ParameterCollection Parameters { get; private set; }
-
-            public void SetValue(float value)
-            {
-                Value = value;
-                // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
-                if (UsedKey is ValueParameterKey<float> floatKey)
-                    Parameters?.Set(floatKey, value);
-            }
-
-            public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
-            {
-                var shaderSource = base.GenerateShaderSource(context, baseKeys);
-                Parameters = context.Parameters;
-                // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
-                //Accessor = context.Parameters.GetAccessor(UsedKey as ValueParameterKey<float>);
-                return shaderSource;
-            }
-        }
-
-        class LiveComputeColor : ComputeColor
-        {
-            private ParameterCollection UsedParameters;
-            private ColorSpace UsedColorSpace;
-
-            public void SetValue(Color4 value)
-            {
-                Value = value; // Already takes care of color space conversion when generating the shader
-                if (UsedParameters != null)
-                {
-                    // But when setting it later while the shader is running (live) we need to do it on our own
-                    value = value.ToColorSpace(UsedColorSpace);
-                    if (PremultiplyAlpha)
-                        value = Color4.PremultiplyAlpha(value);
-
-                    // The value accessors cause very weired behaviour, only updating sometimes. We should figure out why. So use the key for now.
-                    if (UsedKey is ValueParameterKey<Color4> color4Key)
-                        UsedParameters.Set(color4Key, ref value);
-                    else if (UsedKey is ValueParameterKey<Color3> color3Key)
-                        UsedParameters.Set(color3Key, value.ToColor3());
-                }
-            }
-
-            public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
-            {
-                var shaderSource = base.GenerateShaderSource(context, baseKeys);
-                UsedColorSpace = context.ColorSpace;
-                UsedParameters = context.Parameters;
-                return shaderSource;
-            }
-        }
     }
 
     /// <summary>
@@ -208,16 +165,16 @@ namespace VL.Stride.Rendering.Materials
     internal class MaterialBuilder : IDisposable
     {
         readonly MaterialAttributes @default = new MaterialAttributes();
-        readonly IResourceHandle<Game> gameHandle;
+        readonly MaterialBuilder_FromDescriptor builder;
 
         public MaterialBuilder(NodeContext nodeContext)
         {
-            gameHandle = nodeContext.GetGameHandle();
+            builder = new MaterialBuilder_FromDescriptor(nodeContext);
         }
 
         public void Dispose()
         {
-            gameHandle.Dispose();
+            builder.Dispose();
         }
 
         /// <summary>
@@ -269,8 +226,41 @@ namespace VL.Stride.Rendering.Materials
                 Attributes = ToMaterialAttributes(),
                 Layers = Layers
             };
+            builder.Descriptor = descriptor;
+            return builder.ToMaterial();
+        }
+    }
+
+    /// <summary>
+    /// A material defines the appearance of a 3D model surface and how it reacts to light.
+    /// </summary>
+    internal class MaterialBuilder_FromDescriptor : IDisposable
+    {
+        readonly IResourceHandle<Game> gameHandle;
+        readonly SerialDisposable subscriptions = new SerialDisposable();
+
+        public MaterialBuilder_FromDescriptor(NodeContext nodeContext)
+        {
+            gameHandle = nodeContext.GetGameHandle();
+        }
+
+        public void Dispose()
+        {
+            subscriptions.Dispose();
+            gameHandle.Dispose();
+        }
+
+        /// <summary>
+        /// The material descriptor.
+        /// </summary>
+        public MaterialDescriptor Descriptor { get; set; }
+
+        public Material ToMaterial()
+        {
             var game = gameHandle.Resource;
-            return MaterialExtensions.New(game.GraphicsDevice, descriptor, game.Content);
+            var s = new CompositeDisposable();
+            subscriptions.Disposable = s;
+            return MaterialExtensions.New(game.GraphicsDevice, Descriptor ?? new MaterialDescriptor(), game.Content, s);
         }
     }
 

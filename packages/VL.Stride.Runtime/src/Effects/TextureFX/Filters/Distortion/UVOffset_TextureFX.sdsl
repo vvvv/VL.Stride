@@ -1,0 +1,19 @@
+﻿[Category("Filter.Experimental")]
+[Summary("")]
+shader UVOffset_TextureFX : FilterBase
+{
+    float2 maxOffsets;
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 mask = InTex1();
+        float2 uv = streams.TexCoord;
+        float offX = -maxOffsets.x + mask.r * 2 * maxOffsets.x; 
+        float offY = -maxOffsets.y + mask.r * 2 * maxOffsets.y; 
+        float2 off = float2(uv.x + offX/10.0, uv.y + offY/10.0);
+        float4 col = Texture0.SampleLevel(Sampler0,off,0);
+        return col;
+    }
+};
+
+

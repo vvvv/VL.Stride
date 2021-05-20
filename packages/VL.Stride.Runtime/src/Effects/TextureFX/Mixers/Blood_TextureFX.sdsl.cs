@@ -18,7 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class Blood_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Fader = ParameterKeys.NewValue<float>(0.5f);
-        public static readonly ValueParameterKey<float> Seed = ParameterKeys.NewValue<float>(0.5f);
+        public static readonly ValueParameterKey<float> RandomSeed = ParameterKeys.NewValue<float>(0);
     }
 }

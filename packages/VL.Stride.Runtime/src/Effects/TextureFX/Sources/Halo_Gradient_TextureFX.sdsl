@@ -1,0 +1,44 @@
+// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Source/Halo.tfx
+
+[TextureSource]
+[Category("Source.Experimental")]
+[Summary("Returns a halo texture derived from a 1d texture")]
+shader Halo_Gradient_TextureFX : TextureFX
+{
+    matrix Transform;
+
+    [Color]
+    float4 BackgroundColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    [Color]
+    float4 HaloColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float Gamma = 0.5f;
+    float MaxColor = 1.0f;
+    stage Texture2D GradientTexture;
+
+    float4 Textured(float f, float g)
+    {
+        f = GradientTexture.SampleLevel(LinearSampler, f.x*2, 0);
+        f = sign(f) * pow(abs(f), g);
+        
+        float4 c = lerp(HaloColor, BackgroundColor, f);
+
+        return min(MaxColor, c);
+    }
+
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord;
+
+        float4 col = 0;
+
+        float2 x0 = mul(float4((uv * 2-1)*float2(1, -1), 0, 1),Transform).xy*0.5*float2(1, -1) + 0.5;
+        float d = length(x0-.5);
+        float f = length(x0-.5);
+     
+        float g = Gamma/(1.00001-Gamma);
+        f = saturate(1 - 2*f);
+
+        return Textured(f, g);
+    }
+};

@@ -20,6 +20,6 @@ namespace Stride.Rendering
     {
         public static readonly ValueParameterKey<float> Scale = ParameterKeys.NewValue<float>(1.0f);
         public static readonly ValueParameterKey<Vector2> Offset = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<int> NoiseType = ParameterKeys.NewValue<int>();
+        public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>();
     }
 }

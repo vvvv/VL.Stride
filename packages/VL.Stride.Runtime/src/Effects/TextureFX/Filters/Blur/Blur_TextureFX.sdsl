@@ -1,0 +1,37 @@
+﻿[Category("Filter.Experimental")]
+[Summary("")]
+shader Blur_TextureFX : FilterBase
+{
+    float Strength;
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 R = 1/Texture0TexelSize;
+        float4 map = InTex1();
+        map = max(map.x, max(map.y, map.z)) * map.a;
+        float lod = 1 + map.x * (Strength) * log2(max(R.x, R.y));
+        float4 c = 0;
+        float2 x = streams.TexCoord;
+        float2 off = 0.25/R * pow(2, lod) * saturate(lod - 1);
+        
+        // TODO: Check if this is a correct usage of lod in SampleLevel
+        c += Texture0.SampleLevel(Sampler0, x + float2( 0,  0) * off, lod);
+        c += Texture0.SampleLevel(Sampler0, x + float2( 1,  1) * off, lod);
+        c += Texture0.SampleLevel(Sampler0, x + float2( 1, -1) * off, lod);
+        c += Texture0.SampleLevel(Sampler0, x + float2(-1, -1) * off, lod);
+        c += Texture0.SampleLevel(Sampler0, x + float2(-1,  1) * off, lod);
+        off *= 1.6;
+        c += Texture0.SampleLevel(Sampler0, x + float2( 0,  1) * off, lod);
+        c += Texture0.SampleLevel(Sampler0, x + float2( 0, -1) * off, lod);
+        c += Texture0.SampleLevel(Sampler0, x + float2(-1,  0) * off, lod);
+        c += Texture0.SampleLevel(Sampler0, x + float2( 1,  0) * off, lod);
+        c /= 9;
+
+        // TODO: Add premultiply
+        //if(PreMultiply)c.rgb/=c.a+Epsilon;
+
+        return c;
+    }
+};
+
+
