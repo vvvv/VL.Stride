@@ -55,9 +55,7 @@ namespace VL.Stride.Rendering
                         var nodes = GetNodeDescriptions(factory, path, shadersPath);
                         // Additionaly watch out for new/deleted/renamed files
                         invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
-                            .Where(e => e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted || e.ChangeType == WatcherChangeTypes.Renamed)
-                            // Check for shader files only. Editor (like VS) create lot's of other temporary files.
-                            .Where(e => string.Equals(Path.GetExtension(e.Name), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(e.Name), ".sdfx", StringComparison.OrdinalIgnoreCase)));
+                            .Where(e => IsNewOrDeletedShaderFile(e)));
                         return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
                             export: c =>
                             {
@@ -80,6 +78,19 @@ namespace VL.Stride.Rendering
                 // Just watch for changes
                 return NodeBuilding.NewFactoryImpl(invalidated: invalidated);
             });
+        }
+
+        static bool IsShaderFile(string file) => string.Equals(Path.GetExtension(file), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(file), ".sdfx", StringComparison.OrdinalIgnoreCase);
+
+        static bool IsNewOrDeletedShaderFile(FileSystemEventArgs e)
+        {
+            // Check for shader files only. Editor (like VS) create lot's of other temporary files.
+            if (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Deleted)
+                return IsShaderFile(e.Name);
+            // Also the old name must be a shader file. We're not interested in weired renamings by VS.
+            if (e.ChangeType == WatcherChangeTypes.Renamed && e is RenamedEventArgs r)
+                return IsShaderFile(e.Name) && IsShaderFile(r.OldName);
+            return false;
         }
 
         static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory, string path = default, string shadersPath = default)
