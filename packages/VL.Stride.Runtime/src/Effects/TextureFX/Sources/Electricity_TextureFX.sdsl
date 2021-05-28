@@ -1,0 +1,59 @@
+// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Source/Electricity.tfx
+
+[TextureSource]
+[Category("Source.Experimental")]
+[Summary("Returns an electricity texture")]
+shader Electricity_TextureFX : TextureFX
+{
+    float Time;
+
+    [Color]
+    float4 BackgroundColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    [Color]
+    float4 ElectricityColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    
+    float GlowStrength = 40.0f;
+    float AmbientGlow = 0.5f;
+    float AmbientGlowHeightScale = 1.0f;
+    float Height = 0.25f;
+    float GlowFallOff = 2.0f;
+    stage Texture2D NoiseTexture;
+    float VertexNoise = 0.5f;
+
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord - 0.5;
+
+        float2 t = float2(Time - VertexNoise*abs(uv.y), Time);
+
+        // Sample at three positions for some horizontal blur
+        // The shader should blur fine by itself in vertical direction
+        float xs0 = uv.x;
+        float xs1 = uv.x;
+        float xs2 = uv.y + uv.x ;
+
+        // Noise for the three samples
+        float noise0 = NoiseTexture.SampleLevel(LinearRepeatSampler, float3(xs0, t), 0).x;
+        float noise1 = NoiseTexture.SampleLevel(LinearRepeatSampler, float3(xs1, t), 0).x;
+        float noise2 = NoiseTexture.SampleLevel(LinearRepeatSampler, float3(xs2, t), 0).x;
+        
+        // The position of the flash
+        float mid0 = Height * (noise0 * 2 - 1) * (1 - xs0 * xs0);
+        float mid1 = Height * (noise1 * 2 - 1) * (1 - xs1 * xs1);
+        float mid2 = Height * (noise2 * 2 - 1) * (1 - xs2 * xs2);
+
+        // Distance to flash
+        float dist0 = abs(uv.y - mid0);
+        float dist1 = abs(uv.y - mid1);
+        float dist2 = abs(uv.y - mid2);
+
+        // Glow according to distance to flash
+        float glow = 1.0 - pow(0.25 * (dist0 + 2*dist1 + dist2), GlowFallOff/100.0);
+
+        // Add some ambient glow to get some power in the air feeling
+        float ambGlow = AmbientGlow * (1 - xs1*xs1) * (1 - abs(AmbientGlowHeightScale * uv.y));
+
+        return lerp(BackgroundColor, ElectricityColor, (GlowStrength*glow*glow + ambGlow));
+    }
+};

@@ -1,27 +1,27 @@
-﻿shader Noise_TextureFX : TextureFX
+﻿[TextureSource]
+[Category("Source.Experimental")]
+[Summary("Returns a texture with different choosable noise types")]
+shader Noise_TextureFX : TextureFX, HappyNoise
 {
-    float Scale = 1.0f;
+    float Scale = 0.25f;
     float2 Offset;
-    int NoiseType; // TODO: Create a patch wrapping that with enum
-
-    // TODO: More advanced noise generation?
-    compose HappyNoise happyNoise;
+    [EnumType("VL.Stride.Effects.TextureFX.NoiseType")]
+    int Type;
 
     stage override float4 Shading()
     {
         float2 uv = streams.TexCoord;
         
-        if (NoiseType == 0) return happyNoise.perlin((uv + Offset) / Scale);
-        else if (NoiseType == 1) return float4(happyNoise.perlinGrad((uv + Offset) / Scale), 1.0);
-        else if (NoiseType == 2) return happyNoise.valueNoise((uv + Offset) / Scale);
-        else if (NoiseType == 3) return float4(happyNoise.valueNoiseGrad((uv + Offset) / Scale), 1.0);
-        else if (NoiseType == 4) return happyNoise.simplex((uv + Offset) / Scale);
-        else if (NoiseType == 5) return float4(happyNoise.simplexGrad((uv + Offset) / Scale), 1.0);
-        else if (NoiseType == 6) return happyNoise.worleyFast((uv + Offset) / Scale);
-        else if (NoiseType == 7) return float4(happyNoise.worleyFastGrad((uv + Offset) / Scale), 1.0);
-        else return float4(1,0,1,1);
+        switch((uint)Type % 8)
+        {
+            case 0 : return perlin((uv + Offset) / Scale);
+            case 1 : return float4(perlinGrad((uv + Offset) / Scale), 1.0);
+            case 2 : return valueNoise((uv + Offset) / Scale);
+            case 3 : return float4(valueNoiseGrad((uv + Offset) / Scale), 1.0);
+            case 4 : return simplex((uv + Offset) / Scale);
+            case 5 : return float4(simplexGrad((uv + Offset) / Scale), 1.0);
+            case 6 : return worleyFast((uv + Offset) / Scale);
+            case 7 : return float4(worleyFastGrad((uv + Offset) / Scale), 1.0);
+        }
     }
-};
-
-
-        
+};        

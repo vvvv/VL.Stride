@@ -19,9 +19,9 @@ namespace Stride.Rendering
     public static partial class Mosaic_TextureFXKeys
     {
         public static readonly ValueParameterKey<Vector2> Cells = ParameterKeys.NewValue<Vector2>(new Vector2(1,1));
-        public static readonly ValueParameterKey<bool> Mir = ParameterKeys.NewValue<bool>(false);
-        public static readonly ValueParameterKey<float> Rotate = ParameterKeys.NewValue<float>(0);
-        public static readonly ValueParameterKey<Vector2> Scale = ParameterKeys.NewValue<Vector2>(new Vector2(1,1));
+        public static readonly ValueParameterKey<bool> Mirror = ParameterKeys.NewValue<bool>(false);
+        public static readonly ValueParameterKey<float> Rotation = ParameterKeys.NewValue<float>(0);
+        public static readonly ValueParameterKey<Vector2> Scaling = ParameterKeys.NewValue<Vector2>(new Vector2(1,1));
         public static readonly ValueParameterKey<bool> Stripes = ParameterKeys.NewValue<bool>(false);
     }
 }

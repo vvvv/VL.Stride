@@ -1,0 +1,15 @@
+shader ParticleProvider : ShaderBaseStream, Transformation, PositionStream4, NormalStream, ShaderBase
+{
+    stage stream uint VertexID : SV_VertexID;
+    stage stream uint VID;
+
+    stage float4 GetWorldPosition()
+    {
+        return mul(streams.Position, World);
+    }
+
+    stage float GetParticleSize()
+    {
+        return 0.1;
+    }
+};

@@ -1,0 +1,16 @@
+[Category("Utils")]
+[Summary("Converts a texture from linear to gamma color space")]
+[Remarks("This is usually the last color transformation before a texture in linear color space gets displayed on screen.")]
+[Tags("convert")]
+[OutputFormat("R16G16B16A16_Float")] //Valid values: https://github.com/stride3d/stride/blob/master/sources/engine/Stride/Graphics/PixelFormat.cs
+shader LinearToGamma_TextureFX : TextureFX
+{
+    float Gamma = 2.2f;
+    
+    stage override float4 Shading()
+    {
+        float4 col = InTex0();
+        col.rgb = ColorUtilityTemp.LinearToGamma(col, Gamma);
+        return col;
+    }
+};

@@ -1,13 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
+    <!-- In our main repo this should get picked up and import targets which override the build version targets -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..\..))" 
+          Condition="Exists($([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..\..)))" />
   <PropertyGroup>
     <LocalNuGetConfigFile>$(MsBuildThisFileDirectory)NuGet.config</LocalNuGetConfigFile>
     <Year>$([System.DateTime]::Now.ToString('yyyy'))</Year>
 
     <!-- The VL version to use -->
-    <VLVersion>2021.4.0-0012-g1390768a00</VLVersion>
+    <VLVersion>2021.4.0-0067-g19ccee761f</VLVersion>
+    
     <!-- The build ID on teamcity.vvvv.org for automatic download in case the specified version is not installed yet -->
-    <VLBuildId>33943</VLBuildId>
+    <VLBuildId>34106</VLBuildId>
     
     <!-- The download URL of above vvvv/VL version -->
     <VLZipUrl>https://teamcity.vvvv.org/guestAuth/app/rest/builds/id:$(VLBuildId)/artifacts/content/vvvv_gamma_$(VLVersion).zip</VLZipUrl>
@@ -38,9 +42,10 @@
     <!-- Disabled for now as it causes old nuget API to crash when used as source package -->
     <!--<PackageIcon>stride_package_logo.png</PackageIcon>-->
 
-    <!-- Check for .git/HEAD to determine whether we're in our private repo -->
+    <!-- Check whether we're in our private repo -->
     <InPrivateRepo>false</InPrivateRepo>
     <InPrivateRepo Condition="Exists('$(MsBuildThisFileDirectory)..\..\VL.Core')">true</InPrivateRepo>
+    <PackageOutputPath Condition="$(InPrivateRepo)">$(MsBuildThisFileDirectory)..\..\packages-build\</PackageOutputPath>
 
     <Configurations>Debug;Release;Packages</Configurations>
   </PropertyGroup>

@@ -1,0 +1,101 @@
+// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Filter/ColorMap.tfx
+
+[Category("Filter.Experimental")]
+[Summary("")]
+shader MapColor_TextureFX : FilterBase
+{
+    [EnumType("VL.Stride.Effects.TextureFX.MapColorType")]
+    int Type;
+
+    float2 Center = float2(0.0f, 0.0f);
+    float2 Direction = float2(0.5f, 0.5f);
+    float MapSmooth = 0.0f;
+    
+    float4 Ramp(float2 f)
+    {
+        float2 R = 1/Texture0TexelSize;
+
+        float lod = log2(max(R.x, R.y)) * MapSmooth;
+        return Texture1.SampleLevel(Sampler1, Center*.5 + .5 + Direction*f, lod);
+    }
+
+    float4 MapHue(float4 col)
+    {
+        float f = RGBtoHSV(col.rgb).x;
+        return Ramp(f);
+    };
+
+    float4 MapHueSaturation(float4 col)
+    {
+        float2 f = RGBtoHSV(col.rgb).xy;
+        return Ramp(f);
+    };
+
+    float4 MapHueValue(float4 col)
+    {
+        float2 f = RGBtoHSV(col.rgb).xz;
+        return Ramp(f);
+    };
+
+    float4 MapLuma(float4 col)
+    {
+        float f = dot(col.rgb, float3(.33,.59,.11));
+        return Ramp(f);
+    };
+
+    float4 MapRedBlue(float4 col)
+    {
+        float2 f = col.rb - col.g;
+        return Ramp(f);
+    };
+
+    float4 MapRGBA(float4 col)
+    {
+        col.r = Ramp(col.r).r;
+        col.g = Ramp(col.g).g;
+        col.b = Ramp(col.b).b;
+        col.a = Ramp(col.a).a;
+        return col;
+    };
+
+    float4 MapSaturationValue(float4 col)
+    {
+        float2 f = base.RGBtoHSV(col.rgb).yz;
+        return Ramp(f);
+    };
+
+    float4 MapTone(float4 col)
+    {
+        float3 h = RGBtoHSV(col.rgb);
+        col.rg = sin((h.x + float2(.25,0)) * acos(-1)*2);
+        float2 f = col.rg;
+        
+        return Ramp(f);
+    };
+
+    float4 MapValue(float4 col)
+    {
+        float f = RGBtoHSV(col.rgb).z;
+        return Ramp(f);
+    };
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+        float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
+        
+        switch((uint)Type%9)
+        {
+            case 0 : return MapHue(col);
+            case 1 : return MapHueSaturation(col);
+            case 2 : return MapHueValue(col);
+            case 3 : return MapLuma(col);
+            case 4 : return MapRedBlue(col);
+            case 5 : return MapRGBA(col);
+            case 6 : return MapSaturationValue(col);
+            case 7 : return MapTone(col);
+            case 8 : return MapValue(col);
+        }
+    }
+};

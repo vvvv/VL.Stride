@@ -5,6 +5,7 @@ using VL.Stride.Assets;
 using Stride.Core.Assets;
 using Stride.Engine;
 using System.Linq;
+using System;
 
 namespace VL.Stride.Assets
 {
@@ -18,8 +19,15 @@ namespace VL.Stride.Assets
 
         public AssetBuilderServiceScript()
         {
-            //set msbuild
-            PackageSessionPublicHelper.FindAndSetMSBuildVersion();
+            try
+            {
+                //set msbuild
+                PackageSessionPublicHelper.FindAndSetMSBuildVersion();
+            }
+            catch (Exception e)
+            {
+                Log.Warning("MSBuild not found", e);
+            }
         }
 
         public void PushWork(IEnumerable<AssetItem> items)

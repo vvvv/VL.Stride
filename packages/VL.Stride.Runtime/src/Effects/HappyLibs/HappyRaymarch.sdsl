@@ -74,7 +74,7 @@ shader HappyRaymarch : HappyCalc
     //
     ////////////////////////////////////////////////////////////////
 
-    float2 r2d(float2 x,float a){a*=acos(-1)*2;return float2(cos(a)*x.x+sin(a)*x.y,cos(a)*x.y-sin(a)*x.x);}
+    
     void setupRay(float2 uv, out float3 ro, out float3 rd)
     {	
         #ifdef PANO
@@ -82,8 +82,8 @@ shader HappyRaymarch : HappyCalc
             ro = tVI[3].xyz;
         
             rd=float3(0,0,1);
-            rd.yz=r2d(rd.yz,-(uv.y-.5)*.5);
-            rd.xz=r2d(rd.xz,-uv.x);
+            rd.yz = ShaderUtils.r2dCyc(rd.yz,-(uv.y-.5)*.5);
+            rd.xz = ShaderUtils.r2dCyc(rd.xz,-uv.x);
 
         #elif defined(PANO3D)
         // ODS 3D panorama version

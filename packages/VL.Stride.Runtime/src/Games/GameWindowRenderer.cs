@@ -98,7 +98,8 @@ namespace VL.Stride.Games
                     WindowManager.PreferredBackBufferFormat)
                 {
                     DepthStencilFormat = WindowManager.PreferredDepthStencilFormat,
-                    PresentationInterval = PresentInterval.Immediate
+                    PresentationInterval = PresentInterval.Immediate,
+                    MultisampleCount = WindowManager.PreferredMultisampleCount,
                 };
 
 #if STRIDE_GRAPHICS_API_DIRECT3D11 && STRIDE_PLATFORM_UWP

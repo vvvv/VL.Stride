@@ -7,11 +7,115 @@ using System.Buffers;
 using System.IO;
 using Buffer = Stride.Graphics.Buffer;
 using VL.Core;
+using System.Reflection;
+using Stride.Core;
 
 namespace VL.Stride.Graphics
 {
     public static class BufferExtensions
     {
+        public static Buffer New(GraphicsDevice graphicsDevice, BufferDescription description, BufferViewDescription viewDescription, IntPtr intialData)
+        {
+            var buffer = BufferCtor(graphicsDevice);
+            return BufferInit(buffer, description, viewDescription, intialData);
+        }
+
+        const BindingFlags NonPunblicInst = BindingFlags.NonPublic | BindingFlags.Instance;
+
+        static Buffer BufferCtor(GraphicsDevice graphicsDevice)
+        {
+            var ctor = typeof(Buffer).GetConstructor(NonPunblicInst, null, new[] { typeof(GraphicsDevice) }, null);
+            return (Buffer)ctor.Invoke(new[] { graphicsDevice });
+        }
+
+        static Buffer BufferInit(Buffer buffer, BufferDescription description, BufferViewDescription viewDescription, IntPtr intialData)
+        {
+            var init = typeof(Buffer).GetMethod("InitializeFromImpl", NonPunblicInst, null, new[] { typeof(BufferDescription), typeof(BufferFlags), typeof(PixelFormat), typeof(IntPtr) }, null);
+            return (Buffer)init.Invoke(buffer, new object[] { description, viewDescription.Flags, viewDescription.Format, intialData});
+        }
+
+        internal static readonly PropertyKey<Buffer> ParentBuffer = new PropertyKey<Buffer>(nameof(ParentBuffer), typeof(Buffer));
+
+        public static Buffer ToBufferView(Buffer bufferView, Buffer parentBuffer, BufferViewDescription viewDescription, GraphicsDevice graphicsDevice)
+        {
+            SetGraphicsDevice(bufferView, graphicsDevice);
+
+            //bufferDescription = description;
+            SetField(bufferView, "bufferDescription", parentBuffer.Description);
+
+            //nativeDescription = ConvertToNativeDescription(Description);
+            SetField(bufferView, "nativeDescription", ConvertToNativeDescription(parentBuffer.Description));
+
+            //ViewFlags = viewFlags;
+            SetProp(bufferView, "ViewFlags", viewDescription.Flags);
+
+            //InitCountAndViewFormat(out this.elementCount, ref viewFormat);
+            InitCountAndViewFormat(bufferView, out var count, ref viewDescription.Format);
+            SetField(bufferView, "elementCount", count);
+
+            //ViewFormat = viewFormat;
+            SetProp(bufferView, "ViewFormat", viewDescription.Format);
+
+            //NativeDeviceChild = new SharpDX.Direct3D11.Buffer(GraphicsDevice.NativeDevice, dataPointer, nativeDescription);
+            SetNativeChild(bufferView, GetNativeChild(parentBuffer));
+
+            //if (nativeDescription.Usage != ResourceUsage.Staging)
+            //    this.InitializeViews();
+            InitializeViews(bufferView);
+
+            return bufferView;
+        }
+
+        static SharpDX.Direct3D11.DeviceChild GetNativeChild(GraphicsResourceBase graphicsResource)
+        {
+            var prop = typeof(GraphicsResourceBase).GetProperty("NativeDeviceChild", NonPunblicInst);
+            return (SharpDX.Direct3D11.DeviceChild)prop.GetValue(graphicsResource);
+        }
+
+        static void SetNativeChild(GraphicsResourceBase graphicsResource, SharpDX.Direct3D11.DeviceChild deviceChild)
+        {
+            var prop = typeof(GraphicsResourceBase).GetProperty("NativeDeviceChild", NonPunblicInst);
+            prop.SetValue(graphicsResource, deviceChild);
+        }
+
+        static SharpDX.Direct3D11.BufferDescription ConvertToNativeDescription(BufferDescription description)
+        {
+            var method = typeof(Buffer).GetMethod("ConvertToNativeDescription", BindingFlags.Static | BindingFlags.NonPublic, null, new[] { typeof(BufferDescription) }, null);
+            return (SharpDX.Direct3D11.BufferDescription)method.Invoke(null, new object[] { description });
+        }
+
+        static void SetField(Buffer buffer, string name, object arg)
+        {
+            var field = typeof(Buffer).GetField(name, NonPunblicInst);
+            field.SetValue(buffer, arg);
+        }
+
+        static void SetGraphicsDevice(Buffer buffer, object arg)
+        {
+            var prop = typeof(GraphicsResourceBase).GetProperty("GraphicsDevice", BindingFlags.Public | BindingFlags.Instance);
+            prop.SetValue(buffer, arg);
+        }
+
+        static void SetProp(Buffer buffer, string name, object arg)
+        {
+            var prop = typeof(Buffer).GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+            prop.SetValue(buffer, arg);
+        }
+        
+        static void InitCountAndViewFormat(Buffer buffer, out int count, ref PixelFormat viewFormat)
+        {
+            var method = typeof(Buffer).GetMethod("InitCountAndViewFormat", NonPunblicInst);
+            var args = new object[] { 0, viewFormat };
+            method.Invoke(buffer, args);
+            count = (int)args[0];
+        }
+
+        static void InitializeViews(Buffer buffer)
+        {
+            var method = typeof(Buffer).GetMethod("InitializeViews", NonPunblicInst);
+            method.Invoke(buffer, null);
+        }
+
         /// <summary>
         /// Copies the <paramref name="fromData"/> to the given <paramref name="buffer"/> on GPU memory.
         /// </summary>

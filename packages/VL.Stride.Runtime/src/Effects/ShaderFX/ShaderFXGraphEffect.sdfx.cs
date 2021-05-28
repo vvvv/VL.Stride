@@ -16,6 +16,10 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace VL.Stride.Effects.ShaderFX
 {
+    [DataContract]public partial class ShaderFXGraphKeys : ShaderMixinParameters
+    {
+        public static readonly PermutationParameterKey<ShaderSource> ShaderFXRoot = ParameterKeys.NewPermutation<ShaderSource>();
+    };
     internal static partial class ShaderMixins
     {
         internal partial class ShaderFXGraphEffect  : IShaderMixinBuilder
@@ -23,7 +27,7 @@ namespace VL.Stride.Effects.ShaderFX
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
                 context.Mixin(mixin, "ShaderFXGraph");
-                context.Mixin(mixin, context.GetParam(ShaderFXKeys.ShaderFXRoot));
+                context.Mixin(mixin, context.GetParam(ShaderFXGraphKeys.ShaderFXRoot));
             }
 
             [ModuleInitializer]
