@@ -18,8 +18,8 @@ namespace Stride.Rendering
 {
     public static partial class Scanline_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Brightness = ParameterKeys.NewValue<float>();
-        public static readonly ValueParameterKey<Vector2> Amount = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<float> Brightness = ParameterKeys.NewValue<float>(1);
+        public static readonly ValueParameterKey<Vector2> Amount = ParameterKeys.NewValue<Vector2>(new Vector2(1,1));
         public static readonly ValueParameterKey<Vector2> RedShift = ParameterKeys.NewValue<Vector2>();
         public static readonly ValueParameterKey<Vector2> GreenShift = ParameterKeys.NewValue<Vector2>();
         public static readonly ValueParameterKey<Vector2> BlueShift = ParameterKeys.NewValue<Vector2>();
