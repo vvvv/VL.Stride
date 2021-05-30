@@ -1,6 +1,7 @@
 using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.Mathematics;
+using Stride.Graphics;
 using Stride.Rendering;
 using System;
 using System.Collections.Generic;
@@ -84,7 +85,10 @@ namespace VL.Stride.Rendering
                     return;
 
                 using (context.RenderContext.PushRenderViewAndRestore(renderView))
+                using (context.RenderContext.SaveViewportAndRestore())
                 {
+                    context.RenderContext.ViewportState.Viewport0 = new Viewport(0, 0, context.CommandList.RenderTarget.ViewWidth, context.CommandList.RenderTarget.ViewHeight);
+
                     // Call renderers which want to get invoked only once per frame first
                     var currentFrameNr = context.RenderContext.Time.FrameCount;
                     if (lastFrameNr != currentFrameNr)
