@@ -65,6 +65,11 @@ namespace VL.Stride.Rendering
     [Display("VL Forward Renderer")]
     public partial class VLForwardRenderer : SceneRendererBase, ISharedRenderer
     {
+        public VLForwardRenderer()
+        {
+
+        }
+
         // TODO: should we use GraphicsDeviceManager.PreferredBackBufferFormat?
         public const PixelFormat DepthBufferFormat = PixelFormat.D24_UNorm_S8_UInt;
 
@@ -87,12 +92,14 @@ namespace VL.Stride.Rendering
 
         protected int ViewIndex { get; private set; }
 
+        private ViewportState currentViewportState = new ViewportState();
+
         public ClearRenderer Clear { get; set; } = new ClearRenderer();
 
         /// <summary>
         /// Enable Light Probe.
         /// </summary>
-        public bool LightProbes { get; set; } = true;
+        public bool LightProbes { get; set; } = false;
 
         /// <summary>
         /// The main render stage for opaque geometry.
@@ -329,6 +336,8 @@ namespace VL.Stride.Rendering
             }
         }
 
+        //needs one complete draw before multiple views work...
+        static bool initHack = false;
         protected override unsafe void CollectCore(RenderContext context)
         {
             var camera = context.GetCurrentCamera();
@@ -437,7 +446,7 @@ namespace VL.Stride.Rendering
                         }
                     }
                 }
-                else if (MultiviewSettings.Enabled && MultiviewSettings.Views?.Count > 0)
+                else if (initHack && MultiviewSettings.Enabled && MultiviewSettings.Views?.Count > 0)
                 {
                     shadowMapRenderer?.RenderViewsWithShadows.Remove(context.RenderView);
                     for (var i = 0; i < MultiviewSettings.Views.Count; i++)
@@ -449,6 +458,7 @@ namespace VL.Stride.Rendering
                             shadowMapRenderer?.RenderViewsWithShadows.Add(context.RenderView);
                             context.RenderSystem.Views.Add(context.RenderView);
                             context.RenderView.LightingView = context.RenderView;
+                            context.ViewportState = currentViewportState;
                             context.ViewportState.Viewport0 = Unsafe.As<ViewportF, Viewport>(ref currentView.Viewport);
 
                             //change camera params for eye
@@ -468,9 +478,9 @@ namespace VL.Stride.Rendering
 
                             LightShafts?.Collect(context);
                         }
-
-                        PostEffects?.Collect(context);
                     }
+
+                    PostEffects?.Collect(context);
                 }
                 else
                 {
@@ -556,7 +566,7 @@ namespace VL.Stride.Rendering
             MSAAResolver.Resolve(drawContext, currentDepthStencil, currentDepthStencilNonMSAA);
         }
 
-        protected virtual void DrawView(RenderContext context, RenderDrawContext drawContext, int eyeIndex, int eyeCount)
+        protected virtual void DrawView(RenderContext context, RenderDrawContext drawContext, int eyeIndex, int eyeCount, bool renderPostFX = true)
         {
             var renderSystem = context.RenderSystem;
 
@@ -573,7 +583,9 @@ namespace VL.Stride.Rendering
                 using (drawContext.QueryManager.BeginProfile(Color.Green, CompositingProfilingKeys.GBuffer))
                 using (drawContext.PushRenderTargetsAndRestore())
                 {
-                    drawContext.CommandList.Clear(drawContext.CommandList.DepthStencilBuffer, DepthStencilClearOptions.DepthBuffer);
+                    if (eyeIndex == 0)
+                        drawContext.CommandList.Clear(drawContext.CommandList.DepthStencilBuffer, DepthStencilClearOptions.DepthBuffer);
+
                     drawContext.CommandList.SetRenderTarget(drawContext.CommandList.DepthStencilBuffer, null);
 
                     // Draw [main view | z-prepass stage]
@@ -633,6 +645,78 @@ namespace VL.Stride.Rendering
                 if (colorTargetIndex == -1)
                     return;
 
+                var renderTargets = currentRenderTargets;
+                var depthStencil = currentDepthStencil;
+                if (renderPostFX)
+                {
+                    // Resolve MSAA targets
+                    if (actualMultisampleCount != MultisampleCount.None)
+                    {
+                        using (drawContext.QueryManager.BeginProfile(Color.Green, CompositingProfilingKeys.MsaaResolve))
+                        {
+                            ResolveMSAA(drawContext);
+                        }
+
+                        renderTargets = currentRenderTargetsNonMSAA;
+                        depthStencil = currentDepthStencilNonMSAA;
+                    } 
+                }
+
+                // Shafts if we have them
+                if (LightShafts != null)
+                {
+                    using (drawContext.QueryManager.BeginProfile(Color.Green, CompositingProfilingKeys.LightShafts))
+                    {
+                        LightShafts.Draw(drawContext, depthStencil, renderTargets[colorTargetIndex]);
+                    }
+                }
+
+                if (renderPostFX)
+                {
+                    if (PostEffects != null)
+                    {
+                        // Run post effects
+                        // Note: OpaqueRenderStage can't be null otherwise colorTargetIndex would be -1
+                        PostEffects.Draw(drawContext, OpaqueRenderStage.OutputValidator, renderTargets.Items, depthStencil, viewOutputTarget);
+                    }
+                    else
+                    {
+                        if (actualMultisampleCount != MultisampleCount.None)
+                        {
+                            using (drawContext.QueryManager.BeginProfile(Color.Green, CompositingProfilingKeys.MsaaResolve))
+                            {
+                                drawContext.CommandList.Copy(renderTargets[colorTargetIndex], viewOutputTarget);
+                            }
+                        }
+                    } 
+                }
+
+                // Free the depth texture since we won't need it anymore
+                if (depthStencilSRV != null)
+                {
+                    drawContext.Resolver.ReleaseDepthStenctilAsShaderResource(depthStencilSRV);
+                }
+            }
+        }
+
+        protected virtual void DrawPostFXOnly(RenderContext context, RenderDrawContext drawContext)
+        {
+            using (drawContext.PushRenderTargetsAndRestore())
+            {
+
+                Texture depthStencilSRV = null;
+
+                // Draw [main view | transparent stage]
+                if (TransparentRenderStage != null)
+                {
+                    if (depthStencilSRV == null)
+                        depthStencilSRV = ResolveDepthAsSRV(drawContext);
+                }
+
+                var colorTargetIndex = OpaqueRenderStage?.OutputValidator.Find(typeof(ColorTargetSemantic)) ?? -1;
+                if (colorTargetIndex == -1)
+                    return;
+
                 // Resolve MSAA targets
                 var renderTargets = currentRenderTargets;
                 var depthStencil = currentDepthStencil;
@@ -645,15 +729,6 @@ namespace VL.Stride.Rendering
 
                     renderTargets = currentRenderTargetsNonMSAA;
                     depthStencil = currentDepthStencilNonMSAA;
-                }
-
-                // Shafts if we have them
-                if (LightShafts != null)
-                {
-                    using (drawContext.QueryManager.BeginProfile(Color.Green, CompositingProfilingKeys.LightShafts))
-                    {
-                        LightShafts.Draw(drawContext, depthStencil, renderTargets[colorTargetIndex]);
-                    }
                 }
 
                 if (PostEffects != null)
@@ -801,36 +876,40 @@ namespace VL.Stride.Rendering
                         CopyOrScaleTexture(drawContext, vrFullSurface, drawContext.CommandList.RenderTarget);
                     }
                 }
-                else if (MultiviewSettings.Enabled && MultiviewSettings.Views?.Count > 0)
+                else if (initHack && MultiviewSettings.Enabled && MultiviewSettings.Views?.Count > 0)
                 {
                     using (drawContext.PushRenderTargetsAndRestore())
                     {
                         PrepareRenderTargets(drawContext, new Size2((int)viewport.Width, (int)viewport.Height));
 
                         //draw per view
-                        using (context.SaveViewportAndRestore())
-                        using (drawContext.PushRenderTargetsAndRestore())
+                        //using (context.SaveViewportAndRestore())
+                        //using (drawContext.PushRenderTargetsAndRestore())
                         {
                             ViewCount = MultiviewSettings.Views.Count;
                             drawContext.CommandList.SetRenderTargets(currentDepthStencil, currentRenderTargets.Count, currentRenderTargets.Items);
 
+                            Clear?.Draw(drawContext);
+
                             for (var i = 0; i < ViewCount; i++)
                             {
                                 var currentView = MultiviewSettings.Views[i];
-                                var vp = Unsafe.As<ViewportF, Viewport>(ref currentView.Viewport);
-                                drawContext.CommandList.SetViewport(vp);
 
                                 using (context.PushRenderViewAndRestore(currentView.View))
+                                using (context.SaveViewportAndRestore())
                                 {
-                                    // Clear render target and depth stencil
-                                    if (i == 0) // need to clear once
-                                        Clear?.Draw(drawContext);
+                                    context.ViewportState = currentViewportState;
+                                    context.ViewportState.Viewport0 = Unsafe.As<ViewportF, Viewport>(ref currentView.Viewport);
+                                    drawContext.CommandList.SetViewport(context.ViewportState.Viewport0);
 
                                     ViewIndex = i;
 
-                                    DrawView(context, drawContext, i, ViewCount);
+                                    shadowMapRenderer?.Draw(drawContext);
+                                    DrawView(context, drawContext, i, ViewCount, renderPostFX: false);
                                 }
                             }
+
+                            DrawPostFXOnly(context, drawContext);
                         }
                     }
                 }
@@ -852,6 +931,8 @@ namespace VL.Stride.Rendering
 
                         DrawView(context, drawContext, 0, 1);
                     }
+
+                    initHack = true;
                 }
             }
 
