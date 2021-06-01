@@ -19,7 +19,7 @@ namespace VL.Stride.Engine
             var vrCategory = "Stride.Experimental.VirtualReality";
             var physicsColliderShapesCategory = $"{vrCategory}.ColliderShapes";
 
-            yield return new StrideNodeDesc<VRRendererSettings>(factory, category: vrCategory);
+            yield return new StrideNodeDesc<VRRendererSettings>(factory, name: "VRSettings", category: vrCategory);
             yield return new StrideNodeDesc<VRDeviceDescription>(factory, category: vrCategory);
             yield return new StrideNodeDesc<VROverlayRenderer>(factory, category: vrCategory);
 

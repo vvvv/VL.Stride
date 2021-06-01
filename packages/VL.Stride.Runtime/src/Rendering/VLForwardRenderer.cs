@@ -12,6 +12,7 @@ using Stride.Core.Collections;
 using Stride.Core.Diagnostics;
 using Stride.Core.Mathematics;
 using Stride.Core.Storage;
+using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.Compositing;
@@ -34,14 +35,24 @@ namespace VL.Stride.Rendering
         public ViewportF Viewport;
     }
 
+    public class ViewportRenderInfo
+    {
+        public CameraComponent CameraComponent { get; set; } = new CameraComponent();
+
+        public Vector2 RenderTargetSize { get; set; }
+    }
+
     [DataContract]
-    public class MultiviewRendererSettings
+    public class ViewportSettings
     {
         [DataMember]
         public IReadOnlyList<ViewportView> Views { get; set; } = new List<ViewportView>();
 
         [DataMember]
         public bool Enabled { get; set; }
+
+        [DataMember]
+        public ViewportRenderInfo ViewportRenderInfo { get; set; }
     }
 
     public static class PresenterExtensions
@@ -140,7 +151,7 @@ namespace VL.Stride.Rendering
         /// <summary>
         /// Multi viewport related settings
         /// </summary>
-        public MultiviewRendererSettings MultiviewSettings { get; set; } = new MultiviewRendererSettings();
+        public ViewportSettings ViewportSettings { get; set; } = new ViewportSettings();
 
         /// <summary>
         /// Separable subsurface scattering effect
@@ -446,12 +457,15 @@ namespace VL.Stride.Rendering
                         }
                     }
                 }
-                else if (initHack && MultiviewSettings.Enabled && MultiviewSettings.Views?.Count > 0)
+                else if (initHack && ViewportSettings.Enabled && ViewportSettings.Views?.Count > 0)
                 {
+                    if (ViewportSettings.ViewportRenderInfo != null)
+                        ViewportSettings.ViewportRenderInfo.CameraComponent = camera;
+
                     shadowMapRenderer?.RenderViewsWithShadows.Remove(context.RenderView);
-                    for (var i = 0; i < MultiviewSettings.Views.Count; i++)
+                    for (var i = 0; i < ViewportSettings.Views.Count; i++)
                     {
-                        var currentView = MultiviewSettings.Views[i];
+                        var currentView = ViewportSettings.Views[i];
                         using (context.PushRenderViewAndRestore(currentView.View))
                         using (context.SaveViewportAndRestore())
                         {
@@ -876,41 +890,39 @@ namespace VL.Stride.Rendering
                         CopyOrScaleTexture(drawContext, vrFullSurface, drawContext.CommandList.RenderTarget);
                     }
                 }
-                else if (initHack && MultiviewSettings.Enabled && MultiviewSettings.Views?.Count > 0)
+                else if (initHack && ViewportSettings.Enabled && ViewportSettings.Views?.Count > 0)
                 {
                     using (drawContext.PushRenderTargetsAndRestore())
                     {
                         PrepareRenderTargets(drawContext, new Size2((int)viewport.Width, (int)viewport.Height));
 
-                        //draw per view
-                        //using (context.SaveViewportAndRestore())
-                        //using (drawContext.PushRenderTargetsAndRestore())
+                        if (ViewportSettings.ViewportRenderInfo != null)
+                            ViewportSettings.ViewportRenderInfo.RenderTargetSize = viewport.Size;
+
+                        ViewCount = ViewportSettings.Views.Count;
+                        drawContext.CommandList.SetRenderTargets(currentDepthStencil, currentRenderTargets.Count, currentRenderTargets.Items);
+
+                        Clear?.Draw(drawContext);
+
+                        for (var i = 0; i < ViewCount; i++)
                         {
-                            ViewCount = MultiviewSettings.Views.Count;
-                            drawContext.CommandList.SetRenderTargets(currentDepthStencil, currentRenderTargets.Count, currentRenderTargets.Items);
+                            var currentView = ViewportSettings.Views[i];
 
-                            Clear?.Draw(drawContext);
-
-                            for (var i = 0; i < ViewCount; i++)
+                            using (context.PushRenderViewAndRestore(currentView.View))
+                            using (context.SaveViewportAndRestore())
                             {
-                                var currentView = MultiviewSettings.Views[i];
+                                context.ViewportState = currentViewportState;
+                                context.ViewportState.Viewport0 = Unsafe.As<ViewportF, Viewport>(ref currentView.Viewport);
+                                drawContext.CommandList.SetViewport(context.ViewportState.Viewport0);
 
-                                using (context.PushRenderViewAndRestore(currentView.View))
-                                using (context.SaveViewportAndRestore())
-                                {
-                                    context.ViewportState = currentViewportState;
-                                    context.ViewportState.Viewport0 = Unsafe.As<ViewportF, Viewport>(ref currentView.Viewport);
-                                    drawContext.CommandList.SetViewport(context.ViewportState.Viewport0);
+                                ViewIndex = i;
 
-                                    ViewIndex = i;
-
-                                    shadowMapRenderer?.Draw(drawContext);
-                                    DrawView(context, drawContext, i, ViewCount, renderPostFX: false);
-                                }
+                                shadowMapRenderer?.Draw(drawContext);
+                                DrawView(context, drawContext, i, ViewCount, renderPostFX: false);
                             }
-
-                            DrawPostFXOnly(context, drawContext);
                         }
+
+                        DrawPostFXOnly(context, drawContext);
                     }
                 }
                 else
