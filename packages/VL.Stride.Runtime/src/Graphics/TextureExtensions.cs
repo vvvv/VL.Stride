@@ -41,10 +41,12 @@ namespace VL.Stride.Graphics
         /// Copies the <paramref name="fromData"/> to the given <paramref name="buffer"/> on GPU memory.
         /// </summary>
         /// <typeparam name="TData">The type of the T data.</typeparam>
-        /// <param name="buffer">The <see cref="Buffer"/>.</param>
+        /// <param name="texture"></param>
         /// <param name="commandList">The <see cref="CommandList"/>.</param>
         /// <param name="fromData">The data to copy from.</param>
-        /// <param name="offsetInBytes">The offset in bytes to write to.</param>
+        /// <param name="arraySlice"></param>
+        /// <param name="mipSlice"></param>
+        /// <param name="region"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <remarks>
         /// See the unmanaged documentation about Map/UnMap for usage and restrictions.
