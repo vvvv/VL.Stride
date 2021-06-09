@@ -12,7 +12,7 @@ namespace VL.Stride.Graphics
         {
             private TextureDescription description;
             private TextureViewDescription viewDescription;
-            private DataBox[] initalData;
+            private IStrideGraphicsDataProvider[] initalData;
             private bool needsRebuild = true;
             private Texture texture;
             internal bool Recreate;
@@ -53,7 +53,7 @@ namespace VL.Stride.Graphics
                 }
             }
 
-            public DataBox[] InitalData
+            public IStrideGraphicsDataProvider[] InitalData
             {
                 get => initalData;
                 set
@@ -75,18 +75,55 @@ namespace VL.Stride.Graphics
                 gameHandle.Dispose();
             }
 
+            IPinnedGraphicsData[] pinnedGraphicsDatas = new IPinnedGraphicsData[0];
+            DataBox[] boxes = new DataBox[0];
+
             private void RebuildTexture()
             {
+                var dataCount = 0;
+                if (initalData != null)
+                {
+                    dataCount = initalData.Length;
+
+                    if (pinnedGraphicsDatas.Length < dataCount)
+                    {
+                        pinnedGraphicsDatas = new IPinnedGraphicsData[dataCount];
+                        boxes = new DataBox[dataCount];
+                    }
+
+                    for (int i = 0; i < dataCount; i++)
+                    {
+                        var id = initalData[i];
+                        if (id is null)
+                        {
+                            pinnedGraphicsDatas[i] = null;
+                            boxes[i] = new DataBox();
+                        }
+                        else
+                        {
+                            pinnedGraphicsDatas[i] = id.Pin();
+                            boxes[i] = new DataBox(pinnedGraphicsDatas[i].Pointer, id.RowSizeInBytes, id.SliceSizeInBytes); 
+                        }
+                    }
+                }
+
                 try
                 {
                     texture?.Dispose();
                     texture = null;
                     var game = gameHandle.Resource;
-                    texture = Texture.New(game.GraphicsDevice, description, viewDescription, initalData);
+                    texture = Texture.New(game.GraphicsDevice, description, viewDescription, boxes);
                 }
                 catch
                 {
                     texture = null;
+                }
+                finally
+                {
+                    for (int i = 0; i < dataCount; i++)
+                    {
+                        pinnedGraphicsDatas[i]?.Dispose();
+                    }
                 }
             }
         }

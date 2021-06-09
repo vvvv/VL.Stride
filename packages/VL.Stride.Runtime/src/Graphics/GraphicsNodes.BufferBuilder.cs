@@ -14,7 +14,7 @@ namespace VL.Stride.Graphics
         {
             private BufferDescription description;
             private BufferViewDescription viewDescription;
-            private IntPtr initalData;
+            private IStrideGraphicsDataProvider initalData;
             private bool needsRebuild = true;
             private Buffer buffer;
             internal bool Recreate;
@@ -55,7 +55,7 @@ namespace VL.Stride.Graphics
                 }
             }
 
-            public IntPtr InitalData
+            public IStrideGraphicsDataProvider InitalData
             {
                 get => initalData;
                 set
@@ -79,16 +79,26 @@ namespace VL.Stride.Graphics
 
             private void RebuildBuffer()
             {
+                IPinnedGraphicsData pin = null;
+                if (initalData != null)
+                {
+                    pin = initalData.Pin();
+                }
+
                 try
                 {
                     buffer?.Dispose();
                     buffer = null;
                     var game = gameHandle.Resource;
-                    buffer = BufferExtensions.New(game.GraphicsDevice, description, viewDescription, initalData);
+                    buffer = BufferExtensions.New(game.GraphicsDevice, description, viewDescription, pin?.Pointer ?? IntPtr.Zero);
                 }
                 catch
                 {
                     buffer = null;
+                }
+                finally
+                {
+                    pin?.Dispose();
                 }
             }
         }

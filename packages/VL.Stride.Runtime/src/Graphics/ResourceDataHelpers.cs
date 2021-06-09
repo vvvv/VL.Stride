@@ -1,16 +1,117 @@
 ﻿using Stride.Core;
+using Stride.Graphics;
 using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using VL.Lib.Basics.Imaging;
 using VL.Lib.Collections;
 
 namespace VL.Stride.Graphics
 {
+    public interface IStrideGraphicsDataProvider
+    {
+        int SizeInBytes { get; }
+        int ElementSizeInBytes { get; }
+        int RowSizeInBytes { get; }
+        int SliceSizeInBytes { get; }
+        IPinnedGraphicsData Pin();
+    }
+
+    public interface IPinnedGraphicsData : IDisposable
+    {
+        IntPtr Pointer { get; }
+    }
+
+    public class ImageDataProvider : IStrideGraphicsDataProvider
+    {
+        private IImage image;
+
+        public ImageDataProvider(IImage image)
+        {
+            this.image = image;
+            SizeInBytes = image.Info.ImageSize;
+            ElementSizeInBytes = image.Info.Format.GetPixelSize();
+            RowSizeInBytes = image.Info.ScanSize;
+            SliceSizeInBytes = RowSizeInBytes * image.Info.Height;
+        }
+
+        public int SizeInBytes { get; set; }
+
+        public int ElementSizeInBytes { get; set; }
+
+        public int RowSizeInBytes { get; set; }
+
+        public int SliceSizeInBytes { get; set; }
+
+
+        public IPinnedGraphicsData Pin()
+        {
+            return new PinnedImageData(image);
+        }
+    }
+
+    public struct PinnedImageData : IPinnedGraphicsData
+    {
+        IImageData imageData;
+        MemoryHandle memoryHandle;
+
+        public PinnedImageData(IImage image)
+        {
+            imageData = image.GetData();
+            memoryHandle = imageData.Bytes.Pin();
+        }
+
+        public unsafe IntPtr Pointer => new IntPtr(memoryHandle.Pointer);
+
+        public void Dispose()
+        {
+            memoryHandle.Dispose();
+            imageData.Dispose();
+        }
+    }
+
+    public class MemoryDataProvider<T> : IStrideGraphicsDataProvider where T : struct
+    {
+        private ReadOnlyMemory<T> memory;
+
+        public MemoryDataProvider(ReadOnlyMemory<T> memory)
+        {
+            this.memory = memory;
+            SizeInBytes = memory.Length;
+            ElementSizeInBytes = Utilities.SizeOf<T>();
+        }
+
+        public int SizeInBytes { get; set; }
+
+        public int ElementSizeInBytes { get; set; }
+
+        public int RowSizeInBytes { get; set; }
+
+        public int SliceSizeInBytes { get; set; }
+
+
+        public IPinnedGraphicsData Pin()
+        {
+            return new PinnedMemoryHandle<T>(memory);
+        }
+    }
+
+    public struct PinnedMemoryHandle<T> : IPinnedGraphicsData
+    {
+        MemoryHandle memoryHandle;
+
+        public PinnedMemoryHandle(ReadOnlyMemory<T> memory)
+        {
+            memoryHandle = memory.Pin();
+        }
+
+        public unsafe IntPtr Pointer => new IntPtr(memoryHandle.Pointer);
+
+        public void Dispose()
+        {
+            memoryHandle.Dispose();
+        }
+    }
 
     public class ImagePinner : IDisposable
     {
