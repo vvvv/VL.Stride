@@ -121,53 +121,54 @@ namespace VL.Stride.Rendering.Compositing
 
             var defaultResolver = new MSAAResolver();
             yield return nodeFactory.NewGraphicsRendererNode<ForwardRenderer>(category: compositionCategory, copyOnWrite: true)
-                .AddInput(nameof(ForwardRenderer.Clear), x => x.Clear, (x, v) => x.Clear = v, defaultValue: null /* We want null as default */)
+                .AddCachedInput(nameof(ForwardRenderer.Clear), x => x.Clear, (x, v) => x.Clear = v, defaultValue: null /* We want null as default */)
                 .AddCachedInput(nameof(ForwardRenderer.OpaqueRenderStage), x => x.OpaqueRenderStage, (x, v) => x.OpaqueRenderStage = v)
                 .AddCachedInput(nameof(ForwardRenderer.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v)
                 .AddCachedListInput(nameof(ForwardRenderer.ShadowMapRenderStages), x => x.ShadowMapRenderStages)
                 .AddCachedInput(nameof(ForwardRenderer.GBufferRenderStage), x => x.GBufferRenderStage, (x, v) => x.GBufferRenderStage = v)
-                .AddInput(nameof(ForwardRenderer.PostEffects), x => x.PostEffects, (x, v) => x.PostEffects = v)
-                .AddInput(nameof(ForwardRenderer.LightShafts), x => x.LightShafts, (x, v) => x.LightShafts = v)
-                .AddInput(nameof(ForwardRenderer.VRSettings), x => x.VRSettings, (x, v) => x.VRSettings = v)
-                .AddInput(nameof(ForwardRenderer.SubsurfaceScatteringBlurEffect), x => x.SubsurfaceScatteringBlurEffect, (x, v) => x.SubsurfaceScatteringBlurEffect = v)
-                .AddInput(nameof(ForwardRenderer.MSAALevel), x => x.MSAALevel, (x, v) => x.MSAALevel = v)
-                .AddInput(nameof(ForwardRenderer.MSAAResolver), x => x.MSAAResolver, (x, v) =>
+                .AddCachedInput(nameof(ForwardRenderer.PostEffects), x => x.PostEffects, (x, v) => x.PostEffects = v)
+                .AddCachedInput(nameof(ForwardRenderer.LightShafts), x => x.LightShafts, (x, v) => x.LightShafts = v)
+                .AddCachedInput(nameof(ForwardRenderer.VRSettings), x => x.VRSettings, (x, v) => x.VRSettings = v)
+                .AddCachedInput(nameof(ForwardRenderer.SubsurfaceScatteringBlurEffect), x => x.SubsurfaceScatteringBlurEffect, (x, v) => x.SubsurfaceScatteringBlurEffect = v)
+                .AddCachedInput(nameof(ForwardRenderer.MSAALevel), x => x.MSAALevel, (x, v) => x.MSAALevel = v)
+                .AddCachedInput(nameof(ForwardRenderer.MSAAResolver), x => x.MSAAResolver, (x, v) =>
                 {
                     var s = x.MSAAResolver;
                     var y = v ?? defaultResolver;
                     s.FilterType = y.FilterType;
                     s.FilterRadius = y.FilterRadius;
                 })
-                .AddInput(nameof(ForwardRenderer.BindDepthAsResourceDuringTransparentRendering), x => x.BindDepthAsResourceDuringTransparentRendering, (x, v) => x.BindDepthAsResourceDuringTransparentRendering = v)
+                .AddCachedInput(nameof(ForwardRenderer.BindDepthAsResourceDuringTransparentRendering), x => x.BindDepthAsResourceDuringTransparentRendering, (x, v) => x.BindDepthAsResourceDuringTransparentRendering = v)
                 .AddEnabledPin();
 
-            yield return new StrideNodeDesc<ViewportView>(nodeFactory, category: compositionCategoryExperimental);
-            yield return new StrideNodeDesc<ViewportSettings>(nodeFactory, category: compositionCategoryExperimental);
+            yield return new StrideNodeDesc<ViewportView>(nodeFactory, category: compositionCategoryExperimental) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<ViewportSettings>(nodeFactory, category: compositionCategoryExperimental) { CopyOnWrite = false };
 
             yield return nodeFactory.NewNode<ViewportRenderInfo>(category: compositionCategoryExperimental)
                 .AddOutput(nameof(ViewportRenderInfo.CameraComponent), x => x.CameraComponent)
                 .AddOutput(nameof(ViewportRenderInfo.RenderTargetSize), x => x.RenderTargetSize);
 
+            //Same as the Stride ForwardRenderer class, but with additional ViewportSettings that work similar to the VRSettings.
             yield return nodeFactory.NewGraphicsRendererNode<VLForwardRenderer>(category: compositionCategoryExperimental, copyOnWrite: true)
-                .AddInput(nameof(VLForwardRenderer.Clear), x => x.Clear, (x, v) => x.Clear = v, defaultValue: null /* We want null as default */)
+                .AddCachedInput(nameof(VLForwardRenderer.Clear), x => x.Clear, (x, v) => x.Clear = v, defaultValue: null /* We want null as default */)
                 .AddCachedInput(nameof(VLForwardRenderer.OpaqueRenderStage), x => x.OpaqueRenderStage, (x, v) => x.OpaqueRenderStage = v)
                 .AddCachedInput(nameof(VLForwardRenderer.TransparentRenderStage), x => x.TransparentRenderStage, (x, v) => x.TransparentRenderStage = v)
                 .AddCachedListInput(nameof(VLForwardRenderer.ShadowMapRenderStages), x => x.ShadowMapRenderStages)
                 .AddCachedInput(nameof(VLForwardRenderer.GBufferRenderStage), x => x.GBufferRenderStage, (x, v) => x.GBufferRenderStage = v)
-                .AddInput(nameof(VLForwardRenderer.PostEffects), x => x.PostEffects, (x, v) => x.PostEffects = v)
-                .AddInput(nameof(VLForwardRenderer.LightShafts), x => x.LightShafts, (x, v) => x.LightShafts = v)
-                .AddInput(nameof(VLForwardRenderer.VRSettings), x => x.VRSettings, (x, v) => x.VRSettings = v)
-                .AddInput(nameof(VLForwardRenderer.ViewportSettings), x => x.ViewportSettings, (x, v) => x.ViewportSettings = v)
-                .AddInput(nameof(VLForwardRenderer.SubsurfaceScatteringBlurEffect), x => x.SubsurfaceScatteringBlurEffect, (x, v) => x.SubsurfaceScatteringBlurEffect = v)
-                .AddInput(nameof(VLForwardRenderer.MSAALevel), x => x.MSAALevel, (x, v) => x.MSAALevel = v)
-                .AddInput(nameof(VLForwardRenderer.MSAAResolver), x => x.MSAAResolver, (x, v) =>
+                .AddCachedInput(nameof(VLForwardRenderer.PostEffects), x => x.PostEffects, (x, v) => x.PostEffects = v)
+                .AddCachedInput(nameof(VLForwardRenderer.LightShafts), x => x.LightShafts, (x, v) => x.LightShafts = v)
+                .AddCachedInput(nameof(VLForwardRenderer.VRSettings), x => x.VRSettings, (x, v) => x.VRSettings = v)
+                .AddCachedInput(nameof(VLForwardRenderer.ViewportSettings), x => x.ViewportSettings, (x, v) => x.ViewportSettings = v)
+                .AddCachedInput(nameof(VLForwardRenderer.SubsurfaceScatteringBlurEffect), x => x.SubsurfaceScatteringBlurEffect, (x, v) => x.SubsurfaceScatteringBlurEffect = v)
+                .AddCachedInput(nameof(VLForwardRenderer.MSAALevel), x => x.MSAALevel, (x, v) => x.MSAALevel = v)
+                .AddCachedInput(nameof(VLForwardRenderer.MSAAResolver), x => x.MSAAResolver, (x, v) =>
                 {
                     var s = x.MSAAResolver;
                     var y = v ?? defaultResolver;
                     s.FilterType = y.FilterType;
                     s.FilterRadius = y.FilterRadius;
                 })
-                .AddInput(nameof(VLForwardRenderer.BindDepthAsResourceDuringTransparentRendering), x => x.BindDepthAsResourceDuringTransparentRendering, (x, v) => x.BindDepthAsResourceDuringTransparentRendering = v)
+                .AddCachedInput(nameof(VLForwardRenderer.BindDepthAsResourceDuringTransparentRendering), x => x.BindDepthAsResourceDuringTransparentRendering, (x, v) => x.BindDepthAsResourceDuringTransparentRendering = v)
                 .AddEnabledPin();
 
             yield return new StrideNodeDesc<SubsurfaceScatteringBlur>(nodeFactory, category: compositionCategory);
