@@ -347,8 +347,6 @@ namespace VL.Stride.Rendering
             }
         }
 
-        //needs one complete draw before multiple views work...
-        static bool initHack = false;
         protected override unsafe void CollectCore(RenderContext context)
         {
             var camera = context.GetCurrentCamera();
@@ -457,15 +455,27 @@ namespace VL.Stride.Rendering
                         }
                     }
                 }
-                else if (initHack && ViewportSettings.Enabled && ViewportSettings.Views?.Count > 0)
+                else if (ViewportSettings.Enabled && ViewportSettings.Views?.Count > 0)
                 {
                     if (ViewportSettings.ViewportRenderInfo != null)
                         ViewportSettings.ViewportRenderInfo.CameraComponent = camera;
 
+                    var cullingMask = context.RenderView.CullingMask;
+                    var stages = context.RenderView.RenderStages;
                     shadowMapRenderer?.RenderViewsWithShadows.Remove(context.RenderView);
+                    var prevViewMatrix = camera.ViewMatrix;
+                    var prevProjMatrix = camera.ProjectionMatrix;
+
                     for (var i = 0; i < ViewportSettings.Views.Count; i++)
                     {
                         var currentView = ViewportSettings.Views[i];
+                        currentView.View.CullingMask = cullingMask;
+
+                        for (int j = 0; j < stages.Count; j++)
+                        {
+                            currentView.View.RenderStages.Add(stages[j]);
+                        }
+
                         using (context.PushRenderViewAndRestore(currentView.View))
                         using (context.SaveViewportAndRestore())
                         {
@@ -485,14 +495,14 @@ namespace VL.Stride.Rendering
                             //write params to view
                             SceneCameraRenderer.UpdateCameraToRenderView(context, context.RenderView, camera);
 
-                            //culling
-                            context.VisibilityGroup.TryCollect(context.RenderView);
-
                             CollectView(context);
 
                             LightShafts?.Collect(context);
                         }
                     }
+
+                    camera.ViewMatrix = prevViewMatrix;
+                    camera.ProjectionMatrix = prevProjMatrix;
 
                     PostEffects?.Collect(context);
                 }
@@ -890,7 +900,7 @@ namespace VL.Stride.Rendering
                         CopyOrScaleTexture(drawContext, vrFullSurface, drawContext.CommandList.RenderTarget);
                     }
                 }
-                else if (initHack && ViewportSettings.Enabled && ViewportSettings.Views?.Count > 0)
+                else if (ViewportSettings.Enabled && ViewportSettings.Views?.Count > 0)
                 {
                     using (drawContext.PushRenderTargetsAndRestore())
                     {
@@ -943,8 +953,6 @@ namespace VL.Stride.Rendering
 
                         DrawView(context, drawContext, 0, 1);
                     }
-
-                    initHack = true;
                 }
             }
 

@@ -22,8 +22,6 @@ namespace VL.Stride.Core
     {
         protected override void RegisterServices(IVLFactory factory)
         {
-            Serialization.RegisterSerializers(factory);
-
             // Graphics device
             factory.RegisterService<NodeContext, IResourceProvider<GraphicsDevice>>(nodeContext =>
             {
