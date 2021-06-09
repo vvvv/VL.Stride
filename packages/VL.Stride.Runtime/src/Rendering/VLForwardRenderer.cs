@@ -71,6 +71,7 @@ namespace VL.Stride.Rendering
     }
 
     /// <summary>
+    /// Same as the Stride ForwardRenderer class, but with additional ViewportSettings that work similar to the VRSettings.
     /// Renders your game. It should use current <see cref="RenderContext.RenderView"/> and <see cref="CameraComponentRendererExtensions.GetCurrentCamera"/>.
     /// </summary>
     [Display("VL Forward Renderer")]

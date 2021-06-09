@@ -19,9 +19,9 @@ namespace VL.Stride.Engine
             var vrCategory = "Stride.Experimental.VirtualReality";
             var physicsColliderShapesCategory = $"{vrCategory}.ColliderShapes";
 
-            yield return new StrideNodeDesc<VRRendererSettings>(factory, name: "VRSettings", category: vrCategory);
-            yield return new StrideNodeDesc<VRDeviceDescription>(factory, category: vrCategory);
-            yield return new StrideNodeDesc<VROverlayRenderer>(factory, category: vrCategory);
+            yield return new StrideNodeDesc<VRRendererSettings>(factory, name: "VRSettings", category: vrCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<VRDeviceDescription>(factory, category: vrCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<VROverlayRenderer>(factory, category: vrCategory) { CopyOnWrite = false };
 
             yield return factory.NewNode(name: "VRDevice", category: vrCategory, copyOnWrite: false, hasStateOutput: false, ctor: n => new VRDeviceSplitter(n))
                 .AddOutput(nameof(VRDevice.State), x => x.v.Device?.State ?? DeviceState.Invalid)
