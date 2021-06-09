@@ -1,0 +1,30 @@
+shader SampleTexture_ComputeFX :  ComputeShaderBase
+{
+    uint Count = 1;
+    float SampleLevel;
+
+    Buffer<float2> SamplerPosBuffer;
+    RWTexture1D<float4> SamplerColTex;
+
+    Texture2D Tex;
+    SamplerState TexSampler
+    {
+        Filter = MIN_MAG_MIP_LINEAR;
+        AddressU = border;
+        AddressV = border;
+        AddressW = border;
+        BorderColor = float4(0,0,0,0);
+    };
+   	
+    override void Compute()
+    {
+        uint sampleID = streams.DispatchThreadId.x;
+
+        if (sampleID >= Count) return;
+
+        float2 uv = SamplerPosBuffer[sampleID];
+
+        SamplerColTex[sampleID] = Tex.SampleLevel(TexSampler, uv, SampleLevel);
+    }
+
+};    
