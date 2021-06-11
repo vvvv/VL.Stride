@@ -40,8 +40,8 @@ namespace MyTests
                 // Shows up red on build server - maybe due to super cheap graphics card?
                 if (Path.GetFileName(file) == "HowTo Write a Shader.vl" ||
                     Path.GetFileName(file) == "HowTo Create a Custom ShaderFX Node.vl" ||
-                    Path.GetFileName(file) == "HowTo Read pixels of a texture.vl" ||
-                    Path.GetFileName(file) == "VL.Stride.Rendering.vl")
+                    Path.GetFileName(file) == "HowTo Read Pixels of a Texture.vl" ||
+                    Path.GetFileName(file) == "VL.Stride.Rendering.Temp.vl")
                     continue;
 
                 var fileUri = new Uri(file, UriKind.Absolute);
