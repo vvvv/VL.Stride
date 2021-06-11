@@ -1,6 +1,7 @@
 ﻿using Stride.Core;
 using Stride.Engine;
 using Stride.Graphics;
+using System;
 using VL.Core;
 using VL.Lib.Basics.Resources;
 
@@ -85,25 +86,34 @@ namespace VL.Stride.Graphics
                 {
                     dataCount = initalData.Length;
 
-                    if (pinnedGraphicsDatas.Length < dataCount)
+                    if (pinnedGraphicsDatas.Length != dataCount)
                     {
                         pinnedGraphicsDatas = new IPinnedGraphicsData[dataCount];
                         boxes = new DataBox[dataCount];
                     }
 
-                    for (int i = 0; i < dataCount; i++)
+                    if (dataCount > 0)
                     {
-                        var id = initalData[i];
-                        if (id is null)
+                        var pixelSize = description.Format.BlockSize();
+                        var minRowSize = description.Width * pixelSize;
+                        var minSliceSize = description.Depth * minRowSize;
+
+                        for (int i = 0; i < dataCount; i++)
                         {
-                            pinnedGraphicsDatas[i] = null;
-                            boxes[i] = new DataBox();
-                        }
-                        else
-                        {
-                            pinnedGraphicsDatas[i] = id.Pin();
-                            boxes[i] = new DataBox(pinnedGraphicsDatas[i].Pointer, id.RowSizeInBytes, id.SliceSizeInBytes); 
-                        }
+                            var id = initalData[i];
+                            if (id is null)
+                            {
+                                pinnedGraphicsDatas[i] = null;
+                                boxes[i] = new DataBox();
+                            }
+                            else
+                            {
+                                pinnedGraphicsDatas[i] = id.Pin();
+                                var rowSize = Math.Max(id.RowSizeInBytes, minRowSize);
+                                var sliceSize = Math.Max(id.SliceSizeInBytes, minSliceSize);
+                                boxes[i] = new DataBox(pinnedGraphicsDatas[i].Pointer, rowSize, sliceSize);
+                            }
+                        } 
                     }
                 }
 
@@ -190,7 +200,6 @@ namespace VL.Stride.Graphics
                 {
                     if (textureView != null)
                     {
-                        textureView.Destroyed -= TextureView_Destroyed;
                         textureView.Dispose();
                         textureView = null; 
                     }
@@ -203,19 +212,12 @@ namespace VL.Stride.Graphics
                     {
                         var game = gameHandle.Resource;
                         textureView = texture.ToTextureView(viewDescription);
-                        textureView.DisposeBy(texture);
-                        textureView.Destroyed += TextureView_Destroyed;
                     }
                 }
                 catch
                 {
                     textureView = null;
                 }
-            }
-
-            private void TextureView_Destroyed(object sender, System.EventArgs e)
-            {
-                textureView = null;
             }
         }
     }
