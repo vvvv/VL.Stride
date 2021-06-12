@@ -9,7 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reflection;
 using VL.Lib.Control;
+using System.Linq;
+using Buffer = Stride.Graphics.Buffer;
 
 namespace VL.Stride.Rendering.ComputeEffect
 {
@@ -135,6 +138,8 @@ namespace VL.Stride.Rendering.ComputeEffect
             Dispatcher?.UpdateParameters(Parameters, ThreadGroupSize);
         }
 
+        List<GraphicsResource> uavs = new List<GraphicsResource>();
+
         protected override void DrawCore(RenderDrawContext context)
         {
             if (string.IsNullOrEmpty(Name) || FRefreshTime > context.RenderContext.Time.Total)
@@ -172,6 +177,26 @@ namespace VL.Stride.Rendering.ComputeEffect
                         pipelineState.State.EffectBytecode = EffectInstance.Effect.Bytecode;
                         pipelineState.Update();
                         pipelineStateDirty = false;
+
+                        uavs.Clear();
+                        var parameters = EffectInstance.Parameters;
+                        if (parameters.HasLayout)
+                        {
+                            uavs.AddRange(parameters.Layout.LayoutParameterKeyInfos
+                                                .Where(p => typeof(Buffer).IsAssignableFrom(p.Key.PropertyType) || typeof(Texture).IsAssignableFrom(p.Key.PropertyType))
+                                                .Select(k => parameters.GetObject(k.Key))
+                                                .Where(gr =>
+                                                {
+                                                    if (gr is Buffer b)
+                                                        return (b.ViewFlags & BufferFlags.UnorderedAccess) != 0;
+
+                                                    if (gr is Texture t)
+                                                        return (t.ViewFlags & TextureFlags.UnorderedAccess) != 0;
+
+                                                    return false;
+                                                })
+                                                .Cast<GraphicsResource>());
+                        }
                     }
                 }
                 catch (Exception e)
@@ -192,10 +217,23 @@ namespace VL.Stride.Rendering.ComputeEffect
                 // Dispatch
                 Dispatcher?.Dispatch(context);
 
-                // Un-apply
-                //throw new InvalidOperationException();
-                //EffectInstance.Effect.UnbindResources(GraphicsDevice);
+                // Un-apply UAV
+                for (int i = 0; i < uavs.Count; i++)
+                {
+                    UnsetUAV(context.CommandList, uavs[i]);
+                }
+                
             }
         }
+
+        MethodInfo unsetUAV;
+        object[] unsetUAVArg = new object[1];
+        void UnsetUAV (CommandList commandList, GraphicsResource resource)
+        {
+            unsetUAV ??= typeof(CommandList).GetMethod("UnsetUnorderedAccessView", BindingFlags.NonPublic | BindingFlags.Instance);
+            unsetUAVArg[0] = resource;
+            unsetUAV.Invoke(commandList, unsetUAVArg);
+        }
+
     }
 }
