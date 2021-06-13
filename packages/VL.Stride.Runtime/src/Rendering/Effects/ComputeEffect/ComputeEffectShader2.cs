@@ -138,7 +138,7 @@ namespace VL.Stride.Rendering.ComputeEffect
             Dispatcher?.UpdateParameters(Parameters, ThreadGroupSize);
         }
 
-        List<GraphicsResource> uavs = new List<GraphicsResource>();
+        List<ParameterKey> uavs = new List<ParameterKey>();
 
         protected override void DrawCore(RenderDrawContext context)
         {
@@ -178,24 +178,14 @@ namespace VL.Stride.Rendering.ComputeEffect
                         pipelineState.Update();
                         pipelineStateDirty = false;
 
+                        // get potential UAVs to unset
                         uavs.Clear();
                         var parameters = EffectInstance.Parameters;
                         if (parameters.HasLayout)
                         {
                             uavs.AddRange(parameters.Layout.LayoutParameterKeyInfos
-                                                .Where(p => typeof(Buffer).IsAssignableFrom(p.Key.PropertyType) || typeof(Texture).IsAssignableFrom(p.Key.PropertyType))
-                                                .Select(k => parameters.GetObject(k.Key))
-                                                .Where(gr =>
-                                                {
-                                                    if (gr is Buffer b)
-                                                        return (b.ViewFlags & BufferFlags.UnorderedAccess) != 0;
-
-                                                    if (gr is Texture t)
-                                                        return (t.ViewFlags & TextureFlags.UnorderedAccess) != 0;
-
-                                                    return false;
-                                                })
-                                                .Cast<GraphicsResource>());
+                                .Where(p => typeof(Buffer).IsAssignableFrom(p.Key.PropertyType) || typeof(Texture).IsAssignableFrom(p.Key.PropertyType))
+                                .Select(k => k.Key));
                         }
                     }
                 }
@@ -217,10 +207,10 @@ namespace VL.Stride.Rendering.ComputeEffect
                 // Dispatch
                 Dispatcher?.Dispatch(context);
 
-                // Un-apply UAV
+                // Unset UAV
                 for (int i = 0; i < uavs.Count; i++)
                 {
-                    UnsetUAV(context.CommandList, uavs[i]);
+                    UnsetUAV(context.CommandList, EffectInstance.Parameters, uavs[i]);
                 }
                 
             }
@@ -228,11 +218,29 @@ namespace VL.Stride.Rendering.ComputeEffect
 
         MethodInfo unsetUAV;
         object[] unsetUAVArg = new object[1];
-        void UnsetUAV (CommandList commandList, GraphicsResource resource)
+        void UnsetUAV (CommandList commandList, ParameterCollection parameters, ParameterKey resourceKey)
         {
-            unsetUAV ??= typeof(CommandList).GetMethod("UnsetUnorderedAccessView", BindingFlags.NonPublic | BindingFlags.Instance);
-            unsetUAVArg[0] = resource;
-            unsetUAV.Invoke(commandList, unsetUAVArg);
+            var gr = parameters?.GetObject(resourceKey);
+
+            GraphicsResource resource = null;
+            if (gr is Buffer b)
+            {
+                if ((b.ViewFlags & BufferFlags.UnorderedAccess) != 0)
+                    resource = b;
+
+            }
+            else if (gr is Texture t)
+            {
+                if ((t.ViewFlags & TextureFlags.UnorderedAccess) != 0)
+                    resource = t;
+            }
+
+            if (resource != null)
+            {
+                unsetUAV ??= typeof(CommandList).GetMethod("UnsetUnorderedAccessView", BindingFlags.NonPublic | BindingFlags.Instance);
+                unsetUAVArg[0] = resource;
+                unsetUAV.Invoke(commandList, unsetUAVArg); 
+            }
         }
 
     }
