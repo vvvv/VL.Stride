@@ -38,7 +38,7 @@ namespace VL.Stride.Graphics
         }
 
         /// <summary>
-        /// Copies the <paramref name="fromData"/> to the given <paramref name="buffer"/> on GPU memory.
+        /// Copies the <paramref name="fromData"/> to the given <paramref name="texture"/> on GPU memory.
         /// </summary>
         /// <typeparam name="TData">The type of the T data.</typeparam>
         /// <param name="texture"></param>
@@ -67,6 +67,19 @@ namespace VL.Stride.Graphics
             {
                 var dp = new DataPointer(handle.Pointer, data.Bytes.Length);
                 texture.SetData(commandList, dp, arraySlice, mipSlice, region);
+            }
+
+            return texture;
+        }
+
+        public static unsafe Texture SetDataFromProvider(this Texture texture, CommandList commandList, IStrideGraphicsDataProvider data, int arraySlice = 0, int mipSlice = 0, ResourceRegion? region = null)
+        {
+            if (texture != null && data != null)
+            {
+                using (var handle = data.Pin())
+                {
+                    texture.SetData(commandList, new DataPointer(handle.Pointer, data.SizeInBytes), arraySlice, mipSlice, region);
+                } 
             }
 
             return texture;

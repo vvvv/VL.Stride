@@ -160,6 +160,19 @@ namespace VL.Stride.Graphics
             }
         }
 
+        public static Buffer SetDataFromProvider(this Buffer buffer, CommandList commandList, IStrideGraphicsDataProvider data, int offsetInBytes = 0)
+        {
+            if (buffer != null && data != null)
+            {
+                using (var handle = data.Pin())
+                {
+                    buffer.SetData(commandList, new DataPointer(handle.Pointer, data.SizeInBytes), offsetInBytes);
+                } 
+            }
+
+            return buffer;
+        }
+
         /// <summary>
         /// Creates a new <see cref="Buffer"/> initialized with a copy of the given data.
         /// </summary>
