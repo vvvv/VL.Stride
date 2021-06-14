@@ -17,9 +17,10 @@ namespace VL.Stride.Graphics
         PinnedGraphicsData Pin();
     }
 
-    public interface IMemoryPinner : IDisposable
+    public interface IMemoryPinner
     {
         public IntPtr Pin();
+        public void Unpin();
     }
 
     public class ReadonlyMemoryPinner<T> : IMemoryPinner where T : struct
@@ -33,7 +34,7 @@ namespace VL.Stride.Graphics
             return new IntPtr(memoryHandle.Pointer);
         }
 
-        public void Dispose()
+        public void Unpin()
         {
             memoryHandle.Dispose();
         }
@@ -53,7 +54,7 @@ namespace VL.Stride.Graphics
             return new IntPtr(memoryHandle.Pointer);
         }
 
-        public void Dispose()
+        public void Unpin()
         {
             memoryHandle.Dispose();
             imageData.Dispose();
@@ -67,7 +68,7 @@ namespace VL.Stride.Graphics
             return IntPtr.Zero;
         }
 
-        public void Dispose()
+        public void Unpin()
         {
         }
     }
@@ -77,17 +78,17 @@ namespace VL.Stride.Graphics
         public static readonly PinnedGraphicsData None = new PinnedGraphicsData(new NonePinner());
 
         public readonly IntPtr Pointer;
-        readonly IDisposable disposable;
+        readonly IMemoryPinner pinner;
 
         public PinnedGraphicsData(IMemoryPinner pinner)
         {
             Pointer = pinner.Pin();
-            disposable = pinner;
+            this.pinner = pinner;
         }
 
         public void Dispose()
         {
-            disposable.Dispose();
+            pinner.Unpin();
         }
     }
 
@@ -104,8 +105,9 @@ namespace VL.Stride.Graphics
             Pinner = pnr;
 
             OffsetInBytes = offsetInBytes;
-            SizeInBytes = sizeInBytes > 0 ? sizeInBytes : memory.Length;
-            ElementSizeInBytes = elementSizeInBytes > 0 ? elementSizeInBytes : Utilities.SizeOf<T>();
+            var tSize = Utilities.SizeOf<T>();
+            SizeInBytes = sizeInBytes > 0 ? sizeInBytes : memory.Length * tSize;
+            ElementSizeInBytes = elementSizeInBytes > 0 ? elementSizeInBytes : tSize;
             RowSizeInBytes = rowSizeInBytes;
             SliceSizeInBytes = sliceSizeInBytes;
         }
