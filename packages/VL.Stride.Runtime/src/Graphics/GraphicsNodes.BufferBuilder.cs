@@ -79,7 +79,7 @@ namespace VL.Stride.Graphics
 
             private void RebuildBuffer()
             {
-                IPinnedGraphicsData pin = null;
+                var pin = PinnedGraphicsData.None;
                 if (initalData != null)
                 {
                     pin = initalData.Pin();
@@ -90,7 +90,7 @@ namespace VL.Stride.Graphics
                     buffer?.Dispose();
                     buffer = null;
                     var game = gameHandle.Resource;
-                    buffer = BufferExtensions.New(game.GraphicsDevice, description, viewDescription, pin?.Pointer ?? IntPtr.Zero);
+                    buffer = BufferExtensions.New(game.GraphicsDevice, description, viewDescription, pin.Pointer);
                 }
                 catch
                 {
@@ -98,7 +98,7 @@ namespace VL.Stride.Graphics
                 }
                 finally
                 {
-                    pin?.Dispose();
+                    pin.Dispose();
                 }
             }
         }

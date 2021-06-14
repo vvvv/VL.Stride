@@ -14,54 +14,44 @@ namespace VL.Stride.Graphics
         int ElementSizeInBytes { get; }
         int RowSizeInBytes { get; }
         int SliceSizeInBytes { get; }
-        IPinnedGraphicsData Pin();
+        PinnedGraphicsData Pin();
     }
 
-    public interface IPinnedGraphicsData : IDisposable
+    public interface IMemoryPinner : IDisposable
     {
-        IntPtr Pointer { get; }
+        public IntPtr Pin();
     }
 
-    public class ImageDataProvider : IStrideGraphicsDataProvider
+    public class ReadonlyMemoryPinner<T> : IMemoryPinner where T : struct
     {
-        private IImage image;
+        public ReadOnlyMemory<T> Memory;
+        MemoryHandle memoryHandle;
 
-        public ImageDataProvider(IImage image)
+        public unsafe IntPtr Pin()
         {
-            this.image = image;
-            SizeInBytes = image.Info.ImageSize;
-            ElementSizeInBytes = image.Info.Format.GetPixelSize();
-            RowSizeInBytes = image.Info.ScanSize;
-            SliceSizeInBytes = RowSizeInBytes * image.Info.Height;
+            memoryHandle = Memory.Pin();
+            return new IntPtr(memoryHandle.Pointer);
         }
 
-        public int SizeInBytes { get; set; }
-
-        public int ElementSizeInBytes { get; set; }
-
-        public int RowSizeInBytes { get; set; }
-
-        public int SliceSizeInBytes { get; set; }
-
-
-        public IPinnedGraphicsData Pin()
+        public void Dispose()
         {
-            return new PinnedImageData(image);
+            memoryHandle.Dispose();
         }
     }
 
-    public struct PinnedImageData : IPinnedGraphicsData
+    public class ImagePinner : IMemoryPinner
     {
+        public IImage Image;
+
         IImageData imageData;
         MemoryHandle memoryHandle;
 
-        public PinnedImageData(IImage image)
+        public unsafe IntPtr Pin()
         {
-            imageData = image.GetData();
+            imageData = Image.GetData();
             memoryHandle = imageData.Bytes.Pin();
+            return new IntPtr(memoryHandle.Pointer);
         }
-
-        public unsafe IntPtr Pointer => new IntPtr(memoryHandle.Pointer);
 
         public void Dispose()
         {
@@ -70,16 +60,73 @@ namespace VL.Stride.Graphics
         }
     }
 
-    public class MemoryDataProvider<T> : IStrideGraphicsDataProvider where T : struct
+    public class NonePinner : IMemoryPinner
     {
-        private ReadOnlyMemory<T> memory;
-
-        public MemoryDataProvider(ReadOnlyMemory<T> memory)
+        public IntPtr Pin()
         {
-            this.memory = memory;
-            SizeInBytes = memory.Length;
-            ElementSizeInBytes = Utilities.SizeOf<T>();
+            return IntPtr.Zero;
         }
+
+        public void Dispose()
+        {
+        }
+    }
+
+    public struct PinnedGraphicsData : IDisposable
+    {
+        public static readonly PinnedGraphicsData None = new PinnedGraphicsData(new NonePinner());
+
+        public readonly IntPtr Pointer;
+        readonly IDisposable disposable;
+
+        public PinnedGraphicsData(IMemoryPinner pinner)
+        {
+            Pointer = pinner.Pin();
+            disposable = pinner;
+        }
+
+        public void Dispose()
+        {
+            disposable.Dispose();
+        }
+    }
+
+    public class MemoryDataProvider : IStrideGraphicsDataProvider
+    {
+        public IMemoryPinner Pinner = new NonePinner();
+
+        public void SetMemoryData<T>(ReadOnlyMemory<T> memory, int offsetInBytes = 0, int sizeInBytes = 0, int elementSizeInBytes = 0, int rowSizeInBytes = 0, int sliceSizeInBytes = 0) where T : struct
+        {
+            var pnr = Pinner as ReadonlyMemoryPinner<T>;
+            pnr ??= new ReadonlyMemoryPinner<T>();
+
+            pnr.Memory = memory;
+            Pinner = pnr;
+
+            OffsetInBytes = offsetInBytes;
+            SizeInBytes = sizeInBytes > 0 ? sizeInBytes : memory.Length;
+            ElementSizeInBytes = elementSizeInBytes > 0 ? elementSizeInBytes : Utilities.SizeOf<T>();
+            RowSizeInBytes = rowSizeInBytes;
+            SliceSizeInBytes = sliceSizeInBytes;
+        }
+
+        public void SetImageData(IImage image, int offsetInBytes = 0, int sizeInBytes = 0, int elementSizeInBytes = 0, int rowSizeInBytes = 0, int sliceSizeInBytes = 0)
+        {
+            var pnr = Pinner as ImagePinner;
+            pnr ??= new ImagePinner();
+
+            pnr.Image = image;
+            Pinner = pnr;
+
+            OffsetInBytes = offsetInBytes;
+
+            SizeInBytes = sizeInBytes > 0 ? sizeInBytes : image.Info.ImageSize;
+            ElementSizeInBytes = elementSizeInBytes > 0 ? elementSizeInBytes : image.Info.Format.GetPixelSize();
+            RowSizeInBytes = rowSizeInBytes > 0 ? rowSizeInBytes : image.Info.ScanSize;
+            SliceSizeInBytes = sliceSizeInBytes > 0 ? sliceSizeInBytes : RowSizeInBytes * image.Info.Height;
+        }
+
+        public int OffsetInBytes { get; set; }
 
         public int SizeInBytes { get; set; }
 
@@ -89,37 +136,19 @@ namespace VL.Stride.Graphics
 
         public int SliceSizeInBytes { get; set; }
 
-
-        public IPinnedGraphicsData Pin()
+        public PinnedGraphicsData Pin()
         {
-            return new PinnedMemoryHandle<T>(memory);
+            return new PinnedGraphicsData(Pinner);
         }
     }
 
-    public struct PinnedMemoryHandle<T> : IPinnedGraphicsData
-    {
-        MemoryHandle memoryHandle;
-
-        public PinnedMemoryHandle(ReadOnlyMemory<T> memory)
-        {
-            memoryHandle = memory.Pin();
-        }
-
-        public unsafe IntPtr Pointer => new IntPtr(memoryHandle.Pointer);
-
-        public void Dispose()
-        {
-            memoryHandle.Dispose();
-        }
-    }
-
-    public class ImagePinner : IDisposable
+    public class VLImagePinner : IDisposable
     {
         IImageData imageData;
         MemoryHandle imageDataHandle;
         IntPtr pointer;
 
-        public unsafe ImagePinner(IImage image)
+        public unsafe VLImagePinner(IImage image)
         {
             imageData = image.GetData();
             imageDataHandle = imageData.Bytes.Pin();
@@ -207,7 +236,7 @@ namespace VL.Stride.Graphics
             }
         }
 
-        public static void PinImage(IImage input, out IntPtr pointer, out int sizeInBytes, out int bytePerRow, out int bytesPerPixel, out ImagePinner pinner)
+        public static void PinImage(IImage input, out IntPtr pointer, out int sizeInBytes, out int bytePerRow, out int bytesPerPixel, out VLImagePinner pinner)
         {
             pointer = IntPtr.Zero;
             sizeInBytes = 0;
@@ -217,7 +246,7 @@ namespace VL.Stride.Graphics
 
             if (input != null)
             {
-                pinner = new ImagePinner(input);
+                pinner = new VLImagePinner(input);
                 sizeInBytes = pinner.SizeInBytes;
                 bytePerRow = pinner.ScanSize;
                 bytesPerPixel = input.Info.PixelSize;

@@ -76,7 +76,7 @@ namespace VL.Stride.Graphics
                 gameHandle.Dispose();
             }
 
-            IPinnedGraphicsData[] pinnedGraphicsDatas = new IPinnedGraphicsData[0];
+            PinnedGraphicsData[] pinnedGraphicsDatas = new PinnedGraphicsData[0];
             DataBox[] boxes = new DataBox[0];
 
             private void RebuildTexture()
@@ -88,7 +88,7 @@ namespace VL.Stride.Graphics
 
                     if (pinnedGraphicsDatas.Length != dataCount)
                     {
-                        pinnedGraphicsDatas = new IPinnedGraphicsData[dataCount];
+                        pinnedGraphicsDatas = new PinnedGraphicsData[dataCount];
                         boxes = new DataBox[dataCount];
                     }
 
@@ -103,8 +103,8 @@ namespace VL.Stride.Graphics
                             var id = initalData[i];
                             if (id is null)
                             {
-                                pinnedGraphicsDatas[i] = null;
-                                boxes[i] = new DataBox();
+                                pinnedGraphicsDatas[i] = PinnedGraphicsData.None;
+                                boxes[i] = new DataBox(IntPtr.Zero, minRowSize, minSliceSize);
                             }
                             else
                             {
@@ -132,7 +132,7 @@ namespace VL.Stride.Graphics
                 {
                     for (int i = 0; i < dataCount; i++)
                     {
-                        pinnedGraphicsDatas[i]?.Dispose();
+                        pinnedGraphicsDatas[i].Dispose();
                     }
                 }
             }
