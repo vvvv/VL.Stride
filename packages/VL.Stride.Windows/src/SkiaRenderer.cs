@@ -25,6 +25,7 @@ namespace VL.Stride.Windows
         private readonly SerialDisposable inputSubscription = new SerialDisposable();
         private IInputSource lastInputSource;
         private SharedSurface lastSharedSurface;
+        private readonly InViewportUpstream viewportLayer = new InViewportUpstream();
         
         public ILayer Layer { get; set; }
 
@@ -71,8 +72,25 @@ namespace VL.Stride.Windows
                 //GL.Vertex2(-0.5f, 0.5f);
                 //GL.End();
 
-                Layer.Render(CallerInfo.InRenderer(sharedSurface.Width, sharedSurface.Height, sharedSurface.Surface.Canvas, sharedSurface.SkiaContext.GraphicsContext));
-                sharedSurface.Surface.Canvas.Flush();
+                var surface = sharedSurface.Surface;
+                var canvas = surface.Canvas;
+
+                var viewport = context.RenderContext.ViewportState.Viewport0;
+
+                canvas.Save();
+
+                try
+                {
+                    canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
+                    viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
+
+                    layer.Render(CallerInfo.InRenderer(sharedSurface.Width, sharedSurface.Height, sharedSurface.Surface.Canvas, sharedSurface.SkiaContext.GraphicsContext));
+                }
+                finally
+                {
+                    canvas.Restore();
+                    canvas.Flush();
+                }
             }
         }
 
