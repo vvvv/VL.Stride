@@ -33,6 +33,9 @@ namespace VL.Stride.Rendering
 
         [DataMember]
         public ViewportF Viewport;
+
+        [DataMemberIgnore]
+        public IGraphicsRendererBase Renderer { get; set; }
     }
 
     public class ViewportRenderInfo
@@ -930,6 +933,7 @@ namespace VL.Stride.Rendering
 
                                 shadowMapRenderer?.Draw(drawContext);
                                 DrawView(context, drawContext, i, ViewCount, renderPostFX: false);
+                                currentView.Renderer?.Draw(drawContext);
                             }
                         }
 

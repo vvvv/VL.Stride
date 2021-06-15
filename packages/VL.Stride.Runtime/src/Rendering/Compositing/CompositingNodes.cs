@@ -141,7 +141,11 @@ namespace VL.Stride.Rendering.Compositing
                 .AddCachedInput(nameof(ForwardRenderer.BindDepthAsResourceDuringTransparentRendering), x => x.BindDepthAsResourceDuringTransparentRendering, (x, v) => x.BindDepthAsResourceDuringTransparentRendering = v)
                 .AddEnabledPin();
 
-            yield return new StrideNodeDesc<ViewportView>(nodeFactory, category: compositionCategoryExperimental) { CopyOnWrite = false };
+            yield return nodeFactory.NewNode<ViewportView>(category: compositionCategoryExperimental, copyOnWrite: false)
+                .AddInput(nameof(ViewportView.View), x => x.View, (x, v) => x.View = v)
+                .AddInput(nameof(ViewportView.Viewport), x => x.Viewport, (x, v) => x.Viewport = v)
+                .AddInput(nameof(ViewportView.Renderer), x => x.Renderer, (x, v) => x.Renderer = v);
+
             yield return new StrideNodeDesc<ViewportSettings>(nodeFactory, category: compositionCategoryExperimental) { CopyOnWrite = false };
 
             yield return nodeFactory.NewNode<ViewportRenderInfo>(category: compositionCategoryExperimental)
