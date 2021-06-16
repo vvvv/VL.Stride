@@ -9,6 +9,7 @@ using Buffer = Stride.Graphics.Buffer;
 using VL.Core;
 using System.Reflection;
 using Stride.Core;
+using System.Diagnostics;
 
 namespace VL.Stride.Graphics
 {
@@ -63,6 +64,12 @@ namespace VL.Stride.Graphics
             //    this.InitializeViews();
             InitializeViews(bufferView);
 
+            if (parentBuffer is IReferencable referencable)
+            {
+                referencable.AddReference();
+                bufferView.Destroyed += (e, s) => referencable.Release();
+            }
+
             return bufferView;
         }
 
@@ -74,6 +81,12 @@ namespace VL.Stride.Graphics
 
         static void SetNativeChild(GraphicsResourceBase graphicsResource, SharpDX.Direct3D11.DeviceChild deviceChild)
         {
+            var iUnknownObject = deviceChild as SharpDX.IUnknown;
+            if (iUnknownObject != null)
+            {
+                var refCountResult = iUnknownObject.AddReference();
+                Debug.Assert(refCountResult > 1);
+            }
             var prop = typeof(GraphicsResourceBase).GetProperty("NativeDeviceChild", NonPunblicInst);
             prop.SetValue(graphicsResource, deviceChild);
         }

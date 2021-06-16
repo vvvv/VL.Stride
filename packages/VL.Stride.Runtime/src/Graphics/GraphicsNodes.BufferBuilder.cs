@@ -90,6 +90,10 @@ namespace VL.Stride.Graphics
                     buffer?.Dispose();
                     buffer = null;
                     var game = gameHandle.Resource;
+
+                    if (viewDescription.Flags == BufferFlags.None)
+                        viewDescription.Flags = description.BufferFlags;
+
                     buffer = BufferExtensions.New(game.GraphicsDevice, description, viewDescription, pin.Pointer);
                 }
                 catch
@@ -165,7 +169,6 @@ namespace VL.Stride.Graphics
                 {
                     if (bufferView != null)
                     {
-                        bufferView.Destroyed -= BufferView_Destroyed;
                         bufferView.Dispose();
                         bufferView = null; 
                     }
@@ -177,8 +180,6 @@ namespace VL.Stride.Graphics
                         bufferView ??= new Buffer();
                         var game = gameHandle.Resource;
                         bufferView = BufferExtensions.ToBufferView(bufferView, buffer, viewDescription, game.GraphicsDevice);
-                        bufferView.DisposeBy(buffer);
-                        bufferView.Destroyed += BufferView_Destroyed;
                     }
                     else
                     {
@@ -189,11 +190,6 @@ namespace VL.Stride.Graphics
                 {
                     bufferView = null;
                 }
-            }
-
-            private void BufferView_Destroyed(object sender, EventArgs e)
-            {
-                bufferView = null;
             }
         }
     }
