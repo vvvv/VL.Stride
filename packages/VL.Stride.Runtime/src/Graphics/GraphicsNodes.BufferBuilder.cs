@@ -179,7 +179,7 @@ namespace VL.Stride.Graphics
                     {
                         bufferView ??= new Buffer();
                         var game = gameHandle.Resource;
-                        bufferView = BufferExtensions.ToBufferView(bufferView, buffer, viewDescription, game.GraphicsDevice);
+                        bufferView = buffer.ToBufferView(bufferView, viewDescription, game.GraphicsDevice);
                     }
                     else
                     {

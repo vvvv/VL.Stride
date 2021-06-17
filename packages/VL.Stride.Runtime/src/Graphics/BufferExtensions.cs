@@ -37,7 +37,7 @@ namespace VL.Stride.Graphics
 
         internal static readonly PropertyKey<Buffer> ParentBuffer = new PropertyKey<Buffer>(nameof(ParentBuffer), typeof(Buffer));
 
-        public static Buffer ToBufferView(Buffer bufferView, Buffer parentBuffer, BufferViewDescription viewDescription, GraphicsDevice graphicsDevice)
+        public static Buffer ToBufferView(this Buffer parentBuffer, Buffer bufferView, BufferViewDescription viewDescription, GraphicsDevice graphicsDevice)
         {
             SetGraphicsDevice(bufferView, graphicsDevice);
 
