@@ -34,7 +34,8 @@ namespace VL.Stride.Assets
         private Subject<ReloadingAsset> AssetBuilt = new Subject<ReloadingAsset>();
         private Subject<string> AssetRemoved = new Subject<string>();
         public IObservable<Tuple<ReloadingAsset, object>> OnAssetBuilt { get; }
-        private ConcurrentDictionary<string, AssetWrapperBase> AllAssets = new ConcurrentDictionary<string, AssetWrapperBase>();
+        private ConcurrentDictionary<string, AssetWrapperBase> allAssets = new ConcurrentDictionary<string, AssetWrapperBase>();
+        public IReadOnlyCollection<KeyValuePair<string, AssetWrapperBase>> AllAssets => allAssets;
         public IObservable<string> OnAssetRemoved => AssetRemoved;
         private readonly ILogger logger;
         private readonly IRuntimeDatabase database;
@@ -109,13 +110,13 @@ namespace VL.Stride.Assets
 
             if (url != null && obj.Item2 != null)
             {
-                if (!AllAssets.TryGetValue(url, out var assetWrapper))
+                if (!allAssets.TryGetValue(url, out var assetWrapper))
                 {
                     var awt = typeof(AssetWrapper<>);
                     Type[] typeArgs = { obj.Item2.GetType() };
                     var makeme = awt.MakeGenericType(typeArgs);
                     assetWrapper = (AssetWrapperBase)Activator.CreateInstance(makeme);
-                    AllAssets[url] = assetWrapper;
+                    allAssets[url] = assetWrapper;
                 }
 
                 assetWrapper.Loading = false;
@@ -130,7 +131,7 @@ namespace VL.Stride.Assets
 
         private void HandleAssetRemoved(string url)
         {
-            if (AllAssets.TryGetValue(url, out var assetWrapper))
+            if (allAssets.TryGetValue(url, out var assetWrapper))
             {
                 assetWrapper.Loading = false;
                 assetWrapper.Exists = false;
@@ -140,10 +141,10 @@ namespace VL.Stride.Assets
 
         public AssetWrapper<T> GetOrCreateAssetWrapper<T>(string url) where T : class
         {
-            if (!AllAssets.TryGetValue(url, out var assetWrapper))
+            if (!allAssets.TryGetValue(url, out var assetWrapper))
             {
                 assetWrapper = new AssetWrapper<T>();
-                AllAssets[url] = assetWrapper;
+                allAssets[url] = assetWrapper;
             }
             
             // If the asset is not yet available add a pending load request
@@ -251,7 +252,7 @@ namespace VL.Stride.Assets
 
             foreach (var ai in assetList)
             {
-                if (AllAssets.TryGetValue(ai.Location.FullPath, out var assetWrapper))
+                if (allAssets.TryGetValue(ai.Location.FullPath, out var assetWrapper))
                 {
                     assetWrapper.Loading = true;
                 }
