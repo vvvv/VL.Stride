@@ -42,8 +42,7 @@ namespace MyTests
                     Path.GetFileName(file) == "HowTo Create a Custom ShaderFX Node.vl" ||
                     Path.GetFileName(file) == "HowTo Read Pixels of a Texture.vl" ||
                     Path.GetFileName(file) == "HowTo Write into a VertexBuffer in a Compute Shader.vl" ||
-                    Path.GetFileName(file) == "VL.Stride.Rendering.Temp.vl" ||
-                    Path.GetFileName(file).StartsWith("Example GPU Particle"))
+                    Path.GetFileName(file) == "VL.Stride.Rendering.Temp.vl")
                     continue;
 
                 var fileUri = new Uri(file, UriKind.Absolute);
