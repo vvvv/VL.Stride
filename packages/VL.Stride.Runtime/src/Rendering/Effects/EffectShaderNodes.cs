@@ -59,13 +59,18 @@ namespace VL.Stride.Rendering
                         return NodeBuilding.NewFactoryImpl(nodes.ToImmutableArray(), invalidated,
                             export: c =>
                             {
-                                // Copy all shaders to the project directory
-                                var assetsFolder = Path.Combine(c.DirectoryPath, "Assets");
-                                Directory.CreateDirectory(assetsFolder);
-                                foreach (var f in Directory.EnumerateFiles(shadersPath))
+                                // Copy all shaders to the project directory but do so only once per shader path relying on the assumption that the generated project
+                                // containing the Assets folder will be referenced by projects further up in the dependency tree.
+                                var pathExportedKey = (typeof(EffectShaderNodes), shadersPath);
+                                if (c.SolutionWideStorage.TryAdd(pathExportedKey, pathExportedKey))
                                 {
-                                    if (string.Equals(Path.GetExtension(f), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(f), ".sdfx", StringComparison.OrdinalIgnoreCase))
-                                        File.Copy(f, Path.Combine(assetsFolder, Path.GetFileName(f)), overwrite: true);
+                                    var assetsFolder = Path.Combine(c.DirectoryPath, "Assets");
+                                    Directory.CreateDirectory(assetsFolder);
+                                    foreach (var f in Directory.EnumerateFiles(shadersPath))
+                                    {
+                                        if (string.Equals(Path.GetExtension(f), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(f), ".sdfx", StringComparison.OrdinalIgnoreCase))
+                                            File.Copy(f, Path.Combine(assetsFolder, Path.GetFileName(f)), overwrite: true);
+                                    }
                                 }
                             });
                     }
