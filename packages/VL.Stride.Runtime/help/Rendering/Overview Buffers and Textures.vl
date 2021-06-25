@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document xmlns:p="property" Id="CTUJMXAiRepP76cKgFfVU7" LanguageVersion="2021.4.0.156" Version="0.128">
+  <NugetDependency Id="VgOwLNRrEaYQQvCQ5Orm0P" Location="VL.CoreLib" Version="2021.4.0-0156-ge75162692c" />
+  <Patch Id="OyaSX5LIy7pMHej5eLWfxG">
+    <Canvas Id="EN2AWcUyuUPNJldoOKKxc7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
+    <!--
+
+    ************************ Application ************************
+
+-->
+    <Node Name="Application" Bounds="100,100" Id="LHXbrW36sKEQNDVqzJV3EB">
+      <p:NodeReference>
+        <Choice Kind="ContainerDefinition" Name="Process" />
+        <FullNameCategoryReference ID="Primitive" />
+      </p:NodeReference>
+      <Patch Id="DpDBxcSl7VRNTSiKNJ25EO">
+        <Canvas Id="VeFyBKebQQZPdSufUx7jz3" CanvasType="Group">
+          <Overlay Id="LxTGyn5T8PkORmIP8vx1NE" Name="Upload data from CPU to GPU" Bounds="203,159,702,256" />
+          <Overlay Id="O7sMy1FUdqZMeEzfAJH5x0" Name="Write and read on GPU" Bounds="204,445,700,157" />
+          <Pad Id="FokQH4hGVu0M7A1wyFQlfZ" Bounds="199,116,448,31" ShowValueBox="true" isIOBox="true" Value="Depending on the usage, select your buffer or texture node as follows:">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Node Bounds="245,235,113,19" Id="N5zO7r838MAOrGEWoL0gkO">
+            <p:NodeReference LastCategoryFullName="Stride.Textures" LastSymbolSource="VL.Stride.Graphics.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="ImmutableTexture2D" />
+            </p:NodeReference>
+            <Pin Id="U0qp8tvCllCNEkXScfJlQj" Name="Initial Data" Kind="InputPin" />
+            <Pin Id="SVxHZSStJo2Lm3L4PICqLt" Name="Size" Kind="InputPin" />
+            <Pin Id="HkOLHx4xxioPeOwQc1wI3k" Name="Format" Kind="InputPin" />
+            <Pin Id="V05rfuGuSzwLjpqkh4TYSc" Name="Recreate On Inital Data Change" Kind="InputPin" />
+            <Pin Id="F54us9BWYRKMHJHj3L6Dua" Name="Recreate" Kind="InputPin" />
+            <Pin Id="Ojx0eM5QbX3N11kxWvnxvN" Name="Output" Kind="OutputPin" />
+            <Pin Id="ScaFhg5bN0BNYHMGJ1Ay43" Name="Has Changed" Kind="OutputPin" />
+          </Node>
+          <Node Bounds="727,231,92,19" Id="KGdAFWnR6YqN9R6kazWNqQ">
+            <p:NodeReference LastCategoryFullName="Stride.Buffers" LastSymbolSource="VL.Stride.Graphics.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="ImmutableBuffer" />
+            </p:NodeReference>
+            <Pin Id="AeoqQY0eB5sPe8j03tGOIk" Name="Initial Data" Kind="InputPin" />
+            <Pin Id="LmlPR2B3UbROLRqQ9VFiSC" Name="Element Size In Bytes" Kind="InputPin" />
+            <Pin Id="UzOWqyMYB99M1hDzGXeDVR" Name="Recreate On Inital Data Change" Kind="InputPin" />
+            <Pin Id="GsBbZvVLmcXPvgbsxyOU3V" Name="Recreate" Kind="InputPin" />
+            <Pin Id="RK21JOa0hsfMFktNtuZkL2" Name="Output" Kind="OutputPin" />
+            <Pin Id="GTwWP0jWxX4LPFcGkzM7nB" Name="Has Changed" Kind="OutputPin" />
+          </Node>
+          <Pad Id="Mk8xTMFlgHsPbqPsNF2qLa" Bounds="419,235,213,39" ShowValueBox="true" isIOBox="true" Value="data is static or rarely changes, optimized for reading on GPU.">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Node Bounds="243,334,85,19" Id="OzrIthD8UvnNzCdR3B3Znq">
+            <p:NodeReference LastCategoryFullName="Stride.Textures" LastSymbolSource="VL.Stride.Graphics.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="DynamicTexture2D" />
+            </p:NodeReference>
+            <Pin Id="KUEeVjqxDmXPS8PNGrwgkQ" Name="Input" Kind="InputPin" />
+            <Pin Id="Nn7vRGrFNGSQOq7qx8tplM" Name="Size" Kind="InputPin" />
+            <Pin Id="Hy4flnWZ5ccMe4vSENQgwg" Name="Format" Kind="InputPin" />
+            <Pin Id="EOzaiegB4LFLqF2PK0sv8Q" Name="Apply" Kind="InputPin" />
+            <Pin Id="NMxIeoVgSyYN43uly6kWmH" Name="Recreate" Kind="InputPin" />
+            <Pin Id="UZdWYOO4LPbODK5bSAvlTk" Name="Output" Kind="OutputPin" />
+            <Pin Id="R6V8RZPoGmrOV3ywkb8zJJ" Name="Has Changed" Kind="OutputPin" />
+          </Node>
+          <Pad Id="AhVGGo4YtqtM7QsjnKurA4" Bounds="412,329,249,41" ShowValueBox="true" isIOBox="true" Value="data potentially changes every frame, optimized for fast uploads.">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Node Bounds="727,333,85,19" Id="GuH1jlC0qnULLbbmbHIT9p">
+            <p:NodeReference LastCategoryFullName="Stride.Buffers" LastSymbolSource="VL.Stride.Graphics.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="DynamicBuffer" />
+            </p:NodeReference>
+            <Pin Id="Lchfof9LuSjMjuEwo4R5Ox" Name="Input" Kind="InputPin" />
+            <Pin Id="Q2ylUX8NnTSN3GtexOg2Fy" Name="Element Size In Bytes" Kind="InputPin" />
+            <Pin Id="OEUU0xhh6nKLzKE7RRrnnu" Name="Offset In Bytes" Kind="InputPin" />
+            <Pin Id="Oh7jhesFjNDLSSw7zL3oYf" Name="Is Structured Buffer" Kind="InputPin" />
+            <Pin Id="O7y58I9QCm7NF29WcK18x8" Name="Is Vertex Buffer" Kind="InputPin" />
+            <Pin Id="AxPsSgO1aEwMZdz9UssqLG" Name="Is Index Buffer" Kind="InputPin" />
+            <Pin Id="JaYh4YfjoiVLoth2Ii6y8B" Name="Recreate" Kind="InputPin" />
+            <Pin Id="DFhFeNBf51ZLiihVXoPeRq" Name="Apply" Kind="InputPin" />
+            <Pin Id="UvDX9NNqmUyOy9UBi8YBrT" Name="Output" Kind="OutputPin" />
+            <Pin Id="P0Bof4saoQUPfDh9bQDOFp" Name="Has Changed" Kind="OutputPin" />
+          </Node>
+          <Node Bounds="718,537,85,19" Id="HrfZrjFHWxbOmqNK6qKIrx">
+            <p:NodeReference LastCategoryFullName="Stride.Buffers" LastSymbolSource="VL.Stride.Graphics.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="ComputeBuffer" />
+            </p:NodeReference>
+            <Pin Id="IeW3lgza6NhPIfETUpAu3E" Name="Element Count" Kind="InputPin" />
+            <Pin Id="DJ2WGf9u4emLb8O4cm92ri" Name="Element Size In Bytes" Kind="InputPin" />
+            <Pin Id="EOZ1nrv9OdmMGJepUCgFts" Name="Recreate" Kind="InputPin" />
+            <Pin Id="ArbDKZKPUk0QAMrnutGekY" Name="Output" Kind="OutputPin" />
+            <Pin Id="RsfVAYuZLCJN9ATG8IT4o1" Name="Has Changed" Kind="OutputPin" />
+          </Node>
+          <Node Bounds="246,534,106,19" Id="FH8VeCEEUdWP1zpjHvAiW3">
+            <p:NodeReference LastCategoryFullName="Stride.Textures" LastSymbolSource="VL.Stride.Graphics.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="ComputeTexture2D" />
+            </p:NodeReference>
+            <Pin Id="OX0jYPE7CZoMBTPxsp5RBD" Name="Size" Kind="InputPin" />
+            <Pin Id="UAwZ9t8jYIrNaT5G9zUQhv" Name="Format" Kind="InputPin" />
+            <Pin Id="FPPRjyNigAIOwKLscSuCVL" Name="Recreate" Kind="InputPin" />
+            <Pin Id="MmWqmslrEuWNEtT6BNZkcq" Name="Output" Kind="OutputPin" />
+            <Pin Id="QjtOxPZQBYGLCFYibuY6R2" Name="Has Changed" Kind="OutputPin" />
+          </Node>
+          <Pad Id="QFu0h2R8IzjNADR2UhAWJL" Bounds="422,540,185,21" ShowValueBox="true" isIOBox="true" Value="data is manipulated on GPU">
+            <p:TypeAnnotation>
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+        </Canvas>
+        <Patch Id="G5g4MEsvHm0QKwFYeBosRR" Name="Create" />
+        <Patch Id="U8RJR7GrRS5PZGjGEySMmF" Name="Update" />
+        <ProcessDefinition Id="IBUvnuiDcaAPuIENvoP8jr">
+          <Fragment Id="ECKz41bGpFPOgoIiOWJnpE" Patch="G5g4MEsvHm0QKwFYeBosRR" Enabled="true" />
+          <Fragment Id="QmHsfF9eX1QLO864kPpOAz" Patch="U8RJR7GrRS5PZGjGEySMmF" Enabled="true" />
+          <Fragment Id="BZBhMGktotiLlkcoCAuCx3" Patch="A3qayaIqK0QLYq5WsUcdAt" />
+        </ProcessDefinition>
+        <Patch Id="A3qayaIqK0QLYq5WsUcdAt" Name="CreateDefault (Hidden)" />
+      </Patch>
+    </Node>
+  </Patch>
+  <NugetDependency Id="TPpaPGKpPLFMsicnspQolM" Location="VL.CoreLib" Version="2021.4.0-0156-ge75162692c" />
+  <NugetDependency Id="LRBSiP14dv8MBfvjFhGlZx" Location="VL.Stride" Version="2021.4.0-0156-ge75162692c" />
+</Document>
