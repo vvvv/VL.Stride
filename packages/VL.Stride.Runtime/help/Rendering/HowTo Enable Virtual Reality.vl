@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="EpFTo6QHYkoP3IGXodygSE" LanguageVersion="2021.4.0.89" Version="0.128">
-  <NugetDependency Id="EK2IIfeZLP7M7Y7FuMidpy" Location="VL.CoreLib" Version="2021.4.0-proxies-0089-g89dfbca11e" />
+<Document xmlns:p="property" Id="EpFTo6QHYkoP3IGXodygSE" LanguageVersion="2021.4.0.166" Version="0.128">
+  <NugetDependency Id="EK2IIfeZLP7M7Y7FuMidpy" Location="VL.CoreLib" Version="2021.4.0-0166-gb997104856" />
   <Patch Id="OJlEj9qqLsGQMBVoXBBHQD">
     <Canvas Id="JJIykWSGbjqMd3yAxb7JUf" DefaultCategory="Main" CanvasType="FullCategory">
       <!--
@@ -1325,8 +1325,7 @@
             </p:NodeReference>
             <Pin Id="C3vAiO9iRCANew1RD2QZcu" Name="Input" Kind="InputPin" />
             <Pin Id="STsWjhP6IJ0N2RkZE9L85C" Name="Render View" Kind="InputPin" />
-            <Pin Id="NaSzjgsjUtiOIHo4r2x4T4" Name="Width" Kind="InputPin" />
-            <Pin Id="JRMSCXbeGPvLhsrTZcnxOH" Name="Height" Kind="InputPin" />
+            <Pin Id="PrrxlwnGM6JQEAEy0IqK94" Name="Size" Kind="InputPin" />
             <Pin Id="Geu6y0LZcDvPDXPO6T8pw1" Name="Format" Kind="InputPin" />
             <Pin Id="Obtqq1eJsMyQcygnWjM6bl" Name="Depth Format" Kind="InputPin" />
             <Pin Id="TuytTpOITuRN2i9PYsZapz" Name="Clear Color" Kind="InputPin" />
@@ -1337,11 +1336,6 @@
           <Pad Id="SxrRXkF7Wf9NVoCup8n9FE" Comment="Clear Color" Bounds="1035,543,136,15" ShowValueBox="true" isIOBox="true" Value="0, 0, 0, 0">
             <p:TypeAnnotation LastCategoryFullName="Color" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="RGBA" />
-            </p:TypeAnnotation>
-          </Pad>
-          <Pad Id="EFJuk52P24VOvEj3ugvpI9" Comment="" Bounds="964,530,35,15" ShowValueBox="true" isIOBox="true" Value="512">
-            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="TypeFlag" Name="Integer32" />
             </p:TypeAnnotation>
           </Pad>
           <Node Bounds="204,669,185,19" Id="J26Ijs83BlKNUkYn0NsajM">
@@ -1391,7 +1385,7 @@
           <Pad Id="PhsjLtuEuuKNc4LGwbFjeS" Comment="State" Bounds="130,186,84,15" ShowValueBox="true" isIOBox="true" />
           <Pad Id="K0tWDMelvCcLYurRTb6c0Q" Comment="State" Bounds="190,307,84,15" ShowValueBox="true" isIOBox="true" />
           <Overlay Id="Gk9nyaZorSuMVjk7xJgtMT" Name="Experimental" Bounds="834,366,444,535" />
-          <Pad Id="UznickWVZ4gNrTxSRaPsHg" Bounds="709,611,188,62" ShowValueBox="true" isIOBox="true" Value="Stride doesn't expect these values to change at runtime, so use carefully.">
+          <Pad Id="UznickWVZ4gNrTxSRaPsHg" Bounds="707,609,188,62" ShowValueBox="true" isIOBox="true" Value="Stride doesn't expect these values to change at runtime, so use carefully.">
             <p:TypeAnnotation>
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -1485,6 +1479,11 @@
             </p:ValueBoxSettings>
           </Pad>
           <Pad Id="Gt7WT9QRwD7M32mVSA1ScU" Comment="Head Position" Bounds="309,172,35,43" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="PUwp5te646vNs32sDm5oln" Comment="Size" Bounds="941,531,36,28" ShowValueBox="true" isIOBox="true" Value="512, 512">
+            <p:TypeAnnotation LastCategoryFullName="Stride.API.Core.Mathematics" LastSymbolSource="VL.Stride.Runtime.TypeForwards.vl">
+              <Choice Kind="TypeFlag" Name="Int2" />
+            </p:TypeAnnotation>
+          </Pad>
         </Canvas>
         <Patch Id="OMXzTGNEV47NTiwBznhr5D" Name="Create" />
         <Patch Id="AOi49iY4nUNLvqi98cKnt7" Name="Update" />
@@ -1493,6 +1492,7 @@
           <Fragment Id="KOrn32ggi61NzU5Nuw9kix" Patch="AOi49iY4nUNLvqi98cKnt7" Enabled="true" />
           <Fragment Id="GCRTKzOikyuPdubfrZHLbn" Patch="TBpcDE977RNMeKqisOA5h8" />
           <Fragment Id="NEnPWZhK8f0QckvpV3LjHh" Patch="PjyU35JoQheQAHJ0BtUJ9O" />
+          <Fragment Id="DM6GvbbemrlMR4ileufjin" Patch="Rb9V1Danwf8QZWnFs3KOog" />
         </ProcessDefinition>
         <Link Id="A6a1ChsBSvNMETLRLAhcFu" Ids="IWsQe5cOixvPGHj5DDnYZq,VvCkUF61x2VNAocMjMXOqq" />
         <Link Id="CIowyxS2skULaKSLNHraqy" Ids="VvCkUF61x2VNAocMjMXOqq,Ku0VoLFktVyN85hreY8YAi" />
@@ -1516,8 +1516,6 @@
         <Link Id="N2nXgqoyw3MLIYIFh2fqOV" Ids="SL9cb64puspMSnSMGbHW04,AipJY2sT67uNUcFgVzy0bc" />
         <Link Id="T02mry5NlQvPJPMZL1fIpy" Ids="JBYkeqtC0i2OpPycrCjnG8,RHIGSzGPBVjNzrI3MD3y6L" />
         <Link Id="K03gLPYUv0yNearcJcufc7" Ids="SxrRXkF7Wf9NVoCup8n9FE,TuytTpOITuRN2i9PYsZapz" />
-        <Link Id="KEWP6Mv4ddYLjVhf8Z9dYZ" Ids="EFJuk52P24VOvEj3ugvpI9,NaSzjgsjUtiOIHo4r2x4T4" />
-        <Link Id="KglyKABH6ABMcdhmN9Jglf" Ids="EFJuk52P24VOvEj3ugvpI9,JRMSCXbeGPvLhsrTZcnxOH" />
         <Link Id="OvnzuUyZ3S2MeIA1osh3DV" Ids="UEitt3jBSD8LjonXOxyZam,TZgp5ckUV2AOdxunO6oP4D" />
         <Link Id="IG7bUiVYA7rNXWm2F6SJVQ" Ids="HDHw45a4FB8QXw28OqKtSF,U0a4xVDhwgDPPSmSKPjqwU" />
         <Link Id="Tvdp6BjBBd2QJuYxDW17y1" Ids="Psved0AN02SN7C0TpT0JX9,Qqz1rPSS2rXLMih0qDfCtS" />
@@ -1536,8 +1534,9 @@
         <Link Id="JdsTfcDDpseP4tfg4t5joW" Ids="AAScMSetuN5OkMXKxDsluo,DsmktSGV84PQOftxtNQqeK" />
         <Link Id="MuNSJShaGcvPlQCohvKTgf" Ids="AoeNPsQ8WZBOWUkPQevEOX,Gt7WT9QRwD7M32mVSA1ScU" />
         <Patch Id="Rb9V1Danwf8QZWnFs3KOog" Name="CreateDefault (Hidden)" />
+        <Link Id="TZ6PQnfnA1SMTMaEOCZyro" Ids="PUwp5te646vNs32sDm5oln,PrrxlwnGM6JQEAEy0IqK94" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Sqp860gSrRSM3KIIvcTq17" Location="VL.Stride" Version="2021.4.0-proxies-0090-g6fce957940" />
+  <NugetDependency Id="Sqp860gSrRSM3KIIvcTq17" Location="VL.Stride" Version="2021.4.0-0166-gb997104856" />
 </Document>
