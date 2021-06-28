@@ -35,6 +35,7 @@ namespace VL.Stride.Lib
                     factory: () =>
                     {
                         var clockSubscription = default(IDisposable);
+                        var assetBuildService = default(AssetBuilderServiceScript);
                         EventHandler processSdlEventsHandler = (s, e) => global::Stride.Graphics.SDL.Application.ProcessEvents();
 
                         return ResourceProvider.New(
@@ -48,7 +49,7 @@ namespace VL.Stride.Lib
                                 // as we'd need to either recreate all textures and swapchains in that moment or make sure that these weren't created yet.
                                 game.GraphicsDeviceManager.PreferredColorSpace = ColorSpace.Linear;
 
-                                var assetBuildService = new AssetBuilderServiceScript();
+                                assetBuildService = new AssetBuilderServiceScript();
                                 game.Services.AddService(assetBuildService);
                                 game.Services.AddService(nodeContext.Factory);
 
@@ -98,6 +99,14 @@ namespace VL.Stride.Lib
                             },
                             beforeDispose: game =>
                             {
+                                // Stride doesn't seem to remove the script on it's own. Do it manually to ensure the cancellation token gets set.
+                                if (assetBuildService != null)
+                                {
+                                    game.Script.Remove(assetBuildService);
+                                    // And run the scheduler one last time to actually trigger the cancellation
+                                    game.Script.Scheduler.Run();
+                                }
+
                                 // Remove the event handlers
                                 if (UseSDL)
                                 {
