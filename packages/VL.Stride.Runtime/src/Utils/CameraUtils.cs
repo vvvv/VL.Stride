@@ -11,12 +11,16 @@ namespace VL.Stride.Utils
 {
     public static class CameraUtils
     {
-        public static Ray ScreenToWorldRay(CameraComponent cameraComponent, Vector2 position)
+        public static Ray ScreenToWorldRay(CameraComponent cameraComponent, Vector2 position, float mouseSurfaceAspect = 0)
         {
             if (cameraComponent == null)
             {
                 return new Ray();
             }
+
+            // calculate projection matrix for current surface
+            if (!cameraComponent.UseCustomAspectRatio && mouseSurfaceAspect > 0 && cameraComponent.ActuallyUsedAspectRatio != mouseSurfaceAspect)
+                cameraComponent.Update(mouseSurfaceAspect);
 
             Matrix.Invert(ref cameraComponent.ViewProjectionMatrix, out var inverseViewProjection);
 
