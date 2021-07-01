@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="MNSXyivlhNYQCnBSK8Eq50" LanguageVersion="2021.3.1.89" Version="0.128">
-  <NugetDependency Id="CyTMByIS4GCPcXbd9DIEG1" Location="VL.CoreLib" Version="2021.3.1" />
+<Document xmlns:p="property" Id="MNSXyivlhNYQCnBSK8Eq50" LanguageVersion="2021.4.0.177" Version="0.128">
+  <NugetDependency Id="CyTMByIS4GCPcXbd9DIEG1" Location="VL.CoreLib" Version="2021.4.0-0177-g7e42e89b9b" />
   <Patch Id="Rbz20khwuWuPWaF6SmBpfN">
     <Canvas Id="B58Ycc38XovLPRwNSajl1j" DefaultCategory="Main" CanvasType="FullCategory" />
     <!--
@@ -15,43 +15,40 @@
       </p:NodeReference>
       <Patch Id="LlIhAUMKBLkLlHcSPt0U76">
         <Canvas Id="K3fbjoznszIPZvySMYPYyF" CanvasType="Group">
-          <Node Bounds="682,491,111,19" Id="OZQ7kzaH29oQRYh7vRASsf">
-            <p:NodeReference LastCategoryFullName="Stride.Textures.Spout" LastSymbolSource="VL.Stride.Graphics.Windows.vl">
+          <Node Bounds="643,481,29,19" Id="OZQ7kzaH29oQRYh7vRASsf">
+            <p:NodeReference>
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="ReceiveSpoutTexture" />
+              <Choice Kind="ProcessAppFlag" Name="SpoutReceiver" />
             </p:NodeReference>
             <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
+            <Pin Id="J4kLGMn4QYALYi458N5JPV" Name="Auto Receive Active Sender" Kind="InputPin" />
             <Pin Id="LBYSvWiYgSTL9X76w7UCjY" Name="Sender Name" Kind="InputPin" />
             <Pin Id="EVHAS28Ma82OrqZNHOhu4F" Name="Is SRgb" Kind="InputPin" />
             <Pin Id="DBQYeVbar5HL8KDjbLUhmY" Name="Refresh" Kind="InputPin" />
             <Pin Id="BJGxjfnuY37MXAHhY5IIAJ" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="KhXlSDAbmQNPtcurf1db1D" Comment="Refresh" Bounds="889,376,35,35" ShowValueBox="true" isIOBox="true" Value="False">
-            <p:TypeAnnotation>
-              <Choice Kind="TypeFlag" Name="Boolean" />
-              <FullNameCategoryReference ID="Primitive" />
-            </p:TypeAnnotation>
-            <p:ValueBoxSettings>
-              <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Bang</p:buttonmode>
-            </p:ValueBoxSettings>
-          </Pad>
-          <Node Bounds="186,645,99,19" Id="DrqoHwM26jRNDeMCOYpQTv">
+          <Node Bounds="184,645,99,19" Id="DrqoHwM26jRNDeMCOYpQTv">
             <p:NodeReference LastCategoryFullName="Stride.Textures.Spout" LastSymbolSource="VL.Stride.Graphics.Windows.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="SendSpoutTexture" />
+              <Choice Kind="ProcessAppFlag" Name="SpoutSender" />
             </p:NodeReference>
             <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
             <Pin Id="ChcMdrRzObnLlrTAeTCEKf" Name="Source" Kind="InputPin" />
             <Pin Id="NdbTFYBpLCQL7IIUeYaRj6" Name="Sender Name" Kind="InputPin" />
-            <Pin Id="HVcSjk3CxgmLh3UOtMYjNx" Name="Reset" Kind="InputPin" />
-            <Pin Id="EXri9VB40OmMny1onTdlsi" Name="Success" Kind="OutputPin" />
+            <Pin Id="Hr6GPd4ML9YMx99jginYgP" Name="Set As Active Sender" Kind="InputPin" DefaultValue="False">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="PLd3QmdrVf2QYRAfc3DjPu" Name="Reset" Kind="InputPin" />
+            <Pin Id="Q8eXQGjj7jEOJExAbnIHaX" Name="Enabled" Kind="InputPin" DefaultValue="True">
+              <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="TypeFlag" Name="Boolean" />
+              </p:TypeAnnotation>
+            </Pin>
+            <Pin Id="Hdxesdbf7unMrWePdQeyOa" Name="Success" Kind="OutputPin" />
           </Node>
-          <Pad Id="OHJ1x2qMYfpLjBrbfADL4b" Comment="Sender Name" Bounds="235,614,99,15" ShowValueBox="true" isIOBox="true" Value="With Love from vvvv">
-            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="TypeFlag" Name="String" />
-            </p:TypeAnnotation>
-          </Pad>
-          <Pad Id="ITk9AHwgghpOgAXOmpYmw6" Comment="Sender Name" Bounds="684,376,108,16" ShowValueBox="true" isIOBox="true" Value="With Love from vvvv">
+          <Pad Id="OHJ1x2qMYfpLjBrbfADL4b" Comment="Sender Name" Bounds="210,618,99,15" ShowValueBox="true" isIOBox="true" Value="With Love from vvvv">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -62,14 +59,9 @@
               <Choice Kind="ProcessAppFlag" Name="RenderTexture" />
             </p:NodeReference>
             <Pin Id="U9sWoU11wWSOky5l6zVivf" Name="Input" Kind="InputPin" />
+            <Pin Id="Mf4YBRvrqtDOOIjiONdFvv" Name="Size" Kind="InputPin" />
             <Pin Id="QaQojHJdWKDNcry0nta2It" Name="Render View" Kind="InputPin" />
-            <Pin Id="DDZXOzzmwcgPB1OpUM9lN6" Name="Width" Kind="InputPin" />
-            <Pin Id="LodBR7DD1QhLekRYp8BmEq" Name="Height" Kind="InputPin" />
-            <Pin Id="FRxMzngGeM5QP987TCbnrp" Name="Format" Kind="InputPin" DefaultValue="R8G8B8A8_UNorm_SRgb">
-              <p:TypeAnnotation LastCategoryFullName="Stride.API.Graphics" LastSymbolSource="VL.Stride.Runtime.TypeForwards.vl">
-                <Choice Kind="TypeFlag" Name="PixelFormat" />
-              </p:TypeAnnotation>
-            </Pin>
+            <Pin Id="FRxMzngGeM5QP987TCbnrp" Name="Format" Kind="InputPin" />
             <Pin Id="PTiBawsGaJoMWYfGZwkaVb" Name="Depth Format" Kind="InputPin" />
             <Pin Id="Ij9oCFoTg95OiXog5HZ04p" Name="Clear Color" Kind="InputPin" />
             <Pin Id="Vbn0g7NZCS1Lu625QwIWRy" Name="Clear" Kind="InputPin" />
@@ -132,12 +124,12 @@
             </Pin>
             <Pin Id="Suqmcwx4EUPMfVTqyf0Rb9" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="622,637,205,19" Id="DLqDQDna8TBNQt26QhhB05">
+          <Node Bounds="583,627,205,19" Id="DLqDQDna8TBNQt26QhhB05">
             <p:NodeReference LastCategoryFullName="Stride" LastSymbolSource="VL.Stride.Engine.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
             </p:NodeReference>
-            <Pin Id="UuHuRbmFfTWMjOOkZMhe0M" Name="Bounds" Kind="InputPin" DefaultValue="1177.6, 102.4, 425.6, 234.4">
+            <Pin Id="UuHuRbmFfTWMjOOkZMhe0M" Name="Bounds" Kind="InputPin" DefaultValue="1048.5, 81.5, 579, 433.5">
               <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Rectangle" />
               </p:TypeAnnotation>
@@ -166,21 +158,12 @@
             <Pin Id="M1sD0bdp4LbQXOIQL4FRgN" Name="Back Buffer" Kind="OutputPin" />
             <Pin Id="KY0rxqaDvGSMCFFL266lQr" Name="Depth Buffer" Kind="OutputPin" />
           </Node>
-          <Pad Id="J85uidfbWMLPXvfRbG5yXx" Comment="Title" Bounds="704,610,120,15" ShowValueBox="true" isIOBox="true" Value="Received Spout Texture">
+          <Pad Id="J85uidfbWMLPXvfRbG5yXx" Comment="Title" Bounds="665,600,120,15" ShowValueBox="true" isIOBox="true" Value="Received Spout Texture">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="JNvH8uvdZEdMxhaG7plL3e" Comment="Is SRgb" Bounds="737,419,35,35" ShowValueBox="true" isIOBox="true" Value="True">
-            <p:TypeAnnotation>
-              <Choice Kind="TypeFlag" Name="Boolean" />
-              <FullNameCategoryReference ID="Primitive" />
-            </p:TypeAnnotation>
-            <p:ValueBoxSettings>
-              <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
-            </p:ValueBoxSettings>
-          </Pad>
-          <Overlay Id="ECf9qHKvgaxMWGr68x3AGW" Name="Receive" Bounds="517,278,488,429" />
+          <Overlay Id="ECf9qHKvgaxMWGr68x3AGW" Name="Receive" Bounds="517,278,347,429" />
           <Overlay Id="Ax46OjXeICQNzumP34Ibcv" Name="Send" Bounds="103,285,344,429" />
           <Pad Id="ApZcTI3DaoZP3EigkwqRK4" Bounds="120,190,438,19" ShowValueBox="true" isIOBox="true" Value="Make sure that the sender and receiver application run on the same GPU.">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
@@ -200,7 +183,7 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Node Bounds="662,529,145,19" Id="ONyfQHnXgvJQUNhV1ND6WI">
+          <Node Bounds="623,519,89,19" Id="ONyfQHnXgvJQUNhV1ND6WI">
             <p:NodeReference LastCategoryFullName="Stride.Models.Meshes" LastSymbolSource="VL.Stride.Rendering.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="QuadRenderer" />
@@ -219,7 +202,7 @@
             <Pin Id="JaVdmNdUqMiMMqcZZYB7ZL" Name="Anchor" Kind="InputPin" />
             <Pin Id="RyExsjfDTpOQcC0Uk7ysqT" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="662,567,112,19" Id="GejmRJ1A55oNcfevMdaNvS">
+          <Node Bounds="623,557,112,19" Id="GejmRJ1A55oNcfevMdaNvS">
             <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.Nodes">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessNode" Name="WithinCommonSpace" />
@@ -232,23 +215,7 @@
             </Pin>
             <Pin Id="H6h8YB2e2EiL8Vz7MnXEPU" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="887,425,54,19" Id="JtqGtGWke59PZLWaPmUO7z">
-            <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="OnOpen" />
-            </p:NodeReference>
-            <Pin Id="PDYOSJM67U3PmHH0HwxTn1" Name="Simulate" Kind="InputPin" />
-            <Pin Id="JmFkOqUF852NH11fKMYcxZ" Name="Output" Kind="OutputPin" />
-          </Node>
-          <Node Bounds="887,456,69,19" Id="OOBHethedeROqAaY4NKjxC">
-            <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="FrameDelay" />
-            </p:NodeReference>
-            <Pin Id="VlChAAuyskVLoc0tRwZpnt" Name="Value" Kind="InputPin" />
-            <Pin Id="RPTzATwLSuTPgqANj7b43U" Name="Value" Kind="OutputPin" />
-          </Node>
-          <Pad Id="CR5to2CAjgiLzDuRn0M29o" Comment="Format" Bounds="267,501,172,15" ShowValueBox="true" isIOBox="true" Value="R8G8B8A8_UNorm_SRgb">
+          <Pad Id="CR5to2CAjgiLzDuRn0M29o" Comment="Format" Bounds="259,515,172,15" ShowValueBox="true" isIOBox="true" Value="R8G8B8A8_UNorm_SRgb">
             <p:TypeAnnotation LastCategoryFullName="Stride.API.Graphics" LastSymbolSource="VL.Stride.Runtime.TypeForwards.vl">
               <Choice Kind="TypeFlag" Name="PixelFormat" />
             </p:TypeAnnotation>
@@ -262,6 +229,50 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
+          <Pad Id="ThFPH3tG0vdL3kySmg4342" Comment="Auto Receive Active Sender" Bounds="564,408,35,35" ShowValueBox="true" isIOBox="true" Value="True">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="Boolean" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="NTa6nXZhkmcP54j3imW97u" Comment="Sender Name" Bounds="667,449,99,15" ShowValueBox="true" isIOBox="true" Value="With Love from vvvv">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Node Bounds="624,792,78,19" Id="G7pBuUy6EioQDUSLmxGV8C">
+            <p:NodeReference LastCategoryFullName="Stride.Textures.Spout" LastSymbolSource="VL.Stride.Graphics.Windows.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="SenderNames" />
+            </p:NodeReference>
+            <Pin Id="GmtQTv3IEVZPNuW5ZHHyoq" Name="Update" Kind="InputPin" />
+            <Pin Id="LqLkncJMkJXLt3eqjJzqor" Name="Output" Kind="OutputPin" />
+          </Node>
+          <Pad Id="I5FfP9UUxqVOJ82cWVrWaZ" Comment="" Bounds="626,837,127,34" ShowValueBox="true" isIOBox="true">
+            <p:Value>
+              <Item></Item>
+            </p:Value>
+          </Pad>
+          <Pad Id="B0wH7MAsqVqLby5vWJoOql" Comment="Update" Bounds="626,744,35,35" ShowValueBox="true" isIOBox="true" Value="False">
+            <p:TypeAnnotation>
+              <Choice Kind="TypeFlag" Name="Boolean" />
+              <FullNameCategoryReference ID="Primitive" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Bang</p:buttonmode>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Node Bounds="784,792,75,19" Id="SLp0FfGYLQ7MwzNLFdALNv">
+            <p:NodeReference LastCategoryFullName="Stride.Textures.Spout" LastSymbolSource="VL.Stride.Graphics.Windows.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="ActiveSender" />
+            </p:NodeReference>
+            <Pin Id="Abz4LEQmzvJNMznYnqIB2j" Name="Update" Kind="InputPin" />
+            <Pin Id="ECpi1QlLKtBPMKKld8pC5I" Name="Output" Kind="OutputPin" />
+          </Node>
+          <Pad Id="NyWvJ4YKxbFL6ceW5nySkL" Comment="" Bounds="786,828,107,11" ShowValueBox="true" isIOBox="true" />
         </Canvas>
         <Patch Id="Jks4fnN1awzMF49aeinQOL" Name="Create" />
         <Patch Id="UT9l26TMtpYQQMEWpAL5mV" Name="Update" />
@@ -269,24 +280,25 @@
           <Fragment Id="Fnic7WvZqaxMIlvpCG1SHw" Patch="Jks4fnN1awzMF49aeinQOL" Enabled="true" />
           <Fragment Id="GKe0sL3JyPaPoO5T6MMY4I" Patch="UT9l26TMtpYQQMEWpAL5mV" Enabled="true" />
         </ProcessDefinition>
-        <Link Id="NfwD8leBPR9QMbmYbQU5sV" Ids="OHJ1x2qMYfpLjBrbfADL4b,NdbTFYBpLCQL7IIUeYaRj6" />
-        <Link Id="MsHJvudghSdLJWKFex54m9" Ids="ITk9AHwgghpOgAXOmpYmw6,LBYSvWiYgSTL9X76w7UCjY" />
-        <Link Id="KWVw6oBTo4fPwY5XGqBKgp" Ids="Tcve49W8dUYPhMbThBKzeS,ChcMdrRzObnLlrTAeTCEKf" />
         <Link Id="AV2yIvEkVj5Pmw510HCUGT" Ids="SvVGHgZK2KFMGX2QP2Zdcf,FhlcbSYEbg2PyGTM26riV9" />
         <Link Id="STuqJAr7zFnOIi5wCtQU5V" Ids="Suqmcwx4EUPMfVTqyf0Rb9,U9sWoU11wWSOky5l6zVivf" />
         <Link Id="QiYaO089V2GLX5TyTKSSbd" Ids="J85uidfbWMLPXvfRbG5yXx,IgMTaxmg06qNfVwGRoecRn" />
-        <Link Id="ULD4OItXn16Ov4MZXBJIbk" Ids="JNvH8uvdZEdMxhaG7plL3e,EVHAS28Ma82OrqZNHOhu4F" />
         <Link Id="SgpbBJFGcEnNfov2mrCFgj" Ids="BJGxjfnuY37MXAHhY5IIAJ,Kp1h3LR5wvBPsg9hIx4koS" />
         <Link Id="RDRIpyYpiCJNXAUVxQhWNm" Ids="RyExsjfDTpOQcC0Uk7ysqT,VAS2A4lpsvzPhBOnJCBRIV" />
         <Link Id="SwcqSoAnseNQcmnTs0qRik" Ids="H6h8YB2e2EiL8Vz7MnXEPU,TWXHKKi66NjPEhHBAuCRW5" />
         <Link Id="DQlIwLfQZLqPmol9oa2VKC" Ids="OxUDc0UDWTtQKZjz1tH2jB,Cjs7sSM1Vr2PLztGUMqPtf" />
         <Link Id="J9SOzmyB5JfP450hlg3EJf" Ids="PCfLouWCeHHOZCiyc32czP,GOXcJoQSTiLOXPlmaavOwd" />
-        <Link Id="EcIH06ptY75PqnjYtqnKbx" Ids="JmFkOqUF852NH11fKMYcxZ,VlChAAuyskVLoc0tRwZpnt" />
-        <Link Id="JxfwC91honNMTwF1Dzi4gK" Ids="RPTzATwLSuTPgqANj7b43U,DBQYeVbar5HL8KDjbLUhmY" />
-        <Link Id="N6JGiR3DI3bQYtRDwbjfcb" Ids="KhXlSDAbmQNPtcurf1db1D,PDYOSJM67U3PmHH0HwxTn1" />
-        <Link Id="Dt9eAaseSzcQCCVZrZaDZI" Ids="CR5to2CAjgiLzDuRn0M29o,FRxMzngGeM5QP987TCbnrp" />
+        <Link Id="LuzFxsoh3TWObcq0eMGahP" Ids="CR5to2CAjgiLzDuRn0M29o,FRxMzngGeM5QP987TCbnrp" />
+        <Link Id="OxeYBrRQPnkLM1jItXp38C" Ids="Tcve49W8dUYPhMbThBKzeS,ChcMdrRzObnLlrTAeTCEKf" />
+        <Link Id="OC5pIFdJiqvM3QHjQPlTPT" Ids="ThFPH3tG0vdL3kySmg4342,J4kLGMn4QYALYi458N5JPV" />
+        <Link Id="KAyTaZQObrFMvsgPgiYQge" Ids="OHJ1x2qMYfpLjBrbfADL4b,NdbTFYBpLCQL7IIUeYaRj6" />
+        <Link Id="GZK75qWujeMM8FXqf1XAH6" Ids="NTa6nXZhkmcP54j3imW97u,LBYSvWiYgSTL9X76w7UCjY" />
+        <Link Id="EchfSLeAhJUNq24t5BGNRW" Ids="LqLkncJMkJXLt3eqjJzqor,I5FfP9UUxqVOJ82cWVrWaZ" />
+        <Link Id="QuVHX3CPibyLdacQVYuDbg" Ids="B0wH7MAsqVqLby5vWJoOql,GmtQTv3IEVZPNuW5ZHHyoq" />
+        <Link Id="QKRwH4ARknVL1QwSeHDBfL" Ids="B0wH7MAsqVqLby5vWJoOql,Abz4LEQmzvJNMznYnqIB2j" />
+        <Link Id="Oo3wipXi7r4MkizivMD1K7" Ids="ECpi1QlLKtBPMKKld8pC5I,NyWvJ4YKxbFL6ceW5nySkL" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="SIZmJy5kz58MG7xo0w1pTn" Location="VL.Stride" Version="0.9.92-g247bd849af" />
+  <NugetDependency Id="SIZmJy5kz58MG7xo0w1pTn" Location="VL.Stride" Version="2021.4.0-0178-g8410c98dfd" />
 </Document>
