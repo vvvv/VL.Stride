@@ -144,7 +144,7 @@ namespace VL.Stride.Graphics
         }
     }
 
-    public class VLImagePinner : IDisposable
+    public struct VLImagePinner : IDisposable
     {
         IImageData imageData;
         MemoryHandle imageDataHandle;
@@ -152,9 +152,18 @@ namespace VL.Stride.Graphics
 
         public unsafe VLImagePinner(IImage image)
         {
-            imageData = image.GetData();
-            imageDataHandle = imageData.Bytes.Pin();
-            pointer = (IntPtr)imageDataHandle.Pointer;
+            if (image != null)
+            {
+                imageData = image.GetData();
+                imageDataHandle = imageData.Bytes.Pin();
+                pointer = (IntPtr)imageDataHandle.Pointer; 
+            }
+            else
+            {
+                imageData = null;
+                imageDataHandle = new MemoryHandle();
+                pointer = IntPtr.Zero;
+            }
         }
 
         public IntPtr Pointer
@@ -175,17 +184,20 @@ namespace VL.Stride.Graphics
         public void Dispose()
         {
             imageDataHandle.Dispose();
-            imageData.Dispose();
+            imageData?.Dispose();
         }
     }
 
-    public class GCPinner : IDisposable
+    public struct GCPinner : IDisposable
     {
         GCHandle pinnedObject;
 
         public GCPinner(object obj)
         {
-            pinnedObject = GCHandle.Alloc(obj, GCHandleType.Pinned);
+            if (obj != null)
+                pinnedObject = GCHandle.Alloc(obj, GCHandleType.Pinned);
+            else
+                pinnedObject = new GCHandle();
         }
 
         public IntPtr Pointer
@@ -206,7 +218,6 @@ namespace VL.Stride.Graphics
             pointer = IntPtr.Zero;
             sizeInBytes = 0;
             byteStride = 0;
-            pinner = null;
 
             var count = input.Count;
             if (count > 0)
@@ -216,7 +227,10 @@ namespace VL.Stride.Graphics
 
                 pinner = new GCPinner(input);
                 pointer = pinner.Pointer;
+                return;
             }
+
+            pinner = new GCPinner(null);
         }
 
         public static void PinArray<T>(T[] input, out IntPtr pointer, out int sizeInBytes, out int byteStride, out GCPinner pinner) where T : struct
@@ -224,7 +238,6 @@ namespace VL.Stride.Graphics
             pointer = IntPtr.Zero;
             sizeInBytes = 0;
             byteStride = 0;
-            pinner = null;
 
             var count = input.Length;
             if (count > 0)
@@ -235,7 +248,10 @@ namespace VL.Stride.Graphics
 
                 pinner = new GCPinner(input);
                 pointer = pinner.Pointer;
+                return;
             }
+
+            pinner = new GCPinner(null);
         }
 
         public static void PinImage(IImage input, out IntPtr pointer, out int sizeInBytes, out int bytePerRow, out int bytesPerPixel, out VLImagePinner pinner)
@@ -244,7 +260,6 @@ namespace VL.Stride.Graphics
             sizeInBytes = 0;
             bytePerRow = 0;
             bytesPerPixel = 0;
-            pinner = null;
 
             if (input != null)
             {
@@ -253,7 +268,10 @@ namespace VL.Stride.Graphics
                 bytePerRow = pinner.ScanSize;
                 bytesPerPixel = input.Info.PixelSize;
                 pointer = pinner.Pointer;
+                return;
             }
+
+            pinner = new VLImagePinner(null);
         }
     }
 }
