@@ -8,7 +8,7 @@ using VL.Lib.Collections;
 
 namespace VL.Stride.Graphics
 {
-    public interface IStrideGraphicsDataProvider
+    public interface IGraphicsDataProvider
     {
         int SizeInBytes { get; }
         int ElementSizeInBytes { get; }
@@ -92,7 +92,7 @@ namespace VL.Stride.Graphics
         }
     }
 
-    public class MemoryDataProvider : IStrideGraphicsDataProvider
+    public class MemoryDataProvider : IGraphicsDataProvider
     {
         public IMemoryPinner Pinner = new NonePinner();
 

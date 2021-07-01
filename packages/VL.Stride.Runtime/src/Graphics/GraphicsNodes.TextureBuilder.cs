@@ -13,7 +13,7 @@ namespace VL.Stride.Graphics
         {
             private TextureDescription description;
             private TextureViewDescription viewDescription;
-            private IStrideGraphicsDataProvider[] initalData;
+            private IGraphicsDataProvider[] initalData;
             private bool needsRebuild = true;
             private Texture texture;
             internal bool Recreate;
@@ -54,7 +54,7 @@ namespace VL.Stride.Graphics
                 }
             }
 
-            public IStrideGraphicsDataProvider[] InitalData
+            public IGraphicsDataProvider[] InitalData
             {
                 get => initalData;
                 set

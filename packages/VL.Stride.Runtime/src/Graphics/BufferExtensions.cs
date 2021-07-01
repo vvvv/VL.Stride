@@ -174,7 +174,7 @@ namespace VL.Stride.Graphics
             }
         }
 
-        public static Buffer SetDataFromProvider(this Buffer buffer, CommandList commandList, IStrideGraphicsDataProvider data, int offsetInBytes = 0)
+        public static Buffer SetDataFromProvider(this Buffer buffer, CommandList commandList, IGraphicsDataProvider data, int offsetInBytes = 0)
         {
             if (buffer != null && data != null)
             {
