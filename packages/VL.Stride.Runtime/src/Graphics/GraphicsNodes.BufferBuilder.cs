@@ -14,7 +14,7 @@ namespace VL.Stride.Graphics
         {
             private BufferDescription description;
             private BufferViewDescription viewDescription;
-            private IStrideGraphicsDataProvider initalData;
+            private IGraphicsDataProvider initalData;
             private bool needsRebuild = true;
             private Buffer buffer;
             internal bool Recreate;
@@ -55,7 +55,7 @@ namespace VL.Stride.Graphics
                 }
             }
 
-            public IStrideGraphicsDataProvider InitalData
+            public IGraphicsDataProvider InitalData
             {
                 get => initalData;
                 set

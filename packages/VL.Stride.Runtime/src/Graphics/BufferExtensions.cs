@@ -10,6 +10,7 @@ using VL.Core;
 using System.Reflection;
 using Stride.Core;
 using System.Diagnostics;
+using MapMode = Stride.Graphics.MapMode;
 
 namespace VL.Stride.Graphics
 {
@@ -173,7 +174,7 @@ namespace VL.Stride.Graphics
             }
         }
 
-        public static Buffer SetDataFromProvider(this Buffer buffer, CommandList commandList, IStrideGraphicsDataProvider data, int offsetInBytes = 0)
+        public static Buffer SetDataFromProvider(this Buffer buffer, CommandList commandList, IGraphicsDataProvider data, int offsetInBytes = 0)
         {
             if (buffer != null && data != null)
             {
@@ -303,6 +304,147 @@ namespace VL.Stride.Graphics
                 pool.Return(chunk);
             }
             return buffer;
+        }
+
+        /// <summary>
+        /// Calculates the expected element count of a buffer using a specified type.
+        /// </summary>
+        /// <typeparam name="TData">The type of the T pixel data.</typeparam>
+        /// <returns>The expected width</returns>
+        /// <exception cref="System.ArgumentException">If the size is invalid</exception>
+        public static int CalculateElementCount<TData>(this Buffer input) where TData : struct
+        {
+            var dataStrideInBytes = Utilities.SizeOf<TData>();
+
+            return input.SizeInBytes / dataStrideInBytes;
+        }
+
+        /// <summary>
+        /// Copies the content of this buffer to an array of data.
+        /// </summary>
+        /// <typeparam name="TData">The type of the T data.</typeparam>
+        /// <param name="thisBuffer"></param>
+        /// <param name="commandList">The command list.</param>
+        /// <param name="toData">The destination array to receive a copy of the buffer datas.</param>
+        /// <param name="doNotWait">if set to <c>true</c> this method will return immediately if the resource is still being used by the GPU for writing. Default is false</param>
+        /// <param name="offsetInBytes"></param>
+        /// <param name="lengthInBytes"></param>
+        /// <returns><c>true</c> if data was correctly retrieved, <c>false</c> if <see cref="doNotWait"/> flag was true and the resource is still being used by the GPU for writing.</returns>
+        /// <remarks>
+        /// This method is only working when called from the main thread that is accessing the main <see cref="GraphicsDevice"/>.
+        /// This method creates internally a stagging resource if this buffer is not already a stagging resouce, copies to it and map it to memory. Use method with explicit staging resource
+        /// for optimal performances.</remarks>
+        public static bool GetData<TData>(this Buffer thisBuffer, CommandList commandList, TData[] toData, bool doNotWait = false, int offsetInBytes = 0, int lengthInBytes = 0) where TData : struct
+        {
+            // Get data from this resource
+            if (thisBuffer.Usage == GraphicsResourceUsage.Staging)
+            {
+                // Directly if this is a staging resource
+                return thisBuffer.GetData(commandList, thisBuffer, toData, doNotWait, offsetInBytes, lengthInBytes);
+            }
+            else
+            {
+                // Unefficient way to use the Copy method using dynamic staging texture
+                using (var throughStaging = thisBuffer.ToStaging())
+                    return thisBuffer.GetData(commandList, throughStaging, toData, doNotWait, offsetInBytes, lengthInBytes);
+            }
+        }
+
+        /// <summary>
+        /// Copies the content of this buffer from GPU memory to a CPU memory using a specific staging resource.
+        /// </summary>
+        /// <param name="thisBuffer"></param>
+        /// <param name="commandList"></param>
+        /// <param name="staginBuffer">The staging buffer used to transfer the buffer.</param>
+        /// <param name="toData">To data pointer.</param>
+        /// <param name="doNotWait"></param>
+        /// <param name="offsetInBytes"></param>
+        /// <param name="lengthInBytes"></param>
+        /// <exception cref="System.ArgumentException">When strides is different from optimal strides, and TData is not the same size as the pixel format, or Width * Height != toData.Length</exception>
+        /// <remarks>
+        /// This method is only working when called from the main thread that is accessing the main <see cref="GraphicsDevice"/>.
+        /// </remarks>
+        public static bool GetData<TData>(this Buffer thisBuffer, CommandList commandList, Buffer staginBuffer, TData[] toData, bool doNotWait = false, int offsetInBytes = 0, int lengthInBytes = 0) where TData : struct
+        {
+            using (var pinner = new GCPinner(toData))
+                return thisBuffer.GetData(commandList, staginBuffer, new DataPointer(pinner.Pointer, toData.Length * Utilities.SizeOf<TData>()), doNotWait, offsetInBytes, lengthInBytes);
+        }
+
+        /// <summary>
+        /// Copies the content of this buffer to an array of data.
+        /// </summary>
+        /// <typeparam name="TData">The type of the T data.</typeparam>
+        /// <param name="thisBuffer"></param>
+        /// <param name="commandList">The command list.</param>
+        /// <param name="toData">The destination array to receive a copy of the buffer datas.</param>
+        /// <param name="doNotWait">if set to <c>true</c> this method will return immediately if the resource is still being used by the GPU for writing. Default is false</param>
+        /// <param name="offsetInBytes"></param>
+        /// <param name="lengthInBytes"></param>
+        /// <returns><c>true</c> if data was correctly retrieved, <c>false</c> if <see cref="doNotWait"/> flag was true and the resource is still being used by the GPU for writing.</returns>
+        /// <remarks>
+        /// This method is only working when called from the main thread that is accessing the main <see cref="GraphicsDevice"/>.
+        /// This method creates internally a stagging resource if this buffer is not already a stagging resouce, copies to it and map it to memory. Use method with explicit staging resource
+        /// for optimal performances.</remarks>
+        public static bool GetData(this Buffer thisBuffer, CommandList commandList, DataPointer toData, bool doNotWait = false, int offsetInBytes = 0, int lengthInBytes = 0)
+        {
+            // Get data from this resource
+            if (thisBuffer.Usage == GraphicsResourceUsage.Staging)
+            {
+                // Directly if this is a staging resource
+                return thisBuffer.GetData(commandList, thisBuffer, toData, doNotWait, offsetInBytes, lengthInBytes);
+            }
+            else
+            {
+                // Unefficient way to use the Copy method using dynamic staging texture
+                using (var throughStaging = thisBuffer.ToStaging())
+                    return thisBuffer.GetData(commandList, throughStaging, toData, doNotWait, offsetInBytes, lengthInBytes);
+            }
+        }
+
+        /// <summary>
+        /// Copies the content of this buffer from GPU memory to a CPU memory using a specific staging resource.
+        /// </summary>
+        /// <param name="thisBuffer"></param>
+        /// <param name="commandList"></param>
+        /// <param name="stagingBuffer">The staging buffer used to transfer the buffer.</param>
+        /// <param name="toData">To data pointer.</param>
+        /// <param name="doNotWait"></param>
+        /// <param name="offsetInBytes"></param>
+        /// <param name="lengthInBytes"></param>
+        /// <exception cref="System.ArgumentException">When strides is different from optimal strides, and TData is not the same size as the pixel format, or Width * Height != toData.Length</exception>
+        /// <remarks>
+        /// This method is only working when called from the main thread that is accessing the main <see cref="GraphicsDevice"/>.
+        /// </remarks>
+        public static bool GetData(this Buffer thisBuffer, CommandList commandList, Buffer stagingBuffer, DataPointer toData, bool doNotWait = false, int offsetInBytes = 0, int lengthInBytes = 0)
+        {
+            // Check size validity of data to copy to
+            if (toData.Pointer == IntPtr.Zero || toData.Size != thisBuffer.SizeInBytes)
+                return false;
+
+            // Copy the texture to a staging resource
+            if (!ReferenceEquals(thisBuffer, stagingBuffer))
+                commandList.Copy(thisBuffer, stagingBuffer);
+
+            var mappedResource = commandList.MapSubresource(stagingBuffer, 0, MapMode.Read, doNotWait, offsetInBytes, lengthInBytes);
+            
+            try
+            {
+                if (mappedResource.DataBox.DataPointer != IntPtr.Zero)
+                {
+                    Utilities.CopyMemory(toData.Pointer, mappedResource.DataBox.DataPointer, toData.Size);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                // Make sure that we unmap the resource in case of an exception
+                commandList.UnmapSubresource(mappedResource);
+            }
+
+            return true;
         }
     }
 }

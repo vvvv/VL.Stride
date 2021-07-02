@@ -3,8 +3,8 @@ shader SampleTexture_ComputeFX :  ComputeShaderBase
     uint Count = 1;
     float SampleLevel;
 
-    Buffer<float2> SamplerPosBuffer;
-    RWTexture1D<float4> SamplerColTex;
+    Buffer<float2> PosBuffer;
+    RWStructuredBuffer<float4> ColorsBuffer;
 
     Texture2D Tex;
     SamplerState TexSampler
@@ -13,7 +13,7 @@ shader SampleTexture_ComputeFX :  ComputeShaderBase
         AddressU = border;
         AddressV = border;
         AddressW = border;
-        BorderColor = float4(0,0,0,0);
+        BorderColor = float4(0, 0, 0, 0);
     };
    	
     override void Compute()
@@ -22,9 +22,9 @@ shader SampleTexture_ComputeFX :  ComputeShaderBase
 
         if (sampleID >= Count) return;
 
-        float2 uv = SamplerPosBuffer[sampleID];
+        float2 uv = PosBuffer[sampleID];
 
-        SamplerColTex[sampleID] = Tex.SampleLevel(TexSampler, uv, SampleLevel);
+        ColorsBuffer[sampleID] = Tex.SampleLevel(TexSampler, uv, SampleLevel);
     }
 
 };    

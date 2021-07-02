@@ -72,7 +72,7 @@ namespace VL.Stride.Graphics
             return texture;
         }
 
-        public static unsafe Texture SetDataFromProvider(this Texture texture, CommandList commandList, IStrideGraphicsDataProvider data, int arraySlice = 0, int mipSlice = 0, ResourceRegion? region = null)
+        public static unsafe Texture SetDataFromProvider(this Texture texture, CommandList commandList, IGraphicsDataProvider data, int arraySlice = 0, int mipSlice = 0, ResourceRegion? region = null)
         {
             if (texture != null && data != null)
             {
