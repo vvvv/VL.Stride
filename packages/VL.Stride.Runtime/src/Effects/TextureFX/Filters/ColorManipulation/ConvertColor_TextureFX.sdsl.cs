@@ -18,6 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class ConvertColor_TextureFXKeys
     {
-        public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>();
+        public static readonly ValueParameterKey<uint> Type = ParameterKeys.NewValue<uint>();
     }
 }

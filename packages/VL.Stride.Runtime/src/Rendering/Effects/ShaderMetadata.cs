@@ -33,6 +33,8 @@ namespace VL.Stride.Rendering
         public ParsedShader ParsedShader { get; private set; }
 
         public bool IsTextureSource { get; private set; }
+        
+        public List<string> WantsMips { get; private set; }
 
         public bool DontApplySRgbCurveOnWrite { get; private set; }
 
@@ -227,6 +229,7 @@ namespace VL.Stride.Rendering
         public const string OutputFormatName = "OutputFormat";
         public const string RenderFormatName = "RenderFormat";
         public const string TextureSourceName = "TextureSource";
+        public const string WantsMipsName = "WantsMips";
         public const string DontApplySRgbCurveOnWriteName = "DontApplySRgbCurveOnWrite";
 
         //pin
@@ -287,6 +290,9 @@ namespace VL.Stride.Rendering
                                 break;
                             case TextureSourceName:
                                 shaderMetadata.IsTextureSource = true;
+                                break;
+                            case WantsMipsName:
+                                shaderMetadata.WantsMips = attr.ParseStringAsCommaSeparatedList();
                                 break;
                             case DontApplySRgbCurveOnWriteName:
                                 shaderMetadata.DontApplySRgbCurveOnWrite = true;
