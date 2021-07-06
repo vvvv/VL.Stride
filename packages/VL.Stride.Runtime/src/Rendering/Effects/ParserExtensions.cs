@@ -5,6 +5,7 @@ using VL.Lang;
 using Stride.Core.Mathematics;
 using Stride.Core.Shaders.Ast.Stride;
 using Stride.Core.Shaders.Ast;
+using System.Collections.Generic;
 
 namespace VL.Stride.Rendering
 {
@@ -40,6 +41,24 @@ namespace VL.Stride.Rendering
         public static string ParseString(this AttributeDeclaration attr)
         {
             return attr.Parameters.FirstOrDefault()?.Value as string;
+        }
+
+        public static List<string> ParseStringList(this AttributeDeclaration attr)
+        {
+            return attr.Parameters
+                .Select(p => p?.Value as string)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .ToList();
+        }
+
+        public static List<string> ParseStringAsCommaSeparatedList(this AttributeDeclaration attr)
+        {
+            return attr.Parameters
+                .Select(p => p?.Value as string)
+                .SelectMany(s => s.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => s.Trim())
+                .ToList();
         }
 
         public static bool ParseBool(this AttributeDeclaration attr, int index = 0)

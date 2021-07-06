@@ -45,6 +45,22 @@ namespace VL.Stride.Rendering
         public override IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters) => new Pin<T>(Name, DefaultValue);
     }
 
+    /// <summary>
+    /// Currently used for texture input pins of TextureFX nodes that need access to the original ParameterKey of the shader.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <seealso cref="VL.Stride.Rendering.EffectPinDescription" />
+    class ParameterKeyPinDescription<T> : PinDescription<T>
+    {
+        public ParameterKeyPinDescription(string name, ParameterKey<T> key, T defaultValue = default(T))
+            : base(name, defaultValue)
+        {
+            Key = key;
+        }
+
+        public ParameterKey<T> Key { get; }
+    }
+
     class ParameterPinDescription : EffectPinDescription
     {
         public readonly ParameterKey Key;

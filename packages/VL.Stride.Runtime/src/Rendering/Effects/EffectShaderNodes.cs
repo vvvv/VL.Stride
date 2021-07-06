@@ -679,7 +679,7 @@ namespace VL.Stride.Rendering
                                 else
                                     pinName = ++_textureCount == 1 ? textureInputName : $"{textureInputName} {_textureCount}";
                                 usedNames.Add(pinName);
-                                _inputs.Add(new PinDescription<Texture>(pinName));
+                                _inputs.Add(new ParameterKeyPinDescription<Texture>(pinName, (ParameterKey<Texture>)key));
                             }
                             else
                             {
@@ -742,7 +742,7 @@ namespace VL.Stride.Rendering
                                         inputs.Add(enabledInput = nodeBuildContext.Input<bool>(v => effect.Enabled = v, effect.Enabled));
                                     else if (_input is ParameterPinDescription parameterPinDescription)
                                         inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, effect.Parameters));
-                                    else if (_input is PinDescription<Texture> textureInput)
+                                    else if (_input is ParameterKeyPinDescription<Texture> textureInput)
                                     {
                                         var slot = textureCount++;
                                         inputs.Add(nodeBuildContext.Input<Texture>(setter: t =>
@@ -793,6 +793,23 @@ namespace VL.Stride.Rendering
                         var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = shaderMetadata.IsTextureSource };
                         var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = false };
                         var _renderFormat = new PinDescription<PixelFormat>("Render Format", defaultRenderFormat) { IsVisible = false, Summary = "Allows to specify a render format that is differet to the output format" };
+
+                        // Wants mips?
+                        var wantsMips = shaderMetadata.WantsMips?.Count > 0;
+                        if (wantsMips)
+                        {
+                            foreach (var textureName in shaderMetadata.WantsMips)
+                            {
+                                var texDesc = _inputs.FirstOrDefault(p => p is ParameterKeyPinDescription<Texture> ppd && ppd.Key.GetVariableName() == textureName);
+                                if (texDesc != null)
+                                {
+                                    var texIndex = _inputs.IndexOf(texDesc);
+                                    _inputs.Insert(texIndex + 1, new PinDescription<bool>("Always Generate Mips for " + texDesc.Name, true)
+                                    { Summary = "If true, mipmaps will be generated in every frame, if false only on change of the reference. If the texture has mipmaps, nothing will be done." });
+                                }
+                            }
+                        }
+
                         if (isFilterOrMixer)
                         {
                             // Filter or Mixer
@@ -824,11 +841,44 @@ namespace VL.Stride.Rendering
                             newNode: nodeBuildContext =>
                             {
                                 var nodeContext = nodeBuildContext.NodeContext;
-                                var node = shaderDescription.CreateInstance(nodeContext);
-                                var inputs = node.Inputs.ToList();
-                                var textureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == textureInputName));
-                                var outputTextureInput = node.Inputs.ElementAtOrDefault(shaderDescription.Inputs.IndexOf(p => p.Name == "Output Texture"));
-                                var enabledInput = (IVLPin<bool>)node.Inputs.ElementAt(shaderDescription.Inputs.IndexOf(p => p.Name == Enabled));
+                                var shaderNode = shaderDescription.CreateInstance(nodeContext);
+                                var inputs = shaderNode.Inputs.ToList();
+                                var mipmapManager = new TextureFXMipmapManager(nodeContext);
+
+                                var shaderNodeInputs = shaderDescription.Inputs.ToList();
+
+                                // synchronize mipmap pins
+                                if (wantsMips)
+                                {
+                                    foreach (var textureName in shaderMetadata.WantsMips)
+                                    {
+                                        var texDesc = shaderNodeInputs.FirstOrDefault(p => p is ParameterKeyPinDescription<Texture> ppd && ppd.Key.GetVariableName() == textureName);
+                                        if (texDesc != null)
+                                        {
+                                            var texIndex = shaderNodeInputs.IndexOf(texDesc);
+                                            var shaderTexturePin = inputs.ElementAtOrDefault(texIndex) as IVLPin<Texture>;
+                                            if (shaderTexturePin != null)
+                                            {
+                                                var newTexturePin = nodeBuildContext.Input<Texture>();
+                                                var alwaysGeneratePin = nodeBuildContext.Input(true);
+
+                                                // Replace this texture input with the new one
+                                                inputs[texIndex] = newTexturePin;
+
+                                                // Setup mipmap manager
+                                                mipmapManager.AddInput(newTexturePin, shaderTexturePin, alwaysGeneratePin);
+
+                                                // Insert generate pin
+                                                inputs.Insert(texIndex + 1, alwaysGeneratePin);
+                                                shaderNodeInputs.Insert(texIndex + 1, new PinDescription<bool>("Always Generate Mips for " + texDesc.Name, true)); //keep shader pin indices in sync
+                                            } 
+                                        }
+                                    }
+                                }
+
+                                var textureInput = inputs.ElementAtOrDefault(shaderNodeInputs.IndexOf(p => p.Name == textureInputName));
+                                var outputTextureInput = inputs.ElementAtOrDefault(shaderNodeInputs.IndexOf(p => p.Name == "Output Texture"));
+                                var enabledInput = (IVLPin<bool>)inputs.ElementAt(shaderNodeInputs.IndexOf(p => p.Name == Enabled));
 
                                 var outputSize = nodeBuildContext.Input(defaultSize);
                                 var outputFormat = nodeBuildContext.Input(defaultFormat);
@@ -854,7 +904,7 @@ namespace VL.Stride.Rendering
                                 // Remove this once FrameDelay can deal with textures properly
                                 var output1 = default(((Int2 size, PixelFormat format, PixelFormat renderFormat) desc, Texture texture, Texture view));
                                 var output2 = default(((Int2 size, PixelFormat format, PixelFormat renderFormat) desc, Texture texture, Texture view));
-                                var mainOutput = nodeBuildContext.Output<Texture>(getter: () =>
+                                var mainOutput = nodeBuildContext.Output(getter: () =>
                                 {
                                     var inputTexture = textureInput?.Value as Texture;
 
@@ -934,10 +984,15 @@ namespace VL.Stride.Rendering
                                         output1.view = outputTexture;
                                     }
 
-                                    var effect = node.Outputs[0].Value as TextureFXEffect;
+                                    var effect = shaderNode.Outputs[0].Value as TextureFXEffect;
                                     if (scheduler != null && effect != null && output1.texture != null)
                                     {
                                         effect.SetOutput(output1.view);
+                                        if (wantsMips)
+                                        {
+                                            mipmapManager.Update();
+                                            scheduler.Schedule(mipmapManager);
+                                        }
                                         scheduler.Schedule(effect);
                                         return output1.texture;
                                     }
@@ -954,7 +1009,7 @@ namespace VL.Stride.Rendering
                                         output2.view?.Dispose();
                                         output2.texture?.Dispose();
                                         gameHandle.Dispose();
-                                        node.Dispose();
+                                        shaderNode.Dispose();
                                     });
                             },
                             openEditor: () => shaderDescription.OpenEditor()

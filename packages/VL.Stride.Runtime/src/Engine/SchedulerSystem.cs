@@ -12,14 +12,14 @@ using VL.Core;
 namespace VL.Stride.Engine
 {
     /// <summary>
-    /// Allows to schedule game systems (e.g. a SceneSystem or a LayerSystem) as well as layers.
+    /// Allows to schedule game systems (e.g. a SceneSystem or a LayerSystem) as well as single renderers.
     /// </summary>
     public class SchedulerSystem : GameSystemBase
     {
         static readonly PropertyKey<bool> contentLoaded = new PropertyKey<bool>("ContentLoaded", typeof(SchedulerSystem));
 
         readonly List<GameSystemBase> queue = new List<GameSystemBase>();
-        readonly Stack<ConsecutiveLayerSystem> pool = new Stack<ConsecutiveLayerSystem>();
+        readonly Stack<ConsecutiveRenderSystem> pool = new Stack<ConsecutiveRenderSystem>();
 
         public SchedulerSystem([NotNull] IServiceRegistry registry) : base(registry)
         {
@@ -37,19 +37,19 @@ namespace VL.Stride.Engine
         }
 
         /// <summary>
-        /// Schedules a layer for rendering.
+        /// Schedules a renderer for rendering.
         /// </summary>
-        /// <param name="layer">The layer to schedule.</param>
-        public void Schedule(IGraphicsRendererBase layer)
+        /// <param name="renderer">The layer to schedule.</param>
+        public void Schedule(IGraphicsRendererBase renderer)
         {
-            var current = queue.LastOrDefault() as ConsecutiveLayerSystem;
+            var current = queue.LastOrDefault() as ConsecutiveRenderSystem;
             if (current is null)
             {
                 // Fetch from pool or create new
-                current = pool.Count > 0 ? pool.Pop() : new ConsecutiveLayerSystem(Services);
+                current = pool.Count > 0 ? pool.Pop() : new ConsecutiveRenderSystem(Services);
                 Schedule(current);
             }
-            current.Layers.Add(layer);
+            current.Renderers.Add(renderer);
         }
 
         public override void Update(GameTime gameTime)
@@ -94,26 +94,26 @@ namespace VL.Stride.Engine
             {
                 // Put back into the pool
                 foreach (var system in queue)
-                    if (system is ConsecutiveLayerSystem c)
+                    if (system is ConsecutiveRenderSystem c)
                         pool.Push(c);
 
                 queue.Clear();
             }
         }
 
-        sealed class ConsecutiveLayerSystem : GameSystemBase
+        sealed class ConsecutiveRenderSystem : GameSystemBase
         {
             private RenderView renderView;
             private RenderContext renderContext;
             private RenderDrawContext renderDrawContext;
 
-            public ConsecutiveLayerSystem([NotNull] IServiceRegistry registry) : base(registry)
+            public ConsecutiveRenderSystem([NotNull] IServiceRegistry registry) : base(registry)
             {
                 Enabled = true;
                 Visible = true;
             }
 
-            public readonly List<IGraphicsRendererBase> Layers = new List<IGraphicsRendererBase>();
+            public readonly List<IGraphicsRendererBase> Renderers = new List<IGraphicsRendererBase>();
 
             protected override void LoadContent()
             {
@@ -137,12 +137,12 @@ namespace VL.Stride.Engine
                     using (renderContext.PushRenderViewAndRestore(renderView))
                     using (renderDrawContext.PushRenderTargetsAndRestore())
                     {
-                        // Report the exceptions but continue drawing the next layers. Otherwise one failing renderer can cause the whole app to fail.
-                        foreach (var layer in Layers)
+                        // Report the exceptions but continue drawing the next renderer. Otherwise one failing renderer can cause the whole app to fail.
+                        foreach (var renderer in Renderers)
                         {
                             try
                             {
-                                layer?.Draw(renderDrawContext);
+                                renderer?.Draw(renderDrawContext);
                             }
                             catch (Exception e)
                             {
@@ -153,7 +153,7 @@ namespace VL.Stride.Engine
                 }
                 finally
                 {
-                    Layers.Clear();
+                    Renderers.Clear();
                     renderDrawContext.ResourceGroupAllocator.Flush();
                     renderDrawContext.QueryManager.Flush();
                 }

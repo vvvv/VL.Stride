@@ -6,7 +6,7 @@
 shader ConvertColor_TextureFX : FilterBase
 {
     [EnumType("VL.Stride.Effects.TextureFX.ConvertColorType")]
-    int Type;
+    uint Type;
     
     float4 ConvertAlpha(float4 col)
     {
@@ -65,20 +65,17 @@ shader ConvertColor_TextureFX : FilterBase
 
     float4 Filter(float4 tex0col)
     {
-        float2 uv = streams.TexCoord;
-        float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
-        
-        switch((uint)Type%9)
+        switch(Type % 9)
         {
-            case 0 : return ConvertAlpha(col);
-            case 1 : return ConvertRed(col);
-            case 2 : return ConvertGreen(col);
-            case 3 : return ConvertBlue(col);
-            case 4 : return ConvertHue(col);
-            case 5 : return ConvertSaturation(col);
-            case 6 : return ConvertValue(col);
-            case 7 : return ConvertHSVtoRGB(col);
-            case 8 : return ConvertRGBtoHSV(col);
+            case 0 : return ConvertAlpha(tex0col);
+            case 1 : return ConvertRed(tex0col);
+            case 2 : return ConvertGreen(tex0col);
+            case 3 : return ConvertBlue(tex0col);
+            case 4 : return ConvertHue(tex0col);
+            case 5 : return ConvertSaturation(tex0col);
+            case 6 : return ConvertValue(tex0col);
+            case 7 : return ConvertHSVtoRGB(tex0col);
+            case 8 : return ConvertRGBtoHSV(tex0col);
         }
     }
 };
