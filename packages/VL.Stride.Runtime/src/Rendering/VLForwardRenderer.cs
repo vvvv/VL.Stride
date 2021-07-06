@@ -494,9 +494,9 @@ namespace VL.Stride.Rendering
                             camera.ProjectionMatrix = currentView.View.Projection;
                             camera.UseCustomProjectionMatrix = true;
                             camera.UseCustomViewMatrix = true;
-                            camera.Update();
 
                             //write params to view
+                            //this will also update the camera state (frustum...)
                             SceneCameraRenderer.UpdateCameraToRenderView(context, context.RenderView, camera);
 
                             CollectView(context);
