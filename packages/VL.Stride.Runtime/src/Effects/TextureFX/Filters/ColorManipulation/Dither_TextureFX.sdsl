@@ -58,17 +58,16 @@ shader Dither_TextureFX : FilterBase
     {
         float2 uv = streams.TexCoord;
         float2 R = 1/Texture0TexelSize;
-        float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
         
         int x = int((uv.x*R.x)%8);
         int y = int((uv.y*R.y)%8);
     
         float4 finalCol;
     
-        finalCol.r = FindClosest(x, y, col.r);
-        finalCol.g = FindClosest(x, y, col.g);
-        finalCol.b = FindClosest(x, y, col.b);
-        finalCol.a = col.a; 
+        finalCol.r = FindClosest(x, y, tex0col.r);
+        finalCol.g = FindClosest(x, y, tex0col.g);
+        finalCol.b = FindClosest(x, y, tex0col.b);
+        finalCol.a = tex0col.a; 
 
         return finalCol;
     }

@@ -114,7 +114,6 @@ namespace VL.Stride.Rendering
         {
             var variableName = key.GetVariableName();
             var shaderName = key.GetShaderName();
-            var name = key.Name;
             var camelCasedName = FCamelCasePattern.Replace(variableName, match => $"{match.Value[0]} {match.Value[1]}");
             var result = char.ToUpper(camelCasedName[0]) + camelCasedName.Substring(1);
             if (usedNames.Add(result))
@@ -350,7 +349,7 @@ namespace VL.Stride.Rendering
     static class WellKnownParameters
     {
         public static readonly Dictionary<string, PerFrameParameters> PerFrameMap = BuildParameterMap<PerFrameParameters>("Global");
-        public static readonly Dictionary<string, PerViewParameters> PerViewMap = BuildParameterMap<PerViewParameters>("Transformation");
+        public static readonly Dictionary<string, PerViewParameters> PerViewMap = BuildViewParameterMap();
         public static readonly Dictionary<string, PerDrawParameters> PerDrawMap = BuildParameterMap<PerDrawParameters>("Transformation");
         public static readonly Dictionary<string, TexturingParameters> TexturingMap = BuildParameterMap<TexturingParameters>("Texturing");
 
@@ -489,6 +488,39 @@ namespace VL.Stride.Rendering
                         var eye = viewInverse.Row4;
                         parameters.Set(TransformationKeys.Eye, ref eye);
                         break;
+                    case PerViewParameters.AspectRatio:
+                        parameters.Set(CameraKeys.AspectRatio, renderView.ViewSize.X / Math.Max(renderView.ViewSize.Y, 1.0f));
+                        break;
+                    case PerViewParameters.ViewSize:
+                        parameters.Set(CameraKeys.ViewSize, ref renderView.ViewSize);
+                        break;
+                        //TODO:
+                        //perViewCamera->NearClipPlane = view.NearClipPlane;
+                        //perViewCamera->FarClipPlane = view.FarClipPlane;
+                        //perViewCamera->ZProjection = CameraKeys.ZProjectionACalculate(view.NearClipPlane, view.FarClipPlane);
+                    default:
+                        break;
+                }
+            }
+        }
+
+        // Used by TextureFX, which uses an ImageEffect that already sets most parameters
+        public static void SetCameraParametersOnly(this ParameterCollection parameters, PerViewParameters[] perViewParams, ref Vector2 viewSize)
+        {
+            foreach (var perView in perViewParams)
+            {
+                switch (perView)
+                {
+                    case PerViewParameters.AspectRatio:
+                        parameters.Set(CameraKeys.AspectRatio, viewSize.X / Math.Max(viewSize.Y, 1.0f));
+                        break;
+                    case PerViewParameters.ViewSize:
+                        parameters.Set(CameraKeys.ViewSize, ref viewSize);
+                        break;
+                    //TODO:
+                    //perViewCamera->NearClipPlane = view.NearClipPlane;
+                    //perViewCamera->FarClipPlane = view.FarClipPlane;
+                    //perViewCamera->ZProjection = CameraKeys.ZProjectionACalculate(view.NearClipPlane, view.FarClipPlane);
                     default:
                         break;
                 }
@@ -569,6 +601,26 @@ namespace VL.Stride.Rendering
                 map.Add($"{effectName}.{entry.ToString()}", (T)entry);
             return map;
         }
+
+        static Dictionary<string, PerViewParameters> BuildViewParameterMap()
+        {
+            var map = new Dictionary<string, PerViewParameters>();
+            foreach (var entry in (PerViewParameters[])Enum.GetValues(typeof(PerViewParameters)))
+            {
+                
+                if (entry == PerViewParameters.AspectRatio || entry == PerViewParameters.ViewSize)
+                {
+                    map.Add($"Camera.{entry.ToString()}", entry);
+                }
+                else
+                {
+                    map.Add($"Transformation.{entry.ToString()}", entry);
+                }
+
+            }
+
+            return map;
+        }
     }
 
     // from Globals shader
@@ -608,7 +660,15 @@ namespace VL.Stride.Rendering
         /// <summary>
         /// Eye vector. Default to = View^-1[M41,M42,M43,1.0]
         /// </summary>
-        Eye
+        Eye,
+        /// <summary>
+        /// The aspect ratio of the current viewport
+        /// </summary>
+        AspectRatio,
+        /// <summary>
+        /// The size of the current viewport
+        /// </summary>
+        ViewSize,
     }
 
     // from Transformation shader

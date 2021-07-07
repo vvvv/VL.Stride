@@ -3,6 +3,7 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
+[WantsMips("Texture0")]
 shader BlurGlow_TextureFX : FilterBase
 {
     float Shape= 0.5f;
@@ -12,7 +13,7 @@ shader BlurGlow_TextureFX : FilterBase
 
     float4 Filter(float4 tex0col)
     {
-        float2 R = 1/Texture0TexelSize;
+        float2 R = ViewSize;
         float2 uv = streams.TexCoord;
 
         float lod = log2(max(R.x, R.y));

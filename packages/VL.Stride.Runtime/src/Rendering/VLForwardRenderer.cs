@@ -494,9 +494,9 @@ namespace VL.Stride.Rendering
                             camera.ProjectionMatrix = currentView.View.Projection;
                             camera.UseCustomProjectionMatrix = true;
                             camera.UseCustomViewMatrix = true;
-                            camera.Update();
 
                             //write params to view
+                            //this will also update the camera state (frustum...)
                             SceneCameraRenderer.UpdateCameraToRenderView(context, context.RenderView, camera);
 
                             CollectView(context);
@@ -788,6 +788,9 @@ namespace VL.Stride.Rendering
         {
             var viewport = drawContext.CommandList.Viewport;
 
+            if (ViewportSettings?.ViewportRenderInfo != null)
+                ViewportSettings.ViewportRenderInfo.RenderTargetSize = viewport.Size;
+
             using (drawContext.PushRenderTargetsAndRestore())
             {
                 // Render Shadow maps
@@ -904,40 +907,40 @@ namespace VL.Stride.Rendering
                         CopyOrScaleTexture(drawContext, vrFullSurface, drawContext.CommandList.RenderTarget);
                     }
                 }
-                else if (ViewportSettings.Enabled && ViewportSettings.Views?.Count > 0)
+                else if (ViewportSettings.Enabled)
                 {
-                    using (drawContext.PushRenderTargetsAndRestore())
+                    if (ViewportSettings.Views?.Count > 0)
                     {
-                        PrepareRenderTargets(drawContext, new Size2((int)viewport.Width, (int)viewport.Height));
-
-                        if (ViewportSettings.ViewportRenderInfo != null)
-                            ViewportSettings.ViewportRenderInfo.RenderTargetSize = viewport.Size;
-
-                        ViewCount = ViewportSettings.Views.Count;
-                        drawContext.CommandList.SetRenderTargets(currentDepthStencil, currentRenderTargets.Count, currentRenderTargets.Items);
-
-                        Clear?.Draw(drawContext);
-
-                        for (var i = 0; i < ViewCount; i++)
+                        using (drawContext.PushRenderTargetsAndRestore())
                         {
-                            var currentView = ViewportSettings.Views[i];
+                            PrepareRenderTargets(drawContext, new Size2((int)viewport.Width, (int)viewport.Height));
 
-                            using (context.PushRenderViewAndRestore(currentView.View))
-                            using (context.SaveViewportAndRestore())
+                            ViewCount = ViewportSettings.Views.Count;
+                            drawContext.CommandList.SetRenderTargets(currentDepthStencil, currentRenderTargets.Count, currentRenderTargets.Items);
+
+                            Clear?.Draw(drawContext);
+
+                            for (var i = 0; i < ViewCount; i++)
                             {
-                                context.ViewportState = currentViewportState;
-                                context.ViewportState.Viewport0 = Unsafe.As<ViewportF, Viewport>(ref currentView.Viewport);
-                                drawContext.CommandList.SetViewport(context.ViewportState.Viewport0);
+                                var currentView = ViewportSettings.Views[i];
 
-                                ViewIndex = i;
+                                using (context.PushRenderViewAndRestore(currentView.View))
+                                using (context.SaveViewportAndRestore())
+                                {
+                                    context.ViewportState = currentViewportState;
+                                    context.ViewportState.Viewport0 = Unsafe.As<ViewportF, Viewport>(ref currentView.Viewport);
+                                    drawContext.CommandList.SetViewport(context.ViewportState.Viewport0);
 
-                                shadowMapRenderer?.Draw(drawContext);
-                                DrawView(context, drawContext, i, ViewCount, renderPostFX: false);
-                                currentView.Renderer?.Draw(drawContext);
+                                    ViewIndex = i;
+
+                                    shadowMapRenderer?.Draw(drawContext);
+                                    DrawView(context, drawContext, i, ViewCount, renderPostFX: false);
+                                    currentView.Renderer?.Draw(drawContext);
+                                }
                             }
-                        }
 
-                        DrawPostFXOnly(context, drawContext);
+                            DrawPostFXOnly(context, drawContext);
+                        }
                     }
                 }
                 else
