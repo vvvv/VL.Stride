@@ -39,18 +39,22 @@ namespace VL.Stride.Rendering
                 base.PreDrawCore(context);
         }
 
-        Vector2 lastViewSize;
+        int lastViewWidth;
+        int lastViewHeight;
         protected override void UpdateParameters()
         {
             base.UpdateParameters();
 
             var output0 = GetOutput(0); //safe because it will only be called from base.PreDrawCore when IsOutputAssigned = true
-            var viewSize = new Vector2(output0.ViewWidth, output0.ViewHeight);
-            
-            if (viewSize != lastViewSize) //rarely changes
+            var w = output0.ViewWidth;
+            var h = output0.ViewHeight;
+
+            if (w != lastViewWidth || h != lastViewHeight) //rarely changes
             {
+                var viewSize = new Vector2(w, h);
                 Parameters.SetCameraParametersOnly(perViewParams, ref viewSize);
-                lastViewSize = viewSize;
+                lastViewWidth = w;
+                lastViewHeight = h;
             }
         }
 
