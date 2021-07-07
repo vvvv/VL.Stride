@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Reactive.Disposables;
 using Stride.Core;
+using Stride.Core.Mathematics;
 using Stride.Rendering;
 using Stride.Rendering.Images;
 
@@ -11,6 +13,8 @@ namespace VL.Stride.Rendering
         private TimeSpan? lastExceptionTime;
         private TimeSpan retryTime = TimeSpan.FromSeconds(3);
 
+        PerViewParameters[] perViewParams;
+
         public TextureFXEffect(string effectName = null, bool delaySetRenderTargets = false)
             : base(effectName, delaySetRenderTargets)
         {
@@ -19,12 +23,35 @@ namespace VL.Stride.Rendering
 
         internal readonly CompositeDisposable Subscriptions = new CompositeDisposable();
 
+        protected override void InitializeCore()
+        {
+            base.InitializeCore();
+
+            EffectInstance.UpdateEffect(GraphicsDevice);
+            perViewParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
+        }
+
         public bool IsOutputAssigned => OutputCount > 0 && GetOutput(0) != null;
 
         protected override void PreDrawCore(RenderDrawContext context)
         {
             if (IsOutputAssigned)
                 base.PreDrawCore(context);
+        }
+
+        Vector2 lastViewSize;
+        protected override void UpdateParameters()
+        {
+            base.UpdateParameters();
+
+            var output0 = GetOutput(0); //safe because it will only be called from base.PreDrawCore when IsOutputAssigned = true
+            var viewSize = new Vector2(output0.ViewWidth, output0.ViewHeight);
+            
+            if (viewSize != lastViewSize) //rarely changes
+            {
+                Parameters.SetCameraParametersOnly(perViewParams, ref viewSize);
+                lastViewSize = viewSize;
+            }
         }
 
         protected override void DrawCore(RenderDrawContext context)
