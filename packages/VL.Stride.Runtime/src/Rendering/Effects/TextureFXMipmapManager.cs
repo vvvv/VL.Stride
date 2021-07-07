@@ -1,11 +1,12 @@
 ﻿using Stride.Graphics;
 using Stride.Rendering;
+using System;
 using System.Collections.Generic;
 using VL.Core;
 
 namespace VL.Stride.Rendering
 {
-    class MipmapPinManager
+    class MipmapPinManager : IDisposable
     {
         readonly NodeContext nodeContext;
         readonly IVLPin<Texture> texturePin;
@@ -54,9 +55,15 @@ namespace VL.Stride.Rendering
             if (render)
                 generator.Draw(context);
         }
+
+        public void Dispose()
+        {
+            generator?.Dispose();
+            generator = null;
+        }
     }
 
-    public class TextureFXMipmapManager : IGraphicsRendererBase
+    public class TextureFXMipmapManager : IGraphicsRendererBase, IDisposable
     {
         readonly NodeContext nodeContext;
 
@@ -86,6 +93,16 @@ namespace VL.Stride.Rendering
             {
                 pins[i].Draw(context);
             }
+        }
+
+        public void Dispose()
+        {
+            for (int i = 0; i < pins.Count; i++)
+            {
+                pins[i].Dispose();
+            }
+
+            pins.Clear();
         }
     }
 }

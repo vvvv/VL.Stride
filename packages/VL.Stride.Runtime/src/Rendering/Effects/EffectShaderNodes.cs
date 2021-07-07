@@ -1008,6 +1008,7 @@ namespace VL.Stride.Rendering
                                         output1.texture?.Dispose();
                                         output2.view?.Dispose();
                                         output2.texture?.Dispose();
+                                        mipmapManager?.Dispose();
                                         gameHandle.Dispose();
                                         shaderNode.Dispose();
                                     });
