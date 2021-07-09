@@ -611,12 +611,17 @@ namespace VL.Stride.Rendering
             var map = new Dictionary<string, PerViewParameters>();
             foreach (var entry in (PerViewParameters[])Enum.GetValues(typeof(PerViewParameters)))
             {
-                
-                if (entry == PerViewParameters.AspectRatio || entry == PerViewParameters.ViewSize)
+                //camera
+                if (entry == PerViewParameters.NearClipPlane 
+                    || entry == PerViewParameters.FarClipPlane
+                    || entry == PerViewParameters.ZProjection
+                    || entry == PerViewParameters.AspectRatio
+                    || entry == PerViewParameters.ViewSize
+                    )
                 {
                     map.Add($"Camera.{entry.ToString()}", entry);
                 }
-                else
+                else //transformation
                 {
                     map.Add($"Transformation.{entry.ToString()}", entry);
                 }
@@ -665,6 +670,19 @@ namespace VL.Stride.Rendering
         /// Eye vector. Default to = View^-1[M41,M42,M43,1.0]
         /// </summary>
         Eye,
+        /// <summary>
+        /// Camera Z NearClipPlane value. 
+        /// </summary>
+        NearClipPlane,
+        /// <summary>
+        /// Camera Z FarClipPlane value.
+        /// </summary>
+        FarClipPlane,
+        /// <summary>
+        /// Z Retro projection factor used retro project a non-linear 1/z depth in the range [0.0 - 1.0] to a linear-depth in view space.
+        /// Remarks: ZInViewSpace = ZProjection.y / (depth - ZProjection.x)
+        /// </summary>
+        ZProjection,
         /// <summary>
         /// The aspect ratio of the current viewport
         /// </summary>

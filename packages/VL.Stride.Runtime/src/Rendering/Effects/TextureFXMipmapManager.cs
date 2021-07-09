@@ -12,17 +12,19 @@ namespace VL.Stride.Rendering
         readonly IVLPin<Texture> texturePin;
         readonly IVLPin<Texture> shaderTexturePin;
         readonly IVLPin<bool> alwaysGeneratePin;
+        readonly string profilerName;
 
         Texture lastInputTexture;
         MipMapGenerator generator;
         bool render;
 
-        public MipmapPinManager(NodeContext nodeContext, IVLPin<Texture> texturePin, IVLPin<Texture> shaderTexturePin, IVLPin<bool> alwaysGeneratePin)
+        public MipmapPinManager(NodeContext nodeContext, IVLPin<Texture> texturePin, IVLPin<Texture> shaderTexturePin, IVLPin<bool> alwaysGeneratePin, string profilerName = "Pin MipMap Generator")
         {
             this.nodeContext = nodeContext;
             this.texturePin = texturePin;
             this.shaderTexturePin = shaderTexturePin;
             this.alwaysGeneratePin = alwaysGeneratePin;
+            this.profilerName = profilerName;
         }
 
         public void Update()
@@ -40,7 +42,7 @@ namespace VL.Stride.Rendering
             }
 
             // Mips must be generated 
-            generator ??= new MipMapGenerator(nodeContext);
+            generator ??= new MipMapGenerator(nodeContext) { Name = profilerName };
 
             generator.InputTexture = currentInputTexture;
             shaderTexturePin.Value = generator.OutputTexture;
@@ -74,9 +76,9 @@ namespace VL.Stride.Rendering
             this.nodeContext = nodeContext;
         }
 
-        public void AddInput(IVLPin<Texture> texturePin, IVLPin<Texture> shaderTexturePin, IVLPin<bool> alwaysGeneratePin)
+        public void AddInput(IVLPin<Texture> texturePin, IVLPin<Texture> shaderTexturePin, IVLPin<bool> alwaysGeneratePin, string profilerName)
         {
-            pins.Add(new MipmapPinManager(nodeContext, texturePin, shaderTexturePin, alwaysGeneratePin));
+            pins.Add(new MipmapPinManager(nodeContext, texturePin, shaderTexturePin, alwaysGeneratePin, profilerName));
         }
 
         public void Update()
