@@ -30,7 +30,7 @@ namespace VL.Stride.Rendering
             var currentInputTexture = texturePin.Value;
 
             // Input already has mips
-            if (currentInputTexture.MipLevels > 1)
+            if (currentInputTexture?.MipLevels > 1)
             {
                 shaderTexturePin.Value = currentInputTexture;
                 generator?.Dispose();
