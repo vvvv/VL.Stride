@@ -15,7 +15,7 @@ shader MapColor_TextureFX : FilterBase
     
     float4 Ramp(float2 f)
     {
-        float2 R = 1/Texture0TexelSize;
+        float2 R = ViewSize;
 
         float lod = log2(max(R.x, R.y)) * MapSmooth;
         return Texture1.SampleLevel(Sampler1, Center*.5 + .5 + Direction*f, lod);
