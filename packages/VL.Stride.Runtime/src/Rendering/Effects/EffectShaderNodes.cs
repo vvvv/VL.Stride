@@ -868,7 +868,7 @@ namespace VL.Stride.Rendering
                                                 inputs[texIndex] = newTexturePin;
 
                                                 // Setup mipmap manager
-                                                mipmapManager.AddInput(newTexturePin, shaderTexturePin, alwaysGeneratePin);
+                                                mipmapManager.AddInput(newTexturePin, shaderTexturePin, alwaysGeneratePin, profilerName: name + " " + texDesc.Name + " Mipmap Generator");
 
                                                 // Insert generate pin
                                                 inputs.Insert(texIndex + 1, alwaysGeneratePin);
