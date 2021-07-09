@@ -133,14 +133,20 @@ namespace VL.Stride.Rendering
             var varName = key.GetVariableName();
             if (ParsedShader != null && ParsedShader.VariablesByName.TryGetValue(varName, out var variable))
             {
-                var shaderType = variable.Type.ToString();
-                if (!(shaderType.StartsWith("float", StringComparison.OrdinalIgnoreCase) 
-                    || shaderType.StartsWith("int", StringComparison.OrdinalIgnoreCase)
-                    || shaderType.StartsWith("bool", StringComparison.OrdinalIgnoreCase)
-                    || shaderType.StartsWith("uint", StringComparison.OrdinalIgnoreCase)
-                    || shaderType.StartsWith("Sampler", StringComparison.OrdinalIgnoreCase)))
+                var varType = variable.Type.ToString();
+                if (!(varType.StartsWith("float", StringComparison.OrdinalIgnoreCase) 
+                    || varType.StartsWith("int", StringComparison.OrdinalIgnoreCase)
+                    || varType.StartsWith("bool", StringComparison.OrdinalIgnoreCase)
+                    || varType.StartsWith("uint", StringComparison.OrdinalIgnoreCase)
+                    || varType.StartsWith("Sampler", StringComparison.OrdinalIgnoreCase)
+                    || varType.StartsWith("ComputeFloat", StringComparison.OrdinalIgnoreCase)
+                    || varType.StartsWith("ComputeInt", StringComparison.OrdinalIgnoreCase)
+                    || varType.StartsWith("ComputeBool", StringComparison.OrdinalIgnoreCase)
+                    || varType.StartsWith("ComputeUInt", StringComparison.OrdinalIgnoreCase)
+                    || varType.StartsWith("ComputeMatrix", StringComparison.OrdinalIgnoreCase)
+                    ))
                 {
-                    summary += (string.IsNullOrWhiteSpace(summary) ? "" : Environment.NewLine) + shaderType;
+                    summary += (string.IsNullOrWhiteSpace(summary) ? "" : Environment.NewLine) + varType;
                 }
             }
 
