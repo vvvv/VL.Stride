@@ -3,12 +3,13 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
+[WantsMips("Texture0")]
 shader Edge_TextureFX : FilterBase
 {
     float Brightness = 1.0f;
     float Radius = 1.0f;
 
-    float4 q(float2 uv,float2 off,float v)
+    float4 q(float2 uv, float2 off, float v)
     {
         return Texture0.SampleLevel(Sampler0, uv + off, v);
     }
