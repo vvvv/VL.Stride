@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Diagnostics;
 using Stride.Core;
 using Stride.Shaders.Parser.Mixins;
+using VL.App;
 
 namespace VL.Stride.Rendering
 {
@@ -57,19 +58,22 @@ namespace VL.Stride.Rendering
         //get shader source from data base, is there a more direct way?
         public static string GetShaderSourceCode(string effectName, IVirtualFileProvider fileProvider, ShaderSourceManager shaderSourceManager)
         {
-            var path = GetPathOfSdslShader(effectName, fileProvider);
-            
-            if (!string.IsNullOrWhiteSpace(path))
+            if (!AppState.IsExported) //only try to load shader source from file when in VL editor
             {
-                try
-                {
-                    return File.ReadAllText(path);
-                }
-                catch (Exception)
-                {
+                var path = GetPathOfSdslShader(effectName, fileProvider);
 
-                    //fall through
-                }
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    try
+                    {
+                        return File.ReadAllText(path);
+                    }
+                    catch (Exception)
+                    {
+
+                        //fall through
+                    }
+                } 
             }
 
             return shaderSourceManager?.LoadShaderSource(effectName).Source;

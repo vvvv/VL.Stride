@@ -805,7 +805,9 @@ namespace VL.Stride.Rendering
                                 {
                                     var texIndex = _inputs.IndexOf(texDesc);
                                     _inputs.Insert(texIndex + 1, new PinDescription<bool>("Always Generate Mips for " + texDesc.Name, true)
-                                    { Summary = "If true, mipmaps will be generated in every frame, if false only on change of the reference. If the texture has mipmaps, nothing will be done." });
+                                    { 
+                                        Summary = "If true, mipmaps will be generated in every frame, if false only on change of the reference. If the texture has mipmaps, nothing will be done." 
+                                    });
                                 }
                             }
                         }
