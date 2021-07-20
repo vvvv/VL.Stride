@@ -644,7 +644,7 @@ namespace VL.Stride.Rendering
                         int insertOffset = 0;
                         foreach (var parameter in parameters)
                         {
-                            if (parameter.Key.Name.Contains(".Sampler"))
+                            if (parameter.Key.Name.StartsWith("Texturing.Sampler"))
                             {
                                 var texturePinIdx = parameters.IndexOf(p => p.Key.Name == parameter.Key.Name.Replace("Sampler", "Texture"));
                                 if (texturePinIdx >= 0)
@@ -667,7 +667,7 @@ namespace VL.Stride.Rendering
                             var key = parameter.Key;
                             var name = key.Name;
 
-                            // Skip the matrix transform - we're drawing fullscreen using a triangle
+                            // Skip the matrix transform - we're drawing fullscreen
                             if (key == SpriteBaseKeys.MatrixTransform)
                                 continue;
 
@@ -685,7 +685,7 @@ namespace VL.Stride.Rendering
                             {
                                 var pinName = default(string); // Using null the name is based on the parameter name
                                 var isOptional = false;
-                                if (key.PropertyType == typeof(SamplerState))
+                                if (key.PropertyType == typeof(SamplerState) && key.Name.StartsWith("Texturing.Sampler"))
                                 {
                                     pinName = ++_samplerCount == 1 ? samplerInputName : $"{samplerInputName} {_samplerCount}";
                                     usedNames.Add(pinName);
