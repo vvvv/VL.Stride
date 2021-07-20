@@ -636,7 +636,7 @@ namespace VL.Stride.Rendering
 
                         var _textureCount = 0;
                         var _samplerCount = 0;
-                        var parameters = GetParameters(_effect).OrderBy(p => p.Key.Name.Contains(".Texture") ? 0 : 1).ToList();
+                        var parameters = GetParameters(_effect).OrderBy(p => p.Key.Name.StartsWith("Texturing.Texture") ? 0 : 1).ToList();
 
                         //order sampler pins after their corresponding texture pins
                         var samplerPins = new Dictionary<ParameterKeyInfo, int>();
@@ -674,7 +674,7 @@ namespace VL.Stride.Rendering
                             if (key.PropertyType == typeof(Texture))
                             {
                                 var pinName = "";
-                                if (shaderMetadata.IsTextureSource)
+                                if (shaderMetadata.IsTextureSource && !key.Name.StartsWith("Texturing.Texture"))
                                     pinName = key.GetPinName(usedNames);
                                 else
                                     pinName = ++_textureCount == 1 ? textureInputName : $"{textureInputName} {_textureCount}";
@@ -744,11 +744,22 @@ namespace VL.Stride.Rendering
                                         inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, effect.Parameters));
                                     else if (_input is ParameterKeyPinDescription<Texture> textureInput)
                                     {
-                                        var slot = textureCount++;
-                                        inputs.Add(nodeBuildContext.Input<Texture>(setter: t =>
+                                        if (textureInput.Name.StartsWith("Texturing.Texture"))
                                         {
-                                            effect.SetInput(slot, t);
-                                        }));
+                                            var slot = textureCount++;
+                                            inputs.Add(nodeBuildContext.Input<Texture>(setter: t =>
+                                            {
+                                                effect.SetInput(slot, t);
+                                            }));
+                                        }
+                                        else
+                                        {
+                                            var accessor = effect.Parameters.GetAccessor((ObjectParameterKey<Texture>)textureInput.Key);
+                                            inputs.Add(nodeBuildContext.Input<Texture>(setter: t =>
+                                            {
+                                                effect.Parameters.Set(accessor, t);
+                                            }));
+                                        }
                                     }
                                 }
 
