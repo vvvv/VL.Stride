@@ -16,9 +16,10 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class BoxBlurBaseKeys
+    public static partial class PolarToCartesian_TextureFXKeys
     {
-        public static readonly ValueParameterKey<int> KernelSize = ParameterKeys.NewValue<int>(3);
-        public static readonly ValueParameterKey<float> Strength = ParameterKeys.NewValue<float>(1);
+        public static readonly ValueParameterKey<float> Interpolation = ParameterKeys.NewValue<float>(1.0f);
+        public static readonly ValueParameterKey<float> OffsetX = ParameterKeys.NewValue<float>(0.0f);
+        public static readonly ValueParameterKey<float> OffsetY = ParameterKeys.NewValue<float>(0.0f);
     }
 }

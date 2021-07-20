@@ -3,9 +3,9 @@
 shader Threshold_TextureFX : FilterBase
 {
     [Color]
-    float4 ColorA = float4(0, 0, 0, 1);
+    float4 OutputColorA = float4(0, 0, 0, 1);
     [Color]
-    float4 ColorB = float4(1, 1, 1, 1);
+    float4 OutputColorB = float4(1, 1, 1, 1);
     float Threshold = 0.5f;
     float Smooth = 0.02f;
     bool Invert;
@@ -20,7 +20,7 @@ shader Threshold_TextureFX : FilterBase
         f = fmth / max(0.00000001 + fwidth(fmth) * Antialiasing, Smooth) + th;
         if (Invert)
             f = 1-f;
-        c = lerp(ColorA, ColorB, saturate(f));
+        c = lerp(OutputColorA, OutputColorB, saturate(f));
         return c;
     }
 };

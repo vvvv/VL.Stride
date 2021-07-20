@@ -16,9 +16,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Coordinates_TextureFXKeys
+    public static partial class CartesianToPolar_TextureFXKeys
     {
-        public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>();
         public static readonly ValueParameterKey<float> Interpolation = ParameterKeys.NewValue<float>(1.0f);
         public static readonly ValueParameterKey<float> Repeats = ParameterKeys.NewValue<float>(1.0f);
         public static readonly ValueParameterKey<bool> Clamp = ParameterKeys.NewValue<bool>(true);
