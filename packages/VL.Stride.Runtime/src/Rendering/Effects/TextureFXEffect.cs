@@ -13,6 +13,7 @@ namespace VL.Stride.Rendering
         private TimeSpan? lastExceptionTime;
         private TimeSpan retryTime = TimeSpan.FromSeconds(3);
 
+        PerFrameParameters[] perFrameParams;
         PerViewParameters[] perViewParams;
 
         public TextureFXEffect(string effectName = null, bool delaySetRenderTargets = false)
@@ -28,6 +29,7 @@ namespace VL.Stride.Rendering
             base.InitializeCore();
 
             EffectInstance.UpdateEffect(GraphicsDevice);
+            perFrameParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
             perViewParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();
         }
 
@@ -36,7 +38,10 @@ namespace VL.Stride.Rendering
         protected override void PreDrawCore(RenderDrawContext context)
         {
             if (IsOutputAssigned)
+            {
                 base.PreDrawCore(context);
+                Parameters.SetPerFrameParameters(perFrameParams, context.RenderContext);
+            }
         }
 
         int lastViewWidth;

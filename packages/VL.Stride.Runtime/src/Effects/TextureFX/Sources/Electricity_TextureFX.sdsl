@@ -4,9 +4,9 @@
 [TextureSource]
 [Category("Source.Experimental")]
 [Summary("Returns an electricity texture")]
-shader Electricity_TextureFX : TextureFX
+shader Electricity_TextureFX : TextureFX, Global
 {
-    float Time;
+    float TimeScale = 1;
 
     [Color]
     float4 BackgroundColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -18,14 +18,15 @@ shader Electricity_TextureFX : TextureFX
     float AmbientGlowHeightScale = 1.0f;
     float Height = 0.25f;
     float GlowFallOff = 2.0f;
-    stage Texture2D NoiseTexture;
+    Texture2D NoiseTexture;
     float VertexNoise = 0.5f;
 
     stage override float4 Shading()
     {
         float2 uv = streams.TexCoord - 0.5;
 
-        float2 t = float2(Time - VertexNoise*abs(uv.y), Time);
+        float ts = Time * TimeScale;
+        float2 t = float2(ts - VertexNoise*abs(uv.y), ts);
 
         // Sample at three positions for some horizontal blur
         // The shader should blur fine by itself in vertical direction
