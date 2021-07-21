@@ -639,7 +639,7 @@ namespace VL.Stride.Rendering
                         var parameters = GetParameters(_effect).OrderBy(p => p.Key.Name.StartsWith("Texturing.Texture") ? 0 : 1).ToList();
 
                         //order sampler pins after their corresponding texture pins
-                        var samplerPins = new Dictionary<ParameterKeyInfo, int>();
+                        var texturingSamplerPins = new Dictionary<ParameterKeyInfo, int>();
                         //find all samplers that have a corresponding texture
                         int insertOffset = 0;
                         foreach (var parameter in parameters)
@@ -649,14 +649,14 @@ namespace VL.Stride.Rendering
                                 var texturePinIdx = parameters.IndexOf(p => p.Key.Name == parameter.Key.Name.Replace("Sampler", "Texture"));
                                 if (texturePinIdx >= 0)
                                 {
-                                    samplerPins.Add(parameter, texturePinIdx + insertOffset);
+                                    texturingSamplerPins.Add(parameter, texturePinIdx + insertOffset);
                                     insertOffset++;
                                 }
                             }
                         }
 
                         //move the sampler pins after the corresponding texture pins
-                        foreach (var samplerPin in samplerPins)
+                        foreach (var samplerPin in texturingSamplerPins)
                         {
                             parameters.Remove(samplerPin.Key);
                             parameters.Insert(samplerPin.Value + 1, samplerPin.Key);
@@ -744,7 +744,7 @@ namespace VL.Stride.Rendering
                                         inputs.Add(parameterPinDescription.CreatePin(graphicsDevice, effect.Parameters));
                                     else if (_input is ParameterKeyPinDescription<Texture> textureInput)
                                     {
-                                        if (textureInput.Name.StartsWith("Texturing.Texture"))
+                                        if (textureInput.Key.Name.StartsWith("Texturing.Texture"))
                                         {
                                             var slot = textureCount++;
                                             inputs.Add(nodeBuildContext.Input<Texture>(setter: t =>
