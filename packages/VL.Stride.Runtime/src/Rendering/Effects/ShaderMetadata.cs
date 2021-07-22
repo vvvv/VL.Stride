@@ -36,6 +36,7 @@ namespace VL.Stride.Rendering
         
         public List<string> WantsMips { get; private set; }
 
+        public List<string> DontUnapplySRgbCurveOnRead{ get; private set; }
         public bool DontApplySRgbCurveOnWrite { get; private set; }
 
         public void GetPixelFormats(bool isFilterOrMixer, out PixelFormat outputFormat, out PixelFormat renderFormat)
@@ -152,6 +153,36 @@ namespace VL.Stride.Rendering
 
         }
 
+        public IEnumerable<(string textureName, bool wantsMips, bool dontUnapplySRgb)> GetTexturePinsToManage(IEnumerable<string> allTextureInputNames)
+            => GetTexturePinsToManageInternal(allTextureInputNames).ToList();
+
+        IEnumerable<(string textureName, bool wantsMips, bool dontUnapplySRgb)> GetTexturePinsToManageInternal(IEnumerable<string> allTextureInputNames)
+        {
+            var wantsMips = WantsMips?.Count > 0;
+            var wantsSRgb = DontUnapplySRgbCurveOnRead != null;
+
+            var mipPins = wantsMips ? WantsMips : Enumerable.Empty<string>();
+
+            var srgbPins = Enumerable.Empty<string>();
+            
+            if (wantsSRgb)
+            {
+                if (DontUnapplySRgbCurveOnRead.Count > 0)
+                    srgbPins = DontUnapplySRgbCurveOnRead;
+                else
+                    srgbPins = allTextureInputNames;
+            }
+
+            foreach (var textureName in allTextureInputNames)
+            {
+                var m = mipPins.Contains(textureName);
+                var s = srgbPins.Contains(textureName);
+                
+                if (m || s)
+                    yield return (textureName, m, s);
+            }
+        }
+
         /// <summary>
         /// Gets the type of the pin, if overwritten by an attribute, e.g. int -> enum.
         /// </summary>
@@ -236,6 +267,7 @@ namespace VL.Stride.Rendering
         public const string RenderFormatName = "RenderFormat";
         public const string TextureSourceName = "TextureSource";
         public const string WantsMipsName = "WantsMips";
+        public const string DontUnapplySRgbCurveOnReadName = "DontUnapplySRgbCurveOnRead";
         public const string DontApplySRgbCurveOnWriteName = "DontApplySRgbCurveOnWrite";
 
         //pin
@@ -299,6 +331,9 @@ namespace VL.Stride.Rendering
                                 break;
                             case WantsMipsName:
                                 shaderMetadata.WantsMips = attr.ParseStringAsCommaSeparatedList();
+                                break;
+                            case DontUnapplySRgbCurveOnReadName:
+                                shaderMetadata.DontUnapplySRgbCurveOnRead = attr.ParseStringAsCommaSeparatedList();
                                 break;
                             case DontApplySRgbCurveOnWriteName:
                                 shaderMetadata.DontApplySRgbCurveOnWrite = true;

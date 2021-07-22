@@ -3,6 +3,8 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
+[DontUnapplySRgbCurveOnRead]
+[DontApplySRgbCurveOnWrite]
 shader Lomograph_TextureFX : FilterBase
 {
     float VignetteStart = 0.1f;
@@ -15,15 +17,8 @@ shader Lomograph_TextureFX : FilterBase
     float Effect = 1.0f;
 
     [EnumType("VL.Stride.Effects.TextureFX.LomographType")]
-    int Type = 0;
+    uint Type = 0;
     int Iterations = 4;
-
-    SamplerState s0 <bool visible=false;string uiname="Sampler";> 
-    {
-        Filter = MIN_MAG_MIP_LINEAR;
-        AddressU = CLAMP;
-        AddressV = WRAP;
-    };
 
     float3 EffectShape1(float3 x, float eff)
     {
@@ -187,17 +182,20 @@ shader Lomograph_TextureFX : FilterBase
     //     return x;
     // }
 
-    float4 prepass(float2 x, float2 R)
+    float4 prepass(float4 col)
     {
-        float4 col = Texture0.Sample(s0, x);
+        //col = pow(col, 1.0/2.2);
+        float2 x = streams.TexCoord; 
+        float2 R = ViewSize;
+
         float3 z = col.rgb;
 
         float itr = min(Iterations, 20);
         
-        for(float i=0; i<itr; i++)
+        for (float i=0; i<itr; i++)
         {
             z = ColorShape(z, Color);
-            z = Vignette(z, length((x-.5)*R/R.x), VignetteAmount, VignetteStart, VignetteDodge);	
+            z = Vignette(z, length((x - 0.5)*R/R.x), VignetteAmount, VignetteStart, VignetteDodge);
             z = ColorContrast(z, Contrast);
             z = ColorLevel(z, Level);
         }
@@ -208,12 +206,10 @@ shader Lomograph_TextureFX : FilterBase
 
     float4 Filter(float4 tex0col)
     {
-        float2 uv = streams.TexCoord;
-        float2 R = ViewSize;
-        
-        float4 col = prepass(uv, R);
+        float4 col = prepass(tex0col);
 
-         switch((uint)Type%8){
+         switch (Type)
+         {
             case 0 : col.rgb = EffectShape1(col.rgb, Effect); break;
             case 1 : col.rgb = EffectShape2(col.rgb, Effect); break;
             case 2 : col.rgb = EffectShape3(col.rgb, Effect); break;
@@ -225,5 +221,6 @@ shader Lomograph_TextureFX : FilterBase
          }
 
         return col;
+        //return pow(col, 1/2.2);
     }
 };

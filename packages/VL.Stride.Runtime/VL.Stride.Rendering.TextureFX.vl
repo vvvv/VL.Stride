@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="BzGvoB2aLhzP7WO4jVw5sI" LanguageVersion="2021.4.0.228" Version="0.128">
-  <NugetDependency Id="QNDaxjZxapFM8KPBDLuO6H" Location="VL.CoreLib" Version="2021.4.0-0195-g3a76268057" />
+<Document xmlns:p="property" Id="BzGvoB2aLhzP7WO4jVw5sI" LanguageVersion="2021.4.0.233" Version="0.128">
+  <NugetDependency Id="QNDaxjZxapFM8KPBDLuO6H" Location="VL.CoreLib" Version="2021.4.0-0233-g113476dd50" />
   <Patch Id="G28kmfwtWsRPWb67PHzP5Y">
     <Canvas Id="TtPf6YeHIWxLlrjYVAmnpJ" DefaultCategory="Stride.Textures" CanvasType="FullCategory">
       <Canvas Id="DeZbgFI9bq4OVIMbH1taT6" Name="Filter" Position="248,318">
@@ -1032,6 +1032,7 @@
                       </p:NodeReference>
                       <Pin Id="IOuMHO3pLD5M6ZtmrFEMUL" Name="Transformation" Kind="InputPin" />
                       <Pin Id="Vlpu9LbzxGSQRSb5KwAosf" Name="Texture" Kind="InputPin" />
+                      <Pin Id="Q42dnOVaJl0L54OQCH05uI" Name="Sampler" Kind="InputPin" />
                       <Pin Id="K0XEbzw8HjwNlOvioq5TLe" Name="Color" Kind="InputPin" />
                       <Pin Id="CL0qxCRWXzqQWGiZ55Ye0X" Name="Blend State" Kind="InputPin" />
                       <Pin Id="VlU7RImyqU9LQwUAKK2sqM" Name="Rasterizer State" Kind="InputPin" />
@@ -1976,12 +1977,12 @@
             <ControlPoint Id="BWYNMLU8xdAPTLIuaD80UX" Bounds="368,474" />
             <ControlPoint Id="AmexCM519H9QO96MpuinjH" Bounds="472,474" />
             <ControlPoint Id="ImT34fEky83Od2RHQ3Y9eP" Bounds="576,474" />
-            <ControlPoint Id="JlJeRl8RU6QL189XTC89qV" Bounds="447,194" />
-            <ControlPoint Id="MjHE79EWE3xPHE3QlYCome" Bounds="501,325" />
-            <ControlPoint Id="JHzNqEhjeFbMCyO49mdK9n" Bounds="521,350" />
-            <ControlPoint Id="UYESvWudXk4OMRfwq4gGaB" Bounds="544,370" />
-            <ControlPoint Id="SgbZIhwkHDvMv7sQuMfoO5" Bounds="595,376" />
-            <ControlPoint Id="FCWpOPE0HFvNXQZCUe7wCV" Bounds="641,395" />
+            <ControlPoint Id="JlJeRl8RU6QL189XTC89qV" Bounds="449,82" />
+            <ControlPoint Id="MjHE79EWE3xPHE3QlYCome" Bounds="532,312" />
+            <ControlPoint Id="JHzNqEhjeFbMCyO49mdK9n" Bounds="552,337" />
+            <ControlPoint Id="UYESvWudXk4OMRfwq4gGaB" Bounds="575,357" />
+            <ControlPoint Id="SgbZIhwkHDvMv7sQuMfoO5" Bounds="626,363" />
+            <ControlPoint Id="FCWpOPE0HFvNXQZCUe7wCV" Bounds="672,382" />
             <ControlPoint Id="VIISfSH49l0PM15oa2DVSV" Bounds="694,403" />
             <Node Bounds="426,229,127,19" Id="SDGEtdscbFrOnhzvb9XbKm">
               <p:NodeReference LastCategoryFullName="Stride.Rendering" LastSymbolSource="VL.Stride.Rendering.ShaderFX.vl">
@@ -1990,19 +1991,40 @@
               </p:NodeReference>
               <Pin Id="R08xvAwYHCtPCu1wiFsrcN" Name="Transformation" Kind="InputPin" />
               <Pin Id="GHfPRCto0vDMZOccKSJMst" Name="Texture" Kind="InputPin" />
+              <Pin Id="FCTo41YShi4L7LoTba029u" Name="Sampler" Kind="InputPin" />
               <Pin Id="RxxDwvAoFsuPgS6GTBipu7" Name="Color" Kind="InputPin" />
               <Pin Id="QndPVREitXzMwBD4vjSNvC" Name="Blend State" Kind="InputPin" />
               <Pin Id="SXDW47urF6EO5JiNjTf8xl" Name="Rasterizer State" Kind="InputPin" />
               <Pin Id="GG9sfYvAXybMW2YlsELQ9l" Name="Depth Stencil State" Kind="InputPin" />
               <Pin Id="JXogtwQo3SVNV1Qz3Wz10W" Name="Output" Kind="OutputPin" />
             </Node>
-            <Node Bounds="504,188,67,19" Id="JTpnvh7NLTdPzV3kT6Vry8">
+            <Node Bounds="527,155,67,19" Id="JTpnvh7NLTdPzV3kT6Vry8">
               <p:NodeReference LastCategoryFullName="Stride.API.Graphics.BlendStateDescription" LastSymbolSource="VL.Stride.Runtime.TypeForwards.vl">
                 <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                 <Choice Kind="OperationCallFlag" Name="AlphaBlend" />
               </p:NodeReference>
               <Pin Id="FzCNfxX9DjZPL13bnFFskh" Name="Alpha Blend" Kind="OutputPin" />
             </Node>
+            <ControlPoint Id="KfPYo3e9ZLlOueVHvwM7C7" Bounds="469,112" />
+            <Node Bounds="608,155,127,19" Id="En5ATfTfRgtLLaisMzvggd">
+              <p:NodeReference LastCategoryFullName="Stride.API.Graphics.BlendStateDescription" LastSymbolSource="VL.Stride.Runtime.TypeForwards.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <CategoryReference Kind="ClassType" Name="BlendStateDescription" NeedsToBeDirectParent="true" />
+                <Choice Kind="OperationCallFlag" Name="AlphaBlendPremultiplied" />
+              </p:NodeReference>
+              <Pin Id="H0ESSnBirtYMoaJmXijWfp" Name="Alpha Blend Premultiplied" Kind="OutputPin" />
+            </Node>
+            <Node Bounds="507,195,45,19" Id="JIQdL2Sd74TMs9XDerbVxX">
+              <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="CoreLibBasics.vl">
+                <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                <Choice Kind="OperationCallFlag" Name="Switch (Boolean)" />
+              </p:NodeReference>
+              <Pin Id="SXmsi0qqi7kLvij1pQk7lC" Name="Condition" Kind="InputPin" />
+              <Pin Id="UMTSHUpvnN0MzNLupuyjNm" Name="Input" Kind="InputPin" />
+              <Pin Id="FHr3t1XAtlONYCkvmCMD7Z" Name="Input 2" Kind="InputPin" />
+              <Pin Id="AkHPPeNSGKHPQx2W52g0GC" Name="Output" Kind="OutputPin" />
+            </Node>
+            <ControlPoint Id="PBfWmHghJKZLSUPdoUkgVs" Bounds="508,137" />
           </Canvas>
           <Patch Id="KlOLZv4WJi1NgNu7EVasCV" Name="Create" ManuallySortedPins="true">
             <Pin Id="DKRWR68VZ88PkCVGRukFqn" Name="Bounds" Kind="InputPin" />
@@ -2012,13 +2034,15 @@
             <Pin Id="Ql77IAFSs7LOfw0cAORtmQ" Name="Dialog If Document Changed" Kind="InputPin" Visibility="Optional" />
           </Patch>
           <Patch Id="FeKUXseSshJPDAcC7NjwuM" Name="Update" ManuallySortedPins="true">
-            <Pin Id="T6f58tXoH2CMy5B52RHcxA" Name="Output" Kind="OutputPin" Bounds="442,453" />
             <Pin Id="VHb8oSvNyd4NhR1cZ4Oksx" Name="Input" Kind="InputPin" Bounds="594,204" />
+            <Pin Id="Feqa4mydFkJNZ2EZF3avkL" Name="Sampler" Kind="InputPin" Bounds="487,145" Summary="If null, a linear sampler will be used" />
             <Pin Id="SARxYF13f3DPGGAugsIRiy" Name="Title" Kind="InputPin" Bounds="651,326" />
             <Pin Id="AVMI583Z1pfQPlZLNG3w5j" Name="Clear Color" Kind="InputPin" Bounds="704,328" />
             <Pin Id="MK0eBA8ErsUMGH9vCX3dBJ" Name="Clear" Kind="InputPin" Bounds="727,348" />
             <Pin Id="JGfg814nJ3mNcKGaDVRlwl" Name="Enable Keyboard Shortcuts" Kind="InputPin" Bounds="778,354" />
             <Pin Id="UCRYyftJBMtMOwO3q8Bj4z" Name="Enabled" Kind="InputPin" Bounds="824,373" />
+            <Pin Id="LhQmMjGaQ5RP0oEwYhJQd3" Name="Is Premultiplied Alpha" Kind="InputPin" Bounds="507,147" DefaultValue="False" />
+            <Pin Id="T6f58tXoH2CMy5B52RHcxA" Name="Output" Kind="OutputPin" Bounds="442,453" />
           </Patch>
           <Patch Id="AfwLBNJS2upMwN7UVQYfRo" Name="Dispose" />
           <Patch Id="Bpq1pWBqNmYQBWvi7CtFVw" Name="BackBuffer">
@@ -2074,7 +2098,13 @@
           <Link Id="QXXzw9sf19JPDd81kjJgKN" Ids="LUPLkZ2f1bgOVxvWllCUFr,VIISfSH49l0PM15oa2DVSV" IsHidden="true" />
           <Link Id="VppFY30kTd5QDrVc0kzED1" Ids="JXogtwQo3SVNV1Qz3Wz10W,UVyoTO7EGTELNdOGr3TaDV" />
           <Link Id="A4YEVPzYBaoPtQBzkFRLZc" Ids="JlJeRl8RU6QL189XTC89qV,GHfPRCto0vDMZOccKSJMst" />
-          <Link Id="GQbdIpnhCvOQYvKJvtoPew" Ids="FzCNfxX9DjZPL13bnFFskh,QndPVREitXzMwBD4vjSNvC" />
+          <Link Id="MMFZ4bebqGGMiT1wPAkHjG" Ids="KfPYo3e9ZLlOueVHvwM7C7,FCTo41YShi4L7LoTba029u" />
+          <Link Id="SMQRmcohxGXLMr3Xj5RBfy" Ids="Feqa4mydFkJNZ2EZF3avkL,KfPYo3e9ZLlOueVHvwM7C7" IsHidden="true" />
+          <Link Id="R4d7ybaWfRgNtmXATeEasq" Ids="FzCNfxX9DjZPL13bnFFskh,UMTSHUpvnN0MzNLupuyjNm" />
+          <Link Id="H2RzOrAybsoPH8aKnwkhau" Ids="H0ESSnBirtYMoaJmXijWfp,FHr3t1XAtlONYCkvmCMD7Z" />
+          <Link Id="NV6IfanfrGxNgwgRjcfWDG" Ids="AkHPPeNSGKHPQx2W52g0GC,QndPVREitXzMwBD4vjSNvC" />
+          <Link Id="UgUQQWnTx3gP6pz6vub5jA" Ids="PBfWmHghJKZLSUPdoUkgVs,SXmsi0qqi7kLvij1pQk7lC" />
+          <Link Id="Cy72YvypxKfP6DT4kbduZs" Ids="LhQmMjGaQ5RP0oEwYhJQd3,PBfWmHghJKZLSUPdoUkgVs" IsHidden="true" />
         </Patch>
       </Node>
     </Canvas>
@@ -2099,7 +2129,7 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="K08TNIU8XTsLzsNUwzw82F" Location="VL.Skia" Version="2021.4.0-0195-g3a76268057" />
+  <NugetDependency Id="K08TNIU8XTsLzsNUwzw82F" Location="VL.Skia" Version="2021.4.0-0233-g113476dd50" />
   <DocumentDependency Id="Msnm4D4Er8bLmlwC1L1XQc" Location="./VL.Stride.Graphics.vl" />
   <DocumentDependency Id="M6gCO22oHy1LhLzIK6RyS2" Location="./VL.Stride.Rendering.vl" IsFriend="true" />
   <PlatformDependency Id="QFvbyrdEV0NLXzcTARn7Xg" Location="./src/bin/Debug/netstandard2.0/VL.Stride.Runtime.dll" />

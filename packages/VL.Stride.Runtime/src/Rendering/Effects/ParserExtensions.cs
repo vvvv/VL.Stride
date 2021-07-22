@@ -58,6 +58,7 @@ namespace VL.Stride.Rendering
                 .SelectMany(s => s.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Select(s => s.Trim())
+                .Distinct()
                 .ToList();
         }
 
