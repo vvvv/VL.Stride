@@ -233,20 +233,21 @@ namespace VL.Stride.Rendering
                             resultRef.ParsedShader = localResult;
 
                         resultRef.ParentShaders.Push(localResult);
-
-                        // base shaders
-                        var baseShaders = localResult.ShaderClass.BaseClasses;
-                        foreach (var baseClass in baseShaders)
+                        try
                         {
-                            var baseShaderName = baseClass.Name.Text;
-                            var fileName = GetPathOfSdslShader(baseShaderName, fileProvider);
-                            if (!string.IsNullOrWhiteSpace(fileName))
+                            // base shaders
+                            var baseShaders = localResult.ShaderClass.BaseClasses;
+                            foreach (var baseClass in baseShaders)
                             {
+                                var baseShaderName = baseClass.Name.Text;
                                 TryParseEffect(baseShaderName, fileProvider, shaderSourceManager, resultRef);
                             }
                         }
-
-                        resultRef.ParentShaders.Pop();
+                        finally
+                        {
+                            resultRef.ParentShaders.Pop();
+                        }
+                        
                         parserCache[shaderName] = localResult;
                         return true;
                     }
