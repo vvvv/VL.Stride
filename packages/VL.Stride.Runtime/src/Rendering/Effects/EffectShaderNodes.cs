@@ -952,7 +952,7 @@ namespace VL.Stride.Rendering
                                             var viewFormat = inputTexture.ViewFormat;
                                             
                                             // Figure out render format
-                                            if (!shaderMetadata.IsTextureSource && shaderMetadata.DontApplySRgbCurveOnWrite)
+                                            if (!shaderMetadata.IsTextureSource && shaderMetadata.DontConvertToSRgbOnOnWrite)
                                             {
                                                 if (viewFormat != lastViewFormat)
                                                     usedRenderFormat = viewFormat.ToNonSRgb();

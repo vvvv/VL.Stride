@@ -25,8 +25,7 @@ namespace Stride.Rendering
         public static readonly ValueParameterKey<float> Contrast = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> Level = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> Effect = ParameterKeys.NewValue<float>(1.0f);
-        public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>(0);
+        public static readonly ValueParameterKey<uint> Type = ParameterKeys.NewValue<uint>(0);
         public static readonly ValueParameterKey<int> Iterations = ParameterKeys.NewValue<int>(4);
-        public static readonly ObjectParameterKey<SamplerState> s0 = ParameterKeys.NewObject<SamplerState>();
     }
 }

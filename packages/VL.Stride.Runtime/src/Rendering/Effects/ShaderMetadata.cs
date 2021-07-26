@@ -36,8 +36,8 @@ namespace VL.Stride.Rendering
         
         public List<string> WantsMips { get; private set; }
 
-        public List<string> DontUnapplySRgbCurveOnRead{ get; private set; }
-        public bool DontApplySRgbCurveOnWrite { get; private set; }
+        public List<string> DontConvertToLinearOnRead{ get; private set; }
+        public bool DontConvertToSRgbOnOnWrite { get; private set; }
 
         public void GetPixelFormats(bool isFilterOrMixer, out PixelFormat outputFormat, out PixelFormat renderFormat)
         {
@@ -48,7 +48,7 @@ namespace VL.Stride.Rendering
                 else
                     outputFormat = OutputFormat;
 
-                if (DontApplySRgbCurveOnWrite && RenderFormat == PixelFormat.None)
+                if (DontConvertToSRgbOnOnWrite && RenderFormat == PixelFormat.None)
                     renderFormat = outputFormat.ToNonSRgb();
                 else
                     renderFormat = RenderFormat;
@@ -159,7 +159,7 @@ namespace VL.Stride.Rendering
         IEnumerable<(string textureName, bool wantsMips, bool dontUnapplySRgb)> GetTexturePinsToManageInternal(IEnumerable<string> allTextureInputNames)
         {
             var wantsMips = WantsMips?.Count > 0;
-            var wantsSRgb = DontUnapplySRgbCurveOnRead != null;
+            var wantsSRgb = DontConvertToLinearOnRead != null;
 
             var mipPins = wantsMips ? WantsMips : Enumerable.Empty<string>();
 
@@ -167,8 +167,8 @@ namespace VL.Stride.Rendering
             
             if (wantsSRgb)
             {
-                if (DontUnapplySRgbCurveOnRead.Count > 0)
-                    srgbPins = DontUnapplySRgbCurveOnRead;
+                if (DontConvertToLinearOnRead.Count > 0)
+                    srgbPins = DontConvertToLinearOnRead;
                 else
                     srgbPins = allTextureInputNames;
             }
@@ -267,8 +267,8 @@ namespace VL.Stride.Rendering
         public const string RenderFormatName = "RenderFormat";
         public const string TextureSourceName = "TextureSource";
         public const string WantsMipsName = "WantsMips";
-        public const string DontUnapplySRgbCurveOnReadName = "DontUnapplySRgbCurveOnRead";
-        public const string DontApplySRgbCurveOnWriteName = "DontApplySRgbCurveOnWrite";
+        public const string DontConvertToLinearOnReadName = "DontConvertToLinearOnRead";
+        public const string DontConvertToSRgbOnName = "DontConvertToSRgbOnWrite";
 
         //pin
         public const string EnumTypeName = "EnumType";
@@ -332,11 +332,11 @@ namespace VL.Stride.Rendering
                             case WantsMipsName:
                                 shaderMetadata.WantsMips = attr.ParseStringAsCommaSeparatedList();
                                 break;
-                            case DontUnapplySRgbCurveOnReadName:
-                                shaderMetadata.DontUnapplySRgbCurveOnRead = attr.ParseStringAsCommaSeparatedList();
+                            case DontConvertToLinearOnReadName:
+                                shaderMetadata.DontConvertToLinearOnRead = attr.ParseStringAsCommaSeparatedList();
                                 break;
-                            case DontApplySRgbCurveOnWriteName:
-                                shaderMetadata.DontApplySRgbCurveOnWrite = true;
+                            case DontConvertToSRgbOnName:
+                                shaderMetadata.DontConvertToSRgbOnOnWrite = true;
                                 break;
                             default:
                                 break;
