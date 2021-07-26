@@ -30,11 +30,11 @@ namespace VL.Stride.Windows
     public partial class SkiaRenderer : RendererBase
     {
         private IResourceHandle<SkiaRenderContext> renderContextHandle;
-
+        private Device1 d1;
         private readonly SerialDisposable inputSubscription = new SerialDisposable();
         private IInputSource lastInputSource;
         private Int2 lastRenderTargetSize;
-
+        private DeviceContextState contextStateForAngle;
         private readonly InViewportUpstream viewportLayer = new InViewportUpstream();
 
         public SkiaRenderer()
@@ -52,6 +52,9 @@ namespace VL.Stride.Windows
             var nativeDevice = SharpDXInterop.GetNativeDevice(GraphicsDevice) as SharpDX.Direct3D11.Device;
             var angleDevice = Egl.eglCreateDeviceANGLE(Egl.EGL_D3D11_DEVICE_ANGLE, nativeDevice.NativePointer, null);
             renderContextHandle = SkiaRenderContext.ForDevice(angleDevice);
+
+            d1 = nativeDevice.QueryInterface<SharpDX.Direct3D11.Device1>();
+            contextStateForAngle = d1.CreateDeviceContextState<SharpDX.Direct3D11.Device1>(SharpDX.Direct3D11.CreateDeviceContextStateFlags.None, new[] { nativeDevice.FeatureLevel }, out var chosen);
 
             base.InitializeCore();
         }
@@ -88,8 +91,10 @@ namespace VL.Stride.Windows
 
             var nativeDevice = SharpDXInterop.GetNativeDevice(GraphicsDevice) as SharpDX.Direct3D11.Device;
             var nativeTempRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
-            PrintCount($"Device ({nativeDevice.NativePointer}) enter", nativeDevice.NativePointer);
-            PrintCount($"Render target ({nativeTempRenderTarget.NativePointer}) enter", nativeTempRenderTarget.NativePointer);
+            //PrintCount($"Device ({nativeDevice.NativePointer}) enter", nativeDevice.NativePointer);
+            //PrintCount($"Render target ({nativeTempRenderTarget.NativePointer}) enter", nativeTempRenderTarget.NativePointer);
+
+            d1.ImmediateContext1.SwapDeviceContextState(contextStateForAngle, out var previous);
 
             // Only working solution was to use shared handles
             var eglSurface = glesContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
@@ -122,10 +127,11 @@ namespace VL.Stride.Windows
             {
                 glesContext.DestroySurface(eglSurface);
                 glesContext.MakeCurrent(default);
+                d1.ImmediateContext1.SwapDeviceContextState(previous, out contextStateForAngle);
             }
 
-            PrintCount("Device exit", nativeDevice.NativePointer);
-            PrintCount("Render target exit", nativeTempRenderTarget.NativePointer);
+            //PrintCount("Device exit", nativeDevice.NativePointer);
+            //PrintCount("Render target exit", nativeTempRenderTarget.NativePointer);
         }
 
         static void PrintCount(string name, IntPtr unkown)
@@ -156,7 +162,7 @@ namespace VL.Stride.Windows
                 stencilBits: stencil,
                 glInfo: glInfo);
 
-            return SKSurface.Create(context, renderTarget, GRSurfaceOrigin.TopLeft, colorType);
+            return SKSurface.Create(context, renderTarget, GRSurfaceOrigin.TopLeft, colorType, colorspace: SKColorSpace.CreateSrgbLinear());
         }
 
         //static void SimpleStupidTestRendering()
