@@ -9,9 +9,11 @@ using Stride.Input;
 using Stride.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices;
 using VL.Lib.Basics.Resources;
 using VL.Skia;
 using VL.Stride.Input;
@@ -27,20 +29,16 @@ namespace VL.Stride.Windows
     /// </summary>
     public partial class SkiaRenderer : RendererBase
     {
-        private readonly IResourceHandle<SkiaRenderContext> renderContextHandle;
+        private IResourceHandle<SkiaRenderContext> renderContextHandle;
 
         private readonly SerialDisposable inputSubscription = new SerialDisposable();
         private IInputSource lastInputSource;
         private Int2 lastRenderTargetSize;
-        private Texture tempRenderTarget;
-        private IntPtr? eglSurface;
 
         private readonly InViewportUpstream viewportLayer = new InViewportUpstream();
 
         public SkiaRenderer()
         {
-            renderContextHandle = SkiaRenderContext.ForCurrentThread();
-
             //var glesContext = new GlesContext();
             //glesContext.MakeCurrent(IntPtr.Zero);
             //var skiaContext = GRContext.CreateGl(GRGlInterface.CreateAngle());
@@ -49,12 +47,18 @@ namespace VL.Stride.Windows
         
         public ILayer Layer { get; set; }
 
+        protected override void InitializeCore()
+        {
+            var nativeDevice = SharpDXInterop.GetNativeDevice(GraphicsDevice) as SharpDX.Direct3D11.Device;
+            var angleDevice = Egl.eglCreateDeviceANGLE(Egl.EGL_D3D11_DEVICE_ANGLE, nativeDevice.NativePointer, null);
+            renderContextHandle = SkiaRenderContext.ForDevice(angleDevice);
+
+            base.InitializeCore();
+        }
+
         protected override void Destroy()
         {
-            // TODO Destroy the EGL surface!
-
             renderContextHandle.Dispose();
-            tempRenderTarget?.Dispose();
             base.Destroy();
         }
 
@@ -63,15 +67,14 @@ namespace VL.Stride.Windows
             if (Layer is null)
                 return;
 
-            // Fetch the skia render context (uses ANGLE -> DirectX11)
-            var skiaRenderContext = renderContextHandle?.Resource;
-            if (skiaRenderContext is null)
-                return;
-
             var commandList = context.CommandList;
             var renderTarget = commandList.RenderTarget;
+
+            // Fetch the skia render context (uses ANGLE -> DirectX11)
+
+            var skiaRenderContext = renderContextHandle.Resource;
+
             var glesContext = skiaRenderContext.GlesContext;
-            var allocator = context.GraphicsContext.Allocator;
 
             // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
             var renderTargetSize = new Int2(renderTarget.Width, renderTarget.Height);
@@ -81,28 +84,15 @@ namespace VL.Stride.Windows
                 lastInputSource = inputSource;
                 lastRenderTargetSize = renderTargetSize;
                 inputSubscription.Disposable = SubscribeToInputSource(inputSource, context, canvas: null, skiaRenderContext.SkiaContext);
-
-                this.tempRenderTarget?.Dispose();
-                this.tempRenderTarget = null;
-                glesContext.DestroySurface(this.eglSurface.Value);
-                this.eglSurface = default;
             }
 
-            var renderTargetDescription = TextureDescription.New2D(
-                renderTarget.Width,
-                renderTarget.Height,
-                PixelFormat.B8G8R8A8_UNorm, // Typeless as well as R8G8B8A8 won't work for CreateSurfaceFromSharedHandle :(
-                textureFlags: TextureFlags.ShaderResource | TextureFlags.RenderTarget,
-                textureOptions: TextureOptions.Shared);
-
-            var tempRenderTarget = this.tempRenderTarget ??= Texture.New(context.GraphicsDevice, renderTargetDescription);
-
-            // This code path works, simple drawing commands work but SkSurface.Flush causes device lost :(
-            //var nativeTempRenderTarget = SharpDXInterop.GetNativeResource(tempRenderTarget) as Texture2D;
-            //var eglSurface = this.eglSurface ??= glesContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
+            var nativeDevice = SharpDXInterop.GetNativeDevice(GraphicsDevice) as SharpDX.Direct3D11.Device;
+            var nativeTempRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
+            PrintCount($"Device ({nativeDevice.NativePointer}) enter", nativeDevice.NativePointer);
+            PrintCount($"Render target ({nativeTempRenderTarget.NativePointer}) enter", nativeTempRenderTarget.NativePointer);
 
             // Only working solution was to use shared handles
-            var eglSurface = this.eglSurface ??= glesContext.CreateSurfaceFromSharedHandle(tempRenderTarget.Width, tempRenderTarget.Height, tempRenderTarget.SharedHandle);
+            var eglSurface = glesContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
             try
             {
                 // Make the surface current (becomes default FBO)
@@ -118,8 +108,6 @@ namespace VL.Stride.Windows
                 var canvas = surface.Canvas;
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    canvas.Clear();
-
                     var viewport = context.RenderContext.ViewportState.Viewport0;
                     canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
                     viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
@@ -129,36 +117,27 @@ namespace VL.Stride.Windows
 
                 // Flush before drawing on our render target
                 surface.Flush();
-                Gles.glFlush();
-
-                if (context.GraphicsDevice.ColorSpace == ColorSpace.Linear)
-                {
-                    // Sadly we can't declare our temp target as Typeless - CreateSurfaceFromSharedHandle will fail
-                    // Therefor we need to adjust the color space manually
-                    // Would it be cheaper to draw with shader doing the conversion manually?
-                    var description = tempRenderTarget.Description;
-                    // Switch the color space
-                    description.Format = description.Format.ToSRgb();
-                    // Ensure we're not asking for a shared texture
-                    description.Options = default;
-                    var tempRenderTarget2 = PushScopedResource(allocator.GetTemporaryTexture2D(description));
-                    commandList.Copy(tempRenderTarget, tempRenderTarget2);
-                    context.GraphicsContext.DrawTexture(tempRenderTarget2, BlendStates.AlphaBlend);
-                }
-                else
-                {
-                    context.GraphicsContext.DrawTexture(tempRenderTarget, BlendStates.AlphaBlend);
-                }
             }
             finally
             {
-                //glesContext.DestroySurface(eglSurface);
+                glesContext.DestroySurface(eglSurface);
+                glesContext.MakeCurrent(default);
             }
+
+            PrintCount("Device exit", nativeDevice.NativePointer);
+            PrintCount("Render target exit", nativeTempRenderTarget.NativePointer);
+        }
+
+        static void PrintCount(string name, IntPtr unkown)
+        {
+            Marshal.AddRef(unkown);
+            var count = Marshal.Release(unkown);
+            Trace.TraceInformation($"{name}: {count}");
         }
 
         static SKSurface CreateSkSurface(GRContext context, Texture texture)
         {
-            var colorType = SKColorType.Bgra8888;
+            var colorType = SKColorType.Rgba8888;
             Gles.glGetIntegerv(Gles.GL_FRAMEBUFFER_BINDING, out var framebuffer);
             Gles.glGetIntegerv(Gles.GL_STENCIL_BITS, out var stencil);
             Gles.glGetIntegerv(Gles.GL_SAMPLES, out var samples);

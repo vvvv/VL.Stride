@@ -151,10 +151,10 @@ namespace VL.Stride.Games
         {
             try
             {
-                base.EndDraw(present);
-
                 foreach (var r in PendingPresentCalls)
                     r.Present();
+
+                base.EndDraw(present: false);
             }
             finally
             {
