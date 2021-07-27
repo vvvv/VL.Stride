@@ -199,32 +199,9 @@ namespace VL.Stride.Rendering
                 return new NameAndVersion(name);
             }
 
-            bool OpenEditor(string effectName)
+            IObservable<object> TrackChanges(string shaderName, ShaderMetadata shaderMetadata)
             {
-                var path = EffectUtils.GetPathOfSdslShader(effectName, fileProvider);
-                try
-                {
-                    Process.Start(path);
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
-            (DynamicEffectInstance effect, ImmutableArray<Message> messages, IObservable<object> invalidated) CreateEffectInstance(string effectName, ShaderMetadata shaderMetadata, ParameterCollection parameters = null, string baseShaderName = null)
-            {
-                var messages = ImmutableArray<Message>.Empty;
-                if (baseShaderName is null)
-                    baseShaderName = effectName;
-
-                var effect = new DynamicEffectInstance(effectName, parameters);
-                if (parameters is null)
-                    parameters = effect.Parameters;
-
-
-                var watchNames = new HashSet<string>() { baseShaderName };
+                var watchNames = new HashSet<string>() { shaderName };
 
                 foreach (var baseClass in shaderMetadata.ParsedShader?.BaseShaders ?? Enumerable.Empty<ParsedShader>())
                 {
@@ -233,7 +210,7 @@ namespace VL.Stride.Rendering
                         continue; //in stride package folder
 
                     watchNames.Add(Path.GetFileNameWithoutExtension(baseClassPath));
-                } 
+                }
 
                 IObservable<object> invalidated = modifications.Where(e => watchNames.Contains(Path.GetFileNameWithoutExtension(e.Name)));
                 // Setup our own watcher as Stride doesn't track shaders with errors
@@ -250,6 +227,33 @@ namespace VL.Stride.Rendering
                             }
                         }));
                 }
+
+                return invalidated;
+            }
+
+            bool OpenEditor(string effectName)
+            {
+                var path = EffectUtils.GetPathOfSdslShader(effectName, fileProvider);
+                try
+                {
+                    Process.Start(path);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            (DynamicEffectInstance effect, ImmutableArray<Message> messages) CreateEffectInstance(string effectName, ShaderMetadata shaderMetadata, ParameterCollection parameters = null, string baseShaderName = null)
+            {
+                var messages = ImmutableArray<Message>.Empty;
+                if (baseShaderName is null)
+                    baseShaderName = effectName;
+
+                var effect = new DynamicEffectInstance(effectName, parameters);
+                if (parameters is null)
+                    parameters = effect.Parameters;
 
                 try
                 {
@@ -276,7 +280,7 @@ namespace VL.Stride.Rendering
                     }
                 }
 
-                return (effect, messages, invalidated);
+                return (effect, messages);
             }
 
             IEnumerable<ParameterKeyInfo> GetParameters(DynamicEffectInstance effectInstance)
@@ -321,10 +325,11 @@ namespace VL.Stride.Rendering
                     name: name,
                     category: "Stride.Rendering.DrawShaders",
                     fragmented: true,
+                    invalidated: TrackChanges(shaderName, shaderMetadata),
                     init: buildContext =>
                     {
                         var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
-                        var (_effect, _messages, _invalidated) = CreateEffectInstance("DrawFXEffect", shaderMetadata, mixinParams, baseShaderName: shaderName);
+                        var (_effect, _messages) = CreateEffectInstance("DrawFXEffect", shaderMetadata, mixinParams, baseShaderName: shaderName);
 
                         var _inputs = new List<IVLPinDescription>();
                         var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(IEffect)) };
@@ -398,7 +403,6 @@ namespace VL.Stride.Rendering
                                         gameHandle.Dispose();
                                     });
                             },
-                            invalidated: _invalidated,
                             openEditor: () => OpenEditor(shaderName)
                         );
                     });
@@ -410,6 +414,7 @@ namespace VL.Stride.Rendering
                     name: name,
                     category: "Stride.Rendering.ComputeShaders",
                     fragmented: true,
+                    invalidated: TrackChanges(shaderName, shaderMetadata),
                     init: buildContext =>
                     {
                         var _parameters = new ParameterCollection();
@@ -418,7 +423,7 @@ namespace VL.Stride.Rendering
 
                         BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource, _parameters);
 
-                        var (_effect, _messages, _invalidated) = CreateEffectInstance("ComputeFXEffect", shaderMetadata, _parameters, baseShaderName: shaderName);
+                        var (_effect, _messages) = CreateEffectInstance("ComputeFXEffect", shaderMetadata, _parameters, baseShaderName: shaderName);
 
                         var _dispatcherInput = new PinDescription<IComputeEffectDispatcher>("Dispatcher");
                         var _threadNumbersInput = new PinDescription<Int3>("Thread Group Size", Int3.One);
@@ -495,7 +500,6 @@ namespace VL.Stride.Rendering
                                         gameHandle.Dispose();
                                     });
                             },
-                            invalidated: _invalidated,
                             openEditor: () => OpenEditor(shaderName)
                         );
                     });
@@ -507,11 +511,12 @@ namespace VL.Stride.Rendering
                     name: name,
                     category: "Stride.Rendering.Experimental.ShaderFX",
                     fragmented: true,
+                    invalidated: TrackChanges(shaderName, shaderMetadata),
                     init: buildContext =>
                     {
                         var outputType = shaderMetadata.GetShaderFXOutputType(out var innerType);
                         var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
-                        var (_effect, _messages, _invalidated) = CreateEffectInstance("ShaderFXEffect", shaderMetadata, mixinParams, baseShaderName: shaderName);
+                        var (_effect, _messages) = CreateEffectInstance("ShaderFXEffect", shaderMetadata, mixinParams, baseShaderName: shaderName);
 
                         var _inputs = new List<IVLPinDescription>();
                         var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", outputType) };
@@ -596,7 +601,6 @@ namespace VL.Stride.Rendering
                                         gameHandle.Dispose();
                                     });
                             },
-                            invalidated: _invalidated,
                             openEditor: () => OpenEditor(shaderName)
                         );
                     });
@@ -614,12 +618,13 @@ namespace VL.Stride.Rendering
                     name: name,
                     category: "Stride.Rendering.ImageShaders.Experimental.Advanced",
                     fragmented: true,
+                    invalidated: TrackChanges(shaderName, shaderMetadata),
                     init: buildContext =>
                     {
 
                         var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
 
-                        var (_effect, _messages, _invalidated) = CreateEffectInstance("TextureFXEffect", shaderMetadata, mixinParams, baseShaderName: shaderName);
+                        var (_effect, _messages) = CreateEffectInstance("TextureFXEffect", shaderMetadata, mixinParams, baseShaderName: shaderName);
 
                         var _inputs = new List<IVLPinDescription>();
                         var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(ImageEffectShader)) };
@@ -779,7 +784,6 @@ namespace VL.Stride.Rendering
                                         gameHandle.Dispose();
                                     });
                             },
-                            invalidated: _invalidated,
                             openEditor: () => OpenEditor(shaderName)
                         );
                     });
@@ -791,6 +795,7 @@ namespace VL.Stride.Rendering
                     name: name,
                     category: shaderMetadata.GetCategory("Stride.Textures"),
                     fragmented: true,
+                    invalidated: shaderDescription.Invalidated,
                     init: buildContext =>
                     {
                         const string Enabled = "Enabled";
@@ -852,7 +857,6 @@ namespace VL.Stride.Rendering
                             inputs: _inputs,
                             outputs: new[] { buildContext.Pin("Output", typeof(Texture)) },
                             messages: shaderDescription.Messages,
-                            invalidated: shaderDescription.Invalidated,
                             summary: shaderMetadata.Summary,
                             remarks: shaderMetadata.Remarks,
                             tags: shaderMetadata.Tags,
