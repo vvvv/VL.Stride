@@ -80,15 +80,7 @@
             <Pin Id="L1n8AR2FgPRMqYSAhiZXdA" Name="Output" Kind="StateOutputPin" />
           </Node>
           <Pad Id="JCY2uPkPDsmNOiiCgURYYQ" SlotId="JXtdJdtP1pIM7n27FqLDaF" Bounds="382,401" />
-          <Pad Id="TNXnPCuBCBvM4ACMuBy8WE" Comment="Apply" Bounds="361,494,35,36" ShowValueBox="true" isIOBox="true" Value="True">
-            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="TypeFlag" Name="Boolean" />
-            </p:TypeAnnotation>
-            <p:ValueBoxSettings>
-              <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
-            </p:ValueBoxSettings>
-          </Pad>
-          <Pad Id="JIwn9Y9joVhP5iPJfBBO7a" Comment="Mode" Bounds="285,314,109,15" ShowValueBox="true" isIOBox="true" Value="Linear">
+          <Pad Id="JIwn9Y9joVhP5iPJfBBO7a" Comment="Mode" Bounds="285,314,109,15" ShowValueBox="true" isIOBox="true" Value="NearestNeighbor">
             <p:TypeAnnotation LastCategoryFullName="VL.Stride.Effects.TextureFX" LastSymbolSource="VL.Stride.Runtime.dll">
               <Choice Kind="TypeFlag" Name="ResizeInterpolationType" />
             </p:TypeAnnotation>
@@ -134,6 +126,31 @@
               <Choice Kind="TypeFlag" Name="Int2" />
             </p:TypeAnnotation>
           </Pad>
+          <Node Bounds="426,493,65,19" Id="JN6SF0I6e7VPL2LFiYR94c">
+            <p:NodeReference LastCategoryFullName="Stride.Textures.Utils" LastSymbolSource="VL.Stride.Rendering.TextureFX.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="Resize (Relative)" />
+            </p:NodeReference>
+            <Pin Id="QcB6NYwsIiROtAVYNZfKUt" Name="Input" Kind="InputPin" />
+            <Pin Id="NAehLwJiUmFM3IHwIIZ796" Name="Size Scale" Kind="InputPin" />
+            <Pin Id="IKmaiM2Ab3kQch982CrVX0" Name="Mode" Kind="InputPin" />
+            <Pin Id="GSzkaZ80xpbQY2ugv8CUZU" Name="Apply" Kind="InputPin" />
+            <Pin Id="Ihp3PAKM6cULvswYByenI0" Name="Output" Kind="OutputPin" />
+          </Node>
+          <Pad Id="KkVDxDMbYjePWXQx70MDt3" Comment="Size Scale" Bounds="448,458,35,15" ShowValueBox="true" isIOBox="true" Value="1">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="Float32" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Pad Id="GP7Q41yAQGSL8qOhVjNKNl" Bounds="495,501,125,21" ShowValueBox="true" isIOBox="true" Value="Relative version">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
         </Canvas>
         <Patch Id="QhjWIHQmsTMLjFw2y5ZYB6" Name="Create" />
         <Patch Id="BUfnhNo8LSGOLf5kf1LBlk" Name="Update" ParticipatingElements="L74SHcJTDtcMAgvgreaJUn" />
@@ -143,7 +160,6 @@
         </ProcessDefinition>
         <Slot Id="JXtdJdtP1pIM7n27FqLDaF" Name="Window Size" />
         <Link Id="B7zOE6ejfVrPujRdL0jY5O" Ids="EC1svrwrSYlMENyCkbWpwS,FB0rDgUx078MlULGIIgUZw" />
-        <Link Id="EozL5A8RhwyO9P0DyEPiBq" Ids="TNXnPCuBCBvM4ACMuBy8WE,LI3MZwF6KmqPywZulgbGaX" />
         <Link Id="JqHAQqQlL31Pu37x5NgKrh" Ids="KPkQw8mW9hlM7EFMcLw49x,TgIBZyfLPIBQHsWLOJdQiJ" />
         <Link Id="OIxACs8mMvkOVp5fa9fiiz" Ids="L1n8AR2FgPRMqYSAhiZXdA,Qvh6NVcSDWWNkeoiSS04X8" />
         <Link Id="L74SHcJTDtcMAgvgreaJUn" Ids="JCY2uPkPDsmNOiiCgURYYQ,Jw6RLmdozKDPaiZdk5gNEO" />
@@ -151,10 +167,11 @@
         <Link Id="OXgi7PZnLxHP4FfEolBXkS" Ids="JIwn9Y9joVhP5iPJfBBO7a,VJ76ewrQPBgNnWHDNBM6rE" />
         <Link Id="GWnWJA8E7CDNmjFfOLuppy" Ids="LBT2HL59bHiMccVR2zeJ1j,Opt3Q5pcqrfQAy1je3PYkn" />
         <Link Id="LvRRILw0gqUQCKjdKqn3em" Ids="FB36olK742sMZR3PQjkASR,A8rlre2fyGpNqU8IsBsE0j" />
-        <Link Id="Hf6DNUhc0xrNKhkw0IgjwL" Ids="LPRVk68hRMjMgC8RTC83n8,GJ7IHc1npBNP4SblgFZpJX" />
+        <Link Id="GL6aqGaALLWMVEz0ptTOV8" Ids="KkVDxDMbYjePWXQx70MDt3,NAehLwJiUmFM3IHwIIZ796" />
+        <Link Id="RxgRXVCmnEnLtoY4dIMbJg" Ids="LPRVk68hRMjMgC8RTC83n8,GJ7IHc1npBNP4SblgFZpJX" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="KejqP9eAj0nMzjuMF92Dop" Location="VL.Stride" Version="2021.4.0-0272-gda4ea47111" />
+  <NugetDependency Id="KejqP9eAj0nMzjuMF92Dop" Location="VL.Stride" Version="2021.4.0-0273-g3d1a6db23c" />
   <NugetDependency Id="VN0MBKjK3CSNi9DnEOej1d" Location="VL.Skia" Version="2021.4.0-0268-g1be600c242" />
 </Document>
