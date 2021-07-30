@@ -696,6 +696,11 @@ namespace VL.Stride.Rendering
                                     usedNames.Add(pinName);
                                     isOptional = true;
                                 }
+                                // also make other samplers from Texturing shader optional
+                                else if (key.PropertyType == typeof(SamplerState) && key.Name.StartsWith("Texturing."))
+                                {
+                                    isOptional = true;
+                                }
 
                                 var pinTypeInPatch = shaderMetadata.GetPinType(key, out var boxedDefaultValue);
                                 shaderMetadata.GetPinDocuAndVisibility(key, out var summary, out var remarks, out var isOptionalAttr);
@@ -807,10 +812,10 @@ namespace VL.Stride.Rendering
                         var hasTexturePinsToManage = texturePinsToManage.Count() > 0;
 
                         var isFilterOrMixer = !shaderMetadata.IsTextureSource;
-                        var defaultSize = isFilterOrMixer ? Int2.Zero : new Int2(512);
-                        shaderMetadata.GetPixelFormats(isFilterOrMixer, out var defaultFormat, out var defaultRenderFormat);
+                        shaderMetadata.GetOutputSize(out var defaultSize, out var outputSizeVisible);
+                        shaderMetadata.GetPixelFormats(out var defaultFormat, out var defaultRenderFormat);
 
-                        var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = shaderMetadata.IsTextureSource };
+                        var _outputSize = new PinDescription<Int2>("Output Size", defaultSize) { IsVisible = outputSizeVisible };
                         var _outputFormat = new PinDescription<PixelFormat>("Output Format", defaultFormat) { IsVisible = false };
                         var _renderFormat = new PinDescription<PixelFormat>("Render Format", defaultRenderFormat) { IsVisible = false, Summary = "Allows to specify a render format that is differet to the output format" };
 

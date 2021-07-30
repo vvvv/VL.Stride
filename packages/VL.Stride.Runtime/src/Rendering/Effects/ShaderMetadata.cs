@@ -20,6 +20,8 @@ namespace VL.Stride.Rendering
     {
         public PixelFormat OutputFormat { get; private set; } = PixelFormat.None;
 
+        public Int2 OutputSize { get; private set; }
+
         public PixelFormat RenderFormat { get; private set; } = PixelFormat.None;
 
         public string Category { get; private set; }
@@ -39,9 +41,10 @@ namespace VL.Stride.Rendering
         public List<string> DontConvertToLinearOnRead{ get; private set; }
         public bool DontConvertToSRgbOnOnWrite { get; private set; }
 
-        public void GetPixelFormats(bool isFilterOrMixer, out PixelFormat outputFormat, out PixelFormat renderFormat)
+        public void GetPixelFormats(out PixelFormat outputFormat, out PixelFormat renderFormat)
         {
-            if (!isFilterOrMixer)
+
+            if (IsTextureSource)
             {
                 if (OutputFormat == PixelFormat.None)
                     outputFormat = PixelFormat.R8G8B8A8_UNorm_SRgb;
@@ -58,6 +61,20 @@ namespace VL.Stride.Rendering
                 outputFormat = OutputFormat;
                 renderFormat = RenderFormat;
             }
+        }
+
+        public void GetOutputSize(out Int2 outputSize, out bool outputSizeVisible)
+        {
+            // default
+            outputSize = IsTextureSource ? new Int2(512, 512) : Int2.Zero;
+
+            // overwritten in shader?
+            var hasOutputSize = OutputSize != Int2.Zero;
+            if (hasOutputSize)
+                outputSize = OutputSize;
+
+            // visible if set in shader or is source
+            outputSizeVisible = IsTextureSource || hasOutputSize;
         }
 
         public string GetCategory(string prefix)
@@ -105,6 +122,7 @@ namespace VL.Stride.Rendering
 
         Dictionary<string, string> pinSummaries = new Dictionary<string, string>();
         Dictionary<string, string> pinRemarks = new Dictionary<string, string>();
+        Dictionary<string, string> pinAssets = new Dictionary<string, string>();
 
         private void AddPinSummary(string pinKeyName, string summary)
         {
@@ -114,6 +132,11 @@ namespace VL.Stride.Rendering
         private void AddPinRemarks(string pinKeyName, string remarks)
         {
             pinRemarks[pinKeyName] = remarks;
+        }
+
+        private void AddPinAsset(string pinKeyName, string assetURL)
+        {
+            pinAssets[pinKeyName] = assetURL;
         }
 
         public void GetPinDocuAndVisibility(ParameterKey key, out string summary, out string remarks, out bool isOptional)
@@ -264,6 +287,7 @@ namespace VL.Stride.Rendering
         public const string RemarksName = "Remarks";
         public const string TagsName = "Tags";
         public const string OutputFormatName = "OutputFormat";
+        public const string OutputSizeName = "OutputSize";
         public const string RenderFormatName = "RenderFormat";
         public const string TextureSourceName = "TextureSource";
         public const string WantsMipsName = "WantsMips";
@@ -274,6 +298,7 @@ namespace VL.Stride.Rendering
         public const string EnumTypeName = "EnumType";
         public const string OptionalName = "Optional";
         public const string DefaultName = "Default";
+        public const string AssetName = "Asset";
 
         /// <summary>
         /// Registers the additional stride variable attributes. Avoids writing them to the final shader, which would create an error in the native platform compiler.
@@ -286,6 +311,7 @@ namespace VL.Stride.Rendering
             StrideAttributes.AvailableAttributes.Add(DefaultName);
             StrideAttributes.AvailableAttributes.Add(SummaryName);
             StrideAttributes.AvailableAttributes.Add(RemarksName);
+            StrideAttributes.AvailableAttributes.Add(AssetName);
         }
 
         public static ShaderMetadata CreateMetadata(string effectName, IVirtualFileProvider fileProvider, ShaderSourceManager shaderSourceManager)
@@ -326,6 +352,9 @@ namespace VL.Stride.Rendering
                                 if (Enum.TryParse<PixelFormat>(attr.ParseString(), true, out var renderFormat))
                                     shaderMetadata.RenderFormat = renderFormat;
                                 break;
+                            case OutputSizeName:
+                                shaderMetadata.OutputSize = attr.ParseInt2();
+                                break;
                             case TextureSourceName:
                                 shaderMetadata.IsTextureSource = true;
                                 break;
@@ -365,6 +394,9 @@ namespace VL.Stride.Rendering
                                 case DefaultName:
                                     // handled in composition parsing in ParseShader.cs
                                     break;
+                                case AssetName:
+                                    shaderMetadata.AddPinAsset(pinDecl.GetKeyName(shaderDecl), attr.ParseString());
+                                    break;
                                 default:
                                     break;
                             }
@@ -387,5 +419,6 @@ namespace VL.Stride.Rendering
                 defaultValue = boxedDefaultValue;
             }
         }
+
     }
 }
