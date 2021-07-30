@@ -18,6 +18,7 @@ using VL.Lib.Basics.Resources;
 using VL.Skia;
 using VL.Stride.Input;
 using VL.Stride.Windows.WglInterop;
+using CommandList = Stride.Graphics.CommandList;
 using PixelFormat = Stride.Graphics.PixelFormat;
 using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 using SkiaRenderContext = VL.Skia.RenderContext;
@@ -29,41 +30,12 @@ namespace VL.Stride.Windows
     /// </summary>
     public partial class SkiaRenderer : RendererBase
     {
-        private IResourceHandle<SkiaRenderContext> renderContextHandle;
-        private Device1 d1;
         private readonly SerialDisposable inputSubscription = new SerialDisposable();
         private IInputSource lastInputSource;
         private Int2 lastRenderTargetSize;
-        private DeviceContextState contextStateForAngle;
         private readonly InViewportUpstream viewportLayer = new InViewportUpstream();
-
-        public SkiaRenderer()
-        {
-            //var glesContext = new GlesContext();
-            //glesContext.MakeCurrent(IntPtr.Zero);
-            //var skiaContext = GRContext.CreateGl(GRGlInterface.CreateAngle());
-            //renderContextHandle = ResourceProvider.Return(new SkiaRenderContext(glesContext, skiaContext), x => x.Dispose()).GetHandle();
-        }
         
         public ILayer Layer { get; set; }
-
-        protected override void InitializeCore()
-        {
-            var nativeDevice = SharpDXInterop.GetNativeDevice(GraphicsDevice) as SharpDX.Direct3D11.Device;
-            var angleDevice = Egl.eglCreateDeviceANGLE(Egl.EGL_D3D11_DEVICE_ANGLE, nativeDevice.NativePointer, null);
-            renderContextHandle = SkiaRenderContext.ForDevice(angleDevice);
-
-            d1 = nativeDevice.QueryInterface<SharpDX.Direct3D11.Device1>();
-            contextStateForAngle = d1.CreateDeviceContextState<SharpDX.Direct3D11.Device1>(SharpDX.Direct3D11.CreateDeviceContextStateFlags.None, new[] { nativeDevice.FeatureLevel }, out var chosen);
-
-            base.InitializeCore();
-        }
-
-        protected override void Destroy()
-        {
-            renderContextHandle.Dispose();
-            base.Destroy();
-        }
 
         protected override void DrawCore(RenderDrawContext context)
         {
@@ -74,8 +46,8 @@ namespace VL.Stride.Windows
             var renderTarget = commandList.RenderTarget;
 
             // Fetch the skia render context (uses ANGLE -> DirectX11)
-
-            var skiaRenderContext = renderContextHandle.Resource;
+            var interopContext = GetInteropContext(context.GraphicsDevice);
+            var skiaRenderContext = interopContext.SkiaRenderContext;
 
             var glesContext = skiaRenderContext.GlesContext;
 
@@ -89,45 +61,43 @@ namespace VL.Stride.Windows
                 inputSubscription.Disposable = SubscribeToInputSource(inputSource, context, canvas: null, skiaRenderContext.SkiaContext);
             }
 
-            var nativeDevice = SharpDXInterop.GetNativeDevice(GraphicsDevice) as SharpDX.Direct3D11.Device;
-            var nativeTempRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
             //PrintCount($"Device ({nativeDevice.NativePointer}) enter", nativeDevice.NativePointer);
             //PrintCount($"Render target ({nativeTempRenderTarget.NativePointer}) enter", nativeTempRenderTarget.NativePointer);
 
-            d1.ImmediateContext1.SwapDeviceContextState(contextStateForAngle, out var previous);
-
-            // Only working solution was to use shared handles
-            var eglSurface = glesContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
-            try
+            using (interopContext.Scoped(commandList))
             {
-                // Make the surface current (becomes default FBO)
-                skiaRenderContext.MakeCurrent(eglSurface);
-
-                // Uncomment for debugging
-                // SimpleStupidTestRendering();
-
-                // Setup a skia surface around the currently set render target
-                using var surface = CreateSkSurface(skiaRenderContext.SkiaContext, renderTarget);
-
-                // Render
-                var canvas = surface.Canvas;
-                using (new SKAutoCanvasRestore(canvas))
+                var nativeTempRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
+                var eglSurface = glesContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
+                try
                 {
-                    var viewport = context.RenderContext.ViewportState.Viewport0;
-                    canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
-                    viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
+                    // Make the surface current (becomes default FBO)
+                    skiaRenderContext.MakeCurrent(eglSurface);
 
-                    layer.Render(CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, skiaRenderContext.SkiaContext));
+                    // Uncomment for debugging
+                    // SimpleStupidTestRendering();
+
+                    // Setup a skia surface around the currently set render target
+                    using var surface = CreateSkSurface(skiaRenderContext.SkiaContext, renderTarget);
+
+                    // Render
+                    var canvas = surface.Canvas;
+                    using (new SKAutoCanvasRestore(canvas))
+                    {
+                        var viewport = context.RenderContext.ViewportState.Viewport0;
+                        canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
+                        viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
+
+                        layer.Render(CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, skiaRenderContext.SkiaContext));
+                    }
+
+                    // Flush before drawing on our render target
+                    surface.Flush();
                 }
-
-                // Flush before drawing on our render target
-                surface.Flush();
-            }
-            finally
-            {
-                glesContext.DestroySurface(eglSurface);
-                glesContext.MakeCurrent(default);
-                d1.ImmediateContext1.SwapDeviceContextState(previous, out contextStateForAngle);
+                finally
+                {
+                    glesContext.DestroySurface(eglSurface);
+                    glesContext.MakeCurrent(default);
+                }
             }
 
             //PrintCount("Device exit", nativeDevice.NativePointer);
@@ -178,19 +148,82 @@ namespace VL.Stride.Windows
         //int i = 0;
 
         // Works, also simple Gles drawing commands work but SkSurface.Flush causes device lost :(
-        static SkiaRenderContext GetSkiaRenderContext(GraphicsDevice graphicsDevice)
+        static InteropContext GetInteropContext(GraphicsDevice graphicsDevice)
         {
-            return graphicsDevice.GetOrCreateSharedData("VL.Stride.Skia.RenderContext", gd =>
+            return graphicsDevice.GetOrCreateSharedData("VL.Stride.Skia.InteropContext", gd =>
             {
-                if (SharpDXInterop.GetNativeDevice(gd) is SharpDX.Direct3D11.Device device)
+                if (SharpDXInterop.GetNativeDevice(gd) is Device device)
                 {
                     // https://github.com/google/angle/blob/master/src/tests/egl_tests/EGLDeviceTest.cpp#L272
                     var angleDevice = Egl.eglCreateDeviceANGLE(Egl.EGL_D3D11_DEVICE_ANGLE, device.NativePointer, null);
                     if (angleDevice != default)
-                        return SkiaRenderContext.ForDevice(angleDevice);
+                    {
+                        var d1 = device.QueryInterface<Device1>();
+                        var contextState = d1.CreateDeviceContextState<Device1>(
+                            CreateDeviceContextStateFlags.None, 
+                            new[] { device.FeatureLevel }, 
+                            out _);
+
+                        return new InteropContext(SkiaRenderContext.New(angleDevice), d1.ImmediateContext1, contextState);
+                    }
                 }
                 return null;
-            })?.Resource;
+            });
+        }
+
+        sealed class InteropContext : IDisposable
+        {
+            public readonly SkiaRenderContext SkiaRenderContext;
+            public readonly DeviceContext1 DeviceContext;
+            public readonly DeviceContextState ContextState;
+
+            public InteropContext(SkiaRenderContext skiaRenderContext, DeviceContext1 deviceContext, DeviceContextState contextState)
+            {
+                SkiaRenderContext = skiaRenderContext;
+                DeviceContext = deviceContext;
+                ContextState = contextState;
+            }
+
+            public ScopedDeviceContext Scoped(CommandList commandList)
+            {
+                return new ScopedDeviceContext(commandList, DeviceContext, ContextState);
+            }
+
+            public void Dispose()
+            {
+                ContextState.Dispose();
+                SkiaRenderContext.Dispose();
+            }
+        }
+
+        readonly struct ScopedDeviceContext : IDisposable
+        {
+            readonly CommandList commandList;
+            readonly DeviceContext1 deviceContext;
+            readonly DeviceContextState oldContextState;
+
+            public ScopedDeviceContext(CommandList commandList, DeviceContext1 deviceContext, DeviceContextState contextState)
+            {
+                this.commandList = commandList;
+                this.deviceContext = deviceContext;
+                deviceContext.SwapDeviceContextState(contextState, out oldContextState);
+            }
+
+            public void Dispose()
+            {
+                // Ensure no references are held to the render targets (would prevent resize)
+                var currentRenderTarget = commandList.RenderTarget;
+                var currentDepthStencil = commandList.DepthStencilBuffer;
+                commandList.UnsetRenderTargets();
+                deviceContext.SwapDeviceContextState(oldContextState, out _);
+                commandList.SetRenderTarget(currentDepthStencil, currentRenderTarget);
+
+                // Doesn't work - why?
+                //var renderTargets = deviceContext.OutputMerger.GetRenderTargets(8, out var depthStencilView);
+                //deviceContext.OutputMerger.ResetTargets();
+                //deviceContext.SwapDeviceContextState(oldContextState, out _);
+                //deviceContext.OutputMerger.SetTargets(depthStencilView, renderTargets);
+            }
         }
     }
 }
