@@ -18,8 +18,8 @@ namespace Stride.Rendering
 {
     public static partial class Noise_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Scale = ParameterKeys.NewValue<float>(1.0f);
+        public static readonly ValueParameterKey<float> Scale = ParameterKeys.NewValue<float>(0.25f);
         public static readonly ValueParameterKey<Vector2> Offset = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>();
+        public static readonly ValueParameterKey<uint> Type = ParameterKeys.NewValue<uint>();
     }
 }

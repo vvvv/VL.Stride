@@ -12,10 +12,17 @@ using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
+    public enum SampleMode
+    {
+        Sampler,
+        CubicBSpline,
+        CubicCatmullRom
+    }
+
     public class SampleTexture<T> : ComputeValue<T>
     {
 
-        public SampleTexture(DeclTexture texture, DeclSampler sampler, IComputeValue<Vector2> texCoord, IComputeValue<float> lod, bool isRW = false, bool isSampleLevel = false)
+        public SampleTexture(DeclTexture texture, DeclSampler sampler, IComputeValue<Vector2> texCoord, IComputeValue<float> lod, bool isRW = false, bool isSampleLevel = false, SampleMode sampleMode = SampleMode.Sampler)
         {
             TextureDecl = texture;
             SamplerDecl = sampler;
@@ -23,6 +30,7 @@ namespace VL.Stride.Shaders.ShaderFX
             LOD = lod;
             IsRW = isRW;
             IsSampleLevel = isSampleLevel;
+            SampleMode = sampleMode;
 
             ShaderName = isSampleLevel ? "SampleLevelTexture" : "SampleTexture";
             ShaderName = IsRW ? ShaderName + "RW" : ShaderName;
@@ -40,6 +48,8 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public bool IsSampleLevel { get; }
 
+        public SampleMode SampleMode { get; }
+
         public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
         {
             if (TextureDecl == null || SamplerDecl == null)
@@ -49,7 +59,21 @@ namespace VL.Stride.Shaders.ShaderFX
             SamplerDecl.GenerateShaderSource(context, baseKeys);
 
             var isSampleLevel = IsSampleLevel || context.IsNotPixelStage;
+
             var shaderName = isSampleLevel ? "SampleLevelTexture" : "SampleTexture";
+
+            switch (SampleMode) // cubic samplers also work in vertex shaders because they use SampleLevel 0
+            {
+                case SampleMode.Sampler:
+                    break;
+                case SampleMode.CubicBSpline:
+                    shaderName = "SampleCubicBSplineTexture";
+                    break;
+                case SampleMode.CubicCatmullRom:
+                    shaderName = "SampleCubicCatmullRomTexture";
+                    break;
+            }
+
             shaderName = IsRW ? shaderName + "RW" : shaderName;
             var shaderClassSource = GetShaderSourceForType<T>(shaderName, TextureDecl.Key, TextureDecl.GetResourceGroupName(context), SamplerDecl.Key, SamplerDecl.GetResourceGroupName(context));
 

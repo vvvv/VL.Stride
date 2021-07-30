@@ -22,4 +22,5 @@ namespace VL.Stride.Effects.TextureFX
     public enum CoordinatesType { Cartesian, Polar };
     public enum SwizzleType { Red, Green, Blue, Alpha };
     public enum TunnelType { Square, Cylinder, Fly };
+    public enum ResizeInterpolationType { NearestNeighbor, Linear, CubicBSpline, CubicCatmullRom/*, Lanczos*/ };
 }
