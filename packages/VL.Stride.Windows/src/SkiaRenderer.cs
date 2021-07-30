@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.ES20;
 using SharpDX.Direct3D11;
+using SharpDX.DXGI;
 using SkiaSharp;
 using SkiaSharp.Views.GlesInterop;
 using Stride.Core;
@@ -16,6 +17,7 @@ using VL.Lib.Basics.Resources;
 using VL.Skia;
 using VL.Stride.Input;
 using VL.Stride.Windows.WglInterop;
+using Device = SharpDX.Direct3D11.Device;
 using PixelFormat = Stride.Graphics.PixelFormat;
 using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 using SkiaRenderContext = VL.Skia.RenderContext;
@@ -28,18 +30,17 @@ namespace VL.Stride.Windows
     public partial class SkiaRenderer : RendererBase
     {
         private readonly IResourceHandle<SkiaRenderContext> renderContextHandle;
-
+        private readonly Device angleDevice;
         private readonly SerialDisposable inputSubscription = new SerialDisposable();
         private IInputSource lastInputSource;
         private Int2 lastRenderTargetSize;
-        private Texture tempRenderTarget;
-        private IntPtr? eglSurface;
 
         private readonly InViewportUpstream viewportLayer = new InViewportUpstream();
 
         public SkiaRenderer()
         {
             renderContextHandle = SkiaRenderContext.ForCurrentThread();
+            angleDevice = new Device(renderContextHandle.Resource.GlesContext.GetD3D11Device());
 
             //var glesContext = new GlesContext();
             //glesContext.MakeCurrent(IntPtr.Zero);
@@ -52,9 +53,8 @@ namespace VL.Stride.Windows
         protected override void Destroy()
         {
             // TODO Destroy the EGL surface!
-
+            angleDevice.Dispose();
             renderContextHandle.Dispose();
-            tempRenderTarget?.Dispose();
             base.Destroy();
         }
 
@@ -81,30 +81,34 @@ namespace VL.Stride.Windows
                 lastInputSource = inputSource;
                 lastRenderTargetSize = renderTargetSize;
                 inputSubscription.Disposable = SubscribeToInputSource(inputSource, context, canvas: null, skiaRenderContext.SkiaContext);
-
-                this.tempRenderTarget?.Dispose();
-                this.tempRenderTarget = null;
-                glesContext.DestroySurface(this.eglSurface.Value);
-                this.eglSurface = default;
             }
 
-            var renderTargetDescription = TextureDescription.New2D(
-                renderTarget.Width,
-                renderTarget.Height,
-                PixelFormat.B8G8R8A8_UNorm, // Typeless as well as R8G8B8A8 won't work for CreateSurfaceFromSharedHandle :(
-                textureFlags: TextureFlags.ShaderResource | TextureFlags.RenderTarget,
-                textureOptions: TextureOptions.Shared);
+            IntPtr sharedHandle = default;
+            IDisposable sharedRenderTarget = default;
 
-            var tempRenderTarget = this.tempRenderTarget ??= Texture.New(context.GraphicsDevice, renderTargetDescription);
-
-            // This code path works, simple drawing commands work but SkSurface.Flush causes device lost :(
-            //var nativeTempRenderTarget = SharpDXInterop.GetNativeResource(tempRenderTarget) as Texture2D;
-            //var eglSurface = this.eglSurface ??= glesContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
-
-            // Only working solution was to use shared handles
-            var eglSurface = this.eglSurface ??= glesContext.CreateSurfaceFromSharedHandle(tempRenderTarget.Width, tempRenderTarget.Height, tempRenderTarget.SharedHandle);
-            try
             {
+                // Fetch the D3D device used by ANGLE
+                var tempRenderTargetDescription = new Texture2DDescription()
+                {
+                    ArraySize = 1,
+                    BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
+                    CpuAccessFlags = CpuAccessFlags.None,
+                    Format = Format.B8G8R8A8_UNorm_SRgb,
+                    Height = renderTarget.Height,
+                    Width = renderTarget.Width,
+                    MipLevels = 1,
+                    // Stride's CreateTextureFromNative crashes when using the recommended ResourceOptionFlags.SharedKeyedmutex flag
+                    OptionFlags = ResourceOptionFlags.Shared,
+                    SampleDescription = new SampleDescription(1, 0),
+                    Usage = ResourceUsage.Default
+                };
+                var tempRenderTarget = new Texture2D(angleDevice, tempRenderTargetDescription);
+                sharedRenderTarget = tempRenderTarget;
+                using var sharedResource = tempRenderTarget.QueryInterface<SharpDX.DXGI.Resource>();
+                sharedHandle = sharedResource.SharedHandle;
+                //using var mutex = tempRenderTarget.QueryInterface<KeyedMutex>();
+                using var eglSurface = glesContext.CreateSurfaceFromClientBuffer(tempRenderTarget.NativePointer);
+
                 // Make the surface current (becomes default FBO)
                 skiaRenderContext.MakeCurrent(eglSurface);
 
@@ -115,44 +119,53 @@ namespace VL.Stride.Windows
                 using var surface = CreateSkSurface(skiaRenderContext.SkiaContext, renderTarget);
 
                 // Render
-                var canvas = surface.Canvas;
-                using (new SKAutoCanvasRestore(canvas))
+                //mutex.Acquire(0, -1);
+                try
                 {
-                    canvas.Clear();
+                    var canvas = surface.Canvas;
+                    using (new SKAutoCanvasRestore(canvas))
+                    {
+                        canvas.Clear();
 
-                    var viewport = context.RenderContext.ViewportState.Viewport0;
-                    canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
-                    viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
+                        var viewport = context.RenderContext.ViewportState.Viewport0;
+                        canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
+                        viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
 
-                    layer.Render(CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, skiaRenderContext.SkiaContext));
+                        layer.Render(CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, skiaRenderContext.SkiaContext));
+                    }
+                    // Flush before drawing on our render target
+                    surface.Flush();
+                }
+                finally
+                {
+                    //mutex.Release(1);
                 }
 
-                // Flush before drawing on our render target
-                surface.Flush();
-                Gles.glFlush();
+                //skiaRenderContext.MakeCurrent(default);
+            }
 
-                if (context.GraphicsDevice.ColorSpace == ColorSpace.Linear)
-                {
-                    // Sadly we can't declare our temp target as Typeless - CreateSurfaceFromSharedHandle will fail
-                    // Therefor we need to adjust the color space manually
-                    // Would it be cheaper to draw with shader doing the conversion manually?
-                    var description = tempRenderTarget.Description;
-                    // Switch the color space
-                    description.Format = description.Format.ToSRgb();
-                    // Ensure we're not asking for a shared texture
-                    description.Options = default;
-                    var tempRenderTarget2 = PushScopedResource(allocator.GetTemporaryTexture2D(description));
-                    commandList.Copy(tempRenderTarget, tempRenderTarget2);
-                    context.GraphicsContext.DrawTexture(tempRenderTarget2, BlendStates.AlphaBlend);
-                }
-                else
-                {
-                    context.GraphicsContext.DrawTexture(tempRenderTarget, BlendStates.AlphaBlend);
-                }
+            // See https://docs.microsoft.com/en-us/windows/win32/api/d3d11/nf-d3d11-id3d11device-opensharedresource
+            angleDevice.ImmediateContext.Flush();
+
+            DrawSharedTexture(context, sharedHandle);
+
+            sharedRenderTarget.Dispose();
+        }
+
+        private void DrawSharedTexture(RenderDrawContext context, IntPtr sharedHandle)
+        {
+            var strideDevice = SharpDXInterop.GetNativeDevice(GraphicsDevice) as Device;
+            using var nativeTempRenderTarget = strideDevice.OpenSharedResource<Texture2D>(sharedHandle);
+            using var strideTempRenderTarget = SharpDXInterop.CreateTextureFromNative(GraphicsDevice, nativeTempRenderTarget, takeOwnership: false, isSRgb: true);
+            //using var mutex = tempRenderTarget.QueryInterface<KeyedMutex>();
+            //mutex.Acquire(1, -1);
+            try
+            {
+                context.GraphicsContext.DrawTexture(strideTempRenderTarget, BlendStates.AlphaBlend);
             }
             finally
             {
-                //glesContext.DestroySurface(eglSurface);
+                //mutex.Release(1);
             }
         }
 
