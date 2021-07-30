@@ -15,10 +15,23 @@ namespace VL.Stride.Windows.WglInterop
         // Use the native pointer for caching. Stride textures might stay the same while their internal pointer changes.
         readonly Dictionary<IntPtr, InteropTexture> textures = new Dictionary<IntPtr, InteropTexture>();
 
+        readonly DeviceContext1 deviceContext;
+        readonly DeviceContextState contextState;
+
         public InteropContext(OpenTK.Graphics.GraphicsContext graphicsContext, INativeWindow window, Device device)
         {
             GraphicsContext = graphicsContext;
             Window = window;
+            Device = device;
+
+            // From https://hg.mozilla.org/mozilla-central/file/tip/gfx/gl/SharedSurfaceD3D11Interop.cpp to workaround AMD driver bug
+            var device1 = device.QueryInterface<Device1>();
+            deviceContext = device1.ImmediateContext1;
+            contextState = device1.CreateDeviceContextState<SharpDX.Direct3D10.Device>(
+                CreateDeviceContextStateFlags.None, 
+                new [] { SharpDX.Direct3D.FeatureLevel.Level_10_0 }, 
+                out _);
+
             DeviceHandle = Wgl.DXOpenDeviceNV(device.NativePointer);
         }
 
@@ -26,6 +39,7 @@ namespace VL.Stride.Windows.WglInterop
 
         public INativeWindow Window { get; }
 
+        public Device Device { get; }
         public IntPtr DeviceHandle { get; }
 
         public void MakeCurrent()
@@ -39,6 +53,8 @@ namespace VL.Stride.Windows.WglInterop
 
             foreach (var t in textures.Values.ToArray())
                 t?.Dispose();
+
+            contextState.Dispose();
 
             if (DeviceHandle != IntPtr.Zero)
                 Wgl.DXCloseDeviceNV(DeviceHandle);
@@ -111,6 +127,26 @@ namespace VL.Stride.Windows.WglInterop
                 }
 
                 return Wgl.DXUnlockObjectsNV(DeviceHandle, textures.Length, new IntPtr(objects));
+            }
+        }
+
+        public ScopedContextState WithScopedContext() => new ScopedContextState(deviceContext, contextState);
+
+        public readonly struct ScopedContextState : IDisposable
+        {
+            private readonly DeviceContext1 deviceContext;
+            private readonly DeviceContextState oldContextState;
+
+            public ScopedContextState(DeviceContext1 deviceContext, DeviceContextState contextState)
+            {
+                this.deviceContext = deviceContext;
+
+                deviceContext.SwapDeviceContextState(contextState, out oldContextState);
+            }
+
+            public void Dispose()
+            {
+                deviceContext.SwapDeviceContextState(oldContextState, out _);
             }
         }
     }

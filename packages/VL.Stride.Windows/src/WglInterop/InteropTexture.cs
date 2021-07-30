@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Platform.Windows;
+using SharpDX.Direct3D11;
 using Stride.Graphics;
 using System;
 
@@ -37,21 +38,28 @@ namespace VL.Stride.Windows.WglInterop
 
         void RegisterTexture()
         {
-            if (Handle == IntPtr.Zero)
+            if (Handle != default)
+                return;
+
+            using (Context.WithScopedContext())
             {
                 Handle = Wgl.DXRegisterObjectNV(
                     Context.DeviceHandle,
                     DxTexture,
                     Name,
                     (uint)OpenTK.Graphics.OpenGL.All.Renderbuffer,
-                    WGL_NV_DX_interop.AccessReadWrite);
+                    WGL_NV_DX_interop.AccessWriteDiscard);
             }
         }
 
         void UnregisterTexture()
         {
-            if (Handle != IntPtr.Zero && Wgl.DXUnregisterObjectNV(Context.DeviceHandle, Handle))
+            if (Handle == default)
+                return;
+
+            using (Context.WithScopedContext())
             {
+                Wgl.DXUnregisterObjectNV(Context.DeviceHandle, Handle);
                 Handle = IntPtr.Zero;
             }
         }
