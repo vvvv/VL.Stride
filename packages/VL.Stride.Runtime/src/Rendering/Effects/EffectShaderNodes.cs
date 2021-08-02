@@ -985,10 +985,16 @@ namespace VL.Stride.Rendering
                                         // Overwrite with user settings
                                         if (outputSize.Value.X > 0)
                                             desc.size.X = outputSize.Value.X;
+
                                         if (outputSize.Value.Y > 0)
                                             desc.size.Y = outputSize.Value.Y;
+                                        
                                         if (outputFormat.Value != PixelFormat.None)
+                                        {
                                             desc.format = outputFormat.Value;
+                                            desc.renderFormat = outputFormat.Value;
+                                        }
+
                                         if (renderFormat.Value != PixelFormat.None)
                                             desc.renderFormat = renderFormat.Value;
 

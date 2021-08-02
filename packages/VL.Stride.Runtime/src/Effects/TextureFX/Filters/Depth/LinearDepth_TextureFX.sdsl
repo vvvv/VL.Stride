@@ -3,41 +3,39 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
+[OutputFormat("R32_Float")]
 shader LinearDepth_TextureFX : FilterBase
 {
     #define IS_ORTHO(P) (round(P._34)==0&&round(P._44)==1)
     #define linstep(a,b,x) saturate((x-a)/(b-a))
     
-    matrix Projection;
+    float4x4 Projection;
     
     float MinDepth = 0.0f;
     float MaxDepth = 10.0f;
 
-    bool ThresholdOrLinear = false;
-
-    SamplerState s0:IMMUTABLE 
-    {
-        Filter=MIN_MAG_MIP_POINT;
-        AddressU=CLAMP;
-        AddressV=CLAMP;
-    };
+    bool Mapped = true;
 
     float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
         float2 R = ViewSize;
 
-        matrix tP = Projection;
+        float4x4 tP = Projection;
 
-        float d = Texture0.SampleLevel(s0, uv, 0).x;
-        float ld = tP._43/(d - tP._33);
+        float d = Texture0.SampleLevel(PointSampler, uv, 0).x;
+        float ld = 0;
 
         if(IS_ORTHO(tP))
         {
             ld = (d-tP._43)/tP._33;
         }
+        else
+        {
+            ld = tP._43/(d - tP._33);
+        }
         
-        float4 c =  ThresholdOrLinear ? ld : linstep(MinDepth, MaxDepth, ld);
+        float4 c =  Mapped ? linstep(MinDepth, MaxDepth, ld) : ld;
         
         return c;
     }
