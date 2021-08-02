@@ -1,8 +1,10 @@
 ﻿shader ColorUtilityTemp
 {
-   float4 GammaToLinear (float4 RGBa, float Gamma)
-   {
-        RGBa.rgb = pow(RGBa.rgb, 1/Gamma);
+
+    // simple screen gamma conversion
+    float4 GammaToLinear (float4 RGBa, float Gamma)
+    {
+        RGBa.rgb = pow(RGBa.rgb, 1.0/Gamma);
         return RGBa;
     }
 
@@ -11,10 +13,17 @@
         RGBa.rgb = pow(RGBa.rgb, Gamma);
         return RGBa;
     }
-   
 
     //https://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
-    float4 LinearTosRGB(float4 RGBa)
+    // Converts an sRGB color to linear space
+    float4 SRgbToLinear(float4 sRGBa)
+    {
+        float3 sRGB = sRGBa.rgb;
+        return float4(sRGB * (sRGB * (sRGB * 0.305306011 + 0.682171111) + 0.012522878), sRGBa.a);
+    }
+
+    // Converts an linear color to sRGB space
+    float4 LinearToSRgb(float4 RGBa)
     {
         float3 RGB = RGBa.rgb;
 
@@ -25,30 +34,29 @@
         return float4(0.662002687f * S1 + 0.684122060f * S2 - 0.323583601f * S3 - 0.0225411470f * RGB, RGBa.a);
     }
 
-
     //https://github.com/vvvv/VL.Stride/pull/395#issuecomment-760253956
 
-    // Converts a color from linear light gamma to sRGB gamma
-    float4 GammaTosRGB(float4 RGBa)
+    // Converts a color from linear to sRGB
+    float4 LinearToSRgbPrecise(float4 RGBa)
     {
-        // bvec4 cutoff = lessThan(linearRGB, vec4(0.0031308));
-        float4 cutoff = step(RGBa, float4(0.0031308f));
-        float4 higher = float4(1.055f)*pow(RGBa, float4(1.0f/2.4f)) - float4(0.055f);
-        float4 lower = RGBa * float4(12.92f);
+        float3 rgb = RGBa.rgb;
+        float3 higher = 1.055 * pow(rgb, 1.0/2.4) - 0.055;
+        float3 lower = rgb * 12.92f;
 
-        //mix(higher, lower, cutoff);
-        return lerp(higher, lower, cutoff);
+        float3 cutoff = step(rgb, 0.0031308);
+        RGBa.rgb = lerp(higher, lower, cutoff);
+        return RGBa;
     }
 
-    // Converts a color from sRGB gamma to linear light gamma
-    float4 sRGBtoGamma(float4 sRGBa)
+    // Converts a color from sRGB to linear
+    float4 SRgbToLinearPrecise(float4 sRGBa)
     {
-        //bvec4 cutoff = lessThan(sRGB, vec4(0.04045));
-        float4 cutoff = step(sRGBa, float4(0.04045f));
-        float4 higher = pow((sRGBa + float4(0.055f))/float4(1.055f), float4(2.4f));
-        float4 lower = sRGBa/float4(12.92f);
+        float3 srgb = sRGBa.rgb;
+        float3 higher = pow((srgb + 0.055) / 1.055, 2.4);
+        float3 lower = srgb / 12.92;
 
-        //mix(higher, lower, cutoff);
-        return lerp(higher, lower, cutoff);
+        float3 cutoff = step(srgb, 0.04045);
+        sRGBa.rgb = lerp(higher, lower, cutoff);
+        return sRGBa;
     }
 };

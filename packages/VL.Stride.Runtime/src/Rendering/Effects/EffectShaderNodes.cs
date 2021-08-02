@@ -954,7 +954,7 @@ namespace VL.Stride.Rendering
                                     {
                                         // No output texture is provided, generate one
                                         const TextureFlags textureFlags = TextureFlags.ShaderResource | TextureFlags.RenderTarget;
-                                        var desc = (size: Int2.One, format: defaultFormat, renderFormat: defaultRenderFormat);
+                                        var desc = (size: defaultSize, format: defaultFormat, renderFormat: defaultRenderFormat);
                                         if (inputTexture != null)
                                         {
                                             // Base it on the input texture
