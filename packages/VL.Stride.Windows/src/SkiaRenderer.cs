@@ -1,26 +1,16 @@
-﻿using OpenTK.Graphics.ES20;
-using SharpDX.Direct3D11;
+﻿using SharpDX.Direct3D11;
 using SkiaSharp;
-using SkiaSharp.Views.GlesInterop;
-using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Input;
 using Stride.Rendering;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Runtime.InteropServices;
-using VL.Lib.Basics.Resources;
 using VL.Skia;
+using VL.Skia.Egl;
 using VL.Stride.Input;
-using VL.Stride.Windows.WglInterop;
 using CommandList = Stride.Graphics.CommandList;
 using PixelFormat = Stride.Graphics.PixelFormat;
-using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 using SkiaRenderContext = VL.Skia.RenderContext;
 
 namespace VL.Stride.Windows
@@ -30,6 +20,9 @@ namespace VL.Stride.Windows
     /// </summary>
     public partial class SkiaRenderer : RendererBase
     {
+        private static readonly SKColorSpace srgbLinearColorspace = SKColorSpace.CreateSrgbLinear();
+        private static readonly SKColorSpace srgbColorspace = SKColorSpace.CreateSrgb();
+
         private readonly SerialDisposable inputSubscription = new SerialDisposable();
         private IInputSource lastInputSource;
         private Int2 lastRenderTargetSize;
@@ -49,7 +42,7 @@ namespace VL.Stride.Windows
             var interopContext = GetInteropContext(context.GraphicsDevice);
             var skiaRenderContext = interopContext.SkiaRenderContext;
 
-            var glesContext = skiaRenderContext.GlesContext;
+            var eglContext = skiaRenderContext.EglContext;
 
             // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
             var renderTargetSize = new Int2(renderTarget.Width, renderTarget.Height);
@@ -61,62 +54,41 @@ namespace VL.Stride.Windows
                 inputSubscription.Disposable = SubscribeToInputSource(inputSource, context, canvas: null, skiaRenderContext.SkiaContext);
             }
 
-            //PrintCount($"Device ({nativeDevice.NativePointer}) enter", nativeDevice.NativePointer);
-            //PrintCount($"Render target ({nativeTempRenderTarget.NativePointer}) enter", nativeTempRenderTarget.NativePointer);
-
             using (interopContext.Scoped(commandList))
             {
                 var nativeTempRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
-                var eglSurface = glesContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
-                try
-                {
-                    // Make the surface current (becomes default FBO)
-                    skiaRenderContext.MakeCurrent(eglSurface);
+                using var eglSurface = eglContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
+                // Make the surface current (becomes default FBO)
+                skiaRenderContext.MakeCurrent(eglSurface);
 
-                    // Uncomment for debugging
-                    // SimpleStupidTestRendering();
+                // Uncomment for debugging
+                // SimpleStupidTestRendering();
 
-                    // Setup a skia surface around the currently set render target
-                    using var surface = CreateSkSurface(skiaRenderContext.SkiaContext, renderTarget);
+                // Setup a skia surface around the currently set render target
+                using var surface = CreateSkSurface(skiaRenderContext.SkiaContext, renderTarget, GraphicsDevice.ColorSpace == ColorSpace.Linear);
 
-                    // Render
-                    var canvas = surface.Canvas;
-                    using (new SKAutoCanvasRestore(canvas))
-                    {
-                        var viewport = context.RenderContext.ViewportState.Viewport0;
-                        canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
-                        viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
+                // Render
+                var canvas = surface.Canvas;
+                var viewport = context.RenderContext.ViewportState.Viewport0;
+                canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
+                viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
 
-                        layer.Render(CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, skiaRenderContext.SkiaContext));
-                    }
+                layer.Render(CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, skiaRenderContext.SkiaContext));
 
-                    // Flush before drawing on our render target
-                    surface.Flush();
-                }
-                finally
-                {
-                    glesContext.DestroySurface(eglSurface);
-                    glesContext.MakeCurrent(default);
-                }
+                // Flush
+                surface.Flush();
+
+                // Ensures surface gets released
+                eglContext.MakeCurrent(default);
             }
-
-            //PrintCount("Device exit", nativeDevice.NativePointer);
-            //PrintCount("Render target exit", nativeTempRenderTarget.NativePointer);
         }
 
-        static void PrintCount(string name, IntPtr unkown)
+        SKSurface CreateSkSurface(GRContext context, Texture texture, bool isLinearColorspace)
         {
-            Marshal.AddRef(unkown);
-            var count = Marshal.Release(unkown);
-            Trace.TraceInformation($"{name}: {count}");
-        }
-
-        static SKSurface CreateSkSurface(GRContext context, Texture texture)
-        {
-            var colorType = SKColorType.Rgba8888;
-            Gles.glGetIntegerv(Gles.GL_FRAMEBUFFER_BINDING, out var framebuffer);
-            Gles.glGetIntegerv(Gles.GL_STENCIL_BITS, out var stencil);
-            Gles.glGetIntegerv(Gles.GL_SAMPLES, out var samples);
+            var colorType = GetColorType(texture.ViewFormat);
+            NativeGles.glGetIntegerv(NativeGles.GL_FRAMEBUFFER_BINDING, out var framebuffer);
+            NativeGles.glGetIntegerv(NativeGles.GL_STENCIL_BITS, out var stencil);
+            NativeGles.glGetIntegerv(NativeGles.GL_SAMPLES, out var samples);
             var maxSamples = context.GetMaxSurfaceSampleCount(colorType);
             if (samples > maxSamples)
                 samples = maxSamples;
@@ -132,7 +104,47 @@ namespace VL.Stride.Windows
                 stencilBits: stencil,
                 glInfo: glInfo);
 
-            return SKSurface.Create(context, renderTarget, GRSurfaceOrigin.TopLeft, colorType, colorspace: SKColorSpace.CreateSrgbLinear());
+            return SKSurface.Create(
+                context, 
+                renderTarget, 
+                GRSurfaceOrigin.TopLeft, 
+                colorType, 
+                colorspace: isLinearColorspace ? srgbLinearColorspace : srgbColorspace);
+        }
+
+        static SKColorType GetColorType(PixelFormat format)
+        {
+            switch (format)
+            {
+                case PixelFormat.B5G6R5_UNorm:
+                    return SKColorType.Rgb565;
+                case PixelFormat.B8G8R8A8_UNorm:
+                case PixelFormat.B8G8R8A8_UNorm_SRgb:
+                    return SKColorType.Bgra8888;
+                case PixelFormat.R8G8B8A8_UNorm:
+                case PixelFormat.R8G8B8A8_UNorm_SRgb:
+                    return SKColorType.Rgba8888;
+                case PixelFormat.R10G10B10A2_UNorm:
+                    return SKColorType.Rgba1010102;
+                case PixelFormat.R16G16B16A16_Float:
+                    return SKColorType.RgbaF16;
+                case PixelFormat.R16G16B16A16_UNorm:
+                    return SKColorType.Rgba16161616;
+                case PixelFormat.R32G32B32A32_Float:
+                    return SKColorType.RgbaF32;
+                case PixelFormat.R16G16_Float:
+                    return SKColorType.RgF16;
+                case PixelFormat.R16G16_UNorm:
+                    return SKColorType.Rg1616;
+                case PixelFormat.R8G8_UNorm:
+                    return SKColorType.Rg88;
+                case PixelFormat.A8_UNorm:
+                    return SKColorType.Alpha8;
+                case PixelFormat.R8_UNorm:
+                    return SKColorType.Gray8;
+                default:
+                    return SKColorType.Unknown;
+            }
         }
 
         //static void SimpleStupidTestRendering()
@@ -155,17 +167,14 @@ namespace VL.Stride.Windows
                 if (SharpDXInterop.GetNativeDevice(gd) is Device device)
                 {
                     // https://github.com/google/angle/blob/master/src/tests/egl_tests/EGLDeviceTest.cpp#L272
-                    var angleDevice = Egl.eglCreateDeviceANGLE(Egl.EGL_D3D11_DEVICE_ANGLE, device.NativePointer, null);
-                    if (angleDevice != default)
-                    {
-                        var d1 = device.QueryInterface<Device1>();
-                        var contextState = d1.CreateDeviceContextState<Device1>(
-                            CreateDeviceContextStateFlags.None, 
-                            new[] { device.FeatureLevel }, 
-                            out _);
+                    var angleDevice = EglDevice.FromD3D11(device.NativePointer);
+                    var d1 = device.QueryInterface<Device1>();
+                    var contextState = d1.CreateDeviceContextState<Device1>(
+                        CreateDeviceContextStateFlags.None,
+                        new[] { device.FeatureLevel },
+                        out _);
 
-                        return new InteropContext(SkiaRenderContext.New(angleDevice), d1.ImmediateContext1, contextState);
-                    }
+                    return new InteropContext(SkiaRenderContext.New(angleDevice), d1.ImmediateContext1, contextState);
                 }
                 return null;
             });
