@@ -1,357 +1,237 @@
-﻿using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
-using SharpDX.Direct3D11;
+﻿using SharpDX.Direct3D11;
 using SkiaSharp;
-using Stride.Core;
+using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Input;
 using Stride.Rendering;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using VL.Skia;
+using VL.Skia.Egl;
 using VL.Stride.Input;
-using VL.Stride.Windows.WglInterop;
+using CommandList = Stride.Graphics.CommandList;
 using PixelFormat = Stride.Graphics.PixelFormat;
-using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
+using SkiaRenderContext = VL.Skia.RenderContext;
 
 namespace VL.Stride.Windows
 {
-    public partial class SkiaRenderer : IGraphicsRendererBase
+    /// <summary>
+    /// Renders the Skia layer into the Stride provided surface.
+    /// </summary>
+    public partial class SkiaRenderer : RendererBase
     {
+        private static readonly SKColorSpace srgbLinearColorspace = SKColorSpace.CreateSrgbLinear();
+        private static readonly SKColorSpace srgbColorspace = SKColorSpace.CreateSrgb();
+
         private readonly SerialDisposable inputSubscription = new SerialDisposable();
         private IInputSource lastInputSource;
-        private SharedSurface lastSharedSurface;
+        private Int2 lastRenderTargetSize;
         private readonly InViewportUpstream viewportLayer = new InViewportUpstream();
         
         public ILayer Layer { get; set; }
 
-        public unsafe void Draw(RenderDrawContext context)
+        protected override void DrawCore(RenderDrawContext context)
         {
             if (Layer is null)
                 return;
 
-            // Try to build a skia context - will only work on DirectX11 backend
-            var skiaContext = GetSkiaContext(context.GraphicsDevice);
-            if (skiaContext is null)
-                return;
-
-            // Make our GL context current
-            skiaContext.MakeCurrent();
-
-            // Try to setup a skia surface around the currently set render target
             var commandList = context.CommandList;
-            var sharedSurface = skiaContext.GetSharedSurface(commandList.RenderTarget, commandList.DepthStencilBuffer);
-            if (sharedSurface is null)
-                return;
+            var renderTarget = commandList.RenderTarget;
+
+            // Fetch the skia render context (uses ANGLE -> DirectX11)
+            var interopContext = GetInteropContext(context.GraphicsDevice);
+            var skiaRenderContext = interopContext.SkiaRenderContext;
+
+            var eglContext = skiaRenderContext.EglContext;
 
             // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
+            var renderTargetSize = new Int2(renderTarget.Width, renderTarget.Height);
             var inputSource = context.RenderContext.GetWindowInputSource();
-            if (inputSource != lastInputSource || sharedSurface != lastSharedSurface)
+            if (inputSource != lastInputSource || renderTargetSize != lastRenderTargetSize)
             {
                 lastInputSource = inputSource;
-                lastSharedSurface = sharedSurface;
-                inputSubscription.Disposable = SubscribeToInputSource(inputSource, context, sharedSurface);
+                lastRenderTargetSize = renderTargetSize;
+                inputSubscription.Disposable = SubscribeToInputSource(inputSource, context, canvas: null, skiaRenderContext.SkiaContext);
             }
 
-            // Lock the backbuffer
-            using (sharedSurface.Lock())
+            using (interopContext.Scoped(commandList))
             {
-                // For testing
-                //GL.BindFramebuffer(FramebufferTarget.Framebuffer, sharedSurface.Framebuffer);
+                var nativeTempRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
+                using var eglSurface = eglContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
+                // Make the surface current (becomes default FBO)
+                skiaRenderContext.MakeCurrent(eglSurface);
 
-                //GL.Begin(PrimitiveType.Triangles);
-                //GL.Color3(1f, 0f, 0f);
-                //GL.Vertex2(0f, -0.5f);
-                //GL.Color3(0f, 1f, 0f);
-                //GL.Vertex2(0.5f, 0.5f);
-                //GL.Color3(0f, 0f, 1f);
-                //GL.Vertex2(-0.5f, 0.5f);
-                //GL.End();
+                // Uncomment for debugging
+                // SimpleStupidTestRendering();
 
-                var surface = sharedSurface.Surface;
+                // Setup a skia surface around the currently set render target
+                using var surface = CreateSkSurface(skiaRenderContext.SkiaContext, renderTarget, GraphicsDevice.ColorSpace == ColorSpace.Linear);
+
+                // Render
                 var canvas = surface.Canvas;
-
                 var viewport = context.RenderContext.ViewportState.Viewport0;
+                canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
+                viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
 
-                canvas.Save();
+                layer.Render(CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, skiaRenderContext.SkiaContext));
 
-                try
-                {
-                    canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
-                    viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
+                // Flush
+                surface.Flush();
 
-                    layer.Render(CallerInfo.InRenderer(sharedSurface.Width, sharedSurface.Height, sharedSurface.Surface.Canvas, sharedSurface.SkiaContext.GraphicsContext));
-                }
-                finally
-                {
-                    canvas.Restore();
-                    canvas.Flush();
-                }
+                // Ensures surface gets released
+                eglContext.MakeCurrent(default);
             }
         }
 
+        SKSurface CreateSkSurface(GRContext context, Texture texture, bool isLinearColorspace)
+        {
+            var colorType = GetColorType(texture.ViewFormat);
+            NativeGles.glGetIntegerv(NativeGles.GL_FRAMEBUFFER_BINDING, out var framebuffer);
+            NativeGles.glGetIntegerv(NativeGles.GL_STENCIL_BITS, out var stencil);
+            NativeGles.glGetIntegerv(NativeGles.GL_SAMPLES, out var samples);
+            var maxSamples = context.GetMaxSurfaceSampleCount(colorType);
+            if (samples > maxSamples)
+                samples = maxSamples;
+
+            var glInfo = new GRGlFramebufferInfo(
+                fboId: (uint)framebuffer,
+                format: colorType.ToGlSizedFormat());
+
+            using var renderTarget = new GRBackendRenderTarget(
+                width: texture.Width,
+                height: texture.Height,
+                sampleCount: samples,
+                stencilBits: stencil,
+                glInfo: glInfo);
+
+            return SKSurface.Create(
+                context, 
+                renderTarget, 
+                GRSurfaceOrigin.TopLeft, 
+                colorType, 
+                colorspace: isLinearColorspace ? srgbLinearColorspace : srgbColorspace);
+        }
+
+        static SKColorType GetColorType(PixelFormat format)
+        {
+            switch (format)
+            {
+                case PixelFormat.B5G6R5_UNorm:
+                    return SKColorType.Rgb565;
+                case PixelFormat.B8G8R8A8_UNorm:
+                case PixelFormat.B8G8R8A8_UNorm_SRgb:
+                    return SKColorType.Bgra8888;
+                case PixelFormat.R8G8B8A8_UNorm:
+                case PixelFormat.R8G8B8A8_UNorm_SRgb:
+                    return SKColorType.Rgba8888;
+                case PixelFormat.R10G10B10A2_UNorm:
+                    return SKColorType.Rgba1010102;
+                case PixelFormat.R16G16B16A16_Float:
+                    return SKColorType.RgbaF16;
+                case PixelFormat.R16G16B16A16_UNorm:
+                    return SKColorType.Rgba16161616;
+                case PixelFormat.R32G32B32A32_Float:
+                    return SKColorType.RgbaF32;
+                case PixelFormat.R16G16_Float:
+                    return SKColorType.RgF16;
+                case PixelFormat.R16G16_UNorm:
+                    return SKColorType.Rg1616;
+                case PixelFormat.R8G8_UNorm:
+                    return SKColorType.Rg88;
+                case PixelFormat.A8_UNorm:
+                    return SKColorType.Alpha8;
+                case PixelFormat.R8_UNorm:
+                    return SKColorType.Gray8;
+                default:
+                    return SKColorType.Unknown;
+            }
+        }
+
+        //static void SimpleStupidTestRendering()
+        //{
+        //    if (++i % 2 == 0)
+        //        Gles.glClearColor(1, 0, 0, 1);
+        //    else
+        //        Gles.glClearColor(1, 1, 0, 1);
+
+        //    Gles.glClear(Gles.GL_COLOR_BUFFER_BIT);
+        //    Gles.glFlush();
+        //}
+        //int i = 0;
+
+        // Works, also simple Gles drawing commands work but SkSurface.Flush causes device lost :(
         static InteropContext GetInteropContext(GraphicsDevice graphicsDevice)
         {
-            return graphicsDevice.GetOrCreateSharedData("VL.Stride.Windows.WglInterop.InteropContext", gd =>
+            return graphicsDevice.GetOrCreateSharedData("VL.Stride.Skia.InteropContext", gd =>
             {
-                if (SharpDXInterop.GetNativeDevice(gd) is SharpDX.Direct3D11.Device device)
+                if (SharpDXInterop.GetNativeDevice(gd) is Device device)
                 {
-                    Toolkit.Init(new ToolkitOptions() { Backend = PlatformBackend.PreferNative });
+                    // https://github.com/google/angle/blob/master/src/tests/egl_tests/EGLDeviceTest.cpp#L272
+                    var angleDevice = EglDevice.FromD3D11(device.NativePointer);
+                    var d1 = device.QueryInterface<Device1>();
+                    var contextState = d1.CreateDeviceContextState<Device1>(
+                        CreateDeviceContextStateFlags.None,
+                        new[] { device.FeatureLevel },
+                        out _);
 
-                    var window = new NativeWindow();
-                    var glContext = new OpenTK.Graphics.GraphicsContext(GraphicsMode.Default, window.WindowInfo);
-                    glContext.LoadAll();
-
-                    return new InteropContext(glContext, window, device);
+                    return new InteropContext(SkiaRenderContext.New(angleDevice), d1.ImmediateContext1, contextState);
                 }
                 return null;
             });
         }
 
-        static SkiaContext GetSkiaContext(GraphicsDevice graphicsDevice)
+        sealed class InteropContext : IDisposable
         {
-            return graphicsDevice.GetOrCreateSharedData("VL.Stride.Windows.SkiaContext", gd =>
-            {
-                var interopContext = GetInteropContext(gd);
-                if (interopContext != null)
-                {
-                    interopContext.MakeCurrent();
-                    var grContext = GRContext.CreateGl();
-                    return new SkiaContext(interopContext, grContext);
-                }
-                return null;
-            });
-        }
+            public readonly SkiaRenderContext SkiaRenderContext;
+            public readonly DeviceContext1 DeviceContext;
+            public readonly DeviceContextState ContextState;
 
-        sealed class SkiaContext : IDisposable
-        {
-            public SkiaContext(InteropContext interopContext, GRContext graphicsContext)
+            public InteropContext(SkiaRenderContext skiaRenderContext, DeviceContext1 deviceContext, DeviceContextState contextState)
             {
-                InteropContext = interopContext;
-                GraphicsContext = graphicsContext;
+                SkiaRenderContext = skiaRenderContext;
+                DeviceContext = deviceContext;
+                ContextState = contextState;
             }
 
-            public InteropContext InteropContext { get; }
-
-            public GRContext GraphicsContext { get; }
-
-            public void MakeCurrent()
+            public ScopedDeviceContext Scoped(CommandList commandList)
             {
-                InteropContext.MakeCurrent();
+                return new ScopedDeviceContext(commandList, DeviceContext, ContextState);
             }
 
             public void Dispose()
             {
-                InteropContext.MakeCurrent();
-
-                foreach (var e in surfaces.ToArray())
-                    e.Value?.Dispose();
-                surfaces.Clear();
-
-                GraphicsContext.Dispose();
-            }
-
-            public SharedSurface GetSharedSurface(Texture colorTexture, Texture depthTexture)
-            {
-                var dxColor = SharpDXInterop.GetNativeResource(colorTexture) as Texture2D;
-                if (dxColor != null)
-                {
-                    lock (surfaces)
-                    {
-                        var dxDepth = default(Texture2D);
-                        if (depthTexture != null)
-                            dxDepth = SharpDXInterop.GetNativeResource(depthTexture) as Texture2D;
-                        var key = (dxColor.NativePointer, dxDepth?.NativePointer ?? IntPtr.Zero);
-                        if (!surfaces.TryGetValue(key, out var surface))
-                            surfaces.Add(key, surface = Create());
-                        return surface;
-                    }
-                }
-                return null;
-
-                SharedSurface Create()
-                {
-                    var interopColor = InteropContext.GetInteropTexture(colorTexture);
-                    if (interopColor is null)
-                        return null;
-
-                    var interopDepth = InteropContext.GetInteropTexture(depthTexture);
-                    if (interopDepth is null && depthTexture != null)
-                        return null;
-
-                    var surface = SharedSurface.New(this, interopColor, interopDepth);
-                    if (surface is null)
-                    {
-                        // Failed to create skia surface, get rid of the WGL interop handles
-                        interopColor?.Dispose();
-                        interopDepth?.Dispose();
-                        return null;
-                    }
-
-                    return surface;
-                }
-            }
-            // Use the native pointer for caching. Stride textures might stay the same while their internal pointer changes.
-            readonly Dictionary<(IntPtr, IntPtr), SharedSurface> surfaces = new Dictionary<(IntPtr, IntPtr), SharedSurface>();
-
-            internal void Remove(SharedSurface sharedSurface)
-            {
-                lock (surfaces)
-                {
-                    surfaces.Remove((sharedSurface.Color.DxTexture, sharedSurface.Depth?.DxTexture ?? IntPtr.Zero));
-                }
+                ContextState.Dispose();
+                SkiaRenderContext.Dispose();
             }
         }
 
-        sealed class SharedSurface : IDisposable
+        readonly struct ScopedDeviceContext : IDisposable
         {
-            public static SharedSurface New(SkiaContext skiaContext, InteropTexture color, InteropTexture depth)
+            readonly CommandList commandList;
+            readonly DeviceContext1 deviceContext;
+            readonly DeviceContextState oldContextState;
+
+            public ScopedDeviceContext(CommandList commandList, DeviceContext1 deviceContext, DeviceContextState contextState)
             {
-                var framebuffer = (uint)GL.GenFramebuffer();
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, framebuffer);
-
-                GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, RenderbufferTarget.Renderbuffer, color.Name);
-                if (depth != null)
-                {
-                    GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depth.Name);
-                    GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.StencilAttachment, RenderbufferTarget.Renderbuffer, depth.Name);
-                }
-
-                var pixelFormat = color.Texture.Format;
-                var colorType = GetColorType(pixelFormat);
-                var glInfo = new GRGlFramebufferInfo(framebuffer, colorType.ToGlSizedFormat());
-                var renderTarget = new GRBackendRenderTarget(color.Texture.Width, color.Texture.Height, sampleCount: 0, stencilBits: 8, glInfo);
-                var colorspace =
-                    pixelFormat.IsSRgb() ? SKColorSpace.CreateSrgb() :
-                    pixelFormat.IsHDR() ? SKColorSpace.CreateSrgbLinear() :
-                    default;
-                var skContext = skiaContext.GraphicsContext;
-                var skiaSurface = SKSurface.Create(skContext, renderTarget, GRSurfaceOrigin.TopLeft, colorType, colorspace: colorspace);
-                if (skiaSurface != null)
-                {
-                    return new SharedSurface(skiaContext, color, depth, framebuffer, skiaSurface);
-                }
-                else
-                {
-                    GL.DeleteFramebuffer(framebuffer);
-                    return null;
-                }
+                this.commandList = commandList;
+                this.deviceContext = deviceContext;
+                deviceContext.SwapDeviceContextState(contextState, out oldContextState);
             }
-
-            public readonly uint Framebuffer;
-            private readonly InteropTexture[] Textures;
-            private bool Disposed;
-
-            SharedSurface(SkiaContext skiaContext, InteropTexture color, InteropTexture depth, uint framebuffer, SKSurface skiaSurface)
-            {
-                SkiaContext = skiaContext;
-                if (depth != null)
-                    Textures = new InteropTexture[] { color, depth };
-                else
-                    Textures = new InteropTexture[] { color };
-                Framebuffer = framebuffer;
-                Surface = skiaSurface;
-
-                foreach (var t in Textures)
-                    t.Texture.Destroyed += Texture_Destroyed;
-            }
-
-            private void Texture_Destroyed(object sender, EventArgs e)
-            {
-                Dispose();
-            }
-
-            ~SharedSurface()
-            {
-                Dispose(false);
-            }
-
-            public SkiaContext SkiaContext { get; }
-
-            public InteropTexture Color => Textures[0];
-
-            public InteropTexture Depth => Textures.ElementAtOrDefault(1);
-
-            public SKSurface Surface { get; }
-
-            public int Width => Color.Texture.Width;
-
-            public int Height => Color.Texture.Height;
 
             public void Dispose()
             {
-                GC.SuppressFinalize(this);
-                Dispose(true);
-            }
+                // Ensure no references are held to the render targets (would prevent resize)
+                var currentRenderTarget = commandList.RenderTarget;
+                var currentDepthStencil = commandList.DepthStencilBuffer;
+                commandList.UnsetRenderTargets();
+                deviceContext.SwapDeviceContextState(oldContextState, out _);
+                commandList.SetRenderTarget(currentDepthStencil, currentRenderTarget);
 
-            void Dispose(bool disposing)
-            {
-                if (!Disposed)
-                {
-                    Disposed = true;
-
-                    foreach (var t in Textures)
-                        t.Texture.Destroyed -= Texture_Destroyed;
-
-                    SkiaContext.MakeCurrent();
-                    SkiaContext.Remove(this);
-                    Surface.Dispose();
-                    GL.DeleteFramebuffer(Framebuffer);
-                }
-            }
-
-            static SKColorType GetColorType(PixelFormat format)
-            {
-                switch (format)
-                {
-                    case PixelFormat.B8G8R8A8_UNorm:
-                    case PixelFormat.B8G8R8A8_UNorm_SRgb:
-                        return SKColorType.Bgra8888;
-                    case PixelFormat.R8G8B8A8_UNorm:
-                    case PixelFormat.R8G8B8A8_UNorm_SRgb:
-                        return SKColorType.Rgba8888;
-                    case PixelFormat.R10G10B10A2_UNorm:
-                        return SKColorType.Rgba1010102;
-                    case PixelFormat.R16G16B16A16_Float:
-                        return SKColorType.RgbaF16;
-                    case PixelFormat.R32G32B32A32_Float:
-                        return SKColorType.RgbaF32;
-                    case PixelFormat.R16G16_Float:
-                        return SKColorType.RgF16;
-                    case PixelFormat.A8_UNorm:
-                        return SKColorType.Alpha8;
-                    case PixelFormat.R8_UNorm:
-                        return SKColorType.Gray8;
-                    case PixelFormat.B5G6R5_UNorm:
-                        return SKColorType.Rgb565;
-                    default:
-                        return SKColorType.Unknown;
-                }
-            }
-
-            public LockAndUnlock Lock()
-            {
-                return new LockAndUnlock(this);
-            }
-
-            public struct LockAndUnlock : IDisposable
-            {
-                readonly SharedSurface Surface;
-
-                public LockAndUnlock(SharedSurface surface)
-                {
-                    Surface = surface;
-                    surface.SkiaContext.InteropContext.Lock(surface.Textures);
-                }
-
-                public void Dispose()
-                {
-                    Surface.SkiaContext.InteropContext.Unlock(Surface.Textures);
-                }
+                // Doesn't work - why?
+                //var renderTargets = deviceContext.OutputMerger.GetRenderTargets(8, out var depthStencilView);
+                //deviceContext.OutputMerger.ResetTargets();
+                //deviceContext.SwapDeviceContextState(oldContextState, out _);
+                //deviceContext.OutputMerger.SetTargets(depthStencilView, renderTargets);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Stride.Input;
+﻿using SkiaSharp;
+using Stride.Input;
 using Stride.Rendering;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,17 @@ namespace VL.Stride.Windows
 {
     partial class SkiaRenderer
     {
-        IDisposable SubscribeToInputSource(IInputSource inputSource, RenderDrawContext context, SharedSurface sharedSurface)
+        IDisposable SubscribeToInputSource(IInputSource inputSource, RenderDrawContext context, SKCanvas canvas, GRContext graphicsContext)
         {
             if (inputSource is null)
                 return Disposable.Empty;
 
             var inputManager = context.RenderContext.Services.GetService<InputManager>();
             if (inputManager is null)
-                return Disposable.Empty;       
+                return Disposable.Empty;
 
-            var callerInfo = CallerInfo.InRenderer(sharedSurface.Width, sharedSurface.Height, sharedSurface.Surface.Canvas, sharedSurface.SkiaContext.GraphicsContext);
+            var renderTarget = context.CommandList.RenderTarget;
+            var callerInfo = CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, graphicsContext);
 
             var mouseButtonListener = NewMouseButtonListener(inputSource, callerInfo);
             inputManager.AddListener(mouseButtonListener);
