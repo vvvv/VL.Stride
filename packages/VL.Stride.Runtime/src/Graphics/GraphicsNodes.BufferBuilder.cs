@@ -10,7 +10,7 @@ namespace VL.Stride.Graphics
 {
     static partial class GraphicsNodes
     {
-        class BufferBuilder
+        class BufferBuilder : IDisposable
         {
             private BufferDescription description;
             private BufferViewDescription viewDescription;
@@ -107,7 +107,7 @@ namespace VL.Stride.Graphics
             }
         }
 
-        class BufferViewBuilder
+        class BufferViewBuilder : IDisposable
         {
             private Buffer buffer;
             private BufferViewDescription viewDescription;
