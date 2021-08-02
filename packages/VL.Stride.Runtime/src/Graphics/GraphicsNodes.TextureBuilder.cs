@@ -9,7 +9,7 @@ namespace VL.Stride.Graphics
 {
     static partial class GraphicsNodes
     {
-        class TextureBuilder
+        class TextureBuilder : IDisposable
         {
             private TextureDescription description;
             private TextureViewDescription viewDescription;
@@ -138,7 +138,7 @@ namespace VL.Stride.Graphics
             }
         }
 
-        class TextureViewBuilder
+        class TextureViewBuilder : IDisposable
         {
             private Texture texture;
             private TextureViewDescription viewDescription;
