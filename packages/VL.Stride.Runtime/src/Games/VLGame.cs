@@ -27,6 +27,11 @@ namespace VL.Stride.Games
             Services.AddService(SchedulerSystem);
         }
 
+        protected override void Destroy()
+        {
+            base.Destroy();
+        }
+
         public TimeSpan ElapsedUserTime;
 
         // Used to post-pone the present calls to the very end of a frame
@@ -151,10 +156,10 @@ namespace VL.Stride.Games
         {
             try
             {
-                base.EndDraw(present);
-
                 foreach (var r in PendingPresentCalls)
                     r.Present();
+
+                base.EndDraw(present: false);
             }
             finally
             {
