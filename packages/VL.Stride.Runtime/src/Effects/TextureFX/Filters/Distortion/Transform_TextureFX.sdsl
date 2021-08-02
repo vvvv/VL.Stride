@@ -3,17 +3,26 @@
 
 [Category("Filter.Experimental")]
 [Summary("")]
-shader Transform_TextureFX : FilterBase
+shader Transform_TextureFX : FilterBase, TextureUtils
 {
-    matrix Transform;
+    float4x4 Transform;
+    SamplerState CustomSampler;
+
+    [EnumType("VL.Stride.Shaders.ShaderFX.SampleMode")]
+    uint InterpolationMode = 0;
 
     float4 Filter(float4 tex0col)
     {
-        float2 uv = streams.TexCoord;        
-        
-        float2 x0 = mul(float4((uv * 2 - 1) * float2(1,-1) * .5, 0, 1), Transform).xy * float2(1,-1) + 0.5;
-        float4 col = Texture0.SampleLevel(Sampler0, x0, 0);
+        float2 uv = mul(float4((streams.TexCoord * 2 - 1) * float2(1,-1) * .5, 0, 1), Transform).xy * float2(1,-1) + 0.5;
 
-        return col;
+        switch (InterpolationMode)
+        {
+            case 0: return Texture0.Sample(CustomSampler, uv);
+            case 1: return SampleCubicBSpline(Texture0, CustomSampler, uv);
+            case 2: return SampleCubicCatmullRom(Texture0, CustomSampler, uv);
+            // case 4: return SampleLanczos2(Texture0, uv);
+        }
+
+        return 1;
     }
 };
