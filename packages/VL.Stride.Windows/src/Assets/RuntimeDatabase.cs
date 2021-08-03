@@ -82,6 +82,7 @@ namespace VL.Stride.Assets
             databaseLock.Dispose();
             CompilerContext.Dispose();
             database.Clear();
+            assetBuilderService.Dispose();
         }
 
         public Task<ISyncLockable> ReserveSyncLock() => databaseLock.ReserveSyncLock();

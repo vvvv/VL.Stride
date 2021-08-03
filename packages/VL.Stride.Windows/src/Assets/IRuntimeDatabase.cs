@@ -9,7 +9,7 @@ using Stride.Core.Assets.Analysis;
 
 namespace VL.Stride.Assets
 {
-    public interface IRuntimeDatabase
+    public interface IRuntimeDatabase : IDisposable
     {
         Task<ISyncLockable> ReserveSyncLock();
         Task<IDisposable> LockAsync();
