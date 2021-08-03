@@ -228,6 +228,7 @@ namespace VL.Stride.Assets
         void IDisposable.Dispose()
         {
             Cleanup();
+            database.Dispose();
         }
 
         private void Cleanup()
