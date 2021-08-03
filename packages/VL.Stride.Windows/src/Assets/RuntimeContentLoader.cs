@@ -23,6 +23,7 @@ using System.Reactive.Linq;
 using Stride.Core.IO;
 using Stride.Core.BuildEngine;
 using System.Collections.Concurrent;
+using System.Reactive.Disposables;
 
 namespace VL.Stride.Assets
 {
@@ -33,6 +34,7 @@ namespace VL.Stride.Assets
     {
         private Subject<ReloadingAsset> AssetBuilt = new Subject<ReloadingAsset>();
         private Subject<string> AssetRemoved = new Subject<string>();
+        private CompositeDisposable subscriptions = new CompositeDisposable();
         public IObservable<Tuple<ReloadingAsset, object>> OnAssetBuilt { get; }
         private ConcurrentDictionary<string, AssetWrapperBase> allAssets = new ConcurrentDictionary<string, AssetWrapperBase>();
         public IReadOnlyCollection<KeyValuePair<string, AssetWrapperBase>> AllAssets => allAssets;
@@ -99,8 +101,8 @@ namespace VL.Stride.Assets
             ContentManager = new ContentManager(Game.Services);
 
             OnAssetBuilt = AssetBuilt.SelectMany(SelectAssetEvent).ObserveOn(SynchronizationContext.Current);
-            OnAssetBuilt.Subscribe(HandleNewAsset);
-            OnAssetRemoved.ObserveOn(SynchronizationContext.Current).Subscribe(HandleAssetRemoved);
+            subscriptions.Add(OnAssetBuilt.Subscribe(HandleNewAsset));
+            subscriptions.Add(OnAssetRemoved.ObserveOn(SynchronizationContext.Current).Subscribe(HandleAssetRemoved));
 
         }
 
@@ -228,6 +230,7 @@ namespace VL.Stride.Assets
         void IDisposable.Dispose()
         {
             Cleanup();
+            subscriptions.Dispose();
             database.Dispose();
         }
 
@@ -466,7 +469,6 @@ namespace VL.Stride.Assets
                             // If it's the first load of this asset, keep its loading url
                             if (!AssetLoadingTimeUrls.ContainsKey(assetToLoad.AssetItem.Asset.Id))
                                 AssetLoadingTimeUrls.Add(assetToLoad.AssetItem.Asset.Id, assetToLoad.AssetItem.Location);
-
 
                             // Remove assets that were previously loaded but are not anymore from the assetLoadingTimeUrls map.
                             foreach (var loadedUrls in AssetLoadingTimeUrls.Where(x => !ContentManager.IsLoaded(x.Value)).ToList())

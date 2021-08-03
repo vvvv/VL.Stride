@@ -1,8 +1,5 @@
 using Stride.Core;
 using Stride.Core.Serialization.Contents;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace VL.Stride.Assets
 {
@@ -13,9 +10,9 @@ namespace VL.Stride.Assets
     {
         protected int LoadRequests;
 
-        public bool Loading { get; internal set; }
+        public bool Loading { get; set; }
 
-        public bool Exists { get; internal set; }
+        public bool Exists { get; set; }
 
         public string Name { get; set; }
 
@@ -59,7 +56,7 @@ namespace VL.Stride.Assets
 
         public override void ProcessLoadRequests(ContentManager contentManager, string url)
         {
-            for (int i = 0; i < LoadRequests; i++)
+            for (int i = 0; i < LoadRequests - 1; i++)
             {
                 contentManager.Load<T>(url);
             }
