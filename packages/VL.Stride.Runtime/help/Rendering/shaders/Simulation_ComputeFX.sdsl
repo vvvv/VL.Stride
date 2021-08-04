@@ -43,7 +43,7 @@
         // ====================================================================================
         float3 Pos = POut.Pos.xyz;
         float3 Vel = POut.Vel.xyz;
-        float VelLength = length(Vel);
+        float VelLength = dot(Vel, Vel);
 
 
         // DRAG:
@@ -70,6 +70,7 @@
 
         // Vel 
         POut.Vel.xyz = Vel;
+
         // Pos
         Pos = Pos + Vel * TimeStep;
         POut.Pos.xyz = Pos;
