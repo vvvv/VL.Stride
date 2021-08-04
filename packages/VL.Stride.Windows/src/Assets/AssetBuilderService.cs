@@ -29,7 +29,7 @@ namespace VL.Stride.Assets
 
             // We want at least 2 threads, since one will be used for DynamicBuildStep (which is a special blocking step)
             var processorCount = Environment.ProcessorCount;
-            var threadCount = MathUtil.Clamp(3 * processorCount / 4, 2, processorCount - 1);
+            var threadCount = MathUtil.Clamp(2 * processorCount / 5, 2, processorCount - 1);
 
             // Mount database (otherwise it will be mounted by DynamicBuilder thread, and it might happen too late)
             Builder.OpenObjectDatabase(buildDirectory, IndexName);
