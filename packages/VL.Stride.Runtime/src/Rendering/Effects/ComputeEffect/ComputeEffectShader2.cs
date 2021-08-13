@@ -146,6 +146,7 @@ namespace VL.Stride.Rendering.ComputeEffect
                 return;
 
             using (Profiler.Begin(profilingKey))
+            using (context.PushRenderTargetsAndRestore())
             {
                 var effectUpdated = false;
                 try
@@ -198,6 +199,9 @@ namespace VL.Stride.Rendering.ComputeEffect
                     return;
                 }
 
+                // Clear render targets
+                context.CommandList.SetRenderTargets(null);
+
                 // Apply pipeline state
                 context.CommandList.SetPipelineState(pipelineState.CurrentState);
 
@@ -212,7 +216,7 @@ namespace VL.Stride.Rendering.ComputeEffect
                 {
                     UnsetUAV(context.CommandList, EffectInstance.Parameters, uavs[i]);
                 }
-                
+
             }
         }
 

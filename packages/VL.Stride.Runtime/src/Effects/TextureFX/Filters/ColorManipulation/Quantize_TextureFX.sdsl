@@ -1,0 +1,31 @@
+﻿[Category("Filter.Experimental")]
+[Summary("")]
+shader Quantize_TextureFX : FilterBase
+{
+    float4 StepSize = float4(0.1f);
+
+    uint Mode;
+    bool QuantizeAlpha;
+
+    float4 Quantize(float4 col, float steps)
+    {
+        switch (Mode)
+        {
+            case 0 : return float4(round(col * steps) / steps);
+            case 1 : return float4(floor(col * steps) / steps);
+            case 2 : return float4(ceil(col * steps) / steps);
+        }
+    }
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 col = Quantize(tex0col, 1/StepSize);
+
+        if (!QuantizeAlpha)
+            col.a = tex0col.a;
+
+        return col;
+    }
+};
+
+

@@ -16,11 +16,10 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Invert_TextureFXKeys
+    public static partial class Quantize_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Factor = ParameterKeys.NewValue<float>(1);
-        public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>(true);
-        public static readonly ValueParameterKey<bool> InvertRGB = ParameterKeys.NewValue<bool>(false);
-        public static readonly ValueParameterKey<bool> InvertAlpha = ParameterKeys.NewValue<bool>(false);
+        public static readonly ValueParameterKey<Vector4> StepSize = ParameterKeys.NewValue<Vector4>(new Vector4(0.1f));
+        public static readonly ValueParameterKey<uint> Mode = ParameterKeys.NewValue<uint>();
+        public static readonly ValueParameterKey<bool> QuantizeAlpha = ParameterKeys.NewValue<bool>();
     }
 }

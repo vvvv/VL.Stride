@@ -3,8 +3,9 @@
 [Summary("Returns a texture with different choosable noise types")]
 shader Noise_TextureFX : TextureFX, HappyNoise
 {
-    float Scale = 0.25f;
+    float2 Scale = 4;
     float2 Offset;
+    float Z;
     [EnumType("VL.Stride.Effects.TextureFX.NoiseType")]
     uint Type;
 
@@ -14,14 +15,14 @@ shader Noise_TextureFX : TextureFX, HappyNoise
         
         switch(Type)
         {
-            case 0 : return perlin((uv + Offset) / Scale);
-            case 1 : return float4(perlinGrad((uv + Offset) / Scale), 1.0);
-            case 2 : return valueNoise((uv + Offset) / Scale);
-            case 3 : return float4(valueNoiseGrad((uv + Offset) / Scale), 1.0);
-            case 4 : return simplex((uv + Offset) / Scale);
-            case 5 : return float4(simplexGrad((uv + Offset) / Scale), 1.0);
-            case 6 : return worleyFast((uv + Offset) / Scale);
-            case 7 : return float4(worleyFastGrad((uv + Offset) / Scale), 1.0);
+            case 0 : return perlin((uv + Offset) * Scale);
+            case 1 : return float4(perlinGrad(float3((uv + Offset) * Scale, Z)).yzw, 1.0);
+            case 2 : return valueNoise((uv + Offset) * Scale);
+            case 3 : return float4(valueNoiseGrad(float3((uv + Offset) * Scale, Z)).yzw, 1.0);
+            case 4 : return simplex((uv + Offset) * Scale);
+            case 5 : return float4(simplexGrad(float3((uv + Offset) * Scale, Z)).yzw, 1.0);
+            case 6 : return worleyFast((uv + Offset) * Scale);
+            case 7 : return float4(worleyFastGrad(float3((uv + Offset) * Scale, Z)).yzw, 1.0);
         }
         return 0;
     }
