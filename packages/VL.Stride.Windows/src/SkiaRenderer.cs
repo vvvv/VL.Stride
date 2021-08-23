@@ -39,7 +39,7 @@ namespace VL.Stride.Windows
             var renderTarget = commandList.RenderTarget;
 
             // Fetch the skia render context (uses ANGLE -> DirectX11)
-            var interopContext = GetInteropContext(context.GraphicsDevice);
+            var interopContext = GetInteropContext(context.GraphicsDevice, (int)renderTarget.MultisampleCount);
             var skiaRenderContext = interopContext.SkiaRenderContext;
 
             var eglContext = skiaRenderContext.EglContext;
@@ -160,9 +160,9 @@ namespace VL.Stride.Windows
         //int i = 0;
 
         // Works, also simple Gles drawing commands work but SkSurface.Flush causes device lost :(
-        static InteropContext GetInteropContext(GraphicsDevice graphicsDevice)
+        static InteropContext GetInteropContext(GraphicsDevice graphicsDevice, int msaaSamples)
         {
-            return graphicsDevice.GetOrCreateSharedData("VL.Stride.Skia.InteropContext", gd =>
+            return graphicsDevice.GetOrCreateSharedData($"VL.Stride.Skia.InteropContext{msaaSamples}", gd =>
             {
                 if (SharpDXInterop.GetNativeDevice(gd) is Device device)
                 {
@@ -174,7 +174,7 @@ namespace VL.Stride.Windows
                         new[] { device.FeatureLevel },
                         out _);
 
-                    return new InteropContext(SkiaRenderContext.New(angleDevice), d1.ImmediateContext1, contextState);
+                    return new InteropContext(SkiaRenderContext.New(angleDevice, msaaSamples), d1.ImmediateContext1, contextState);
                 }
                 return null;
             });
