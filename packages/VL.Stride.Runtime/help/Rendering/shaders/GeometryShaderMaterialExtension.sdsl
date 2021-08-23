@@ -58,7 +58,9 @@ shader GeometryShaderMaterialExtension : ParticleProvider, TransformationBase, P
 
         float4 posQuad = streams.PositionWS;
         posQuad.z += z;
+        streams.PositionWS = posQuad;
         float4 PosWVP = mul(posQuad, ViewProjection);
+        streams.ShadingPosition = PosWVP;
         streams.DepthVS = PosWVP.w;
         streams.DepthLessEqual = PosWVP.z/PosWVP.w;
 
