@@ -28,40 +28,66 @@ shader SphereImpostorMaterialExtension : ParticleProvider, TransformationBase, P
         streams.PositionWS = GetWorldPosition();
         float pSize = GetParticleSize();
 
-        for (int i=0; i<4; i++)
-        {
-            streams.TexCoord  = QuadUV[i].xy * 2 - 1; //center and scale for sphere impostor
+        float padding = 1.5;
+		float2 offset;
+		float4 cameraSpherePos = mul(streams.PositionWS, WorldView);
+		
+		for (int i = 0; i<4; i++) 
+		{
+			streams.TexCoord = QuadPositions[i].xy * padding;
+			offset = sign(QuadPositions[i].xy) * pSize;
+			float4 viewCornerPos = cameraSpherePos;
+			viewCornerPos.xy += offset * padding;
+			streams.ShadingPosition = mul(viewCornerPos, Projection);
 
-            float4 posView = mul(streams.PositionWS, WorldView);
-            posView.xyz += QuadPositions[i].xyz * pSize;
-            streams.ShadingPosition = mul(posView, Projection);
-
-            triangleStream.Append(streams);
-        }     
+			triangleStream.Append(streams);
+		}
     }
+
+    void sphereImpostor(float2 screenCoord, float3 spherePos, float sphereRadius, out float3 pos, out float3 normal)
+	{
+		float3 cameraSpherePos = mul(float4(spherePos, 1), View).xyz;
+
+		float3 cameraPlanePos = float3(screenCoord * sphereRadius, 0.0) + cameraSpherePos;
+		float3 rayDirection = normalize(cameraPlanePos);
+	
+		float B = 2.0 * dot(rayDirection, -cameraSpherePos);
+		float C = dot(cameraSpherePos, cameraSpherePos) - (sphereRadius * sphereRadius);
+	
+		float det = (B * B) - (4 * C);
+		if(det < 0.0)
+			discard;
+		
+		float sqrtDet = sqrt(det);
+		float posT = (-B + sqrtDet)/2;
+		float negT = (-B - sqrtDet)/2;
+	
+		float intersectT = min(posT, negT);
+		pos = rayDirection * intersectT;
+		normal = normalize(pos - cameraSpherePos);
+
+		// back to world space
+		normal = normalize(mul(float4(normal, 0), ViewInverse).xyz);
+		pos = (normal * sphereRadius) + spherePos;
+	}
 
     //override shading, create sphere impostor in this case
     stage override float4 Shading() 
     {
-        float2 mapping = streams.TexCoord;
-        float lenSqr = dot(mapping, mapping);
-        if (lenSqr > 1)
-            discard; // Circles
-        
-        float z = sqrt(1 - lenSqr);
+        float size = GetParticleSize();
 
-        float3 normal = float3(mapping, z);
-        normal = normalize(mul(float4(normal, 0), ViewInverse).xyz);
+		float3 worldPos, worldNormal;
+		sphereImpostor(streams.TexCoord, streams.PositionWS.xyz, size, worldPos, worldNormal);
+	
+        streams.PositionWS = float4(worldPos, 1);
+		streams.ShadingPosition = mul(streams.PositionWS, ViewProjection);
 
-        streams.normalWS = normal;
-        streams.meshNormalWS = normal;
+		streams.DepthVS = streams.ShadingPosition.w;
+		streams.DepthLessEqual = streams.ShadingPosition.z/streams.ShadingPosition.w;
 
-        float4 posQuad = streams.PositionWS;
-        posQuad.z += z;
-        float4 PosWVP = mul(posQuad, ViewProjection);
-        streams.DepthVS = PosWVP.w;
-        streams.DepthLessEqual = PosWVP.z/PosWVP.w;
+		streams.normalWS = worldNormal;
+		streams.meshNormalWS = worldNormal;
 
-        return base.Shading();
+		return base.Shading();
     }
 };
