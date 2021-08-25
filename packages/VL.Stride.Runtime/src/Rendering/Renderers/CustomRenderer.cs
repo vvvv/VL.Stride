@@ -8,13 +8,11 @@ namespace VL.Stride.Rendering
     /// <summary>
     /// A renderer which can provide <see cref="RendererBase.Draw"/> implementation with a stateful region.
     /// </summary>
-    [HotSwap]
     public sealed class CustomRenderer<TState> : SceneRendererBase
         where TState : class
     {
         private Func<TState> CreateFunc;
         private Func<TState, RenderDrawContext, TState> UpdateFunc;
-        [HotSwap]
         private TState State;
 
         public void Update(Func<TState> create, Func<TState, RenderDrawContext, TState> update)
