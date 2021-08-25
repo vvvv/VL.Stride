@@ -14,22 +14,22 @@ using Stride.Shaders;
 using Stride.Core.Mathematics;
 using Buffer = Stride.Graphics.Buffer;
 
-namespace Stride.Rendering.Images
+namespace VL.Stride.Rendering.Images
 {
     internal static partial class ShaderMixins
     {
-        internal partial class AmbientOcclusionRawAOEffect  : IShaderMixinBuilder
+        internal partial class AmbientOcclusionWithOrthoBlurEffect  : IShaderMixinBuilder
         {
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
-                context.Mixin(mixin, "AmbientOcclusionRawAOShader", context.GetParam(AmbientOcclusionRawAOKeys.Count));
+                context.Mixin(mixin, "AmbientOcclusionWithOrthoBlurShader", context.GetParam(AmbientOcclusionWithOrthoBlurKeys.Count), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.VerticalBlur), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.BlurScale), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.EdgeSharpness));
             }
 
             [ModuleInitializer]
             internal static void __Initialize__()
 
             {
-                ShaderMixinManager.Register("AmbientOcclusionRawAOEffect", new AmbientOcclusionRawAOEffect());
+                ShaderMixinManager.Register("AmbientOcclusionWithOrthoBlurEffect", new AmbientOcclusionWithOrthoBlurEffect());
             }
         }
     }

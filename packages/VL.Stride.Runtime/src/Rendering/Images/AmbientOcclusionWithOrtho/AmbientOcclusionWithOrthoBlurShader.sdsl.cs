@@ -14,9 +14,9 @@ using Stride.Shaders;
 using Stride.Core.Mathematics;
 using Buffer = Stride.Graphics.Buffer;
 
-namespace Stride.Rendering.Images
+namespace VL.Stride.Rendering.Images
 {
-    internal static partial class AmbientOcclusionBlurShaderKeys
+    internal static partial class AmbientOcclusionWithOrthoBlurShaderKeys
     {
         public static readonly ValueParameterKey<float> Weights = ParameterKeys.NewValue<float>();
     }
