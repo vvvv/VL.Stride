@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using VL.Core;
+using VL.Stride.Rendering.Images;
 
 namespace VL.Stride.Rendering.Compositing
 {
@@ -184,6 +185,7 @@ namespace VL.Stride.Rendering.Compositing
             yield return CreatePostEffectsNode();
 
             yield return new StrideNodeDesc<AmbientOcclusion>(nodeFactory, category: postFxCategory);
+            yield return new StrideNodeDesc<AmbientOcclusionWithOrtho>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<LocalReflections>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<DepthOfField>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<BrightFilter>(nodeFactory, category: postFxCategory);
