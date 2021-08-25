@@ -93,6 +93,9 @@ namespace VL.Stride.Rendering
                     case ScalarType s when s.Name.Text == "uint":
                         yield return ParameterKeys.NewValue(v.GetDefault<uint>(), keyName);
                         break;
+                    case ScalarType s when s.Name.Text == "bool":
+                        yield return ParameterKeys.NewValue(v.GetDefault<bool>(), keyName);
+                        break;
                     case TypeName n when n.Name.Text == "float2":
                         yield return ParameterKeys.NewValue(v.GetDefault<Vector2>(), keyName);
                         break;
