@@ -17,7 +17,7 @@ namespace VL.Stride.Rendering.Images
     /// You also need to provide the camera configuration you used when rendering the scene.
     /// </summary>
     [DataContract("AmbientOcclusionWithOrtho")]
-    public class AmbientOcclusionWithOrtho : ImageEffect
+    public class AmbientOcclusionWithOrtho : AmbientOcclusion
     {
         private ImageEffectShader aoRawImageEffect;
         private ImageEffectShader blurH;
@@ -43,82 +43,6 @@ namespace VL.Stride.Rendering.Images
             TempSize = TemporaryBufferSize.SizeFull;
         }
 
-        /// <userdoc>
-        /// The number of pixels sampled to determine how occluded a point is. Higher values reduce noise, but affect performance.
-        /// Use with "Blur count to find a balance between results and performance.
-        /// </userdoc>
-        [DataMember(10)]
-        [DefaultValue(13)]
-        [DataMemberRange(1, 50, 1, 5, 0)]
-        [Display("Samples")]
-        public int NumberOfSamples { get; set; } = 13;
-
-        /// <userdoc>
-        /// Scales the sample radius. In most cases, 1 (no scaling) produces the most accurate result.
-        /// </userdoc>
-        [DataMember(20)]
-        [DefaultValue(0.5f)]
-        [Display("Projection scale")]
-        public float ParamProjScale { get; set; } = 0.5f;
-
-        /// <userdoc>
-        /// The strength of the darkening effect in occluded areas
-        /// </userdoc>
-        [DataMember(30)]
-        [DefaultValue(0.2f)]
-        [Display("Intensity")]
-        public float ParamIntensity { get; set; } = 0.2f;
-
-        /// <userdoc>
-        /// The angle at which Stride considers an area of geometry an occluder. At high values, only narrow joins and crevices are considered occluders.
-        /// </userdoc>
-        [DataMember(40)]
-        [DefaultValue(0.01f)]
-        [Display("Sample bias")]
-        public float ParamBias { get; set; } = 0.01f;
-
-        /// <userdoc>
-        /// Use with "projection scale" to control the radius of the occlusion effect
-        /// </userdoc>
-        [DataMember(50)]
-        [DefaultValue(1f)]
-        [Display("Sample radius")]
-        public float ParamRadius { get; set; } = 1f;
-
-        /// <userdoc>
-        /// The number of times the ambient occlusion image is blurred. Higher numbers reduce noise, but can produce artifacts.
-        /// </userdoc>
-        [DataMember(70)]
-        [DefaultValue(2)]
-        [DataMemberRange(0, 3, 1, 1, 0)]
-        [Display("Blur count")]
-        public int NumberOfBounces { get; set; } = 2;
-
-        /// <userdoc>
-        /// The blur radius in pixels
-        /// </userdoc>
-        [DataMember(74)]
-        [DefaultValue(1.85f)]
-        [Display("Blur radius")]
-        public float BlurScale { get; set; } = 1.85f;
-
-        /// <userdoc>
-        /// How much the blur respects the depth differences of occluded areas. Lower numbers create more blur, but might blur unwanted areas (ie beyond occluded areas).
-        /// </userdoc>
-        [DataMember(78)]
-        [DefaultValue(3f)]
-        [Display("Edge sharpness")]
-        public float EdgeSharpness { get; set; } = 3f;
-
-        /// <userdoc>
-        /// The resolution the ambient occlusion is calculated at. The result is upscaled to the game resolution.
-        /// Larger sizes produce better results but use more memory and affect performance.
-        /// </userdoc>
-        [DataMember(100)]
-        [DefaultValue(TemporaryBufferSize.SizeFull)]
-        [Display("Buffer size")]
-        public TemporaryBufferSize TempSize { get; set; } = TemporaryBufferSize.SizeFull;
-
         protected override void InitializeCore()
         {
             base.InitializeCore();
@@ -136,22 +60,6 @@ namespace VL.Stride.Rendering.Images
             // Setup Horizontal parameters
             blurH.Parameters.Set(AmbientOcclusionWithOrthoBlurKeys.VerticalBlur, false);
             blurV.Parameters.Set(AmbientOcclusionWithOrthoBlurKeys.VerticalBlur, true);
-        }
-
-        protected override void Destroy()
-        {
-            base.Destroy();
-        }
-
-        /// <summary>
-        /// Provides a color buffer and a depth buffer to apply the depth-of-field to.
-        /// </summary>
-        /// <param name="colorBuffer">A color buffer to process.</param>
-        /// <param name="depthBuffer">The depth buffer corresponding to the color buffer provided.</param>
-        public void SetColorDepthInput(Texture colorBuffer, Texture depthBuffer)
-        {
-            SetInput(0, colorBuffer);
-            SetInput(1, depthBuffer);
         }
 
         protected override void DrawCore(RenderDrawContext context)
@@ -254,24 +162,6 @@ namespace VL.Stride.Rendering.Images
             aoApplyImageEffect.SetInput(1, aoTexture1);
             aoApplyImageEffect.SetOutput(outputTexture);
             aoApplyImageEffect.Draw(context, "AmbientOcclusionWithOrthoApply");
-        }
-
-        public enum TemporaryBufferSize
-        {
-            [Display("Full size")]
-            SizeFull = 12,
-
-            [Display("5/6 size")]
-            Size1012 = 10,
-
-            [Display("3/4 size")]
-            Size0912 = 9,
-
-            [Display("2/3 size")]
-            Size0812 = 8,
-
-            [Display("1/2 size")]
-            Size0612 = 6,
         }
     }
 }
