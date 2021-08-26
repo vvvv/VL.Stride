@@ -19,6 +19,6 @@ namespace Stride.Rendering
     public static partial class Clamp_TextureFXKeys
     {
         public static readonly ValueParameterKey<Vector4> Min = ParameterKeys.NewValue<Vector4>();
-        public static readonly ValueParameterKey<Vector4> Max = ParameterKeys.NewValue<Vector4>(new Vector4(1));
+        public static readonly ValueParameterKey<Vector4> Max = ParameterKeys.NewValue<Vector4>(new Vector4(1,1,1,1));
     }
 }
