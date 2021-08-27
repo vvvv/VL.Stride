@@ -16,10 +16,10 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class CalcDispatchArgsKeys
+    public static partial class CalcDispatchArgs_ComputeFXKeys
     {
         public static readonly ObjectParameterKey<Buffer> CounterBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> ArgsBuffer = ParameterKeys.NewObject<Buffer>();
-        public static readonly ValueParameterKey<uint> GroupSize = ParameterKeys.NewValue<uint>();
+        public static readonly ValueParameterKey<Vector3> GroupSize = ParameterKeys.NewValue<Vector3>();
     }
 }
