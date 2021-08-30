@@ -315,6 +315,7 @@ namespace VL.Stride.Rendering.Compositing
                 return nodeFactory.NewNode<PostProcessingEffects>(name: "PostFXCore (Internal)", category: renderingCategory, copyOnWrite: false, 
                     init: effects =>
                     {
+                        ReplaceAO(effects);
                         // Can't use effects.DisableAll() - disables private effects used by AA
                         effects.AmbientOcclusion.Enabled = false;
                         effects.LocalReflections.Enabled = false;
@@ -463,6 +464,12 @@ namespace VL.Stride.Rendering.Compositing
                     }, defaultValue: null /* null is used to disable */)
                     .AddCachedListInput(nameof(PostProcessingEffects.ColorTransforms), x => x.ColorTransforms.Transforms)
                     .AddCachedInput(nameof(PostProcessingEffects.Antialiasing), x => x.Antialiasing, (x, v) => x.Antialiasing = v);
+
+                void ReplaceAO(PostProcessingEffects effects)
+                {
+                    var ao = typeof(PostProcessingEffects).GetProperty(nameof(PostProcessingEffects.AmbientOcclusion), BindingFlags.Public | BindingFlags.Instance);
+                    ao.SetValue(effects, new AmbientOcclusionWithOrtho());
+                }
             }
         }
 
