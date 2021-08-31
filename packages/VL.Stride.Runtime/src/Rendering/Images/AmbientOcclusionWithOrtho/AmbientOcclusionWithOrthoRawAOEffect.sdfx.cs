@@ -22,7 +22,7 @@ namespace VL.Stride.Rendering.Images
         {
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
-                context.Mixin(mixin, "AmbientOcclusionWithOrthoRawAOShader", context.GetParam(AmbientOcclusionWithOrthoRawAOKeys.Count));
+                context.Mixin(mixin, "AmbientOcclusionWithOrthoRawAOShader", context.GetParam(AmbientOcclusionWithOrthoRawAOKeys.Count), context.GetParam(AmbientOcclusionWithOrthoRawAOKeys.IsOrtho));
             }
 
             [ModuleInitializer]

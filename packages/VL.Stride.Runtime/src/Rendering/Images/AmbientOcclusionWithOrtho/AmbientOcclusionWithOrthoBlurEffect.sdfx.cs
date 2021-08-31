@@ -22,7 +22,7 @@ namespace VL.Stride.Rendering.Images
         {
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
-                context.Mixin(mixin, "AmbientOcclusionWithOrthoBlurShader", context.GetParam(AmbientOcclusionWithOrthoBlurKeys.Count), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.VerticalBlur), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.BlurScale), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.EdgeSharpness));
+                context.Mixin(mixin, "AmbientOcclusionWithOrthoBlurShader", context.GetParam(AmbientOcclusionWithOrthoBlurKeys.Count), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.VerticalBlur), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.BlurScale), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.EdgeSharpness), context.GetParam(AmbientOcclusionWithOrthoBlurKeys.IsOrtho));
             }
 
             [ModuleInitializer]

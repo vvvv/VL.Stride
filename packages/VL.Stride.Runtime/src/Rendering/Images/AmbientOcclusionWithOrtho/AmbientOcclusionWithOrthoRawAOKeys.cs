@@ -9,5 +9,6 @@ namespace VL.Stride.Rendering.Images
     public static partial class AmbientOcclusionWithOrthoRawAOKeys
     {
         public static readonly PermutationParameterKey<int> Count = ParameterKeys.NewPermutation<int>();
+        public static readonly PermutationParameterKey<bool> IsOrtho = ParameterKeys.NewPermutation<bool>();
     }
 }
