@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2021.4.0.299" Version="0.128">
-  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2021.4.0-0250-g3958a565f9" />
+<Document xmlns:p="property" Id="UFzEbZy7D3GNY8xnLUU17p" LanguageVersion="2021.4.0.329" Version="0.128">
+  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2021.4.0-0326-gdbd531da46" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="AM1t0H80MmiNL9vQcGuPCN" Name="Cameras" Position="253,169">
@@ -69,8 +69,8 @@
               </Node>
               <ControlPoint Id="T1nc8cO9nuRNtkLIH1Uw2F" Bounds="173,841" />
               <ControlPoint Id="R5XFMwW8sv8P4ic5nKG3tQ" Bounds="193,95" />
-              <ControlPoint Id="PUwdFIimGrZOqWlgNgtUj2" Bounds="333,544" />
-              <ControlPoint Id="QCKEs5Qrz9zNgdxBY82vVb" Bounds="313,516" />
+              <ControlPoint Id="PUwdFIimGrZOqWlgNgtUj2" Bounds="353,539" />
+              <ControlPoint Id="QCKEs5Qrz9zNgdxBY82vVb" Bounds="333,511" />
               <Node Bounds="212,351,245,26" Id="ETSubGRezR3PREdNADC1je">
                 <p:NodeReference LastCategoryFullName="Editors.3D.CameraState" LastSymbolSource="VL.Cameras.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -134,6 +134,7 @@
                 <Pin Id="Vl5M3be0PnBNWAgmdxEjag" Name="View Matrix" Kind="InputPin" />
                 <Pin Id="LDBiVmUoP8DQJCQa41iCDJ" Name="Projection" Kind="InputPin" />
                 <Pin Id="VxlEtJKmX7KOwdc05rAYOj" Name="Vertical Field Of View" Kind="InputPin" />
+                <Pin Id="PTm6qEchTVzQK4XKQV4R1l" Name="Orthographic Size" Kind="InputPin" />
                 <Pin Id="K1J70E7x2RxL379PpbLJat" Name="Use Custom Aspect Ratio" Kind="InputPin" />
                 <Pin Id="CgBEpC0Iye0NVqWj1jrsq8" Name="Aspect Ratio" Kind="InputPin" />
                 <Pin Id="D5gLD64q2JONg01USSv0Gj" Name="Near Clip Plane" Kind="InputPin" />
@@ -159,6 +160,21 @@
                 <Pin Id="Bg7RLUu7hQZQW2hkQ4okPq" Name="Result" Kind="OutputPin" />
               </Node>
               <ControlPoint Id="DAwHfZviufJMNzNhr3xNai" Bounds="570,503" />
+              <ControlPoint Id="QuHsjkIdPuWMs68RBuImza" Bounds="277,458" />
+              <Node Bounds="303,536,25,19" Id="ODlRPS3r962PJK2hFu0pVG">
+                <p:NodeReference LastCategoryFullName="Math" LastSymbolSource="CoreLibBasics.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="OperationCallFlag" Name="*" />
+                </p:NodeReference>
+                <Pin Id="GACroXoWRjdPbbRoU4KqwS" Name="Input" Kind="InputPin" />
+                <Pin Id="DWsD2VkgSabOyQEI8p91aT" Name="Input 2" Kind="InputPin" DefaultValue="100">
+                  <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+                    <Choice Kind="TypeFlag" Name="Float32" />
+                  </p:TypeAnnotation>
+                </Pin>
+                <Pin Id="KvLv38LDRG5LTOxv3wF6U1" Name="Output" Kind="OutputPin" />
+              </Node>
+              <Pad Id="AxtGfNVzR6gNO8ilGr0LzQ" Comment="FOV" Bounds="594,400,35,15" ShowValueBox="true" isIOBox="true" />
             </Canvas>
             <Patch Id="Qvkax4iwUx2LOvrRdkfzGd" Name="Create" />
             <Patch Id="TctjirrDJkuNCsOJB2Vpq8" Name="Update" ManuallySortedPins="true">
@@ -171,6 +187,7 @@
                   <Choice Kind="TypeFlag" Name="Float32" />
                 </p:TypeAnnotation>
               </Pin>
+              <Pin Id="P7mSlQDpjGZNyjCFWOZavd" Name="Projection" Kind="InputPin" Bounds="281,455" />
               <Pin Id="PBLtDw73K1MOAqUgu3CpXC" Name="Near Clip Plane" Kind="InputPin" Bounds="733,155" />
               <Pin Id="ILjaB5CvEKBOZHJC1FxpOi" Name="Far Clip Plane" Kind="InputPin" Bounds="957,137" />
               <Pin Id="FWXqqtxfBaHLiz4eB1wrfo" Name="Auto Fetch Input Source" Kind="InputPin" Bounds="-73,105" DefaultValue="True" Visibility="Optional">
@@ -258,6 +275,11 @@
             <Link Id="Om8g9tlkL64LXhs1CUK4OD" Ids="Bg7RLUu7hQZQW2hkQ4okPq,JDpS3YMBIjzQaUJteLpPpY" />
             <Link Id="OaFmBc2ek77NQhlkglN0EW" Ids="DAwHfZviufJMNzNhr3xNai,TDTkq6EGzp5LsfeRYOhKYa" />
             <Link Id="MCXYDQvrTjmQLbln3YuZs3" Ids="S9bYH6wUGqhMxVkaKMG51U,DAwHfZviufJMNzNhr3xNai" IsHidden="true" />
+            <Link Id="AIGSDP0PCfaOvXjcA64vp3" Ids="QuHsjkIdPuWMs68RBuImza,LDBiVmUoP8DQJCQa41iCDJ" />
+            <Link Id="AZcS38Jri68NIL8gur9nhs" Ids="P7mSlQDpjGZNyjCFWOZavd,QuHsjkIdPuWMs68RBuImza" IsHidden="true" />
+            <Link Id="Ex2bj2WBw0cO55jFDz526d" Ids="Mt9rPmLbgrKQHuHF1RQx2F,GACroXoWRjdPbbRoU4KqwS" />
+            <Link Id="T0njPzRRuIwQIEFagqH6wr" Ids="KvLv38LDRG5LTOxv3wF6U1,PTm6qEchTVzQK4XKQV4R1l" />
+            <Link Id="Su7M6lHiQgDMcG9rK9VKSR" Ids="Mt9rPmLbgrKQHuHF1RQx2F,AxtGfNVzR6gNO8ilGr0LzQ" />
           </Patch>
         </Node>
         <Canvas Id="BNgiReZfa48L5F9RUz1odg" Name="Advanced" Position="599,222">
@@ -1734,6 +1756,7 @@
                   <Pin Id="ToSqfyFKKrxNoJRIIjekBk" Name="View Matrix" Kind="InputPin" />
                   <Pin Id="CnDqbwMATe8NYe46vi5WJP" Name="Projection" Kind="InputPin" />
                   <Pin Id="SuZ5qwx9uF0OsYFNOKr3UA" Name="Vertical Field Of View" Kind="InputPin" />
+                  <Pin Id="MfMM7zy2fEEMMzgC4Kc6rz" Name="Orthographic Size" Kind="InputPin" />
                   <Pin Id="VdnmRFTKG0RMvEj2zFDMZE" Name="Use Custom Aspect Ratio" Kind="InputPin" />
                   <Pin Id="Eh1UAvAZQoHNRpiVyzSaiU" Name="Aspect Ratio" Kind="InputPin" />
                   <Pin Id="ELEIwqGiHhWM7GD18n4wzV" Name="Near Clip Plane" Kind="InputPin" />
@@ -2028,6 +2051,7 @@
                 <Pin Id="DbqCnfVlnbVMMmO9r5fEtg" Name="View Matrix" Kind="InputPin" />
                 <Pin Id="H5ug5dETirGOcV0ZbhnPCx" Name="Projection" Kind="InputPin" />
                 <Pin Id="MPpHaoBkxjUOYEHsybSpb0" Name="Vertical Field Of View" Kind="InputPin" />
+                <Pin Id="SkCzrOx1DNrNBe8GaGYUvn" Name="Orthographic Size" Kind="InputPin" />
                 <Pin Id="BNfKdmN28fzNPMAm32HS3T" Name="Use Custom Aspect Ratio" Kind="InputPin" />
                 <Pin Id="FI2y5ssZiY7O9m66smfLjr" Name="Aspect Ratio" Kind="InputPin" />
                 <Pin Id="HoG0gFTAXJqNlneQk0dgdR" Name="Near Clip Plane" Kind="InputPin" />
@@ -2090,16 +2114,16 @@
                 </p:NodeReference>
                 <Pin Id="O3h9tiZixOjOfWT5pr2ydC" Name="Input" Kind="InputPin" />
               </Node>
-              <ControlPoint Id="Q55zAbl8pxxQNntQvcMl9m" Bounds="354,141" />
-              <ControlPoint Id="FAfEQHy98lKLKo3Jyg6NNl" Bounds="394,187" />
-              <ControlPoint Id="T1sS6SkjylnN5pPWIQVkKc" Bounds="455,256" />
-              <ControlPoint Id="CAXcHFLQAgwLyPgCcT2Fq9" Bounds="474,279" />
-              <ControlPoint Id="SGdXIqb3UTeNLpt4ch5yv6" Bounds="373,164" />
-              <ControlPoint Id="MiiYgZQ5AVeLs8KWIOSYi7" Bounds="414,210" />
-              <ControlPoint Id="UxL4a8i86yGQA7og1SgpnQ" Bounds="434,233" />
+              <ControlPoint Id="Q55zAbl8pxxQNntQvcMl9m" Bounds="364,139" />
+              <ControlPoint Id="FAfEQHy98lKLKo3Jyg6NNl" Bounds="406,197" />
+              <ControlPoint Id="T1sS6SkjylnN5pPWIQVkKc" Bounds="503,300" />
+              <ControlPoint Id="CAXcHFLQAgwLyPgCcT2Fq9" Bounds="522,323" />
+              <ControlPoint Id="SGdXIqb3UTeNLpt4ch5yv6" Bounds="383,162" />
+              <ControlPoint Id="MiiYgZQ5AVeLs8KWIOSYi7" Bounds="462,254" />
+              <ControlPoint Id="UxL4a8i86yGQA7og1SgpnQ" Bounds="482,277" />
               <ControlPoint Id="Du4jAJgvpoTMkJEXysuduH" Bounds="754,292" />
               <ControlPoint Id="Lfq921nX1q1Mkw0EO710OP" Bounds="898,357" />
-              <ControlPoint Id="GohDNR7S7fcNBv0mzKQt7d" Bounds="331,118" />
+              <ControlPoint Id="GohDNR7S7fcNBv0mzKQt7d" Bounds="341,116" />
               <Node Bounds="643,327,58,26" Id="K1GJSrMDumNLJLjVYCkHdW">
                 <p:NodeReference LastCategoryFullName="Primitive.Optional" LastSymbolSource="CoreLibBasics.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -2139,6 +2163,7 @@
                   <Patch Id="Dqj5h0kertpP4DZA9SqXdG" Name="Then" ManuallySortedPins="true" />
                 </Patch>
               </Node>
+              <ControlPoint Id="OfavrpZy2aCMdnT3VkOyXY" Bounds="432,225" />
             </Canvas>
             <Link Id="NL0SxPCYogvQKDElVXuvYM" Ids="OFHpERkcZuFLHAvMvSHMML,TGOpvt840swN7qvlM0ftYA" />
             <Link Id="ExwMpNJc1yALh0JSKCk9fS" Ids="HjkjTJ2usOhPWsyNrENmUj,PbkJCecEl1DOobJbRR27r6" />
@@ -2190,12 +2215,19 @@
             </ProcessDefinition>
             <Link Id="TZEzfEcrsJ7NSSbOnFjlPW" Ids="Du4jAJgvpoTMkJEXysuduH,SA1XqK7oXoHOq9kRX70zTq" />
             <Link Id="HKHC2AwFCguL8emzapYFuL" Ids="Du4jAJgvpoTMkJEXysuduH,D2n0fGAeMITMCUXWJYjvil" />
+            <Link Id="M36bNAejb25OTlLEaAMwEf" Ids="TGOpvt840swN7qvlM0ftYA,PD9Kgh7Kj72Otm8Vb25PEy" />
+            <Link Id="GJkFPQss0osMIRmP7pofYp" Ids="TiCqBXhssGROJzxVDVpFdY,TkLVDbNZzngMBL0khBk1fl" />
+            <Link Id="MWZSKyS4mMnN9ZThJ4fsiu" Ids="OpIcWFldJolOHqPiVVd0Ti,IU9EXqnQsEyOOMz09Up9BI" />
+            <Link Id="JUh1yjXio4fLAgNPOyOsfu" Ids="TiCqBXhssGROJzxVDVpFdY,GmEi05WPESMOiSwWTNcU7k" />
+            <Link Id="AST1crz7q6ZO4A3Q8N9yz5" Ids="OfavrpZy2aCMdnT3VkOyXY,SkCzrOx1DNrNBe8GaGYUvn" />
+            <Link Id="Dy3VYrGAvlQO5hqsoxL5dI" Ids="Ix30iYG8b1KM8DWEFEgOdq,OfavrpZy2aCMdnT3VkOyXY" IsHidden="true" />
             <Patch Id="SUHKmexXRcrQRFGmZpuF4k" Name="Create" ParticipatingElements="NL0SxPCYogvQKDElVXuvYM" />
             <Patch Id="P1e2QgmL7mmNZR6aBJGqJR" Name="Update">
               <Pin Id="TR9Ga4o6W9BMfQiZrD9Ppv" Name="Use Custom View Matrix" Kind="InputPin" Bounds="448,-16" />
               <Pin Id="DkxCdkR9fs9M6ks0OSWERe" Name="View Matrix" Kind="InputPin" Bounds="470,174" />
               <Pin Id="B2hLwFeWFt3PbngDmVH4Z7" Name="Projection" Kind="InputPin" Bounds="490,53" />
               <Pin Id="TugE4QbEAHBMVET0aN8LKu" Name="Vertical Field Of View" Kind="InputPin" Bounds="512,197" />
+              <Pin Id="Ix30iYG8b1KM8DWEFEgOdq" Name="Orthographic Size" Kind="InputPin" Bounds="430,218" />
               <Pin Id="NuUz4vOkvuAOb3cLuDGdlA" Name="Use Custom Aspect Ratio" Kind="InputPin" Bounds="531,124" />
               <Pin Id="I6rGYjKIjwiO4Pmqyys6YZ" Name="Aspect Ratio" Kind="InputPin" Bounds="551,144" />
               <Pin Id="I4Xdkd7YncQNaNe7hr3zhj" Name="Near Clip Plane" Kind="InputPin" Bounds="570,214" />
@@ -2241,10 +2273,6 @@
             <Patch Id="Off5FPwlKzPLtWGVQU2Wmv" Name="SetProjectionMatrix" ParticipatingElements="K1GJSrMDumNLJLjVYCkHdW">
               <Pin Id="DFX1kvUtjFKO0z412Md3C4" Name="Projection Matrix" Kind="InputPin" />
             </Patch>
-            <Link Id="M36bNAejb25OTlLEaAMwEf" Ids="TGOpvt840swN7qvlM0ftYA,PD9Kgh7Kj72Otm8Vb25PEy" />
-            <Link Id="GJkFPQss0osMIRmP7pofYp" Ids="TiCqBXhssGROJzxVDVpFdY,TkLVDbNZzngMBL0khBk1fl" />
-            <Link Id="MWZSKyS4mMnN9ZThJ4fsiu" Ids="OpIcWFldJolOHqPiVVd0Ti,IU9EXqnQsEyOOMz09Up9BI" />
-            <Link Id="JUh1yjXio4fLAgNPOyOsfu" Ids="TiCqBXhssGROJzxVDVpFdY,GmEi05WPESMOiSwWTNcU7k" />
           </Patch>
         </Node>
         <!--
@@ -2270,6 +2298,7 @@
                 <Pin Id="KA33welXaSzMTmVr8AKivg" Name="View Matrix" Kind="InputPin" />
                 <Pin Id="LiQVLvEVo4kQZfGHsrUsKe" Name="Projection" Kind="InputPin" />
                 <Pin Id="Lj0I7qcbgJ3LH0tbwcCqJB" Name="Vertical Field Of View" Kind="InputPin" />
+                <Pin Id="FsY5oz2nH5YOhVP5SfjaMo" Name="Orthographic Size" Kind="InputPin" />
                 <Pin Id="RhHrxkYDQODMcS0IJROnUW" Name="Use Custom Aspect Ratio" Kind="InputPin" />
                 <Pin Id="CTeOyFf7LyGMy1yxssT4bv" Name="Aspect Ratio" Kind="InputPin" />
                 <Pin Id="PzfZHsG1FTkPRB8QUyG1lW" Name="Near Clip Plane" Kind="InputPin" />
@@ -22791,6 +22820,7 @@
                   <Pin Id="I2G4Ods8ZhhPdNA3SCH28Y" Name="Initial Pitch" Kind="InputPin" />
                   <Pin Id="OXeOALxnutqOVErVgt7EVO" Name="Initial Distance" Kind="InputPin" />
                   <Pin Id="LnLoebJewX9LTQgiYfDglZ" Name="Initial Vertical Field Of View" Kind="InputPin" />
+                  <Pin Id="KQccjdliWW1MprMJPbWbio" Name="Projection" Kind="InputPin" />
                   <Pin Id="ITWGmV6CzU7LrHL2Br0IU9" Name="Near Clip Plane" Kind="InputPin" />
                   <Pin Id="VgrxkRzkTfLLIVebSlU5tu" Name="Far Clip Plane" Kind="InputPin" />
                   <Pin Id="MaaKjjFYSUxPij4tA82SsY" Name="Auto Fetch Input Source" Kind="InputPin" />
@@ -24873,8 +24903,8 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="NPPs0gHWhhDLwbJWw9C5Qt" Location="VL.Core" Version="2021.4.0-0250-g3958a565f9" />
-  <NugetDependency Id="DpOkG08YmwMOrERTyWIWIl" Location="VL.EditingFramework" Version="2021.4.0-0250-g3958a565f9" />
+  <NugetDependency Id="NPPs0gHWhhDLwbJWw9C5Qt" Location="VL.Core" Version="2021.4.0-0326-gdbd531da46" />
+  <NugetDependency Id="DpOkG08YmwMOrERTyWIWIl" Location="VL.EditingFramework" Version="2021.4.0-0326-gdbd531da46" />
   <PlatformDependency Id="OPlGizMUnBvPvn5XHsJ8EW" Location="./src/bin/Debug/netstandard2.0/VL.Stride.Runtime.dll" />
   <PlatformDependency Id="PNVK9A76J93L79pFuBD4B3" Location="../TestGame/Bin/Windows/Debug/Stride.Games.dll" />
   <PlatformDependency Id="Lg8KGAfsRcwOnEfRhBsBQG" Location="../TestGame/Bin/Windows/Debug/Stride.Engine.dll" />
@@ -24882,7 +24912,7 @@
   <DocumentDependency Id="I9kZBuopBpePX7pwvio3o3" Location="./VL.Stride.Input.vl" />
   <DocumentDependency Id="IDoNCTKSzHfQQlS52M4MXv" Location="./VL.Stride.Rendering.vl" IsFriend="true" />
   <PlatformDependency Id="H2f8MXufRYpPuRjIjOK3q3" Location="../TestGame/Bin/Windows/Debug/Stride.Core.Mathematics.dll" />
-  <NugetDependency Id="IHEIDRov8LFO2eD48F4Hs0" Location="VL.Lang" Version="2021.4.0-0250-g3958a565f9" />
+  <NugetDependency Id="IHEIDRov8LFO2eD48F4Hs0" Location="VL.Lang" Version="2021.4.0-0326-gdbd531da46" />
   <DocumentDependency Id="GILZwUe2iGgPKA8BP1W5y0" Location="./VL.Stride.Games.vl" />
   <DocumentDependency Id="GWdYb2ByA41MUfWOOserWC" Location="./VL.Stride.Rendering.Instancer.vl" />
   <DocumentDependency Id="LWxCxaUoeDdLDEIgLy5CeO" Location="./VL.Stride.Graphics.vl" />
