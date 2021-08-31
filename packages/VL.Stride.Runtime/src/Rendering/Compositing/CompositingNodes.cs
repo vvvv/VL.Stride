@@ -185,7 +185,6 @@ namespace VL.Stride.Rendering.Compositing
             yield return CreatePostEffectsNode();
 
             yield return new StrideNodeDesc<AmbientOcclusion>(nodeFactory, category: postFxCategory);
-            yield return new StrideNodeDesc<AmbientOcclusionWithOrtho>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<LocalReflections>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<DepthOfField>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<BrightFilter>(nodeFactory, category: postFxCategory);
@@ -315,7 +314,7 @@ namespace VL.Stride.Rendering.Compositing
                 return nodeFactory.NewNode<PostProcessingEffects>(name: "PostFXCore (Internal)", category: renderingCategory, copyOnWrite: false, 
                     init: effects =>
                     {
-                        ReplaceAO(effects);
+                        ReplaceAO(effects); // set our own implementation, TODO: remove this once we use a stride version that has the ortho case included
                         // Can't use effects.DisableAll() - disables private effects used by AA
                         effects.AmbientOcclusion.Enabled = false;
                         effects.LocalReflections.Enabled = false;
