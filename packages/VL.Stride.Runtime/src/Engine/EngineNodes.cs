@@ -76,6 +76,7 @@ namespace VL.Stride.Engine
                 .AddInput(nameof(CameraComponent.ViewMatrix), x => x.ViewMatrix, (x, v) => x.ViewMatrix = v, defaultValue: Matrix.Identity)
                 .AddInput(nameof(CameraComponent.Projection), x => x.Projection, (x, v) => x.Projection = v, defaultValue: CameraProjectionMode.Perspective)
                 .AddInput(nameof(CameraComponent.VerticalFieldOfView), x => (double)x.VerticalFieldOfView / 360, (x, v) => x.VerticalFieldOfView = (float)(v * 360), 45d / 360, summary: "Gets or sets the vertical field of view in cycles.", remarks: "The vertical field of view (in cycles)")
+                .AddInput(nameof(CameraComponent.OrthographicSize), x => x.OrthographicSize, (x, v) => x.OrthographicSize = v, defaultValue: 10)
                 .AddInput(nameof(CameraComponent.UseCustomAspectRatio), x => x.UseCustomAspectRatio, (x, v) => x.UseCustomAspectRatio = v, defaultValue: false)
                 .AddInput(nameof(CameraComponent.AspectRatio), x => x.AspectRatio, (x, v) => x.AspectRatio = v, 1f)
                 .AddInput(nameof(CameraComponent.NearClipPlane), x => x.NearClipPlane, (x, v) => x.NearClipPlane = v, defaultValue: 0.05f)
