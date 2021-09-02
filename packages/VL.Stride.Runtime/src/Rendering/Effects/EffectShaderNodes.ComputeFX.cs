@@ -20,6 +20,7 @@ namespace VL.Stride.Rendering
             return factory.NewNodeDescription(
                 name: name,
                 category: "Stride.Rendering.ComputeShaders",
+                tags: shaderMetadata.Tags,
                 fragmented: true,
                 invalidated: changes,
                 init: buildContext =>
@@ -66,7 +67,6 @@ namespace VL.Stride.Rendering
                         messages: _messages,
                         summary: shaderMetadata.Summary,
                         remarks: shaderMetadata.Remarks,
-                        tags: shaderMetadata.Tags,
                         newNode: nodeBuildContext =>
                         {
                             var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
