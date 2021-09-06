@@ -133,6 +133,8 @@ namespace VL.Stride.Graphics
                     return isSRgb ? StridePixelFormat.B8G8R8A8_UNorm_SRgb : StridePixelFormat.B8G8R8A8_UNorm;
                 case VLPixelFormat.R32G32F:
                     return StridePixelFormat.R32G32_Float;
+                case VLPixelFormat.R16G16B16A16F:
+                    return StridePixelFormat.R16G16B16A16_Float;
                 case VLPixelFormat.R32G32B32A32F:
                     return StridePixelFormat.R32G32B32A32_Float;
                 default:
@@ -175,6 +177,8 @@ namespace VL.Stride.Graphics
                     return VLPixelFormat.B8G8R8A8;
                 case StridePixelFormat.R32G32_Float:
                     return VLPixelFormat.R32G32F;
+                case StridePixelFormat.R16G16B16A16_Float:
+                    return VLPixelFormat.R16G16B16A16F;
                 case StridePixelFormat.R32G32B32A32_Float:
                     return VLPixelFormat.R32G32B32A32F;
                 default:
