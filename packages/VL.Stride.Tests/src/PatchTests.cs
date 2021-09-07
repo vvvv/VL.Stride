@@ -78,11 +78,7 @@ namespace MyTests
             // Add the vvvv_stride\vvvv50 folder
             AssemblyLoader.AddPackageRepositories(VLPath);
 
-            if (SynchronizationContext.Current == null)
-                SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
-
-
-            Session = new VLSession("gamma", SynchronizationContext.Current, includeUserPackages: false)
+            Session = new VLSession("gamma", includeUserPackages: false)
             {
                 CheckSolution = false,
                 IgnoreDynamicEnumErrors = true,
