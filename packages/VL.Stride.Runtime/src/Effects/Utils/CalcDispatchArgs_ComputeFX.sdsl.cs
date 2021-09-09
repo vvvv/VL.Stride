@@ -20,6 +20,6 @@ namespace Stride.Rendering
     {
         public static readonly ObjectParameterKey<Buffer> CounterBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> ArgsBuffer = ParameterKeys.NewObject<Buffer>();
-        public static readonly ValueParameterKey<Vector3> GroupSize = ParameterKeys.NewValue<Vector3>();
+        public static readonly ValueParameterKey<int> ThreadGroupSize = ParameterKeys.NewValue<int>(64);
     }
 }

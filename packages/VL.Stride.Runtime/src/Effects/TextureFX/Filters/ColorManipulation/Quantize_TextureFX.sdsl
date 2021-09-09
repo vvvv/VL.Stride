@@ -7,7 +7,7 @@ shader Quantize_TextureFX : FilterBase
     uint Mode;
     bool QuantizeAlpha;
 
-    float4 Quantize(float4 col, float steps)
+    float4 Quant(float4 col, float steps)
     {
         switch (Mode)
         {
@@ -19,7 +19,7 @@ shader Quantize_TextureFX : FilterBase
 
     float4 Filter(float4 tex0col)
     {
-        float4 col = Quantize(tex0col, 1/StepSize);
+        float4 col = Quant(tex0col, 1/StepSize);
 
         if (!QuantizeAlpha)
             col.a = tex0col.a;
