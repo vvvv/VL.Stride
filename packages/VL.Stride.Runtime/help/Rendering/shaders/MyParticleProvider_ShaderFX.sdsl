@@ -1,15 +1,5 @@
 shader MyParticleProvider_ShaderFX : TransformationBase, ParticleProvider, ParticleStructPos4Vel4, ShaderBaseStream, Transformation, PositionStream4, NormalStream
 {
-    stage stream uint VertexID : SV_VertexID;
-    stage stream uint VID;
-
-    // override the vertex shader methods that handle position 
-    stage override void PreTransformPosition() 
-    {
-        streams.VID = streams.VertexID;
-        streams.PositionWS = streams.Position;
-    }
-
     cbuffer PerMaterial
     {
         stage float ParticleSize = 0.1;
@@ -18,16 +8,22 @@ shader MyParticleProvider_ShaderFX : TransformationBase, ParticleProvider, Parti
     rgroup PerMaterial
     {
         stage StructuredBuffer<ParticlePos4Vel4> ParticlesBuffer;
-        stage Buffer<float4> RandomValues;
     }
 
-    stage stream float4 pNorm;
+    stage stream uint VertexID : SV_VertexID;
+    stage stream uint VID;
+
+    // override the vertex shader methods that handle position 
+    stage override void PreTransformPosition()
+    {
+        streams.VID = streams.VertexID;
+        streams.PositionWS = streams.Position;
+    }
+
     override stage float4 GetWorldPosition()
     {
         uint id = streams.VID;
-        float4 Rnd = RandomValues[id];
         ParticlePos4Vel4 p = ParticlesBuffer[id];
-        streams.pNorm = p.Vel;
         return float4(p.Pos.xyz, 1);
     }
 

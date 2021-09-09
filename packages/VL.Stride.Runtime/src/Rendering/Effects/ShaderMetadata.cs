@@ -373,7 +373,7 @@ namespace VL.Stride.Rendering
                     }
 
                     //pins
-                    foreach (var pinDecl in shaderDecl.Members.OfType<Variable>().Where(v => !v.Qualifiers.Contains(StrideStorageQualifier.Compose)))
+                    foreach (var pinDecl in shaderDecl.Members.OfType<Variable>().Where(v => !v.Qualifiers.Contains(StrideStorageQualifier.Compose) && !v.Qualifiers.Contains(StrideStorageQualifier.Stream)))
                     {
                         foreach (var attr in pinDecl.Attributes.OfType<AttributeDeclaration>())
                         {

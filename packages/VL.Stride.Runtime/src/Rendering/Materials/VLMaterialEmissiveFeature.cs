@@ -52,10 +52,13 @@ namespace VL.Stride.Rendering.Materials
         void AddMaterialExtension(MaterialGeneratorContext context)
         {
             var enableExtension = MaterialExtension != null;
-            context.Parameters.Set(VLEffectParameters.EnableExtensionShader, enableExtension);
 
             if (enableExtension)
+            {
+                context.Parameters.Set(VLEffectParameters.EnableExtensionShader, enableExtension);
                 context.Parameters.Set(VLEffectParameters.MaterialExtensionShader, MaterialExtension.GenerateShaderSource(context, new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White)));
+            }
+
         }
 
         void AddVertexAddition(MaterialShaderStage stage, MaterialGeneratorContext context)
