@@ -5,10 +5,13 @@ namespace VL.Stride.Rendering
 {
     params VLEffectParameters
     {
-        bool EnableExtensionName = false;
-        string MaterialExtensionName;
         bool EnableExtensionShader = false;
         ShaderSource MaterialExtensionShader;
+
+        bool EnableExtensionNameMesh = false;
+        string MaterialExtensionNameMesh;
+        bool EnableExtensionShaderMesh = false;
+        ShaderSource MaterialExtensionShaderMesh;
     
     }
 
@@ -18,14 +21,19 @@ namespace VL.Stride.Rendering
         
         mixin StrideForwardShadingEffect;
 
-        if (VLEffectParameters.EnableExtensionName)
-        {
-            mixin VLEffectParameters.MaterialExtensionName;
-        }
-
         if (VLEffectParameters.EnableExtensionShader)
         {
             mixin VLEffectParameters.MaterialExtensionShader;
+        }
+
+        if (VLEffectParameters.EnableExtensionNameMesh)
+        {
+            mixin VLEffectParameters.MaterialExtensionNameMesh;
+        }
+
+        if (VLEffectParameters.EnableExtensionShaderMesh)
+        {
+            mixin VLEffectParameters.MaterialExtensionShaderMesh;
         }
 
     };

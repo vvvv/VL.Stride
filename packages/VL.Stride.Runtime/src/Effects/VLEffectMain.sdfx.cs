@@ -18,10 +18,12 @@ namespace VL.Stride.Rendering
 {
     [DataContract]public partial class VLEffectParameters : ShaderMixinParameters
     {
-        public static readonly PermutationParameterKey<bool> EnableExtensionName = ParameterKeys.NewPermutation<bool>(false);
-        public static readonly PermutationParameterKey<string> MaterialExtensionName = ParameterKeys.NewPermutation<string>();
         public static readonly PermutationParameterKey<bool> EnableExtensionShader = ParameterKeys.NewPermutation<bool>(false);
         public static readonly PermutationParameterKey<ShaderSource> MaterialExtensionShader = ParameterKeys.NewPermutation<ShaderSource>();
+        public static readonly PermutationParameterKey<bool> EnableExtensionNameMesh = ParameterKeys.NewPermutation<bool>(false);
+        public static readonly PermutationParameterKey<string> MaterialExtensionNameMesh = ParameterKeys.NewPermutation<string>();
+        public static readonly PermutationParameterKey<bool> EnableExtensionShaderMesh = ParameterKeys.NewPermutation<bool>(false);
+        public static readonly PermutationParameterKey<ShaderSource> MaterialExtensionShaderMesh = ParameterKeys.NewPermutation<ShaderSource>();
     };
     internal static partial class ShaderMixins
     {
@@ -30,13 +32,17 @@ namespace VL.Stride.Rendering
             public void Generate(ShaderMixinSource mixin, ShaderMixinContext context)
             {
                 context.Mixin(mixin, "StrideForwardShadingEffect");
-                if (context.GetParam(VLEffectParameters.EnableExtensionName))
-                {
-                    context.Mixin(mixin, context.GetParam(VLEffectParameters.MaterialExtensionName));
-                }
                 if (context.GetParam(VLEffectParameters.EnableExtensionShader))
                 {
                     context.Mixin(mixin, context.GetParam(VLEffectParameters.MaterialExtensionShader));
+                }
+                if (context.GetParam(VLEffectParameters.EnableExtensionNameMesh))
+                {
+                    context.Mixin(mixin, context.GetParam(VLEffectParameters.MaterialExtensionNameMesh));
+                }
+                if (context.GetParam(VLEffectParameters.EnableExtensionShaderMesh))
+                {
+                    context.Mixin(mixin, context.GetParam(VLEffectParameters.MaterialExtensionShaderMesh));
                 }
             }
 
