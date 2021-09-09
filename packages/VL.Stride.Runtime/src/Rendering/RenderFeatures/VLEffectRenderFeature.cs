@@ -43,10 +43,10 @@ namespace VL.Stride.Rendering
                     if (enableByName)
                         renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionName, renderMesh.Mesh.Parameters.Get(VLEffectParameters.MaterialExtensionName));
 
-                    var enableBySource = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionShader);
+                    var enableBySource = renderMesh.MaterialPass.Parameters.Get(VLEffectParameters.EnableExtensionShader);
                     renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionShader, enableBySource);
                     if (enableBySource)
-                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionShader, renderMesh.Mesh.Parameters.Get(VLEffectParameters.MaterialExtensionShader));
+                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionShader, renderMesh.MaterialPass.Parameters.Get(VLEffectParameters.MaterialExtensionShader));
                 }
             }
         }

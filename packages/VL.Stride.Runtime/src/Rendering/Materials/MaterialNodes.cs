@@ -127,6 +127,19 @@ namespace VL.Stride.Rendering.Materials
                 hasStateOutput: false)
                 .AddCachedInput(nameof(MaterialBuilder_FromDescriptor.Descriptor), x => x.Descriptor, (x, v) => x.Descriptor = v)
                 .AddCachedOutput("Output", x => x.ToMaterial());
+
+            yield return nodeFactory.NewNode(
+                name: "MaterialExtension",
+                category: materialAdvancedCategory,
+                ctor: ctx => new MaterialBuilderFromMaterial(ctx),
+                copyOnWrite: false,
+                hasStateOutput: false)
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.Material), x => x.Material, (x, v) => x.Material = v)
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.MaterialExtension), x => x.MaterialExtension, (x, v) => x.MaterialExtension = v)
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.VertexAddition), x => x.VertexAddition, (x, v) => x.VertexAddition = v)
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.PixelAddition), x => x.PixelAddition, (x, v) => x.PixelAddition = v)
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.Cutoff), x => x.Cutoff, (x, v) => x.Cutoff = v)
+                .AddCachedOutput("Output", x => x.ToMaterial());
         }
 
         static StrideNodeDesc<T> NewMaterialNode<T>(this IVLNodeDescriptionFactory nodeFactory, string name, string category)
@@ -261,6 +274,67 @@ namespace VL.Stride.Rendering.Materials
             var s = new CompositeDisposable();
             subscriptions.Disposable = s;
             return MaterialExtensions.New(game.GraphicsDevice, Descriptor ?? new MaterialDescriptor(), game.Content, s);
+        }
+    }
+
+    /// <summary>
+    /// A material defines the appearance of a 3D model surface and how it reacts to light.
+    /// </summary>
+    internal class MaterialBuilderFromMaterial : IDisposable
+    {
+        readonly MaterialBuilder_FromDescriptor builder;
+
+        public MaterialBuilderFromMaterial(NodeContext nodeContext)
+        {
+            builder = new MaterialBuilder_FromDescriptor(nodeContext);
+        }
+
+        public void Dispose()
+        {
+            builder.Dispose();
+        }
+
+        readonly IMaterialTransparencyFeature transparencyFeature = new MaterialTransparencyCutoffFeature();
+        readonly VLMaterialEmissiveFeature emissiveFeature = new VLMaterialEmissiveFeature();
+
+        /// <summary>
+        /// The material descriptor.
+        /// </summary>
+        public Material Material { get; set; }
+        public bool Cutoff { get; set; }
+        public IComputeNode MaterialExtension { get; set; }
+        public IComputeNode VertexAddition { get; set; }
+        public IComputeNode PixelAddition { get; set; }
+
+        public Material ToMaterial()
+        {
+            var descriptor = Material?.Descriptor;
+            if (descriptor != null)
+            {
+                var origEmissive = descriptor.Attributes.Emissive;
+                
+                emissiveFeature.MaterialExtension = MaterialExtension;
+                emissiveFeature.VertexAddition = VertexAddition;
+                emissiveFeature.PixelAddition = PixelAddition;
+
+                // set new emissive
+                descriptor.Attributes.Emissive = emissiveFeature;
+
+                var origTransparency = descriptor.Attributes.Transparency;
+
+                if (Cutoff)
+                    descriptor.Attributes.Transparency = transparencyFeature;
+
+                builder.Descriptor = descriptor;
+                var newMaterial = builder.ToMaterial();
+
+                // reset emissive
+                descriptor.Attributes.Emissive = origEmissive;
+                descriptor.Attributes.Transparency = origTransparency;
+                return newMaterial;
+            }
+
+            return Material;
         }
     }
 

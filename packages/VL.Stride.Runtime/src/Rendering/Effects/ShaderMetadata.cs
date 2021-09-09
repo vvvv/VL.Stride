@@ -237,7 +237,7 @@ namespace VL.Stride.Rendering
 
         public Type GetShaderFXOutputType(out Type innerType)
         {
-            innerType = null;
+            innerType = typeof(VoidOrUnknown);
             foreach (var baseShader in ParsedShader?.BaseShaders ?? Enumerable.Empty<ParsedShader>())
             {
                 var baseName = baseShader?.ShaderClass?.Name;

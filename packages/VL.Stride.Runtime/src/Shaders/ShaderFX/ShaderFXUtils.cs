@@ -13,6 +13,11 @@ using Stride.Rendering;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
+    /// <summary>
+    /// For ShaderFX nodes that dont compute a value or an unknown value
+    /// </summary>
+    public class VoidOrUnknown { }
+
     public static class ShaderFXUtils
     {
         public static GetVar<T> GetConstant<T>(T value)
