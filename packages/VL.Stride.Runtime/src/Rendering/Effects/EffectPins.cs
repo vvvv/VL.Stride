@@ -24,7 +24,18 @@ namespace VL.Stride.Rendering
 
         public bool IsVisible { get; set; } = true;
 
-        object IVLPinDescription.DefaultValue => DefaultValueBoxed;
+        object IVLPinDescription.DefaultValue
+        {
+            get
+            {
+                // The Gpu<T> code path seems to use SetVar<T> here - we can't really deal with this in target code generation.
+                // Therefor explicitly return null here, so the target code will not try to insert the types default through the monadic builder interface.
+                if (DefaultValueBoxed is IComputeNode)
+                    return null;
+
+                return DefaultValueBoxed;
+            }
+        }
 
         public abstract IVLPin CreatePin(GraphicsDevice graphicsDevice, ParameterCollection parameters);
     }
