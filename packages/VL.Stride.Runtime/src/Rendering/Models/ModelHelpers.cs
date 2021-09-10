@@ -1,10 +1,27 @@
 ﻿using System;
 using Stride.Core.Mathematics;
+using Stride.Rendering;
+using StrideModel = Stride.Rendering.Model;
 
 namespace VL.Stride.Rendering
 {
     public static class ModelHelpers
     {
+
+        public static StrideModel SetMeshParameter<T>(this StrideModel model, PermutationParameterKey<T> permutationParameter, T value)
+        {
+            var count = model?.Meshes?.Count;
+            if (count > 0)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    model.Meshes[i]?.Parameters?.Set(permutationParameter, value);
+                }
+            }
+
+            return model;
+        }
+
         /// <summary>
         /// Calculates the vertex normals per triangle. If vertices are shared between triangles, they get an average normal weighted by face size.
         /// From: https://gamedev.stackexchange.com/questions/152991/how-can-i-calculate-normals-using-a-vertex-and-index-buffer

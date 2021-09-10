@@ -149,7 +149,11 @@ namespace VL.Stride.Rendering
                         inputs: comps);
 
                     nodeState.CurrentComputeNode = newComputeNode;
-                    nodeState.CurrentOutputValue = ShaderFXUtils.DeclAndSetVar(nodeState.ShaderName + "Result", newComputeNode);
+
+                    if (typeof(TInner) == typeof(VoidOrUnknown))
+                        nodeState.CurrentOutputValue = nodeState.CurrentComputeNode;
+                    else
+                        nodeState.CurrentOutputValue = ShaderFXUtils.DeclAndSetVar(nodeState.ShaderName + "Result", newComputeNode);
                 }
 
                 return (T)nodeState.CurrentOutputValue;

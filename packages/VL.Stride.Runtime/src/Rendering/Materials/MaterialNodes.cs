@@ -122,10 +122,23 @@ namespace VL.Stride.Rendering.Materials
             yield return nodeFactory.NewNode(
                 name: "Material (Descriptor Internal)",
                 category: materialAdvancedCategory,
-                ctor: ctx => new MaterialBuilder_FromDescriptor(ctx),
+                ctor: ctx => new MaterialBuilderFromDescriptor(ctx),
                 copyOnWrite: false,
                 hasStateOutput: false)
-                .AddCachedInput(nameof(MaterialBuilder_FromDescriptor.Descriptor), x => x.Descriptor, (x, v) => x.Descriptor = v)
+                .AddCachedInput(nameof(MaterialBuilderFromDescriptor.Descriptor), x => x.Descriptor, (x, v) => x.Descriptor = v)
+                .AddCachedOutput("Output", x => x.ToMaterial());
+
+            yield return nodeFactory.NewNode(
+                name: "MaterialExtension",
+                category: materialAdvancedCategory,
+                ctor: ctx => new MaterialBuilderFromMaterial(ctx),
+                copyOnWrite: false,
+                hasStateOutput: false)
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.Material), x => x.Material, (x, v) => x.Material = v)
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.MaterialExtension), x => x.MaterialExtension, (x, v) => x.MaterialExtension = v)
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.VertexAddition), x => x.VertexAddition, (x, v) => x.VertexAddition = v, isVisible: false, summary: "Connected shader must inherit from IMaterialSurface")
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.PixelAddition), x => x.PixelAddition, (x, v) => x.PixelAddition = v, isVisible: false, summary: "Connected shader must inherit from IMaterialSurface")
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.Cutoff), x => x.Cutoff, (x, v) => x.Cutoff = v, summary: "Sets the transparency feature of the material to Cutoff, needed when writing into depth in the pixel shader")
                 .AddCachedOutput("Output", x => x.ToMaterial());
         }
 
@@ -165,11 +178,11 @@ namespace VL.Stride.Rendering.Materials
     internal class MaterialBuilder : IDisposable
     {
         readonly MaterialAttributes @default = new MaterialAttributes();
-        readonly MaterialBuilder_FromDescriptor builder;
+        readonly MaterialBuilderFromDescriptor builder;
 
         public MaterialBuilder(NodeContext nodeContext)
         {
-            builder = new MaterialBuilder_FromDescriptor(nodeContext);
+            builder = new MaterialBuilderFromDescriptor(nodeContext);
         }
 
         public void Dispose()
@@ -234,12 +247,12 @@ namespace VL.Stride.Rendering.Materials
     /// <summary>
     /// A material defines the appearance of a 3D model surface and how it reacts to light.
     /// </summary>
-    internal class MaterialBuilder_FromDescriptor : IDisposable
+    internal class MaterialBuilderFromDescriptor : IDisposable
     {
         readonly IResourceHandle<Game> gameHandle;
         readonly SerialDisposable subscriptions = new SerialDisposable();
 
-        public MaterialBuilder_FromDescriptor(NodeContext nodeContext)
+        public MaterialBuilderFromDescriptor(NodeContext nodeContext)
         {
             gameHandle = nodeContext.GetGameHandle();
         }
@@ -261,6 +274,67 @@ namespace VL.Stride.Rendering.Materials
             var s = new CompositeDisposable();
             subscriptions.Disposable = s;
             return MaterialExtensions.New(game.GraphicsDevice, Descriptor ?? new MaterialDescriptor(), game.Content, s);
+        }
+    }
+
+    /// <summary>
+    /// A material defines the appearance of a 3D model surface and how it reacts to light.
+    /// </summary>
+    internal class MaterialBuilderFromMaterial : IDisposable
+    {
+        readonly MaterialBuilderFromDescriptor builder;
+
+        public MaterialBuilderFromMaterial(NodeContext nodeContext)
+        {
+            builder = new MaterialBuilderFromDescriptor(nodeContext);
+        }
+
+        public void Dispose()
+        {
+            builder.Dispose();
+        }
+
+        readonly IMaterialTransparencyFeature transparencyFeature = new MaterialTransparencyCutoffFeature();
+        readonly VLMaterialEmissiveFeature emissiveFeature = new VLMaterialEmissiveFeature();
+
+        /// <summary>
+        /// The material descriptor.
+        /// </summary>
+        public Material Material { get; set; }
+        public bool Cutoff { get; set; }
+        public IComputeNode MaterialExtension { get; set; }
+        public IComputeNode VertexAddition { get; set; }
+        public IComputeNode PixelAddition { get; set; }
+
+        public Material ToMaterial()
+        {
+            var descriptor = Material?.Descriptor;
+            if (descriptor != null)
+            {
+                var origEmissive = descriptor.Attributes.Emissive;
+                
+                emissiveFeature.MaterialExtension = MaterialExtension;
+                emissiveFeature.VertexAddition = VertexAddition;
+                emissiveFeature.PixelAddition = PixelAddition;
+
+                // set new emissive
+                descriptor.Attributes.Emissive = emissiveFeature;
+
+                var origTransparency = descriptor.Attributes.Transparency;
+
+                if (Cutoff)
+                    descriptor.Attributes.Transparency = transparencyFeature;
+
+                builder.Descriptor = descriptor;
+                var newMaterial = builder.ToMaterial();
+
+                // reset emissive
+                descriptor.Attributes.Emissive = origEmissive;
+                descriptor.Attributes.Transparency = origTransparency;
+                return newMaterial;
+            }
+
+            return Material;
         }
     }
 

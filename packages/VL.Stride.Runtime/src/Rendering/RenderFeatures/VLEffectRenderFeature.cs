@@ -38,15 +38,26 @@ namespace VL.Stride.Rendering
                         continue;
 
                     // Generate shader permuatations
-                    var enableByName = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionName);
-                    renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionName, enableByName);
-                    if (enableByName)
-                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionName, renderMesh.Mesh.Parameters.Get(VLEffectParameters.MaterialExtensionName));
-
-                    var enableBySource = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionShader);
-                    renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionShader, enableBySource);
+                    var enableBySource = renderMesh.MaterialPass.Parameters.Get(VLEffectParameters.EnableExtensionShader);
                     if (enableBySource)
-                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionShader, renderMesh.Mesh.Parameters.Get(VLEffectParameters.MaterialExtensionShader));
+                    {
+                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionShader, enableBySource);
+                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionShader, renderMesh.MaterialPass.Parameters.Get(VLEffectParameters.MaterialExtensionShader));
+                    }
+
+                    var enableByNameMesh = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionNameMesh);
+                    if (enableByNameMesh)
+                    {
+                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionNameMesh, enableByNameMesh);
+                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionNameMesh, renderMesh.Mesh.Parameters.Get(VLEffectParameters.MaterialExtensionNameMesh));
+                    }
+
+                    var enableBySourceMesh = renderMesh.Mesh.Parameters.Get(VLEffectParameters.EnableExtensionShaderMesh);
+                    if (enableBySourceMesh)
+                    {
+                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.EnableExtensionShaderMesh, enableBySourceMesh);
+                        renderEffect.EffectValidator.ValidateParameter(VLEffectParameters.MaterialExtensionShaderMesh, renderMesh.Mesh.Parameters.Get(VLEffectParameters.MaterialExtensionShaderMesh));
+                    }
                 }
             }
         }

@@ -222,60 +222,65 @@ namespace VL.Stride
             return this;
         }
 
-        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue, string summary = default, string remarks = default)
+        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue, string summary = default, string remarks = default, bool isVisible = true)
         {
             inputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
                 DefaultValue = defaultValue,
-                CreatePin = (node, instance) => new InputPin<T>(node, instance, getter, setter, defaultValue)
+                CreatePin = (node, instance) => new InputPin<T>(node, instance, getter, setter, defaultValue),
+                IsVisible = isVisible
             });
             return this;
         }
 
-        public CustomNodeDesc<TInstance> AddCachedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default, string summary = default, string remarks = default)
+        public CustomNodeDesc<TInstance> AddCachedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default, string summary = default, string remarks = default, bool isVisible = true)
         {
             inputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
-                CreatePin = (node, instance) => new CachedInputPin<T>(node, instance, getter, setter, getter(instance), equals)
+                CreatePin = (node, instance) => new CachedInputPin<T>(node, instance, getter, setter, getter(instance), equals),
+                IsVisible = isVisible
             });
             return this;
         }
 
-        public CustomNodeDesc<TInstance> AddCachedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue, string summary = default, string remarks = default)
-        {
-            inputs.Add(new CustomPinDesc(name, summary, remarks)
-            {
-                Name = name.InsertSpaces(),
-                Type = typeof(T),
-                DefaultValue = defaultValue,
-                CreatePin = (node, instance) => new CachedInputPin<T>(node, instance, getter, setter, defaultValue)
-            });
-            return this;
-        }
-
-        public CustomNodeDesc<TInstance> AddOptimizedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default, string summary = default, string remarks = default)
-        {
-            inputs.Add(new CustomPinDesc(name, summary, remarks)
-            {
-                Name = name.InsertSpaces(),
-                Type = typeof(T),
-                CreatePin = (node, instance) => new OptimizedInputPin<T>(node, instance, getter, setter, getter(instance))
-            });
-            return this;
-        }
-
-        public CustomNodeDesc<TInstance> AddOptimizedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue, string summary = default, string remarks = default)
+        public CustomNodeDesc<TInstance> AddCachedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue, string summary = default, string remarks = default, bool isVisible = true)
         {
             inputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
                 DefaultValue = defaultValue,
-                CreatePin = (node, instance) => new OptimizedInputPin<T>(node, instance, getter, setter, defaultValue)
+                CreatePin = (node, instance) => new CachedInputPin<T>(node, instance, getter, setter, defaultValue),
+                IsVisible = isVisible
+            });
+            return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddOptimizedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, Func<T, T, bool> equals = default, string summary = default, string remarks = default, bool isVisible = true)
+        {
+            inputs.Add(new CustomPinDesc(name, summary, remarks)
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                CreatePin = (node, instance) => new OptimizedInputPin<T>(node, instance, getter, setter, getter(instance)),
+                IsVisible = isVisible
+            });
+            return this;
+        }
+
+        public CustomNodeDesc<TInstance> AddOptimizedInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, T defaultValue, string summary = default, string remarks = default, bool isVisible = true)
+        {
+            inputs.Add(new CustomPinDesc(name, summary, remarks)
+            {
+                Name = name.InsertSpaces(),
+                Type = typeof(T),
+                DefaultValue = defaultValue,
+                CreatePin = (node, instance) => new OptimizedInputPin<T>(node, instance, getter, setter, defaultValue),
+                IsVisible = isVisible
             });
             return this;
         }
@@ -395,7 +400,7 @@ namespace VL.Stride
             return this;
         }
 
-        class CustomPinDesc : IVLPinDescription, IInfo
+        class CustomPinDesc : IVLPinDescription, IInfo, IVLPinDescriptionWithVisibility
         {
             readonly string memberName;
             string summary;
@@ -419,6 +424,8 @@ namespace VL.Stride
             public string Summary => summary ?? (summary = typeof(TInstance).GetSummary(memberName));
 
             public string Remarks => remarks ?? (remarks = typeof(TInstance).GetRemarks(memberName));
+
+            public bool IsVisible { get; set; }
         }
 
         abstract class Pin : IVLPin
