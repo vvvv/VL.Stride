@@ -211,13 +211,14 @@ namespace VL.Stride
             return false;
         }
 
-        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, string summary = default, string remarks = default)
+        public CustomNodeDesc<TInstance> AddInput<T>(string name, Func<TInstance, T> getter, Action<TInstance, T> setter, string summary = default, string remarks = default, bool isVisible = true)
         {
             inputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
-                CreatePin = (node, instance) => new InputPin<T>(node, instance, getter, setter, getter(instance))
+                CreatePin = (node, instance) => new InputPin<T>(node, instance, getter, setter, getter(instance)),
+                IsVisible = isVisible
             });
             return this;
         }
@@ -352,42 +353,45 @@ namespace VL.Stride
                 });
         }
 
-        public CustomNodeDesc<TInstance> AddOutput<T>(string name, Func<TInstance, T> getter)
+        public CustomNodeDesc<TInstance> AddOutput<T>(string name, Func<TInstance, T> getter, string summary = default, string remarks = default, bool isVisible = true)
         {
-            outputs.Add(new CustomPinDesc(name)
+            outputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
-                CreatePin = (node, instance) => new OutputPin<T>(node, instance, getter)
+                CreatePin = (node, instance) => new OutputPin<T>(node, instance, getter),
+                IsVisible = isVisible
             });
             return this;
         }
 
-        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<TInstance, T> getter)
+        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<TInstance, T> getter, string summary = default, string remarks = default, bool isVisible = true)
         {
-            outputs.Add(new CustomPinDesc(name)
+            outputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
-                CreatePin = (node, instance) => new CachedOutputPin<T>(node, instance, getter)
+                CreatePin = (node, instance) => new CachedOutputPin<T>(node, instance, getter),
+                IsVisible = isVisible
             });
             return this;
         }
 
-        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, TInstance, T> getter)
+        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, TInstance, T> getter, string summary = default, string remarks = default, bool isVisible = true)
         {
-            outputs.Add(new CustomPinDesc(name)
+            outputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
-                CreatePin = (node, instance) => new CachedOutputPin<T>(node, instance, x => getter(node.Context, instance))
+                CreatePin = (node, instance) => new CachedOutputPin<T>(node, instance, x => getter(node.Context, instance)),
+                IsVisible = isVisible
             });
             return this;
         }
 
-        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, (Func<TInstance, T>, IDisposable)> ctor)
+        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, (Func<TInstance, T>, IDisposable)> ctor, string summary = default, string remarks = default, bool isVisible = true)
         {
-            outputs.Add(new CustomPinDesc(name)
+            outputs.Add(new CustomPinDesc(name, summary, remarks)
             {
                 Name = name.InsertSpaces(),
                 Type = typeof(T),
@@ -395,7 +399,8 @@ namespace VL.Stride
                 {
                     var (getter, disposable) = ctor(node.Context);
                     return new CachedOutputPin<T>(node, instance, getter, disposable);
-                }
+                },
+                IsVisible = isVisible
             });
             return this;
         }
@@ -425,7 +430,7 @@ namespace VL.Stride
 
             public string Remarks => remarks ?? (remarks = typeof(TInstance).GetRemarks(memberName));
 
-            public bool IsVisible { get; set; }
+            public bool IsVisible { get; set; } = true;
         }
 
         abstract class Pin : IVLPin
