@@ -283,10 +283,19 @@ namespace VL.Stride.Rendering.Materials
     internal class MaterialBuilderFromMaterial : IDisposable
     {
         readonly MaterialBuilderFromDescriptor builder;
+        readonly MaterialDescriptor defaultDescriptor;
 
         public MaterialBuilderFromMaterial(NodeContext nodeContext)
         {
             builder = new MaterialBuilderFromDescriptor(nodeContext);
+            defaultDescriptor = new MaterialDescriptor()
+            {
+                Attributes =
+                {
+                    Diffuse = new MaterialDiffuseMapFeature(new ComputeTextureColor()),
+                    DiffuseModel = new MaterialDiffuseLambertModelFeature(),
+                },
+            };
         }
 
         public void Dispose()
@@ -308,30 +317,34 @@ namespace VL.Stride.Rendering.Materials
 
         public Material ToMaterial()
         {
-            var descriptor = Material?.Descriptor;
+            var descriptor = Material?.Descriptor ?? defaultDescriptor;
             if (descriptor != null)
             {
                 var origEmissive = descriptor.Attributes.Emissive;
-                
-                emissiveFeature.MaterialExtension = MaterialExtension;
-                emissiveFeature.VertexAddition = VertexAddition;
-                emissiveFeature.PixelAddition = PixelAddition;
-
-                // set new emissive
-                descriptor.Attributes.Emissive = emissiveFeature;
-
                 var origTransparency = descriptor.Attributes.Transparency;
 
-                if (Cutoff)
-                    descriptor.Attributes.Transparency = transparencyFeature;
+                try
+                {
+                    emissiveFeature.MaterialExtension = MaterialExtension;
+                    emissiveFeature.VertexAddition = VertexAddition;
+                    emissiveFeature.PixelAddition = PixelAddition;
 
-                builder.Descriptor = descriptor;
-                var newMaterial = builder.ToMaterial();
+                    // set new attributes
+                    descriptor.Attributes.Emissive = emissiveFeature;
 
-                // reset emissive
-                descriptor.Attributes.Emissive = origEmissive;
-                descriptor.Attributes.Transparency = origTransparency;
-                return newMaterial;
+                    if (Cutoff)
+                        descriptor.Attributes.Transparency = transparencyFeature;
+
+                    builder.Descriptor = descriptor;
+
+                    return builder.ToMaterial();
+                }
+                finally
+                {
+                    // reset attributes
+                    descriptor.Attributes.Emissive = origEmissive;
+                    descriptor.Attributes.Transparency = origTransparency;
+                }
             }
 
             return Material;
