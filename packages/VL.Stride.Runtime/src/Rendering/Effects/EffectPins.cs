@@ -339,13 +339,17 @@ namespace VL.Stride.Rendering
 
         public bool ShaderSourceChanged { get; set; } = true;
 
-        public void GenerateAndSetShaderSource(ShaderMixinSource mixin, ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        public void GenerateAndSetShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys, ShaderMixinSource mixin = null)
         {
             var shaderSource = GetShaderSource(context, baseKeys);
 
             context.Parameters.Set(Key, shaderSource);
 
-            mixin.Compositions[Key.Name] = shaderSource;
+            if (mixin != null)
+            {
+                mixin.Compositions[Key.Name] = shaderSource;
+            }
+
             ShaderSourceChanged = false; //change seen
         }
 

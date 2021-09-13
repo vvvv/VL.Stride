@@ -90,7 +90,7 @@ namespace VL.Stride.Rendering
                             var game = gameHandle.Resource;
 
                             var tempParameters = new ParameterCollection(); // only needed for pin construction - parameter updater will later take care of multiple sinks
-                                var nodeState = new ShaderFXNodeState(shaderName);
+                            var nodeState = new ShaderFXNodeState(shaderName);
 
                             var inputs = new List<IVLPin>();
                             foreach (var _input in _inputs)
@@ -135,9 +135,9 @@ namespace VL.Stride.Rendering
 
                 if (shaderChanged)
                 {
-                    var comps = compositionPins.Select(p => new KeyValuePair<string, IComputeNode>(p.Key.Name, p.GetValueOrDefault()));
+                    
 
-                    var newComputeNode = new GenericComputeNode<TInner>(
+                    var newComputeNode = new ShaderFXNode<TInner>(
                         getShaderSource: (c, k) =>
                         {
                             //let the pins subscribe to the parameter collection of the sink
@@ -146,7 +146,7 @@ namespace VL.Stride.Rendering
 
                             return new ShaderClassSource(nodeState.ShaderName);
                         },
-                        inputs: comps);
+                        inputs: compositionPins);
 
                     nodeState.CurrentComputeNode = newComputeNode;
 
@@ -174,5 +174,21 @@ namespace VL.Stride.Rendering
                 ShaderName = shaderName;
             }
         }
+    }
+
+    interface IShaderFXNode
+    {
+        IList<ShaderFXPin> InputPins { get; }
+    }
+
+    class ShaderFXNode<T> : GenericComputeNode<T>, IShaderFXNode
+    {
+        public ShaderFXNode(Func<ShaderGeneratorContext, MaterialComputeColorKeys, ShaderClassCode> getShaderSource, IList<ShaderFXPin> inputs)
+            : base(getShaderSource, inputs.Select(p => new KeyValuePair<string, IComputeNode>(p.Key.Name, p.GetValueOrDefault())))
+        {
+            InputPins = inputs;
+        }
+
+        public IList<ShaderFXPin> InputPins { get; }
     }
 }

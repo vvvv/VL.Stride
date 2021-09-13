@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VL.Stride.Shaders.ShaderFX;
+using VL.Stride.Shaders.ShaderFX.Control;
 
 namespace VL.Stride.Rendering.Materials
 {
@@ -55,8 +57,43 @@ namespace VL.Stride.Rendering.Materials
 
             if (enableExtension)
             {
+                var ext = MaterialExtension;
+                
+                if (ext is IShaderFXNode node) // check for ShaderFX node
+                {
+                    var compositionPins = node.InputPins;
+                    var baseKeys = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
+                    
+                    for (int i = 0; i < compositionPins.Count; i++)
+                    {
+                        var cp = compositionPins[i];
+
+                        cp?.GenerateAndSetShaderSource(context, baseKeys);
+                    }
+                }
+
+                var shaderSource = MaterialExtension.GenerateShaderSource(context, new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White));
+
+                if (shaderSource is ShaderMixinSource mixinSource)
+                {
+                    if (ext is IShaderFXNode node2) // check for ShaderFX node
+                    {
+                        var compositionPins = node2.InputPins;
+
+                        for (int i = 0; i < compositionPins.Count; i++)
+                        {
+                            var cp = compositionPins[i];
+
+                            var shader = context.Parameters.Get(cp.Key);
+
+                            if (shader is ShaderSource classCode)
+                                mixinSource.AddComposition(cp.Key.Name, classCode);
+                        }
+                    }
+                }
+
                 context.Parameters.Set(VLEffectParameters.EnableExtensionShader, enableExtension);
-                context.Parameters.Set(VLEffectParameters.MaterialExtensionShader, MaterialExtension.GenerateShaderSource(context, new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White)));
+                context.Parameters.Set(VLEffectParameters.MaterialExtensionShader, shaderSource);
             }
 
         }
@@ -72,5 +109,33 @@ namespace VL.Stride.Rendering.Materials
             var shaderSource = PixelAddition.GenerateShaderSource(context, new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White));
             context.AddShaderSource(MaterialShaderStage.Pixel, shaderSource);
         }
+
+        //// takes care of the composition inputs of the connected node
+        //private static bool UpdateCompositions(IReadOnlyList<ShaderFXPin> compositionPins, GraphicsDevice graphicsDevice, ParameterCollection parameters, ShaderMixinSource mixin, CompositeDisposable subscriptions)
+        //{
+        //    var anyChanged = false;
+        //    for (int i = 0; i < compositionPins.Count; i++)
+        //    {
+        //        anyChanged |= compositionPins[i].ShaderSourceChanged;
+        //    }
+
+        //    if (anyChanged)
+        //    {
+        //        // Disposes all current subscriptions. So for example all data bindings between the sources and our parameter collection
+        //        // gets removed.
+        //        subscriptions.Clear();
+
+        //        var context = ShaderGraph.NewShaderGeneratorContext(graphicsDevice, parameters, subscriptions);
+
+        //        var updatedMixin = new ShaderMixinSource();
+        //        updatedMixin.DeepCloneFrom(mixin);
+                
+        //        parameters.Set(EffectNodeBaseKeys.EffectNodeBaseShader, updatedMixin);
+
+        //        return true;
+        //    }
+
+        //    return false;
+        //}
     }
 }

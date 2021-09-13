@@ -325,6 +325,7 @@ namespace VL.Stride.Rendering.Materials
 
                 try
                 {
+                    emissiveFeature.MaterialEmissiveFeature = origEmissive;
                     emissiveFeature.MaterialExtension = MaterialExtension;
                     emissiveFeature.VertexAddition = VertexAddition;
                     emissiveFeature.PixelAddition = PixelAddition;
