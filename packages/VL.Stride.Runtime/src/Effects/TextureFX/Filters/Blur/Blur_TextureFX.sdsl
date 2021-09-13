@@ -3,16 +3,13 @@
 [WantsMips("Texture0")]
 shader Blur_TextureFX : FilterBase
 {
-    stage float Strength = 0.25f;
-
-    [Default(1.0)]
-    compose ComputeFloat StrengthMap;
+    [Default(0.25)]
+    compose ComputeFloat Strength;
 
     float4 Filter(float4 tex0col)
     {
         float2 R = ViewSize;
-        float map = StrengthMap.Compute();
-        float lod = map * Strength * log2(max(R.x, R.y));
+        float lod = Strength.Compute() * log2(max(R.x, R.y));
         float4 c = 0;
         float2 x = streams.TexCoord;
         float2 off = 0.5/R * pow(2, lod) * saturate(lod);
