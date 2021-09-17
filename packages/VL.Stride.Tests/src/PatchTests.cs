@@ -106,7 +106,7 @@ namespace MyTests
         public static async Task IsntRed(string filePath)
         {
             filePath = Path.Combine(MainLibPath, filePath);
-            var solution = FCompiledSolution ?? (FCompiledSolution = await Compile(NormalPatches()));
+            var solution = FCompiledSolution ?? (FCompiledSolution = await CompileAsync(NormalPatches()));
             var document = solution.GetOrAddDocument(filePath);
 
             // Check document structure
@@ -120,7 +120,7 @@ namespace MyTests
             CheckNodes(document.AllTopLevelDefinitions);
         }
 
-        static async Task<Solution> Compile(IEnumerable<string> docs)
+        static async Task<Solution> CompileAsync(IEnumerable<string> docs)
         {
             var solution = Session.CurrentSolution;
             foreach (var f in docs)

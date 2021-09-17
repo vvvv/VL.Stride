@@ -72,7 +72,7 @@ namespace VL.Stride.Rendering
                             var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
                             var renderContext = RenderContext.GetShared(gameHandle.Resource.Services);
                             var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
-                            var effect = new ComputeEffectShader2(renderContext, shaderName, mixinParams);
+                            var effect = new VLComputeEffectShader(renderContext, shaderName, mixinParams);
                             var inputs = new List<IVLPin>();
                             var enabledInput = default(IVLPin);
                             foreach (var _input in _inputs)
