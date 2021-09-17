@@ -18,6 +18,7 @@ using Buffer = Stride.Graphics.Buffer;
 using static VL.Stride.Shaders.ShaderFX.ShaderFXUtils;
 using System.Reactive.Disposables;
 using VL.Stride.Rendering.ComputeEffect;
+using VL.Stride.Effects;
 
 namespace VL.Stride.Shaders.ShaderFX
 {
@@ -134,7 +135,7 @@ namespace VL.Stride.Shaders.ShaderFX
 
         public static VLComputeEffectShader ComposeComputeShader(GraphicsDevice graphicsDevice, IServiceRegistry services, IComputeVoid root)
         {
-            var computeEffect = new VLComputeEffectShader(RenderContext.GetShared(services), "ComputeFXGraphEffect");
+            var computeEffect = new VLComputeEffectShader(RenderContext.GetShared(services), "ComputeFXGraph");
 
             if (root != null)
             {
@@ -143,10 +144,10 @@ namespace VL.Stride.Shaders.ShaderFX
                 var key = new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White);
                 var shaderSource = root.GenerateShaderSource(context, key);
 
-                var mixin = new ShaderMixinSource();
+                var mixin = new ShaderClassSource("ComputeFXGraph").CreateMixin();
                 mixin.AddComposition("Root", shaderSource);
 
-                computeEffect.Parameters.Set(ComputeFXGraphKeys.ComputeFXRoot, mixin);
+                computeEffect.Parameters.Set(EffectNodeBaseKeys.EffectNodeBaseShader, mixin);
             }
 
             return computeEffect;
