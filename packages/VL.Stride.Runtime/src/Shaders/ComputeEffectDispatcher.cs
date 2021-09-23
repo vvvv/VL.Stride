@@ -170,7 +170,7 @@ namespace VL.Stride.Shaders
                 if (IsIndirect)
                     drawCommandList.DispatchIndirect(IndirectArgsBuffer, ArgsBufferAlignedByteOffset);
                 else
-                    drawCommandList.Dispatch(ThreadGroupCounts.X, ThreadGroupCounts.Y, ThreadGroupCounts.Z); 
+                    drawCommandList.Dispatch(ThreadGroupCounts.X, ThreadGroupCounts.Y, ThreadGroupCounts.Z);
             }
         }
     }

@@ -1,33 +1,17 @@
-shader MyShaderFXNode_ShaderFX : ComputeFloat4, ShaderBaseStream, Texturing
+shader MyShaderFXNode_ShaderFX : ComputeFloat4
 {
     compose ComputeFloat4 ShaderInput;
 
     cbuffer PerMaterial //when used in materials
     {
-        stage float ScalarInput = 1; //just for reference, it is often easier to create a ComputeFloat shader input and connect a ValueIn or ValueMap node
-        stage float4 VectorInput = float4(1, 2, 3, 4); //just for reference, it is often easier to create a ComputeFloat shader input and connect a ValueIn or ValueMap node
-        stage float4x4 MatrixInput; //just for reference, it is often easier to create a ComputeFloat shader input and connect a ValueIn or ValueMap node
+        stage float ScalarInput; //just for reference, it is often easier to create a ComputeFloat shader input and connect a ValueIn or ValueMap node
     }
-
-    Texture2D Tex;
-    SamplerState Sam
-    {
-        Filter = MIN_MAG_MIP_LINEAR;
-        AddressU = Wrap;
-        AddressV = Wrap;
-    };
-
-    Buffer<float> Buffer1;
-    StructuredBuffer<float4> BufferS;
-    [Summary("This buffer is cool!")]
-    RWBuffer<float> Buffer2;
-    RWTexture2D<float4> Tex2;
 
     override float4 Compute()
     {
         // evaluate that shader graph above this node
-        float4 result = ShaderInput.Compute() * Tex.Sample(Sam, streams.TexCoord);
+        float4 result = ShaderInput.Compute();
 
-        return mul(result * VectorInput, MatrixInput) + ScalarInput;
+        return result * ScalarInput;
     }
 };
