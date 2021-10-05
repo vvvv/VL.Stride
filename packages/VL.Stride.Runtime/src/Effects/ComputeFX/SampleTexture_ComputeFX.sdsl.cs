@@ -18,10 +18,10 @@ namespace Stride.Rendering
 {
     public static partial class SampleTexture_ComputeFXKeys
     {
-        public static readonly ValueParameterKey<uint> SamplerCount = ParameterKeys.NewValue<uint>(1);
+        public static readonly ValueParameterKey<uint> Count = ParameterKeys.NewValue<uint>(1);
         public static readonly ValueParameterKey<float> SampleLevel = ParameterKeys.NewValue<float>();
-        public static readonly ObjectParameterKey<Buffer> SamplerPosBuffer = ParameterKeys.NewObject<Buffer>();
-        public static readonly ObjectParameterKey<Texture> SamplerColTex = ParameterKeys.NewObject<Texture>();
+        public static readonly ObjectParameterKey<Buffer> PosBuffer = ParameterKeys.NewObject<Buffer>();
+        public static readonly ObjectParameterKey<Buffer> ColorsBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Texture> Tex = ParameterKeys.NewObject<Texture>();
         public static readonly ObjectParameterKey<SamplerState> TexSampler = ParameterKeys.NewObject<SamplerState>();
     }

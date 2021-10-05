@@ -18,12 +18,12 @@ namespace Stride.Rendering
 {
     public static partial class ChannelKeying_TextureFXKeys
     {
+        public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>();
         public static readonly ValueParameterKey<float> Threshold = ParameterKeys.NewValue<float>(0.3f);
         public static readonly ValueParameterKey<float> Smooth = ParameterKeys.NewValue<float>(0.1f);
         public static readonly ValueParameterKey<float> AlphaBlur = ParameterKeys.NewValue<float>(0.0f);
         public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>(false);
         public static readonly ValueParameterKey<bool> SourceAlpha = ParameterKeys.NewValue<bool>(false);
         public static readonly ValueParameterKey<bool> Premultiply = ParameterKeys.NewValue<bool>(false);
-        public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>();
     }
 }

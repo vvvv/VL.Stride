@@ -19,5 +19,7 @@ namespace Stride.Rendering
     public static partial class Transform_TextureFXKeys
     {
         public static readonly ValueParameterKey<Matrix> Transform = ParameterKeys.NewValue<Matrix>();
+        public static readonly ObjectParameterKey<SamplerState> CustomSampler = ParameterKeys.NewObject<SamplerState>();
+        public static readonly ValueParameterKey<uint> InterpolationMode = ParameterKeys.NewValue<uint>(0);
     }
 }

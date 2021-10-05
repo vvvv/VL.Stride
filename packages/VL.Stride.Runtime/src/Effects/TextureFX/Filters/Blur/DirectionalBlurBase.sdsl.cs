@@ -19,7 +19,7 @@ namespace Stride.Rendering
     public static partial class DirectionalBlurBaseKeys
     {
         public static readonly ValueParameterKey<Vector2> Direction = ParameterKeys.NewValue<Vector2>(new Vector2(0.25f,0.0f));
-        public static readonly ValueParameterKey<float> SampleCenter = ParameterKeys.NewValue<float>(0.5f);
+        public static readonly ValueParameterKey<Vector2> SampleCenter = ParameterKeys.NewValue<Vector2>(new Vector2(0.5f,0.5f));
         public static readonly ValueParameterKey<bool> Aspect = ParameterKeys.NewValue<bool>(true);
     }
 }

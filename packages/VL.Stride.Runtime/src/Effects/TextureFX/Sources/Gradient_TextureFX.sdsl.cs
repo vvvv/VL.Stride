@@ -21,5 +21,6 @@ namespace Stride.Rendering
         public static readonly ValueParameterKey<Color4> From = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));
         public static readonly ValueParameterKey<Color4> To = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
         public static readonly ValueParameterKey<bool> isHorizontal = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<float> Gamma = ParameterKeys.NewValue<float>(2.2f);
     }
 }
