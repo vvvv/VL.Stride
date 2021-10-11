@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="RXDdOJeSTYDPqkL8arIjMW" LanguageVersion="2021.4.0.479" Version="0.128">
-  <NugetDependency Id="IvWlHY1zI6hM0XTjMo2AnP" Location="VL.CoreLib" Version="2021.4.0-0454-g78e865b66f" />
+<Document xmlns:p="property" Id="RXDdOJeSTYDPqkL8arIjMW" LanguageVersion="2021.4.0.484" Version="0.128">
+  <NugetDependency Id="IvWlHY1zI6hM0XTjMo2AnP" Location="VL.CoreLib" Version="2021.4.0-0472-g1cf903ecbd" />
   <Patch Id="CJJuKGpHwm7PGP8F8uBo7Y">
     <Canvas Id="GaRgMS52uD2Ml5Tb2fkzpQ" DefaultCategory="Stride" CanvasType="FullCategory" />
     <!--
@@ -15,7 +15,7 @@
       </p:NodeReference>
       <Patch Id="CYQ4KQwlK9BMl9t7fSoWv5">
         <Canvas Id="Bek9MFlaUrmMLspYRN5HOd" CanvasType="Group">
-          <Pad Id="AF80v9TiKQAMLnTYvb41VH" Comment="Directory" Bounds="86,268,102,15" ShowValueBox="true" isIOBox="true" Value="..\..\..\..\..\..\..\..\..\..\..\temp\imagesequence\dds\\">
+          <Pad Id="AF80v9TiKQAMLnTYvb41VH" Comment="Directory" Bounds="86,283,102,15" ShowValueBox="true" isIOBox="true" Value="..\..\..\..\..\..\..\..\..\..\..\Temp\">
             <p:TypeAnnotation LastCategoryFullName="IO" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>
@@ -47,7 +47,7 @@
             <Pin Id="V1Oa8czsm3GPURV3IcgN2e" Name="Input Source" Kind="OutputPin" />
             <Pin Id="LZf0yEHvt8UN7BzPWF1nBl" Name="Present Interval" Kind="InputPin" />
           </Node>
-          <Pad Id="M19kco48v1aLrS79tmc8eq" Comment="Search Pattern" Bounds="106,297,39,15" ShowValueBox="true" isIOBox="true" Value="*.dds">
+          <Pad Id="M19kco48v1aLrS79tmc8eq" Comment="Search Pattern" Bounds="106,312,39,15" ShowValueBox="true" isIOBox="true" Value="*.dds">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -169,11 +169,11 @@
             <Pin Id="KznbkQbRUuuMCuRe1LcZvl" Name="Directory" Kind="InputPin" />
             <Pin Id="Omh29ps2smuLQ3yw4EMNt8" Name="Search Pattern" Kind="InputPin" />
             <Pin Id="ILIKeDd3jzoL6hNIeaPzyi" Name="Rescan Directory" Kind="InputPin" />
+            <Pin Id="Pbtv8KKPOLEOqKOUeURfsM" Name="Is sRGB" Kind="InputPin" />
+            <Pin Id="B0tlyCocem4LimxN2Otvlm" Name="Default" Kind="InputPin" />
             <Pin Id="Gra8XngvDLtQd1w76vfMS6" Name="Movie FPS" Kind="InputPin" />
             <Pin Id="LljognJUAVfP8JuVJ0807R" Name="Display FPS" Kind="InputPin" />
             <Pin Id="VLSsiAINTFuMHzc1KcHjJW" Name="Preload Count" Kind="InputPin" />
-            <Pin Id="Pbtv8KKPOLEOqKOUeURfsM" Name="Is sRGB" Kind="InputPin" />
-            <Pin Id="B0tlyCocem4LimxN2Otvlm" Name="Default" Kind="InputPin" />
             <Pin Id="O6BzK58q8EJMJwm8CAcUGI" Name="Rate" Kind="InputPin" />
             <Pin Id="DKdkEzbYMvsNqLsg9a990k" Name="Play" Kind="InputPin" />
             <Pin Id="SeUh6o2u0naLU6LcDtQ6ca" Name="Seek" Kind="InputPin" />
@@ -234,19 +234,10 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="QzedaNycq9yMHKCawB6I6M" Comment="Frame Step" Bounds="146,371,35,15" ShowValueBox="true" isIOBox="true" Value="1">
+          <Pad Id="QzedaNycq9yMHKCawB6I6M" Comment="Frame Increment" Bounds="146,371,35,15" ShowValueBox="true" isIOBox="true" Value="1">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Byte" />
             </p:TypeAnnotation>
-          </Pad>
-          <Pad Id="REdFnwDEN0pPVC5Yyly1Vm" Comment="Step" Bounds="166,397,35,35" ShowValueBox="true" isIOBox="true" Value="True">
-            <p:TypeAnnotation>
-              <Choice Kind="TypeFlag" Name="Boolean" />
-              <FullNameCategoryReference ID="Primitive" />
-            </p:TypeAnnotation>
-            <p:ValueBoxSettings>
-              <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
-            </p:ValueBoxSettings>
           </Pad>
           <Pad Id="Us99rvvLWxgOHT2d9SeyxQ" Comment="Loop From" Bounds="186,445,35,15" ShowValueBox="true" isIOBox="true" Value="0">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
@@ -317,24 +308,29 @@
               <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
             </p:ValueBoxSettings>
           </Pad>
-          <Node Bounds="144,502,125,19" Id="SfAHh2rgvYOO0TaMBQDa3S">
+          <Node Bounds="144,502,99,19" Id="SfAHh2rgvYOO0TaMBQDa3S">
             <p:NodeReference LastCategoryFullName="IO" LastSymbolSource="VL.Sync.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="FramePlayer" />
             </p:NodeReference>
-            <Pin Id="LGoYj2Dru4hNxNudNDn1qR" Name="Frame Step" Kind="InputPin" />
-            <Pin Id="N6U7JqJ9ijYNEn1MI1gZeM" Name="Step" Kind="InputPin" />
+            <Pin Id="Mmcw9GFWQDmOBvXnR348jC" Name="Frame Increment" Kind="InputPin" />
+            <Pin Id="DIfQun4BakTLR9sn5ZKwZB" Name="Increment every Nth frame" Kind="InputPin" />
             <Pin Id="RY8hHNKTwDlNP7jhcbsB3f" Name="Loop" Kind="InputPin" />
             <Pin Id="AssK8F9yj2BLwMDbj8BwJk" Name="Loop From" Kind="InputPin" />
             <Pin Id="T8zg6tgOUfCLW7J1ClU6P5" Name="Loop To" Kind="InputPin" />
-            <Pin Id="LhDGTbpG2HFNaxfNRtcZcW" Name="Seek Frame" Kind="InputPin" />
             <Pin Id="CRHIxAG8klAN6Suo9Nisyt" Name="Seek" Kind="InputPin" />
+            <Pin Id="LhDGTbpG2HFNaxfNRtcZcW" Name="Seek Frame" Kind="InputPin" />
             <Pin Id="HnhGVuP3HrIOjLkIQ69P4x" Name="Frame Id" Kind="OutputPin" />
             <Pin Id="UFSDSHPpXlsNiZY29WIMct" Name="Loop From" Kind="OutputPin" />
             <Pin Id="Q83WoskmZR6MFgEeIyJIM2" Name="Loop To" Kind="OutputPin" />
             <Pin Id="JESwcvdKYBQN7XEw3xrr5I" Name="Seek Frame" Kind="OutputPin" />
-            <Pin Id="T10mmy0lDQGQOtzFydBeWK" Name="Frame Step" Kind="OutputPin" />
+            <Pin Id="LybgYXNbuWjPPZRd364g4x" Name="Frame Increment" Kind="OutputPin" />
           </Node>
+          <Pad Id="ITqOcyNcpk6Nf7Y4zHqbwP" Comment="Increment every Nth frame" Bounds="146,389,35,15" ShowValueBox="true" isIOBox="true" Value="1">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="Integer32" />
+            </p:TypeAnnotation>
+          </Pad>
         </Canvas>
         <Patch Id="TpnDDF84TJqPJq7ECiRAa5" Name="Create" />
         <Patch Id="ABVoXgJVnUrN1QMrpElCAo" Name="Update" />
@@ -348,8 +344,6 @@
         <Link Id="PqHS1INZw65NZfd9u6fFTT" Ids="O7JQQCEGfxiN9K3xeqZNLr,ToxO9sXDP9zOmavjn7Bi4b" />
         <Link Id="TiM2NBKK59zLXsaRMNqelO" Ids="MUJYfgdc7j5O4sZOEPlmKc,Vkitw7qvoSCOXMUVGFTMml" />
         <Link Id="TWCsg8jXhwzM5N2F76WshV" Ids="AQq1EMmjC9uLJayzt1oBny,LZf0yEHvt8UN7BzPWF1nBl" />
-        <Link Id="Kl9ttK8A3ZhNJwmS0xxGEL" Ids="QzedaNycq9yMHKCawB6I6M,LGoYj2Dru4hNxNudNDn1qR" />
-        <Link Id="VgQUCQUD1gNNhQEkAA8rGX" Ids="REdFnwDEN0pPVC5Yyly1Vm,N6U7JqJ9ijYNEn1MI1gZeM" />
         <Link Id="Jqu5nIX6XtgMyMEl5Lk28G" Ids="Us99rvvLWxgOHT2d9SeyxQ,AssK8F9yj2BLwMDbj8BwJk" />
         <Link Id="Tyz0BV8Qg5bM6YLRvr0GHT" Ids="LF9O6LzRat5N08si57tYX7,T8zg6tgOUfCLW7J1ClU6P5" />
         <Link Id="F9jCBB128bJL0IenZgwvrN" Ids="I41pQc5aJzHLwMI6sUlpuO,RY8hHNKTwDlNP7jhcbsB3f" />
@@ -359,9 +353,11 @@
         <Link Id="SGUGnEUHjWaOftQLMI4LMQ" Ids="UFSDSHPpXlsNiZY29WIMct,AlsWbUzMGt5OVIOmEWf0Ok" />
         <Link Id="I7JVugiwIGaMq6eHANk2VT" Ids="Q83WoskmZR6MFgEeIyJIM2,UJlUrvl3tt9NiTv0uAdWJu" />
         <Link Id="LOEU0HLj1HPMrUEjx6XYBp" Ids="JESwcvdKYBQN7XEw3xrr5I,GgZ7D70MEKROFFCDp3uJmj" />
-        <Link Id="ShBgS6wmkwNL9ZPPTDagbY" Ids="T10mmy0lDQGQOtzFydBeWK,HUC5Z7IzxuaQXDOp3oZCyM" />
+        <Link Id="HR14lApwA1gMyTkTvLR6at" Ids="QzedaNycq9yMHKCawB6I6M,Mmcw9GFWQDmOBvXnR348jC" />
+        <Link Id="QZexB7B9QzjOFHZs0bEOFZ" Ids="ITqOcyNcpk6Nf7Y4zHqbwP,DIfQun4BakTLR9sn5ZKwZB" />
+        <Link Id="KdpeJKy7x6zM5Sc5UztgiN" Ids="LybgYXNbuWjPPZRd364g4x,HUC5Z7IzxuaQXDOp3oZCyM" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="PywipZONzkxO1GlRdhDphq" Location="VL.Stride" Version="2021.4.0-0479-gbd2c33c413" />
+  <NugetDependency Id="PywipZONzkxO1GlRdhDphq" Location="VL.Stride" Version="2021.4.0-0484-g5e332f2608" />
 </Document>
