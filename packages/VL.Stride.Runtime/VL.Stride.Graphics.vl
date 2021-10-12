@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="Dky5PMnuvcKN4CxmfNs7Uv" LanguageVersion="2021.4.0.484" Version="0.128">
-  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2021.4.0-0472-g1cf903ecbd" />
+<Document xmlns:p="property" Id="Dky5PMnuvcKN4CxmfNs7Uv" LanguageVersion="2021.4.0.497" Version="0.128">
+  <NugetDependency Id="EKAeSpl0TUSO67sl9VuE19" Location="VL.CoreLib" Version="2021.4.0-0497-g3edb2ef3ed" />
   <Patch Id="M3fVx2jjvOSLPGL4EJGFf9">
     <Canvas Id="JugVUmEZoitO7m1cCzT7W3" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="VeVSKahGv3bN2DqIVZr70x" Name="Buffers" Position="319,361">
@@ -7066,10 +7066,10 @@
         <Canvas Id="MQ1rDdchnurOyiYbmFYQ3r" Name="Video.Experimental" Position="209,767" DefaultCategory="Video" CanvasType="FullCategory">
           <!--
 
-    ************************ TexturePlayer (FrameBased) ************************
+    ************************ ImagePlayer (FrameBased Stride) ************************
 
 -->
-          <Node Name="TexturePlayer (FrameBased)" Bounds="402,574" Id="FqmXvulEPFmO2GIAyZs14F" Summary="Plays back a sequence of images from a given directory, controlled by a frame counter" Tags="image,stack,sequence,movie,video,dds">
+          <Node Name="ImagePlayer (FrameBased Stride)" Bounds="402,574" Id="FqmXvulEPFmO2GIAyZs14F" Summary="Plays back a sequence of images from a given directory, controlled by a frame counter" Tags="image,stack,sequence,movie,video,dds">
             <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
               <Choice Kind="ContainerDefinition" Name="Process" />
             </p:NodeReference>
@@ -7696,19 +7696,19 @@
           </Node>
           <!--
 
-    ************************ TexturePlayer ************************
+    ************************ ImagePlayer (Stride) ************************
 
 -->
-          <Node Name="TexturePlayer" Bounds="402,638" Id="Rf8zNKbH3rROmWYhlPGRaA" Summary="Plays back a sequence of images from a given directory" Tags="image,stack,sequence,movie,video,dds">
+          <Node Name="ImagePlayer (Stride)" Bounds="402,638" Id="Rf8zNKbH3rROmWYhlPGRaA" Summary="Plays back a sequence of images from a given directory" Tags="image,stack,sequence,movie,video,dds">
             <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
               <Choice Kind="ContainerDefinition" Name="Process" />
             </p:NodeReference>
             <Patch Id="ST617iY0XhHOfktPoofYfT">
               <Canvas Id="TzsWMRTql9oQCldaoeB5g6" CanvasType="Group">
                 <Node Bounds="274,966,475,19" AutoConnect="true" Id="JU6z9w7MVDnOy96k4WzWzA">
-                  <p:NodeReference LastCategoryFullName="Video" LastSymbolSource="VL.Stride.Graphics.vl">
+                  <p:NodeReference>
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                    <Choice Kind="ProcessAppFlag" Name="TexturePlayer (FrameBased)" />
+                    <Choice Kind="ProcessAppFlag" Name="ImagePlayer (FrameBased Stride)" />
                   </p:NodeReference>
                   <Pin Id="FqFCDjW4Vo8NsLLvfJ59D9" Name="Directory" Kind="InputPin" />
                   <Pin Id="EFY4TTI4GtnOAiQWjQ3JSj" Name="Search Pattern" Kind="InputPin" />
@@ -7728,9 +7728,10 @@
                   <Pin Id="EzxoyNSwF4lPtOqYaM6cCK" Name="Preloaded Frames" Kind="OutputPin" />
                 </Node>
                 <Node Bounds="383,621,205,19" AutoConnect="true" Id="AOMLpPUFwXFPgUY82j2HOw">
-                  <p:NodeReference LastCategoryFullName="Video.TexturePlayer" LastSymbolSource="VL.Stride.Graphics.vl">
+                  <p:NodeReference>
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                     <Choice Kind="ProcessAppFlag" Name="Playhead2" />
+                    <CategoryReference Kind="Category" Name="ImagePlayer (Stride)" NeedsToBeDirectParent="true" />
                   </p:NodeReference>
                   <Pin Id="OV2eWYPMxSZQWNZZRA33U0" Name="Clock" Kind="InputPin" />
                   <Pin Id="Eg96zh15Zf7OU0J9AG7pcz" Name="New Clock" Kind="InputPin" />
@@ -7849,7 +7850,7 @@
                   <p:NodeReference>
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                     <Choice Kind="OperationCallFlag" Name="ToFrameId" />
-                    <CategoryReference Kind="Category" Name="TexturePlayer" NeedsToBeDirectParent="true" />
+                    <CategoryReference Kind="Category" Name="ImagePlayer (Stride)" NeedsToBeDirectParent="true" />
                   </p:NodeReference>
                   <Pin Id="MLQutKIgmE0P8GpeCfvp9v" Name="Input" Kind="InputPin" />
                   <Pin Id="R6pvdJihsUIPCquRDz7U47" Name="FPS" Kind="InputPin" />
@@ -8395,7 +8396,7 @@
                       <p:NodeReference>
                         <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                         <Choice Kind="OperationCallFlag" Name="ToFrameId" />
-                        <CategoryReference Kind="Category" Name="TexturePlayer" NeedsToBeDirectParent="true" />
+                        <CategoryReference Kind="Category" Name="ImagePlayer (Stride)" NeedsToBeDirectParent="true" />
                       </p:NodeReference>
                       <Pin Id="MCXgZH4o7XnLHGyAnHCYsq" Name="Input" Kind="InputPin" />
                       <Pin Id="BzfSbTWEcNWMZHBDhB2Oth" Name="FPS" Kind="InputPin" />
@@ -8405,7 +8406,7 @@
                       <p:NodeReference>
                         <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                         <Choice Kind="OperationCallFlag" Name="ToFrameId" />
-                        <CategoryReference Kind="Category" Name="TexturePlayer" NeedsToBeDirectParent="true" />
+                        <CategoryReference Kind="Category" Name="ImagePlayer (Stride)" NeedsToBeDirectParent="true" />
                       </p:NodeReference>
                       <Pin Id="OLxTai7yAvCPr8D3OAV47Y" Name="Input" Kind="InputPin" />
                       <Pin Id="Tj08Yn7ZrjTODGPtM4zNgN" Name="FPS" Kind="InputPin" />
@@ -8415,7 +8416,7 @@
                       <p:NodeReference>
                         <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                         <Choice Kind="OperationCallFlag" Name="ToFrameId" />
-                        <CategoryReference Kind="Category" Name="TexturePlayer" NeedsToBeDirectParent="true" />
+                        <CategoryReference Kind="Category" Name="ImagePlayer (Stride)" NeedsToBeDirectParent="true" />
                       </p:NodeReference>
                       <Pin Id="IrKa2W5pioOMy1StWojUXz" Name="Input" Kind="InputPin" />
                       <Pin Id="LtDRYnDLFf5NQKutDf3bxZ" Name="FPS" Kind="InputPin" />
@@ -11112,7 +11113,7 @@
     </Node>
   </Patch>
   <PlatformDependency Id="JJ0ZRRgadtbPuisZUaeinf" Location="Stride.Graphics.dll" />
-  <NugetDependency Id="RUpxj8weM25L4I4AlKb6Yw" Location="VL.Core" Version="2021.4.0-0472-g1cf903ecbd" />
+  <NugetDependency Id="RUpxj8weM25L4I4AlKb6Yw" Location="VL.Core" Version="2021.4.0-0497-g3edb2ef3ed" />
   <PlatformDependency Id="IC8TlSKr9KnNYjdQ1ni0yJ" Location="Stride.dll" />
   <PlatformDependency Id="IzFXsvic9e0LQG5m2Qejqv" Location="../VL.Stride.Tests/src/bin/Debug/net472/Stride.Core.Mathematics.dll" />
   <NodeFactoryDependency Id="RQuja2dHYIeLUbtM4bRWNa" Location="VL.Stride.Graphics.Nodes" IsForward="true" />
