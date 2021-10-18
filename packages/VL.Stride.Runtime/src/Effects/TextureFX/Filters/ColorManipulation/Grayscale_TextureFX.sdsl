@@ -1,0 +1,12 @@
+[Category("Utils")]
+[Summary("Converts a texture from rgb to grayscale")]
+[Tags("convert, desaturate")]
+shader Grayscale_TextureFX : FilterBase
+{
+    float3 Graymix = float3(0.299, 0.587, 0.114);
+    
+    float4 Filter(float4 tex0col)
+    {
+        return float4(dot(tex0col.rgb, Graymix).rrr, col.a);
+    }
+};
