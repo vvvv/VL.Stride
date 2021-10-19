@@ -16,7 +16,7 @@ shader Halo_TextureFX : TextureFX
     float4 HaloColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
     float Gamma = 0.5f;
     [Summary("Only relevant for 'Spike' type")]
-    float MaxColor = 1.0f;
+    float MaxSpikeColor = 1.0f;
 
     float4 Linear(float f, float g)
     {
@@ -42,7 +42,7 @@ shader Halo_TextureFX : TextureFX
 
         float4 c = lerp(HaloColor, BackgroundColor, f);
 
-        return min(MaxColor, c);
+        return min(MaxSpikeColor, c);
     }
 
     stage override float4 Shading()

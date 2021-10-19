@@ -148,8 +148,8 @@ namespace VL.Stride.Rendering
                             var textureCount = 0;
                             foreach (var _input in _inputs)
                             {
-                                    // Handle the predefined pins first
-                                    if (_input == _outputTextureInput)
+                                // Handle the predefined pins first
+                                if (_input == _outputTextureInput)
                                 {
                                     inputs.Add(nodeBuildContext.Input<Texture>(setter: t =>
                                     {
@@ -173,10 +173,9 @@ namespace VL.Stride.Rendering
                                     }
                                     else
                                     {
-                                        var accessor = effect.Parameters.GetAccessor((ObjectParameterKey<Texture>)textureInput.Key);
                                         inputs.Add(nodeBuildContext.Input<Texture>(setter: t =>
                                         {
-                                            effect.Parameters.Set(accessor, t);
+                                            effect.Parameters.SetObject(textureInput.Key, t);
                                         }));
                                     }
                                 }

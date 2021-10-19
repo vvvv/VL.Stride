@@ -14,11 +14,12 @@ shader Halo_Gradient_TextureFX : TextureFX
     float4 HaloColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
     float Gamma = 0.5f;
     float MaxColor = 1.0f;
+    float y = 0.5f;
     stage Texture2D GradientTexture;
 
     float4 Textured(float f, float g)
     {
-        f = GradientTexture.SampleLevel(LinearSampler, f.x*2, 0);
+        f = GradientTexture.SampleLevel(LinearSampler, float2(f.x*2, y), 0).x;
         f = sign(f) * pow(abs(f), g);
         
         float4 c = lerp(HaloColor, BackgroundColor, f);
