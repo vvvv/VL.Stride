@@ -3,10 +3,10 @@
 [Tags("convert, desaturate")]
 shader Grayscale_TextureFX : FilterBase
 {
-    float3 Graymix = float3(0.299, 0.587, 0.114);
+    float3 Graymix = float3(0.299f, 0.587f, 0.114f);
     
     float4 Filter(float4 tex0col)
     {
-        return float4(dot(tex0col.rgb, Graymix).rrr, col.a);
+        return float4(dot(tex0col.rgb, Graymix).rrr, tex0col.a);
     }
 };
