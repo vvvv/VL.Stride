@@ -158,6 +158,9 @@ namespace VL.Stride.Rendering
     {
         public readonly string Name;
         public readonly string TypeName;
+        public readonly string Summary;
+        public readonly string Remarks;
+        public bool IsOptional;
         public readonly PermutationParameterKey<ShaderSource> Key;
 
         /// <summary>
@@ -170,6 +173,26 @@ namespace VL.Stride.Rendering
         public CompositionInput(Variable v, int localIndex)
         {
             Name = v.Name.Text;
+
+            // parse attributes
+            foreach (var attr in v.Attributes.OfType<AttributeDeclaration>())
+            {
+                switch (attr.Name)
+                {
+                    case ShaderMetadata.OptionalName:
+                        IsOptional = true;
+                        break;
+                    case ShaderMetadata.SummaryName:
+                        Summary = attr.ParseString();
+                        break;
+                    case ShaderMetadata.RemarksName:
+                        Remarks = attr.ParseString();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             TypeName = v.Type.Name.Text;
             Key = new PermutationParameterKey<ShaderSource>(Name);
             LocalIndex = localIndex;

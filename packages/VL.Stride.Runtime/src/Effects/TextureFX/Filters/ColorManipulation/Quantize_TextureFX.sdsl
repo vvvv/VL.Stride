@@ -2,12 +2,13 @@
 [Summary("")]
 shader Quantize_TextureFX : FilterBase
 {
-    float StepSize = 0.1f;
+    float4 StepSize = float4(0.1f, 0.1f, 0.1f, 0.1f);
 
+    [EnumType("VL.Stride.Effects.TextureFX.RoundingType")]
     uint Mode;
     bool QuantizeAlpha;
 
-    float4 Quant(float4 col, float steps)
+    float4 Quant(float4 col, float4 steps)
     {
         switch (Mode)
         {

@@ -44,8 +44,8 @@ namespace VL.Stride.Rendering
 
                         if (WellKnownParameters.PerDrawMap.ContainsKey(name))
                         {
-                                // Expose World only - all other world dependent parameters we can compute on our own
-                                needsWorld = true;
+                            // Expose World only - all other world dependent parameters we can compute on our own
+                            needsWorld = true;
                             continue;
                         }
 
@@ -54,15 +54,15 @@ namespace VL.Stride.Rendering
                         _inputs.Add(new ParameterPinDescription(usedNames, key, parameter.Count, defaultValue: boxedDefaultValue, typeInPatch: typeInPatch) { IsVisible = !isOptional, Summary = summary, Remarks = remarks });
                     }
 
-                        // local input values
-                        foreach (var key in shaderMetadata.ParsedShader?.GetUniformInputs() ?? Enumerable.Empty<ParameterKey>())
+                    // local input values
+                    foreach (var key in shaderMetadata.ParsedShader?.GetUniformInputs() ?? Enumerable.Empty<ParameterKey>())
                     {
                         var name = key.Name;
 
                         if (WellKnownParameters.PerDrawMap.ContainsKey(name))
                         {
-                                // Expose World only - all other world dependent parameters we can compute on our own
-                                needsWorld = true;
+                            // Expose World only - all other world dependent parameters we can compute on our own
+                            needsWorld = true;
                             continue;
                         }
 
@@ -135,7 +135,7 @@ namespace VL.Stride.Rendering
 
                 if (shaderChanged)
                 {
-                    
+
 
                     var newComputeNode = new ShaderFXNode<TInner>(
                         getShaderSource: (c, k) =>

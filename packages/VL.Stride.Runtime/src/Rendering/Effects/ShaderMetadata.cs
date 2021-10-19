@@ -144,14 +144,31 @@ namespace VL.Stride.Rendering
             var name = key.Name;
             summary = "";
             remarks = "";
+            isOptional = false;
 
-            if (pinSummaries.TryGetValue(name, out var sum))
-                summary = sum;
+            if (key.PropertyType == typeof(ShaderSource) && ParsedShader != null)
+            {
+                if (ParsedShader.CompositionsWithBaseShaders.TryGetValue(key.GetVariableName(), out var composition))
+                {
+                    if (!string.IsNullOrWhiteSpace(composition.Summary))
+                        summary = composition.Summary;
 
-            if (pinRemarks.TryGetValue(name, out var rem))
-                remarks = rem;
+                    if (!string.IsNullOrWhiteSpace(composition.Remarks))
+                        remarks = composition.Remarks;
 
-            isOptional = optionalPins.Contains(name);
+                    isOptional = composition.IsOptional;
+                }
+            }
+            else
+            {
+                if (pinSummaries.TryGetValue(name, out var sum))
+                    summary = sum;
+
+                if (pinRemarks.TryGetValue(name, out var rem))
+                    remarks = rem;
+
+                isOptional = optionalPins.Contains(name);
+            }
 
             // add type in shader to pin summary, if not float, int or bool type
             var varName = key.GetVariableName();
@@ -168,6 +185,7 @@ namespace VL.Stride.Rendering
                     || varType.StartsWith("ComputeBool", StringComparison.OrdinalIgnoreCase)
                     || varType.StartsWith("ComputeUInt", StringComparison.OrdinalIgnoreCase)
                     || varType.StartsWith("ComputeMatrix", StringComparison.OrdinalIgnoreCase)
+                    || varType.StartsWith("matrix", StringComparison.OrdinalIgnoreCase)
                     ))
                 {
                     summary += (string.IsNullOrWhiteSpace(summary) ? "" : Environment.NewLine) + varType;
@@ -373,7 +391,8 @@ namespace VL.Stride.Rendering
                     }
 
                     //pins
-                    foreach (var pinDecl in shaderDecl.Members.OfType<Variable>().Where(v => !v.Qualifiers.Contains(StrideStorageQualifier.Compose) && !v.Qualifiers.Contains(StrideStorageQualifier.Stream)))
+                    var pinDecls = shaderDecl.Members.OfType<Variable>().Where(v => !v.Qualifiers.Contains(StrideStorageQualifier.Compose) && !v.Qualifiers.Contains(StrideStorageQualifier.Stream));
+                    foreach (var pinDecl in pinDecls)
                     {
                         foreach (var attr in pinDecl.Attributes.OfType<AttributeDeclaration>())
                         {
