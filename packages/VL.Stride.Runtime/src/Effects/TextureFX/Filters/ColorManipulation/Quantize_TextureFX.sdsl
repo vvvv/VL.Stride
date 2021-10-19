@@ -2,7 +2,7 @@
 [Summary("")]
 shader Quantize_TextureFX : FilterBase
 {
-    float4 StepSize = float4(0.1f);
+    float StepSize = 0.1f;
 
     uint Mode;
     bool QuantizeAlpha;
@@ -15,6 +15,7 @@ shader Quantize_TextureFX : FilterBase
             case 1 : return float4(floor(col * steps) / steps);
             case 2 : return float4(ceil(col * steps) / steps);
         }
+        return 0;
     }
 
     float4 Filter(float4 tex0col)
@@ -27,5 +28,3 @@ shader Quantize_TextureFX : FilterBase
         return col;
     }
 };
-
-
