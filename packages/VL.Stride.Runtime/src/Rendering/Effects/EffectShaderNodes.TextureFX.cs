@@ -39,8 +39,8 @@ namespace VL.Stride.Rendering
                     var _inputs = new List<IVLPinDescription>();
                     var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(ImageEffectShader)) };
 
-                        // The pins as specified by https://github.com/devvvvs/vvvv/issues/5756
-                        var usedNames = new HashSet<string>()
+                    // The pins as specified by https://github.com/devvvvs/vvvv/issues/5756
+                    var usedNames = new HashSet<string>()
                     {
                             "Output Size",
                             "Output Format",
@@ -53,10 +53,10 @@ namespace VL.Stride.Rendering
                     var _samplerCount = 0;
                     var parameters = GetParameters(_effect).OrderBy(p => p.Key.Name.StartsWith("Texturing.Texture") ? 0 : 1).ToList();
 
-                        //order sampler pins after their corresponding texture pins
-                        var texturingSamplerPins = new Dictionary<ParameterKeyInfo, int>();
-                        //find all samplers that have a corresponding texture
-                        int insertOffset = 0;
+                    //order sampler pins after their corresponding texture pins
+                    var texturingSamplerPins = new Dictionary<ParameterKeyInfo, int>();
+                    //find all samplers that have a corresponding texture
+                    int insertOffset = 0;
                     foreach (var parameter in parameters)
                     {
                         if (parameter.Key.Name.StartsWith("Texturing.Sampler"))
@@ -70,8 +70,8 @@ namespace VL.Stride.Rendering
                         }
                     }
 
-                        //move the sampler pins after the corresponding texture pins
-                        foreach (var samplerPin in texturingSamplerPins)
+                    //move the sampler pins after the corresponding texture pins
+                    foreach (var samplerPin in texturingSamplerPins)
                     {
                         parameters.Remove(samplerPin.Key);
                         parameters.Insert(samplerPin.Value + 1, samplerPin.Key);
@@ -82,8 +82,8 @@ namespace VL.Stride.Rendering
                         var key = parameter.Key;
                         var name = key.Name;
 
-                            // Skip the matrix transform - we're drawing fullscreen
-                            if (key == SpriteBaseKeys.MatrixTransform)
+                        // Skip the matrix transform - we're drawing fullscreen
+                        if (key == SpriteBaseKeys.MatrixTransform)
                             continue;
 
                         if (key.PropertyType == typeof(Texture))
@@ -99,7 +99,7 @@ namespace VL.Stride.Rendering
                         else
                         {
                             var pinName = default(string); // Using null the name is based on the parameter name
-                                var isOptional = false;
+                            var isOptional = false;
                             if (key.PropertyType == typeof(SamplerState) && key.Name.StartsWith("Texturing.Sampler"))
                             {
                                 pinName = ++_samplerCount == 1 ? samplerInputName : $"{samplerInputName} {_samplerCount}";
@@ -142,8 +142,8 @@ namespace VL.Stride.Rendering
 
                             BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var textureFXEffectMixin, effect.Parameters);
 
-                                //effect.Parameters.Set
-                                var inputs = new List<IVLPin>();
+                            //effect.Parameters.Set
+                            var inputs = new List<IVLPin>();
                             var enabledInput = default(IVLPin);
                             var textureCount = 0;
                             foreach (var _input in _inputs)
@@ -248,20 +248,20 @@ namespace VL.Stride.Rendering
 
                     if (isFilterOrMixer)
                     {
-                            // Filter or Mixer
-                            _inputs.Insert(_inputs.Count - 1, _outputSize);
+                        // Filter or Mixer
+                        _inputs.Insert(_inputs.Count - 1, _outputSize);
                         _inputs.Insert(_inputs.Count - 1, _outputFormat);
                         _inputs.Insert(_inputs.Count - 1, _renderFormat);
 
-                            // Replace Enabled with Apply
-                            var _enabledPinIndex = _inputs.IndexOf(p => p.Name == Enabled);
+                        // Replace Enabled with Apply
+                        var _enabledPinIndex = _inputs.IndexOf(p => p.Name == Enabled);
                         if (_enabledPinIndex >= 0)
                             _inputs[_enabledPinIndex] = new PinDescription<bool>("Apply", defaultValue: true);
                     }
                     else
                     {
-                            // Pure source
-                            _inputs.Insert(_inputs.Count - 2, _outputSize);
+                        // Pure source
+                        _inputs.Insert(_inputs.Count - 2, _outputSize);
                         _inputs.Insert(_inputs.Count - 2, _outputFormat);
                         _inputs.Insert(_inputs.Count - 2, _renderFormat);
                     }
@@ -282,8 +282,8 @@ namespace VL.Stride.Rendering
 
                             var shaderNodeInputs = shaderDescription.Inputs.ToList();
 
-                                // install pin managers for mipmaps or inputs that should be read in sRGB space
-                                if (hasTexturePinsToManage)
+                            // install pin managers for mipmaps or inputs that should be read in sRGB space
+                            if (hasTexturePinsToManage)
                             {
                                 foreach (var textureToManage in texturePinsToManage)
                                 {
@@ -296,16 +296,17 @@ namespace VL.Stride.Rendering
                                         {
                                             var newTexturePin = nodeBuildContext.Input<Texture>();
 
-                                                // Replace this texture input with the new one
-                                                inputs[texIndex] = newTexturePin;
+                                            // Replace this texture input with the new one
+                                            inputs[texIndex] = newTexturePin;
 
-                                                // Insert generate pin
-                                                IVLPin<bool> alwaysGeneratePin = null;
+                                            // Insert generate pin
+                                            IVLPin<bool> alwaysGeneratePin = null;
+
                                             if (textureToManage.wantsMips)
                                             {
                                                 alwaysGeneratePin = nodeBuildContext.Input(true);
                                                 inputs.Insert(texIndex + 1, alwaysGeneratePin);
-                                                shaderNodeInputs.Insert(texIndex + 1, new PinDescription<bool>("Always Generate Mips for " + texDesc.Name, true)); //keep shader pin indices in sync
+                                                shaderNodeInputs.Insert(texIndex + 1, new PinDescription<bool>("Always Generate Mips for " + texDesc.Name, true) { IsVisible = false }); //keep shader pin indices in sync
                                                 }
 
                                                 // Setup pin manager
@@ -340,8 +341,8 @@ namespace VL.Stride.Rendering
                             var scheduler = game.Services.GetService<SchedulerSystem>();
                             var graphicsDevice = game.GraphicsDevice;
 
-                                // Remove this once FrameDelay can deal with textures properly
-                                var output1 = default(((Int2 size, PixelFormat format, PixelFormat renderFormat) desc, Texture texture, Texture view));
+                            // Remove this once FrameDelay can deal with textures properly
+                            var output1 = default(((Int2 size, PixelFormat format, PixelFormat renderFormat) desc, Texture texture, Texture view));
                             var output2 = default(((Int2 size, PixelFormat format, PixelFormat renderFormat) desc, Texture texture, Texture view));
                             var lastViewFormat = PixelFormat.None;
                             var usedRenderFormat = PixelFormat.None;
@@ -353,23 +354,23 @@ namespace VL.Stride.Rendering
                                 {
                                     if (isFilterOrMixer)
                                         return inputTexture; // By pass
-                                        else
+                                    else
                                         return output1.texture; // Last result
-                                    }
+                                }
 
                                 var outputTexture = outputTextureInput.Value as Texture;
                                 if (outputTexture is null)
                                 {
-                                        // No output texture is provided, generate one
-                                        const TextureFlags textureFlags = TextureFlags.ShaderResource | TextureFlags.RenderTarget;
+                                    // No output texture is provided, generate one
+                                    const TextureFlags textureFlags = TextureFlags.ShaderResource | TextureFlags.RenderTarget;
                                     var desc = (size: defaultSize, format: defaultFormat, renderFormat: defaultRenderFormat);
                                     if (inputTexture != null)
                                     {
-                                            // Base it on the input texture
-                                            var viewFormat = inputTexture.ViewFormat;
+                                        // Base it on the input texture
+                                        var viewFormat = inputTexture.ViewFormat;
 
-                                            // Figure out render format
-                                            if (!shaderMetadata.IsTextureSource && shaderMetadata.DontConvertToSRgbOnOnWrite)
+                                        // Figure out render format
+                                        if (!shaderMetadata.IsTextureSource && shaderMetadata.DontConvertToSRgbOnOnWrite)
                                         {
                                             if (viewFormat != lastViewFormat)
                                                 usedRenderFormat = viewFormat.ToNonSRgb();
@@ -379,19 +380,19 @@ namespace VL.Stride.Rendering
                                         else
                                         {
                                             usedRenderFormat = PixelFormat.None; //same as view format
-                                            }
+                                        }
 
                                         desc = (new Int2(inputTexture.ViewWidth, inputTexture.ViewHeight), viewFormat, usedRenderFormat);
 
-                                            // Watch out for feedback loops
-                                            if (inputTexture == output1.texture)
+                                        // Watch out for feedback loops
+                                        if (inputTexture == output1.texture)
                                         {
                                             Utilities.Swap(ref output1, ref output2);
                                         }
                                     }
 
-                                        // Overwrite with user settings
-                                        if (outputSize.Value.X > 0)
+                                    // Overwrite with user settings
+                                    if (outputSize.Value.X > 0)
                                         desc.size.X = outputSize.Value.X;
 
                                     if (outputSize.Value.Y > 0)
@@ -406,8 +407,8 @@ namespace VL.Stride.Rendering
                                     if (renderFormat.Value != PixelFormat.None)
                                         desc.renderFormat = renderFormat.Value;
 
-                                        // Ensure we have an output of proper size
-                                        if (desc != output1.desc)
+                                    // Ensure we have an output of proper size
+                                    if (desc != output1.desc)
                                     {
                                         output1.view?.Dispose();
                                         output1.texture?.Dispose();
@@ -441,7 +442,7 @@ namespace VL.Stride.Rendering
                                     }
                                 }
                                 else //output texture set by patch
-                                    {
+                                {
                                     output1.texture = outputTexture;
                                     output1.view = outputTexture;
                                 }
