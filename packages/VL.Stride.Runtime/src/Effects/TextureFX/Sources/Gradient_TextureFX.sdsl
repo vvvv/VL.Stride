@@ -10,7 +10,7 @@ shader Gradient_TextureFX : TextureFX
     float Gamma = 2.2f;
     // bool Dither = false;
     // float Dithering = 1;
-	// float DitherSeed = 0; 
+    // float DitherSeed = 0; 
 
     // TODO: Extend with a radial and directional gradient
     stage override float4 Shading()
@@ -23,7 +23,7 @@ shader Gradient_TextureFX : TextureFX
         float4 c = lerp(From, To, fade);
 
         // if (Dither) //nedds target size and is always expensive because shader doesn't get optimized when off... investigate.
-		//      c = _dither(c, uv * R, DitherSeed, 256, Dithering);
+        //      c = _dither(c, uv * R, DitherSeed, 256, Dithering);
 
         return c;
     }
@@ -46,7 +46,7 @@ shader Gradient_TextureFX : TextureFX
             _dnoise1(float3((x+RandomSeed*11+97)+13,length(sin((x-37)/181+RandomSeed*float2(5,23))))+.5)
         };
 
-	    return frac(c+x.x*2+RandomSeed+dot(c,1));
+        return frac(c+x.x*2+RandomSeed+dot(c,1));
     }
 
     float4 _dither(float4 c, float2 x, float RandomSeed=0, float Levels=255, float AddNoise=1)

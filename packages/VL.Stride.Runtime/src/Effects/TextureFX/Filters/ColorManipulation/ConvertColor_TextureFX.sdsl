@@ -7,75 +7,45 @@ shader ConvertColor_TextureFX : FilterBase
 {
     [EnumType("VL.Stride.Effects.TextureFX.ConvertColorType")]
     uint Type;
-    
-    float4 ConvertAlpha(float4 col)
-    {
-        return float4(col.aaa, 1);
-    }
-
-    float4 ConvertRed(float4 col)
-    {
-        return float4(col.rrr, 1);
-    }
-
-    float4 ConvertGreen(float4 col)
-    {
-        return float4(col.ggg, 1);
-    }
-
-    float4 ConvertBlue(float4 col)
-    {
-        return float4(col.bbb, 1);
-    }
-
-    float4 ConvertHue(float4 col)
-    {
-        float3 h = RGBtoHSV(col.rgb);
-
-        return float4(h.xxx, 1);
-    }
-
-    float4 ConvertSaturation(float4 col)
-    {
-        float3 h = RGBtoHSV(col.rgb);
-
-        return float4(h.yyy, 1);
-    }
-
-    float4 ConvertValue(float4 col)
-    {
-        float3 h = RGBtoHSV(col.rgb);
-
-        return float4(h.zzz, 1);
-    }
 
     float4 ConvertHSVtoRGB(float4 col)
     {
         float3 h = HSVtoRGB(col.rgb);
 
-        return float4(h.xyz, 1);
+        return float4(h.xyz, col.a);
     }
 
     float4 ConvertRGBtoHSV(float4 col)
     {
         float3 h = RGBtoHSV(col.rgb);
 
-        return float4(h.xyz, 1);
+        return float4(h.xyz, col.a);
+    }
+
+    float4 ConvertHSLtoRGB(float4 col)
+    {
+        float3 h = HSLtoRGB(col.rgb);
+
+        return float4(h.xyz, col.a);
+    }
+
+    float4 ConvertRGBtoHSL(float4 col)
+    {
+        float3 h = RGBtoHSL(col.rgb);
+
+        return float4(h.xyz, col.a);
     }
 
     float4 Filter(float4 tex0col)
     {
-        switch(Type % 9)
+        switch (Type)
         {
-            case 0 : return ConvertAlpha(tex0col);
-            case 1 : return ConvertRed(tex0col);
-            case 2 : return ConvertGreen(tex0col);
-            case 3 : return ConvertBlue(tex0col);
-            case 4 : return ConvertHue(tex0col);
-            case 5 : return ConvertSaturation(tex0col);
-            case 6 : return ConvertValue(tex0col);
-            case 7 : return ConvertHSVtoRGB(tex0col);
-            case 8 : return ConvertRGBtoHSV(tex0col);
+            case 0 : return ConvertHSVtoRGB(tex0col);
+            case 1 : return ConvertHSLtoRGB(tex0col);
+            case 2 : return ConvertRGBtoHSV(tex0col);
+            case 3 : return ConvertRGBtoHSL(tex0col);
         }
+
+        return 0;
     }
 };

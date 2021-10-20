@@ -20,6 +20,7 @@ namespace Stride.Rendering
     {
         public static readonly ValueParameterKey<uint> Count = ParameterKeys.NewValue<uint>(1);
         public static readonly ValueParameterKey<float> SampleLevel = ParameterKeys.NewValue<float>();
+        public static readonly ValueParameterKey<bool> ConvertToSRgb = ParameterKeys.NewValue<bool>();
         public static readonly ObjectParameterKey<Buffer> PosBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> ColorsBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Texture> Tex = ParameterKeys.NewObject<Texture>();
