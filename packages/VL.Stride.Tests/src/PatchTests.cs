@@ -44,6 +44,7 @@ namespace MyTests
                     Path.GetFileName(file) == "HowTo Write into a VertexBuffer in a Compute Shader.vl" ||
                     Path.GetFileName(file) == "Example GPU Particle System with Mesh.vl" ||
                     Path.GetFileName(file) == "Example Compute Shader Instancing with Oversampling.vl" ||
+                    Path.GetFileName(file) == "HowTo Rearrange Channels of a Texture.vl" ||
                     Path.GetFileName(file) == "VL.Stride.Rendering.Temp.vl")
                     continue;
 
