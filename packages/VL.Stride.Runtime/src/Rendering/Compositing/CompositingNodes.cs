@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using VL.Core;
-using VL.Stride.Rendering.Images;
 
 namespace VL.Stride.Rendering.Compositing
 {
@@ -187,6 +186,13 @@ namespace VL.Stride.Rendering.Compositing
             yield return new StrideNodeDesc<AmbientOcclusion>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<LocalReflections>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<DepthOfField>(nodeFactory, category: postFxCategory);
+            yield return nodeFactory.NewNode<Fog>(category: postFxCategory, copyOnWrite: true)
+                .AddCachedInput(nameof(Fog.Density), x => x.Density * 10, (x, v) => x.Density = v * 0.1f, 1f)
+                .AddCachedInput(nameof(Fog.Color), x => x.Color.ToColor4(), (x, v) => x.Color = v.ToColor3(), Color4.White)
+                .AddCachedInput(nameof(Fog.FogStart), x => x.FogStart, (x, v) => x.FogStart = v, 3)
+                .AddCachedInput(nameof(Fog.SkipBackground), x => x.SkipBackground, (x, v) => x.SkipBackground = v, false)
+                .AddCachedInput(nameof(Fog.Enabled), x => x.Enabled, (x, v) => x.Enabled = v, true);
+            yield return new StrideNodeDesc<Outline>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<BrightFilter>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<Bloom>(nodeFactory, category: postFxCategory);
             yield return new StrideNodeDesc<LightStreak>(nodeFactory, category: postFxCategory);
@@ -243,6 +249,7 @@ namespace VL.Stride.Rendering.Compositing
             yield return new StrideNodeDesc<ToneMapExponentialOperator>(nodeFactory, "Exponential", category: operatorsCategory) { CopyOnWrite = false };
             yield return new StrideNodeDesc<ToneMapLogarithmicOperator>(nodeFactory, "Logarithmic", category: operatorsCategory) { CopyOnWrite = false };
             yield return new StrideNodeDesc<ToneMapReinhardOperator>(nodeFactory, "Reinhard", category: operatorsCategory) { CopyOnWrite = false };
+            yield return new StrideNodeDesc<ToneMapACESOperator>(nodeFactory, "ACES", category: operatorsCategory) { CopyOnWrite = false };
 
             // Root render features
             yield return nodeFactory.NewNode<MeshRenderFeature>(category: renderingCategoryAdvanced)
@@ -314,8 +321,9 @@ namespace VL.Stride.Rendering.Compositing
                 return nodeFactory.NewNode<PostProcessingEffects>(name: "PostFXCore (Internal)", category: renderingCategory, copyOnWrite: false, 
                     init: effects =>
                     {
-                        ReplaceAO(effects); // set our own implementation, TODO: remove this once we use a stride version that has the ortho case included
                         // Can't use effects.DisableAll() - disables private effects used by AA
+                        effects.Fog.Enabled = false;
+                        effects.Outline.Enabled = false;
                         effects.AmbientOcclusion.Enabled = false;
                         effects.LocalReflections.Enabled = false;
                         effects.DepthOfField.Enabled = false;
@@ -385,6 +393,35 @@ namespace VL.Stride.Rendering.Compositing
                             s.QualityPreset = v.QualityPreset;
                             s.Technique = v.Technique;
                             s.AutoFocus = v.AutoFocus;
+                        }
+                        else
+                        {
+                            s.Enabled = false;
+                        }
+                    }, defaultValue: null /* null is used to disable */)
+                    .AddCachedInput(nameof(PostProcessingEffects.Fog), x => x.Fog, (x, v) =>
+                    {
+                        var s = x.Fog;
+                        if (v != null)
+                        {
+                            s.Enabled = v.Enabled;
+                            s.Density = v.Density;
+                            s.Color = v.Color;
+                            s.FogStart = v.FogStart;
+                        }
+                        else
+                        {
+                            s.Enabled = false;
+                        }
+                    }, defaultValue: null /* null is used to disable */)
+                    .AddCachedInput(nameof(PostProcessingEffects.Outline), x => x.Outline, (x, v) =>
+                    {
+                        var s = x.Outline;
+                        if (v != null)
+                        {
+                            s.Enabled = v.Enabled;
+                            s.NormalWeight = v.NormalWeight;
+                            s.DepthWeight = v.DepthWeight;
                         }
                         else
                         {
@@ -463,12 +500,6 @@ namespace VL.Stride.Rendering.Compositing
                     }, defaultValue: null /* null is used to disable */)
                     .AddCachedListInput(nameof(PostProcessingEffects.ColorTransforms), x => x.ColorTransforms.Transforms)
                     .AddCachedInput(nameof(PostProcessingEffects.Antialiasing), x => x.Antialiasing, (x, v) => x.Antialiasing = v);
-
-                void ReplaceAO(PostProcessingEffects effects)
-                {
-                    var ao = typeof(PostProcessingEffects).GetProperty(nameof(PostProcessingEffects.AmbientOcclusion), BindingFlags.Public | BindingFlags.Instance);
-                    ao.SetValue(effects, new AmbientOcclusionWithOrtho());
-                }
             }
         }
 
