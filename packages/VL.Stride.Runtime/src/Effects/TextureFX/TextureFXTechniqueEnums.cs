@@ -23,4 +23,5 @@ namespace VL.Stride.Effects.TextureFX
     public enum ResizeInterpolationType { NearestNeighbor, Linear, CubicBSpline, CubicCatmullRom/*, Lanczos*/ };
     public enum RoundingType { Round, Floor, Ceil };
     public enum TextureChannel { Channel0, Channel1, Channel2, Channel3 };
+    public enum BlurPasses { OnePass, TwoPasses, ThreePasses };
 }

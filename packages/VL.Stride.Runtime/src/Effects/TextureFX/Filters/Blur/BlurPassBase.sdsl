@@ -1,18 +1,28 @@
-﻿[Category("Filter")]
-[Summary("Applies a blur effect")]
-[WantsMips("Texture0")]
-shader Blur_TextureFX : FilterBase
+﻿shader BlurPassBase : FilterBase
 {
     [Default(0.25)]
     compose ComputeFloat Strength;
 
+    void ClacLodAndOffset(float2 R, float strenght, out float lod, out float2 off)
+    {
+        lod = Strength.Compute() * log2(max(R.x, R.y));
+        off = 0.5/R * pow(2, lod) * saturate(lod);
+    }
+
     float4 Filter(float4 tex0col)
     {
-        float2 R = ViewSize;
-        float lod = Strength.Compute() * log2(max(R.x, R.y));
+        float lod;
+        float2 off;
+
+        ClacLodAndOffset(ViewSize, Strength.Compute(), lod, off);
+
+        return BlurPass(off, lod);
+    }
+
+    float4 BlurPass(float2 off, float lod)
+    {
         float4 c = 0;
         float2 x = streams.TexCoord;
-        float2 off = 0.5/R * pow(2, lod) * saturate(lod);
         
         // TODO: Check if this is a correct usage of lod in SampleLevel
         c += Texture0.SampleLevel(Sampler0, x + float2( 0,  0) * off, lod);
@@ -27,11 +37,6 @@ shader Blur_TextureFX : FilterBase
         c += Texture0.SampleLevel(Sampler0, x + float2( 1,  0) * off, lod);
         c /= 9;
 
-        // TODO: Add premultiply
-        //if(PreMultiply)c.rgb/=c.a+Epsilon;
-
         return c;
     }
 };
-
-
