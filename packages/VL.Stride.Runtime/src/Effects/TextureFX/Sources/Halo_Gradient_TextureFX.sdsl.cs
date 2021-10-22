@@ -23,6 +23,7 @@ namespace Stride.Rendering
         public static readonly ValueParameterKey<Color4> HaloColor = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
         public static readonly ValueParameterKey<float> Gamma = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> MaxColor = ParameterKeys.NewValue<float>(1.0f);
+        public static readonly ValueParameterKey<float> y = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ObjectParameterKey<Texture> GradientTexture = ParameterKeys.NewObject<Texture>();
     }
 }

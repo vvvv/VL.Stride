@@ -18,7 +18,7 @@ namespace Stride.Rendering
 {
     public static partial class Hatch_FromTexture_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>();
+        public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>(new Color4(0.5f,0.5f,0.5f,1.0f));
         public static readonly ValueParameterKey<float> Brightness = ParameterKeys.NewValue<float>(2.5f);
         public static readonly ValueParameterKey<float> Scale = ParameterKeys.NewValue<float>(.25f);
     }
