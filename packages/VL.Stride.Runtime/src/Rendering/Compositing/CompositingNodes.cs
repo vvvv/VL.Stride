@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using VL.Core;
+using VL.Stride.Rendering.Images;
 
 namespace VL.Stride.Rendering.Compositing
 {
