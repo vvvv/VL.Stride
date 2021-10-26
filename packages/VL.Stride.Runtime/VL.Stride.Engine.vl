@@ -9153,7 +9153,7 @@
     ************************ SetRenderGroup ************************
 
 -->
-        <Node Name="SetRenderGroup" Bounds="360,251" Id="DwYaLd7meh0NzarXfZl5sm" Summary="Finds all entities matching a name." Remarks="Input types can be Entity, Sequence&lt;Entity&gt; or Scene. The input object including all children are considered in the search. The results are cached.">
+        <Node Name="SetRenderGroup" Bounds="360,251" Id="DwYaLd7meh0NzarXfZl5sm" Summary="Sets the render group of the connected entity, optionally including all children." Remarks="This node cannot know if the connected entity tree has changed! If that happens, bang the &quot;Refresh&quot; pin once.">
           <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
             <Choice Kind="ContainerDefinition" Name="Process" />
           </p:NodeReference>
@@ -9402,6 +9402,7 @@
                 <Pin Id="UU2Qkk777IPPIuHWGWbauQ" Name="Input 2" Kind="InputPin" />
                 <Pin Id="EpoGjNQTWaWMTAbuWBz3nU" Name="Output" Kind="StateOutputPin" />
                 <Pin Id="Q0DM4Pg1E4vPBqg6n9D5qz" Name="Input 3" Kind="InputPin" />
+                <Pin Id="T9nFVqjhJCFNtovvUy6d33" Name="Input 4" Kind="InputPin" />
               </Node>
               <ControlPoint Id="U5nciK2JtRjLsZqIY2yD76" Bounds="804,269" />
               <Node Bounds="709,323,57,19" Id="VqiSZH5YrOMPifDMtY1jMX">
@@ -9413,6 +9414,7 @@
                 <Pin Id="Fz7GhxnunGZPtGSlDXBqZf" Name="Result" Kind="OutputPin" />
                 <Pin Id="JwfDB7YjYt8OPo8x1QJloJ" Name="Unchanged" Kind="OutputPin" />
               </Node>
+              <ControlPoint Id="KmihOlRiaSiOtCUPNB6tD0" Bounds="838,330" />
             </Canvas>
             <Patch Id="SVVophsWM1TOy8ha24cRqs" Name="Create" />
             <Patch Id="GoeyWSoWa5CNMaa5UxCMys" Name="Update">
@@ -9428,6 +9430,7 @@
                   <Choice Kind="TypeFlag" Name="Boolean" />
                 </p:TypeAnnotation>
               </Pin>
+              <Pin Id="F7R4MiVyd3GNW0AZCuKBSN" Name="Refresh" Kind="InputPin" Bounds="838,330" Summary="Bang this, if the entity tree has changed" />
             </Patch>
             <ProcessDefinition Id="Dh2uhOVB0oHN8fhMjOrXYR">
               <Fragment Id="ULbsKusoJ1VOt4egyxpRbU" Patch="SVVophsWM1TOy8ha24cRqs" Enabled="true" />
@@ -9462,6 +9465,8 @@
             <Link Id="TQSLrVdZAXKOTnyKApyQWy" Ids="JDyP9lduHK7MOWqUxpzANJ,JMMkgacjEoYLxCNfujsJnJ" />
             <Link Id="BXplV7Dy1zcP7ITnbaOjU5" Ids="U5nciK2JtRjLsZqIY2yD76,URadgJuI9aNOr9ncEV8tZB" />
             <Link Id="Oi161pcnD8NMcOEobi1Wsk" Ids="Fz7GhxnunGZPtGSlDXBqZf,Q0DM4Pg1E4vPBqg6n9D5qz" />
+            <Link Id="RvpssmIs2IfQRR21fyiOSL" Ids="KmihOlRiaSiOtCUPNB6tD0,T9nFVqjhJCFNtovvUy6d33" />
+            <Link Id="Jw4vnU255lTNamXBJNezUc" Ids="F7R4MiVyd3GNW0AZCuKBSN,KmihOlRiaSiOtCUPNB6tD0" IsHidden="true" />
           </Patch>
         </Node>
         <!--
