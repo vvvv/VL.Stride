@@ -64,6 +64,7 @@ namespace VL.Stride.Games
             Window.SetSize(new Int2(WindowManager.PreferredBackBufferWidth, WindowManager.PreferredBackBufferHeight));
 
             Window.Visible = true;
+            
 
             base.Initialize();
         }
