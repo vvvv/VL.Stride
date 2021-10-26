@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class BackgroundSubstraction_TextureFXKeys
+    public static partial class BackgroundSubtraction_TextureFXKeys
     {
         public static readonly ValueParameterKey<float> Threshold = ParameterKeys.NewValue<float>(0.05f);
         public static readonly ValueParameterKey<float> Softness = ParameterKeys.NewValue<float>(0.05f);
