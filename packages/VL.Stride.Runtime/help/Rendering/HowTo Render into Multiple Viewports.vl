@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="IZNEdmWwsqTPmRYNCw6rdu" LanguageVersion="2021.4.0.197" Version="0.128">
-  <NugetDependency Id="UMjQW1rcsHzLbQEEvmlyux" Location="VL.CoreLib" Version="2021.4.0-0195-g3a76268057" />
+<Document xmlns:p="property" Id="IZNEdmWwsqTPmRYNCw6rdu" LanguageVersion="2021.4.0.568" Version="0.128">
+  <NugetDependency Id="UMjQW1rcsHzLbQEEvmlyux" Location="VL.CoreLib" Version="2021.4.0-0568-gba571a190a" />
   <Patch Id="E3ImUTd2YNGObBvmdtwudp">
     <Canvas Id="UxUkpQTPbkoLBVXkPUqMgv" DefaultCategory="Main" CanvasType="FullCategory">
       <!--
@@ -647,6 +647,7 @@
             <Pin Id="BxsGzFyqCmgMSQh70PtOA9" Name="Initial Pitch" Kind="InputPin" />
             <Pin Id="J8DOWOxzWXoOmP5U3eQxbM" Name="Initial Distance" Kind="InputPin" />
             <Pin Id="DHjJ8leVagLNoEfDrpG7mz" Name="Initial Vertical Field Of View" Kind="InputPin" />
+            <Pin Id="MqKuywySi4fOkoIEnIUCmT" Name="Projection" Kind="InputPin" />
             <Pin Id="MTIInMya2HxOLwlAU3rJhO" Name="Near Clip Plane" Kind="InputPin" />
             <Pin Id="NPE78i1cdZWNMvJ4HHbmxI" Name="Far Clip Plane" Kind="InputPin" />
             <Pin Id="S8kElJ7GBXMLotqy2TJp5O" Name="Aspect Ratio" Kind="InputPin" />
@@ -875,31 +876,24 @@
               </Node>
             </Patch>
           </Node>
-          <Node Bounds="759,197,65,19" Id="FoOe0Ema7JdPOyYywGsZjt">
-            <p:NodeReference LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
+          <Node Bounds="759,197,59,19" Id="FoOe0Ema7JdPOyYywGsZjt">
+            <p:NodeReference>
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="OperationCallFlag" Name="GridPoints (2d)" />
+              <Choice Kind="ProcessAppFlag" Name="GridSpread (2D)" />
             </p:NodeReference>
             <Pin Id="D7ZK3pGx8kqPuC5JWDHuZh" Name="Center" Kind="InputPin" />
-            <Pin Id="LZ03BOgByfMMo4iEWz9PAR" Name="Size" Kind="InputPin" />
-            <Pin Id="HeMKqXsHiXDPIMtFzUjnq2" Name="Centered" Kind="InputPin" />
-            <Pin Id="Vhh3hJbbMO2QBjEXBkmYYP" Name="Resolution" Kind="InputPin" />
+            <Pin Id="NY6iv0RCP0yL6wVCqQfFGU" Name="Width" Kind="InputPin" />
+            <Pin Id="V47KsXSWlEyMOyhtog83XT" Name="Alignment" Kind="InputPin" DefaultValue="Block" />
+            <Pin Id="LGFh9GOj0XYLDOfurVY2fS" Name="Phase" Kind="InputPin" />
+            <Pin Id="O2p5VlGkjqyP1m1ESAhdr6" Name="Count" Kind="InputPin" />
             <Pin Id="IJKZON3iOuwMActQ8UUtFx" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="D1YNeZAb1F6LnOf52SSoHw" Comment="Resolution" Bounds="856,151,35,28" ShowValueBox="true" isIOBox="true" Value="2, 2">
-            <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="TypeFlag" Name="Vector2" />
-            </p:TypeAnnotation>
-            <p:ValueBoxSettings>
-              <p:stepsize p:Type="Single">1</p:stepsize>
-            </p:ValueBoxSettings>
-          </Pad>
           <Pad Id="AKK36ACiNAIL0R1Fzu1F6Q" Comment="" Bounds="915,361,51,28" ShowValueBox="true" isIOBox="true" Value="100, 100">
             <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Vector2" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="ElGj1l6QuuxMT05i7vcSKr" Comment="Size" Bounds="786,131,35,28" ShowValueBox="true" isIOBox="true" Value="4, -4">
+          <Pad Id="ElGj1l6QuuxMT05i7vcSKr" Comment="Size" Bounds="781,139,35,28" ShowValueBox="true" isIOBox="true" Value="4, -4">
             <p:TypeAnnotation LastCategoryFullName="2D" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Vector2" />
             </p:TypeAnnotation>
@@ -920,6 +914,7 @@
                 <Choice Kind="TypeFlag" Name="Float32" />
               </p:TypeAnnotation>
             </Pin>
+            <Pin Id="Ne7ZPznysHgPBDkLYb0B4O" Name="Alignment" Kind="InputPin" />
             <Pin Id="HcCflj3zKxQM82kFTv0Ima" Name="Phase" Kind="InputPin" />
             <Pin Id="L34YhqMSWPYOQeGnVBRh55" Name="Count" Kind="InputPin" />
             <Pin Id="IbkOsSwff1xLZBQxyQ40Jl" Name="Output" Kind="OutputPin" />
@@ -932,6 +927,8 @@
             <Pin Id="SLjRPLcpcnPQUI5FYzYdIH" Name="Ambient Occlusion" Kind="InputPin" />
             <Pin Id="FuPf5SSQ6Z1L2GkiiYHQBK" Name="Local Reflections" Kind="InputPin" />
             <Pin Id="KFIp4ikyjskQMQd3pw1LVG" Name="Depth Of Field" Kind="InputPin" />
+            <Pin Id="HuYgxEV1NK7NPQRBXvCHMx" Name="Fog" Kind="InputPin" />
+            <Pin Id="JErF1o7EOHTPBd2QNDJZdK" Name="Outline" Kind="InputPin" />
             <Pin Id="BFqveJeoTCEPOPrCXGTCz4" Name="Bright Filter" Kind="InputPin" />
             <Pin Id="JIa2OUAIVuJO1gO4iBTGpA" Name="Bloom" Kind="InputPin" />
             <Pin Id="EVF6nNcTlenNyhnNgp8hrl" Name="Light Streak" Kind="InputPin" />
@@ -1207,6 +1204,11 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
+          <Pad Id="RwA8BbPb4OQMJvaSyHnrgB" Comment="Count" Bounds="841,165,35,28" ShowValueBox="true" isIOBox="true" Value="2, 2">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="Int2" />
+            </p:TypeAnnotation>
+          </Pad>
         </Canvas>
         <Patch Id="E2tTERO72lSL6f0H5UhaiY" Name="Create" />
         <Patch Id="ICV52uyFDtcQM9Gi4jZAgC" Name="Update" />
@@ -1249,10 +1251,8 @@
         <Link Id="UOrA90T1I9fQKsT9HZotMp" Ids="Ud5D4bT0BrkLAg97ocgneh,RNhDGxDaUwZMeaDkKKCeCe" />
         <Link Id="MGrUyl4WPu1LpTKRsimKiM" Ids="ANQ4mfReNRyP7GSk2fWUSg,LsEHu7XhNEQNXm2cGD6NgW" />
         <Link Id="SwnqXAr1y8wMiKErCgB3kg" Ids="TEqvRaAu1BnOcqo8fifTqW,KbM0hNyJZzSNvM4fEWL6Fy" />
-        <Link Id="OyH32XGYTZvLuRB6Om2bns" Ids="D1YNeZAb1F6LnOf52SSoHw,Vhh3hJbbMO2QBjEXBkmYYP" />
         <Link Id="AcqyCYIvtxoLdggOJLYCdQ" Ids="GCLpljce1FIOOTpqEsXjNR,DYJ4q4tA5VANeMy0qqxpFn" />
         <Link Id="IFbkid60vXTMKRAFJjsDTK" Ids="AKK36ACiNAIL0R1Fzu1F6Q,BijARjkDHhpLxTturb5h3C" />
-        <Link Id="QxpXv7uyPoqPT9N4TNa03U" Ids="ElGj1l6QuuxMT05i7vcSKr,LZ03BOgByfMMo4iEWz9PAR" />
         <Link Id="I8vPkWu3RZVQYBPwQAZUEG" Ids="FpXNcNH52QENc9OUugoNih,D7ZK3pGx8kqPuC5JWDHuZh" />
         <Link Id="SGrkiMrcuf8LFhOqrcPUZa" Ids="Jn57GIJso3kNTJrJFvOfin,LwKgc5btA6aNig7JVrdHMK" />
         <Link Id="DlSp1dCRBjUNeIGycB3RlG" Ids="P3uiZayNbIuPZCQfwNj58u,MAGTimvtq5CMiePVgpxzlC" />
@@ -1288,12 +1288,14 @@
         <Link Id="FIbha4D9VPJNa0hvkLV0Hc" Ids="BSDLi8R8WdyPRRm3TeFXui,Jwyl9LSWJRzL9VBuBChPMk" />
         <Link Id="URLp2vePpVCNccsVlSSCwL" Ids="Ud6GPtkvUxwQOfnItZjtcN,Ut5Tt8woGAqQVQ8VO45v4j" />
         <Link Id="CPaJ8pi2ddFMoTbgTpMyWV" Ids="HUSauVgvH87NlFTOyxJZcL,C8vWif9oAt4Nx1wspwU1DM" />
+        <Link Id="MbvaYpoVEnQLD95fyj6Qgp" Ids="RwA8BbPb4OQMJvaSyHnrgB,O2p5VlGkjqyP1m1ESAhdr6" />
+        <Link Id="IsgMyhiUq0rL9OIyx5HBKO" Ids="ElGj1l6QuuxMT05i7vcSKr,NY6iv0RCP0yL6wVCqQfFGU" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Dy0zFD8uTmYMzk069ST9sM" Location="VL.CoreLib" Version="2021.4.0-0195-g3a76268057" />
-  <NugetDependency Id="IS68NBjN33xNudq4Meb8FU" Location="VL.EditingFramework" Version="2021.4.0-0195-g3a76268057" />
-  <NugetDependency Id="Ou7SAuGozM3O4nnvveWm0D" Location="VL.Stride" Version="2021.4.0-0197-gf0445313f5" />
-  <NugetDependency Id="Dq23h2NxuV2QCTgBJdG1ct" Location="VL.Skia" Version="2021.4.0-0195-g3a76268057" />
+  <NugetDependency Id="Dy0zFD8uTmYMzk069ST9sM" Location="VL.CoreLib" Version="2021.4.0-0568-gba571a190a" />
+  <NugetDependency Id="IS68NBjN33xNudq4Meb8FU" Location="VL.EditingFramework" Version="2021.4.0-0568-gba571a190a" />
+  <NugetDependency Id="Ou7SAuGozM3O4nnvveWm0D" Location="VL.Stride" Version="2021.4.0-0568-gba571a190a" />
+  <NugetDependency Id="Dq23h2NxuV2QCTgBJdG1ct" Location="VL.Skia" Version="2021.4.0-0568-gba571a190a" />
   <PlatformDependency Id="QRa2n9UiYrrOIMGvvseOZT" Location="Stride.Graphics.dll" />
 </Document>
