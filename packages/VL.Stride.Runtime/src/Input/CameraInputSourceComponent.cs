@@ -14,12 +14,21 @@ namespace VL.Stride.Input
     [DefaultEntityComponentProcessor(typeof(InputSourceProcessor), ExecutionMode = ExecutionMode.All)]
     public class CameraInputSourceComponent : ActivableEntityComponent
     {
-        public IInputSource InputSource { get; set; }
+        IInputSource inputSource;
+
+        public IInputSource InputSource
+        { 
+            get => Enabled ? inputSource : null;
+            set => inputSource = value;
+        }
     }
 
     public class CameraInputSourceSceneRenderer : SceneRendererBase
     {
+        public IInputSource InputSource { get; set; }
+
         CameraInputSourceComponent FCameraInputSourceComponent;
+        
         public CameraInputSourceComponent CameraInputSourceComponent
         {
             get => FCameraInputSourceComponent;
@@ -36,14 +45,11 @@ namespace VL.Stride.Input
 
         protected override void DrawCore(RenderContext context, RenderDrawContext drawContext)
         {
-            var inputSource = context.GetWindowInputSource();
+            var inputSource = InputSource ?? context.GetWindowInputSource();
 
-            if (inputSource != null && CameraInputSourceComponent != null)
+            if (CameraInputSourceComponent != null)
             {
-                if (CameraInputSourceComponent.Enabled)
-                    CameraInputSourceComponent.InputSource = inputSource;
-                else
-                    CameraInputSourceComponent.InputSource = null;
+                CameraInputSourceComponent.InputSource = inputSource;
             }
         }
     }

@@ -127,9 +127,10 @@ namespace VL.Stride.Engine
                 .AddOutput(nameof(CameraInputSourceComponent.InputSource), c => c.InputSource);
 
             yield return factory.NewNode<CameraInputSourceSceneRenderer>(name: nameof(CameraInputSourceSceneRenderer), category: inputCategory)
-                .AddCachedInput(nameof(CameraInputSourceSceneRenderer.CameraInputSourceComponent), x => x.CameraInputSourceComponent, (x, v) => x.CameraInputSourceComponent = v);
+                .AddCachedInput(nameof(CameraInputSourceSceneRenderer.CameraInputSourceComponent), x => x.CameraInputSourceComponent, (x, v) => x.CameraInputSourceComponent = v)
+                .AddCachedInput(nameof(CameraInputSourceSceneRenderer.InputSource), x => x.InputSource, (x, v) => x.InputSource = v);
 
-            
+
             // Patchable script
             yield return factory.NewComponentNode<InterfaceSyncScript>(strideCategoryAdvanced, name: "PatchScriptComponent")
                 .AddCachedInput(nameof(InterfaceSyncScript.PatchScript), x => x.PatchScript, (x, v) => x.PatchScript = v)
