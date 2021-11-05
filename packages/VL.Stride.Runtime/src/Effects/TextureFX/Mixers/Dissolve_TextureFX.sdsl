@@ -6,13 +6,11 @@
 [Summary("Blend between two textures using a rough pixely effect")]
 shader Dissolve_TextureFX : MixerBase
 {
-    float RandomSeed = 0;
-
     float4 Mix(float4 tex0col, float4 tex1col, float fader)
     {
         float2 uv = streams.TexCoord;
 
-        float noise = dot(Texture2.SampleLevel(Sampler2, uv + RandomSeed, 0), 0.33);
+        float noise = dot(Texture2.SampleLevel(Sampler2, uv, 0), 0.33);
 
         float4 col;
 

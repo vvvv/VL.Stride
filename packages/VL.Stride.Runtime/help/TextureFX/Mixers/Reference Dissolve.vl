@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="Hf32SdJhAs1OblerMLg1KE" LanguageVersion="2021.4.0.595" Version="0.128">
+<Document xmlns:p="property" Id="Hf32SdJhAs1OblerMLg1KE" LanguageVersion="2021.4.0.602" Version="0.128">
   <Patch Id="CqEjel6vUB0Ls12PE4UVpj">
     <Canvas Id="Ay0GUWPdCD6MmAsWXwzj9S" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -89,7 +89,6 @@
             <Pin Id="RdbvaFwzCByO5ik8ZAbf6e" Name="Input" Kind="InputPin" />
             <Pin Id="AnDZmRPJcyuP7cDkBRij6w" Name="Input 2" Kind="InputPin" />
             <Pin Id="A9h7y8qMAOpMt5mAsG8IPm" Name="Input 3" Kind="InputPin" />
-            <Pin Id="SyKbbJivKBZN8TnWxG4MtB" Name="Random Seed" Kind="InputPin" />
             <Pin Id="I7IV5aMb0MvLjJyf6XpFCG" Name="Fader" Kind="InputPin" />
             <Pin Id="FqesMSmhgLEL7s9bzIh760" Name="Apply" Kind="InputPin" />
             <Pin Id="BRtC7vwZlbKOh3nqyKSMN9" Name="Output" Kind="OutputPin" />
@@ -126,7 +125,7 @@
             <Pin Id="VoLplL2a8aZNm5i64vjxy6" Name="Client Bounds" Kind="OutputPin" />
             <Pin Id="LQIfawOfdMLLJUzrrpYCeF" Name="Input Source" Kind="OutputPin" />
           </Node>
-          <Pad Id="CXn7po2wv5eLpIm9eAmx4G" Comment="Fader" Bounds="466,336,114,25" ShowValueBox="true" isIOBox="true" Value="0.52">
+          <Pad Id="CXn7po2wv5eLpIm9eAmx4G" Comment="Fader" Bounds="466,336,114,25" ShowValueBox="true" isIOBox="true" Value="0.4900003">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
               <Choice Kind="TypeFlag" Name="Float32" />
             </p:TypeAnnotation>
@@ -138,11 +137,20 @@
               <p:sliderdirection p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.SliderDirectionEnum">Horizontal</p:sliderdirection>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="GMDwBQqlWJFMDQ7cm6vJ8R" Comment="Random Seed" Bounds="446,304,35,15" ShowValueBox="true" isIOBox="true" Value="0">
-            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="TypeFlag" Name="Float32" />
-            </p:TypeAnnotation>
-          </Pad>
+          <Node Bounds="465,247,125,19" Id="KQLybaJjbtCOZAdwdShOQr">
+            <p:NodeReference LastCategoryFullName="Stride.Textures.Source" LastSymbolSource="VL.Stride.Rendering.EffectShaderNodes">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessNode" Name="BubbleNoise" />
+            </p:NodeReference>
+            <Pin Id="LhZQvBFPvEdLydRronPL37" Name="Time" Kind="InputPin" />
+            <Pin Id="PThSPEOG7vON0Jdz3cQyFa" Name="Frequency" Kind="InputPin" />
+            <Pin Id="QGQrBKeKBuLMlr7rZgWDzI" Name="Contrast" Kind="InputPin" />
+            <Pin Id="AVYAKrN5CIpMoJve2zytwf" Name="Background Color" Kind="InputPin" />
+            <Pin Id="K5no3AFQnIqPCoP7KMwoiG" Name="Bubble Color" Kind="InputPin" />
+            <Pin Id="MLtFED46htRMFRTnE1CUDM" Name="Output Size" Kind="InputPin" />
+            <Pin Id="S42njbht9YALDsg3COUEOS" Name="Enabled" Kind="InputPin" />
+            <Pin Id="GR3Qrwomy7fOMCx25JWGbm" Name="Output" Kind="OutputPin" />
+          </Node>
         </Canvas>
         <Patch Id="EeYifYoEpnRNyJtIx9QDx7" Name="Create" />
         <Patch Id="TvSP2TbZlZlPnECnVS9Z9O" Name="Update" />
@@ -155,13 +163,12 @@
         <Link Id="RJ24lDnUVNeOnTPM6tyGOi" Ids="N3A7hOf99ugQQneVifp72U,RdbvaFwzCByO5ik8ZAbf6e" />
         <Link Id="HKXbvQdBg0iM0fBgLeRxZI" Ids="SoEmRNNTsDAMXIMzF32sXK,AnDZmRPJcyuP7cDkBRij6w" />
         <Link Id="MTiK3z2d9GBO63EJJTPKYy" Ids="BRtC7vwZlbKOh3nqyKSMN9,FakRHEoiFMiPGRPBNZM3S4" />
-        <Link Id="RkDPt4EgiThMAuAmcGQBU3" Ids="GMDwBQqlWJFMDQ7cm6vJ8R,SyKbbJivKBZN8TnWxG4MtB" />
         <Link Id="G1FOsmeBQUUPnr91n14uxr" Ids="CXn7po2wv5eLpIm9eAmx4G,I7IV5aMb0MvLjJyf6XpFCG" />
-        <Link Id="QjzWAX9P7gdLIbbGsYDun6" Ids="SoEmRNNTsDAMXIMzF32sXK,A9h7y8qMAOpMt5mAsG8IPm" />
+        <Link Id="HukQKZ3rxMgLkscczlYuIg" Ids="GR3Qrwomy7fOMCx25JWGbm,A9h7y8qMAOpMt5mAsG8IPm" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="UpzMcgYcSeUMeMYKGJjyjj" Location="VL.Stride" Version="2021.4.0-0595-g5de64a458f" />
-  <NugetDependency Id="DgmOWrKQ8ZHMICtHFERV9W" Location="VL.CoreLib" Version="2021.4.0-0583-gc3c0b6599c" />
-  <NugetDependency Id="QLVVHTDx4QBLtIECtRU3m9" Location="VL.Skia" Version="2021.4.0-0583-gc3c0b6599c" />
+  <NugetDependency Id="UpzMcgYcSeUMeMYKGJjyjj" Location="VL.Stride" Version="2021.4.0-0602-g8ed5e0ce29" />
+  <NugetDependency Id="DgmOWrKQ8ZHMICtHFERV9W" Location="VL.CoreLib" Version="2021.4.0-0602-g8ed5e0ce29" />
+  <NugetDependency Id="QLVVHTDx4QBLtIECtRU3m9" Location="VL.Skia" Version="2021.4.0-0602-g8ed5e0ce29" />
 </Document>
