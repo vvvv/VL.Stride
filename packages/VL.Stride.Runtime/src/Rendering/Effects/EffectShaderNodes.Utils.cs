@@ -30,6 +30,8 @@ using VL.Stride.Engine;
 using VL.Stride.Rendering.ComputeEffect;
 using VL.Stride.Shaders;
 using VL.Stride.Shaders.ShaderFX;
+using Microsoft.VisualStudio.Threading;
+using Stride.Core.Diagnostics;
 
 namespace VL.Stride.Rendering
 {
@@ -65,36 +67,16 @@ namespace VL.Stride.Rendering
         static (DynamicEffectInstance effect, ImmutableArray<Message> messages) CreateEffectInstance(string effectName, ShaderMetadata shaderMetadata, IServiceRegistry serviceRegistry, GraphicsDevice graphicsDevice, ParameterCollection parameters = null, string baseShaderName = null)
         {
             var messages = ImmutableArray<Message>.Empty;
-            if (baseShaderName is null)
-                baseShaderName = effectName;
 
             var effect = new DynamicEffectInstance(effectName, parameters);
-            if (parameters is null)
-                parameters = effect.Parameters;
-
             try
             {
                 effect.Initialize(serviceRegistry);
                 effect.UpdateEffect(graphicsDevice);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
-                try
-                {
-                    // Compile manually to get detailed errors
-                    var compilerParameters = new CompilerParameters() { EffectParameters = effect.EffectCompilerParameters };
-                    foreach (var effectParameterKey in parameters.ParameterKeyInfos)
-                        if (effectParameterKey.Key.Type == ParameterKeyType.Permutation)
-                            compilerParameters.SetObject(effectParameterKey.Key, parameters.ObjectValues[effectParameterKey.BindingSlot]);
-                    var compilerResult = serviceRegistry.GetService<EffectSystem>().Compiler.Compile(
-                        shaderSource: GetShaderSource(effectName),
-                        compilerParameters: compilerParameters);
-                    messages = compilerResult.Messages.Select(m => m.ToMessage()).ToImmutableArray();
-                }
-                catch (Exception e)
-                {
-                    messages = messages.Add(new Message(MessageType.Error, $"Shader compiler crashed: {e}"));
-                }
+                messages = messages.Add(new Message(MessageType.Error, e.Message));
             }
 
             return (effect, messages);
