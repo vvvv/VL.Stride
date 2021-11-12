@@ -57,7 +57,7 @@ namespace VL.Stride.Rendering
         {
             Shader = shader;
             ShaderClass = Shader.GetFirstClassDecl();
-            Variables = ShaderClass.Members.OfType<Variable>().Where(v => !v.Qualifiers.Contains(StrideStorageQualifier.Stream)).ToList(); //should include parent shaders?
+            Variables = ShaderClass?.Members.OfType<Variable>().Where(v => !v.Qualifiers.Contains(StrideStorageQualifier.Stream)).ToList() ?? new List<Variable>(); //should include parent shaders?
             VariablesByName = Variables.ToDictionary(v => v.Name.Text);
             compositions = Variables
                 .Select((v, i) => (v, i))

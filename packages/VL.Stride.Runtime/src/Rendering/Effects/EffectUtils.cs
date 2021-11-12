@@ -236,7 +236,7 @@ namespace VL.Stride.Rendering
                         try
                         {
                             // base shaders
-                            var baseShaders = localResult.ShaderClass.BaseClasses;
+                            var baseShaders = localResult.ShaderClass?.BaseClasses ?? Enumerable.Empty<TypeName>();
                             foreach (var baseClass in baseShaders)
                             {
                                 var baseShaderName = baseClass.Name.Text;
