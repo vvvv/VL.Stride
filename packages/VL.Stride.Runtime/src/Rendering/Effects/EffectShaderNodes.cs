@@ -14,15 +14,17 @@ using System.Reflection;
 using VL.Core;
 using VL.Model;
 
+using ServiceRegistry = global::Stride.Core.ServiceRegistry;
+
 namespace VL.Stride.Rendering
 {
     static partial class EffectShaderNodes
     {
-        public static NodeBuilding.FactoryImpl Init(IVLNodeDescriptionFactory factory)
+        public static NodeBuilding.FactoryImpl Init(ServiceRegistry serviceRegistry, IVLNodeDescriptionFactory factory)
         {
             ShaderMetadata.RegisterAdditionalShaderAttributes();
 
-            var nodes = GetNodeDescriptions(factory).ToImmutableArray();
+            var nodes = GetNodeDescriptions(serviceRegistry, factory).ToImmutableArray();
             return NodeBuilding.NewFactoryImpl(nodes, forPath: path => factory =>
             {
                 // In case "shaders" directory gets added or deleted invalidate the whole factory
@@ -35,7 +37,7 @@ namespace VL.Stride.Rendering
                 {
                     try
                     {
-                        var nodes = GetNodeDescriptions(factory, path, shadersPath);
+                        var nodes = GetNodeDescriptions(serviceRegistry, factory, path, shadersPath);
                         // Additionaly watch out for new/deleted/renamed files
                         invalidated = invalidated.Merge(NodeBuilding.WatchDir(shadersPath)
                             .Where(e => IsNewOrDeletedShaderFile(e)));
@@ -68,9 +70,8 @@ namespace VL.Stride.Rendering
             });
         }
 
-        static IEnumerable<IVLNodeDescription> GetNodeDescriptions(IVLNodeDescriptionFactory factory, string path = default, string shadersPath = default)
+        static IEnumerable<IVLNodeDescription> GetNodeDescriptions(ServiceRegistry serviceRegistry, IVLNodeDescriptionFactory factory, string path = default, string shadersPath = default)
         {
-            var serviceRegistry = SharedServices.GetRegistry();
             var graphicsDeviceService = serviceRegistry.GetService<IGraphicsDeviceService>();
             var graphicsDevice = graphicsDeviceService.GraphicsDevice;
             var contentManager = serviceRegistry.GetService<ContentManager>();
