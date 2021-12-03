@@ -54,7 +54,14 @@ namespace VL.Stride.Rendering
                                     foreach (var f in Directory.EnumerateFiles(shadersPath))
                                     {
                                         if (string.Equals(Path.GetExtension(f), ".sdsl", StringComparison.OrdinalIgnoreCase) || string.Equals(Path.GetExtension(f), ".sdfx", StringComparison.OrdinalIgnoreCase))
-                                            File.Copy(f, Path.Combine(assetsFolder, Path.GetFileName(f)), overwrite: true);
+                                        {
+                                            var fileName = Path.GetFileName(f);
+                                            var shaderExportedKey = (typeof(EffectShaderNodes), fileName);
+                                            if (c.SolutionWideStorage.TryAdd(shaderExportedKey, shadersPath))
+                                                File.Copy(f, Path.Combine(assetsFolder, fileName), overwrite: true);
+                                            else if (c.SolutionWideStorage.TryGetValue(shaderExportedKey, out var x) && x is string existingPath)
+                                                throw new InvalidOperationException($"The shader {fileName} ({shadersPath}) has already been copied from a different location ({existingPath}). Make sure shader names are unique.)");
+                                        }
                                     }
                                 }
                             });
