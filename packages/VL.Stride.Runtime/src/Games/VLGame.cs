@@ -174,10 +174,7 @@ namespace VL.Stride.Games
 
             NodeFactoryRegistry = nodeFactoryRegistry;
 
-            // TODO: Newer vvvv versions have this exposed
-            var pathsField = typeof(NodeFactoryRegistry).GetField("paths", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            var paths = (HashSet<string>)pathsField.GetValue(nodeFactoryRegistry);
-            foreach (var path in paths)
+            foreach (var path in nodeFactoryRegistry.Paths)
                 if (Directory.Exists(Path.Combine(path, "shaders")))
                     EffectSystem.EnsurePathIsVisible(path);
         }
