@@ -39,7 +39,7 @@ namespace VL.Stride.Windows
             var renderTarget = commandList.RenderTarget;
 
             // Fetch the skia render context (uses ANGLE -> DirectX11)
-            var interopContext = GetInteropContext(context.GraphicsDevice, (int)renderTarget.MultisampleCount);
+            var interopContext = StrideSkiaInterop.GetInteropContext(context.GraphicsDevice, (int)renderTarget.MultisampleCount);
             var skiaRenderContext = interopContext.SkiaRenderContext;
 
             var eglContext = skiaRenderContext.EglContext;
@@ -54,7 +54,7 @@ namespace VL.Stride.Windows
                 inputSubscription.Disposable = SubscribeToInputSource(inputSource, context, canvas: null, skiaRenderContext.SkiaContext);
             }
 
-            using (interopContext.Scoped(commandList))
+            using (interopContext.Switch(commandList))
             {
                 var nativeTempRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
                 using var eglSurface = eglContext.CreateSurfaceFromClientBuffer(nativeTempRenderTarget.NativePointer);
@@ -73,7 +73,8 @@ namespace VL.Stride.Windows
                 canvas.ClipRect(SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height));
                 viewportLayer.Update(Layer, SKRect.Create(viewport.X, viewport.Y, viewport.Width, viewport.Height), CommonSpace.PixelTopLeft, out var layer);
 
-                layer.Render(CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, skiaRenderContext.SkiaContext));
+                var callerInfo = CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, skiaRenderContext.SkiaContext, context);
+                layer.Render(callerInfo);
 
                 // Flush
                 surface.Flush();
@@ -81,6 +82,8 @@ namespace VL.Stride.Windows
                 // Ensures surface gets released
                 eglContext.MakeCurrent(default);
             }
+
+
         }
 
         SKSurface CreateSkSurface(GRContext context, Texture texture, bool isLinearColorspace)
@@ -158,81 +161,5 @@ namespace VL.Stride.Windows
         //    Gles.glFlush();
         //}
         //int i = 0;
-
-        // Works, also simple Gles drawing commands work but SkSurface.Flush causes device lost :(
-        static InteropContext GetInteropContext(GraphicsDevice graphicsDevice, int msaaSamples)
-        {
-            return graphicsDevice.GetOrCreateSharedData($"VL.Stride.Skia.InteropContext{msaaSamples}", gd =>
-            {
-                if (SharpDXInterop.GetNativeDevice(gd) is Device device)
-                {
-                    // https://github.com/google/angle/blob/master/src/tests/egl_tests/EGLDeviceTest.cpp#L272
-                    var angleDevice = EglDevice.FromD3D11(device.NativePointer);
-                    var d1 = device.QueryInterface<Device1>();
-                    var contextState = d1.CreateDeviceContextState<Device1>(
-                        CreateDeviceContextStateFlags.None,
-                        new[] { device.FeatureLevel },
-                        out _);
-
-                    return new InteropContext(SkiaRenderContext.New(angleDevice, msaaSamples), d1.ImmediateContext1, contextState);
-                }
-                return null;
-            });
-        }
-
-        sealed class InteropContext : IDisposable
-        {
-            public readonly SkiaRenderContext SkiaRenderContext;
-            public readonly DeviceContext1 DeviceContext;
-            public readonly DeviceContextState ContextState;
-
-            public InteropContext(SkiaRenderContext skiaRenderContext, DeviceContext1 deviceContext, DeviceContextState contextState)
-            {
-                SkiaRenderContext = skiaRenderContext;
-                DeviceContext = deviceContext;
-                ContextState = contextState;
-            }
-
-            public ScopedDeviceContext Scoped(CommandList commandList)
-            {
-                return new ScopedDeviceContext(commandList, DeviceContext, ContextState);
-            }
-
-            public void Dispose()
-            {
-                ContextState.Dispose();
-                SkiaRenderContext.Dispose();
-            }
-        }
-
-        readonly struct ScopedDeviceContext : IDisposable
-        {
-            readonly CommandList commandList;
-            readonly DeviceContext1 deviceContext;
-            readonly DeviceContextState oldContextState;
-
-            public ScopedDeviceContext(CommandList commandList, DeviceContext1 deviceContext, DeviceContextState contextState)
-            {
-                this.commandList = commandList;
-                this.deviceContext = deviceContext;
-                deviceContext.SwapDeviceContextState(contextState, out oldContextState);
-            }
-
-            public void Dispose()
-            {
-                // Ensure no references are held to the render targets (would prevent resize)
-                var currentRenderTarget = commandList.RenderTarget;
-                var currentDepthStencil = commandList.DepthStencilBuffer;
-                commandList.UnsetRenderTargets();
-                deviceContext.SwapDeviceContextState(oldContextState, out _);
-                commandList.SetRenderTarget(currentDepthStencil, currentRenderTarget);
-
-                // Doesn't work - why?
-                //var renderTargets = deviceContext.OutputMerger.GetRenderTargets(8, out var depthStencilView);
-                //deviceContext.OutputMerger.ResetTargets();
-                //deviceContext.SwapDeviceContextState(oldContextState, out _);
-                //deviceContext.OutputMerger.SetTargets(depthStencilView, renderTargets);
-            }
-        }
     }
 }

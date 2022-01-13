@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="Qi7h0S2HFoXQSgcrQLzJIk" LanguageVersion="2021.4.0.470" Version="0.128">
-  <NugetDependency Id="SJgSFgD1CesN5MC8rsaNSL" Location="VL.CoreLib" Version="2021.4.0-0464-gc35af7fcc2" />
+<Document xmlns:p="property" Id="Qi7h0S2HFoXQSgcrQLzJIk" LanguageVersion="2021.4.5.753" Version="0.128">
+  <NugetDependency Id="SJgSFgD1CesN5MC8rsaNSL" Location="VL.CoreLib" Version="2021.4.4-0740-gc4444f5262" />
   <Patch Id="M21FntPMZoCL02r89zSLlQ">
     <Canvas Id="D192YDr7hmaNzHwM0fWMJw" DefaultCategory="Stride" CanvasType="FullCategory">
       <Canvas Id="GVFuIRZeK4RPLiChBZp5z3" Name="Rendering" Position="502,257">
@@ -397,6 +397,61 @@
             </Patch>
           </Patch>
         </Node>
+        <!--
+
+    ************************ StrideLayer ************************
+
+-->
+        <Node Name="StrideLayer" Bounds="617,244" Id="BlRypQn6t8yPUajjvbgc8l">
+          <p:NodeReference LastCategoryFullName="Primitive" LastSymbolSource="builtin">
+            <Choice Kind="ContainerDefinition" Name="Process" />
+          </p:NodeReference>
+          <Patch Id="RHVnKUlmPeuM81Xcg74Gwa">
+            <Canvas Id="TWCaOkYo6EsPTnK0KsXsmO" CanvasType="Group">
+              <Node Bounds="448,334,63,26" Id="Rii7TzXUpQWOLUgoz5Zs1x">
+                <p:NodeReference LastCategoryFullName="VL.Stride.Windows.StrideLayer" LastSymbolSource="VL.Stride.Windows.dll">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <Choice Kind="OperationCallFlag" Name="Create" />
+                  <CategoryReference Kind="AssemblyCategory" Name="StrideLayer" NeedsToBeDirectParent="true" />
+                </p:NodeReference>
+                <Pin Id="LLC14m85YE7NlE7HsXFo0V" Name="Output" Kind="StateOutputPin" />
+              </Node>
+              <Node Bounds="446,445,63,26" Id="FY8RxLPzlk8NWTW7Lyxd4r">
+                <p:NodeReference LastCategoryFullName="VL.Stride.Windows.StrideLayer" LastSymbolSource="VL.Stride.Windows.dll">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <CategoryReference Kind="AssemblyCategory" Name="StrideLayer" />
+                  <Choice Kind="OperationCallFlag" Name="SetInput" />
+                </p:NodeReference>
+                <Pin Id="Vp13wA05dL0PB8Shz4rmzx" Name="Input" Kind="StateInputPin" />
+                <Pin Id="LcJMEq2wB0LQCqWFA2EhDY" Name="Value" Kind="InputPin" />
+                <Pin Id="Pd962OmaPwjNCnX9vtUX0u" Name="Output" Kind="StateOutputPin" />
+              </Node>
+              <Pad Id="Pxml6IcMAL9NnJc95bfjFf" SlotId="Lp6gkaPgrtIQGVTsLo1XN2" Bounds="450,386" />
+              <ControlPoint Id="A4AkRj4m5dwQRC4nMNcwCf" Bounds="448,543" />
+              <ControlPoint Id="GJPekp6Zyb5PkOA0ueCEYp" Bounds="553,356" />
+            </Canvas>
+            <Patch Id="UmOppwuKG9YNyTttGCzQJj" Name="Create" ParticipatingElements="Rii7TzXUpQWOLUgoz5Zs1x" />
+            <ProcessDefinition Id="GpppC6BNkukQVOMGXydwwL">
+              <Fragment Id="EjVR9GChIQ2P8yv2xXt0i1" Patch="UmOppwuKG9YNyTttGCzQJj" Enabled="true" />
+              <Fragment Id="UzCm2ExL5TPQEVZden8LVU" Patch="FkRh0lmGzF3PhqUpwL6TyH" Enabled="true" />
+            </ProcessDefinition>
+            <Slot Id="Lp6gkaPgrtIQGVTsLo1XN2" Name="Instance" />
+            <Link Id="Q42f4NCTPbePNDPN2jGJS7" Ids="LLC14m85YE7NlE7HsXFo0V,Pxml6IcMAL9NnJc95bfjFf" />
+            <Link Id="RqZZ2hUsBznQJ9hjel5PRA" Ids="Pxml6IcMAL9NnJc95bfjFf,Vp13wA05dL0PB8Shz4rmzx" />
+            <Link Id="OMm6C8XQBeJPx1HXWmsg4n" Ids="A4AkRj4m5dwQRC4nMNcwCf,Dhzx2mIAhERPKT8g4fKRtZ" IsHidden="true" />
+            <Link Id="Q1dumcau8uHLyRDLrzFt6l" Ids="LKBRR89Ivb4LBa2BaJwvn5,GJPekp6Zyb5PkOA0ueCEYp" IsHidden="true" />
+            <Patch Id="FkRh0lmGzF3PhqUpwL6TyH" Name="Update">
+              <Pin Id="LKBRR89Ivb4LBa2BaJwvn5" Name="Input" Kind="InputPin" />
+              <Pin Id="Dhzx2mIAhERPKT8g4fKRtZ" Name="Output" Kind="OutputPin">
+                <p:TypeAnnotation>
+                  <Choice Kind="TypeFlag" Name="Layer" />
+                </p:TypeAnnotation>
+              </Pin>
+            </Patch>
+            <Link Id="JvSX6Md3OzfPeBQ02uQPYS" Ids="Pd962OmaPwjNCnX9vtUX0u,A4AkRj4m5dwQRC4nMNcwCf" />
+            <Link Id="OnGGpsnr93wPwv4ojJwZWe" Ids="GJPekp6Zyb5PkOA0ueCEYp,LcJMEq2wB0LQCqWFA2EhDY" />
+          </Patch>
+        </Node>
       </Canvas>
     </Canvas>
     <!--
@@ -420,11 +475,11 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="Atmu2olrIbgN6W8C10FCUv" Location="VL.Stride.Runtime" Version="2021.4.0-0470-ga80df71930" />
+  <NugetDependency Id="Atmu2olrIbgN6W8C10FCUv" Location="VL.Stride.Runtime" Version="2021.4.5-0753-g0722046fa9" />
   <PlatformDependency Id="OYXKghOSTHeP6lP3xiPFHx" Location="SharpDX.Direct3D11.dll" />
   <PlatformDependency Id="MrEmya3NafTPYyBdNEw69S" Location="Stride.Graphics.dll" />
   <PlatformDependency Id="FsB8b3wL45VLEHptTDEWXQ" Location="./src/bin/Debug/net472/VL.Stride.Windows.dll" />
   <DocumentDependency Id="LhpQXXxgPVGN8EgidqtOBc" Location="./VL.Stride.Graphics.Windows.vl" IsForward="true" />
-  <NugetDependency Id="LzLfrrlVfFILmJVxcZlKfw" Location="VL.Skia" Version="2021.4.0-0464-gc35af7fcc2" />
+  <NugetDependency Id="LzLfrrlVfFILmJVxcZlKfw" Location="VL.Skia" Version="2021.4.3-0719-gbc3cd5208e" />
   <DocumentDependency Id="LY99E30Es9QNq0MMumSQMB" Location="./VL.Stride.Assets.Windows.vl" IsForward="true" />
 </Document>
