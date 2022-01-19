@@ -49,7 +49,7 @@ public static class Upload
     /// http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2
     /// 
     public static WebResponse PostFile(Uri requestUri, NameValueCollection postData, Stream fileData, string fileName,
-         	string fileContentType, string fileFieldName, CookieContainer cookies, NameValueCollection headers)
+            string fileContentType, string fileFieldName, CookieContainer cookies, NameValueCollection headers)
     {
         HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(requestUri);
 
@@ -57,7 +57,7 @@ public static class Upload
 
         fileContentType = string.IsNullOrEmpty(fileContentType)
                               ? TryGetContentType(fileName, out ctype) ? 
-				ctype : "application/octet-stream"
+                ctype : "application/octet-stream"
                               : fileContentType;
 
         fileFieldName = string.IsNullOrEmpty(fileFieldName) ? "file" : fileFieldName;
@@ -83,7 +83,7 @@ public static class Upload
         }
 
         string boundary = "----------" + DateTime.Now.Ticks.ToString
-					("x", CultureInfo.InvariantCulture);
+                    ("x", CultureInfo.InvariantCulture);
 
         webrequest.ContentType = "multipart/form-data; boundary=" + boundary;
 
@@ -114,7 +114,7 @@ public static class Upload
         byte[] header = Encoding.UTF8.GetBytes(sbHeader.ToString());
         byte[] footer = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
         long contentLength = header.Length + (fileData != null ? 
-			fileData.Length : 0) + footer.Length;
+            fileData.Length : 0) + footer.Length;
 
         webrequest.ContentLength = contentLength;
 
@@ -163,10 +163,10 @@ public static class Upload
          string fileContentType, string fileFieldName, CookieContainer cookies, NameValueCollection headers)
     {
         using (FileStream fileData = File.Open
-		(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+        (fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
             return PostFile(requestUri, postData, fileData, 
-		fileName, fileContentType, fileFieldName, cookies,
+        fileName, fileContentType, fileFieldName, cookies,
                             headers);
         }
     }
@@ -181,7 +181,7 @@ public static class Upload
         try
         {
             RegistryKey key = Registry.ClassesRoot.OpenSubKey
-				(@"MIME\Database\Content Type");
+                (@"MIME\Database\Content Type");
 
             if (key != null)
             {
@@ -195,9 +195,9 @@ public static class Upload
                         if (!string.IsNullOrEmpty(subKeyValue))
                         {
                             if (string.Compare(Path.GetExtension
-				(fileName).ToUpperInvariant(),
+                (fileName).ToUpperInvariant(),
                                      subKeyValue.ToUpperInvariant(), 
-				StringComparison.OrdinalIgnoreCase) ==
+                StringComparison.OrdinalIgnoreCase) ==
                                 0)
                             {
                                 contentType = keyName;

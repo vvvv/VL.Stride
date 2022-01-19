@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Description>Windows specific extensions to the base VL.Stride.Runtime package</Description>
+    <Authors>vvvv and open-source contributors</Authors>
+    <Company>vvvv</Company>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\*.vl" Pack="true" PackagePath=" " />
+    <!-- Setting AutoGen metadata is a hack to avoid getting picked up by asset compiler -->
+    <None Include="..\help\**\*" Link="help\%(RecursiveDir)%(Filename)%(Extension)" Pack="true" AutoGen="false" PackagePath="help\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Stride.Assets" Version="$(StrideVersion)">
+      <!-- Exclude ffmpeg.exe as it is already in our repo and we don't want to package it multiple times -->
+      <!-- Why is it even in our repo? Does the package reference not copy it to the output? Maybe Stride.Assets need an update and add the PackageCopyToOutput=true? -->
+      <ExcludeAssets>contentFiles</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Stride.Assets.Models" Version="$(StrideVersion)" />
+    <!-- A pure package dependency so on install all VL packages come in -->
+    <PackageReference Include="Stride.TextureConverter" Version="$(StrideVersion)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(InPrivateRepo)' != 'true'">
+    <PackageReference Include="VL.Skia" Version="$(VLVersion)" PrivateAssets="all" />
+  </ItemGroup>
+  
+  <Target Name="IncludeStridePackageContent" BeforeTargets="InferPackageContents" DependsOnTargets="_StridePrepareAssetsForPack">
+    <Message Importance="high" Text="Called Stride package targets" />
+  </Target>
+  <ItemGroup>
+    <ProjectReference Include="..\..\VL.Stride.Runtime\src\VL.Stride.Runtime.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="msdfgen.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="2.3.186">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
