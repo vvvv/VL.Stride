@@ -10,8 +10,7 @@ namespace VL.Stride.Effects.TextureFX
     public enum BumpType { Directional, Point };
     public enum ChannelKeyingType { Alpha, Red, Green, Blue, Luma, Saturation };
     public enum ConvertColorType { HSVtoRGB, HSLtoRGB, RGBtoHSV, RGBtoHSL };
-    public enum MapColorType { Hue, HueSaturation, HueValue, Luma, RedBlue, RGBA, SaturationValue, Tone, Value };
-    public enum RampColorType { RGB, Hue, Luma, Saturation };
+    public enum MapColorType { Luma, Hue, Saturation, Value, HueSaturation, HueValue, SaturationValue, Tone, RedBlue, RGBA };
     public enum GlowType { Pre, Glow, Mix };
     public enum HaloType { Smooth, Linear, Spike };
     public enum LevelsClampType { None, Top, Bottom, Both };

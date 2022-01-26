@@ -3,14 +3,15 @@
 
 [Category("Filter")]
 [Summary("")]
+[Tags("lookup LUT")]
 [WantsMips("Texture1")]
 shader MapColor_TextureFX : FilterBase
 {
     [EnumType("VL.Stride.Effects.TextureFX.MapColorType")]
     int Type;
 
-    float2 Center = float2(0.0f, 0.0f);
-    float2 Direction = float2(0.5f, 0.5f);
+    float2 Start = float2(0.0f, 0.0f);
+    float2 End = float2(1.0f, 1.0f);
     float MapSmooth = 0.0f;
     
     float4 Ramp(float2 f)
@@ -18,7 +19,7 @@ shader MapColor_TextureFX : FilterBase
         float2 R = ViewSize;
 
         float lod = log2(max(R.x, R.y)) * MapSmooth;
-        return Texture1.SampleLevel(Sampler1, Center*.5 + .5 + Direction*f, lod);
+        return Texture1.SampleLevel(Sampler1, Start + End*f, lod);
     }
 
     float4 MapHue(float4 col)
@@ -81,22 +82,32 @@ shader MapColor_TextureFX : FilterBase
         return Ramp(f);
     };
 
+    float4 MapSaturation(float4 col)
+    {
+        float f = RGBtoHSL(col.rgb).y;
+        return Ramp(f);
+    }
+
     float4 Filter(float4 tex0col)
     {
-        float2 uv = streams.TexCoord;
-        float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
+        float4 col = tex0col;
+        float pa = col.a;
         
-        switch((uint)Type%9)
+        switch((uint)Type%10)
         {
-            case 0 : return MapHue(col);
-            case 1 : return MapHueSaturation(col);
-            case 2 : return MapHueValue(col);
-            case 3 : return MapLuma(col);
-            case 4 : return MapRedBlue(col);
-            case 5 : return MapRGBA(col);
-            case 6 : return MapSaturationValue(col);
-            case 7 : return MapTone(col);
-            case 8 : return MapValue(col);
+            case 0 : col = MapLuma(col); break;
+            case 1 : col = MapHue(col); break;
+            case 2 : col = MapSaturation(col); break;
+            case 3 : col = MapValue(col); break;
+            case 4 : col = MapHueSaturation(col); break;
+            case 5 : col = MapHueValue(col); break;
+            case 6 : col = MapSaturationValue(col); break;
+            case 7 : col = MapTone(col); break;
+            case 8 : col = MapRedBlue(col); break;
+            case 9 : col = MapRGBA(col); break;
         }
+
+        col.a *= pa;
+        return col;
     }
 };
