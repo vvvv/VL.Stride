@@ -12,7 +12,7 @@ namespace VL.Stride.Effects.TextureFX
     public enum ConvertColorType { HSVtoRGB, HSLtoRGB, RGBtoHSV, RGBtoHSL };
     public enum MapColorType { Luma, Hue, Saturation, Value, HueSaturation, HueValue, SaturationValue, Tone, RedBlue, RGBA };
     public enum GlowType { Pre, Glow, Mix };
-    public enum HaloType { Smooth, Linear, Spike };
+    public enum HaloType { Smooth, Linear };
     public enum LevelsClampType { None, Top, Bottom, Both };
     public enum LomographType { One, Two, Three, Four, Five, Six, Gray, Sepia };
     public enum NoiseType { Perlin, PerlinGrad, Value, ValueGrad, Simplex, SimplexGrad, WorleyFast, WorleyFastGrad };
