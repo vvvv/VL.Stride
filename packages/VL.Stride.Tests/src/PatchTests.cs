@@ -1,31 +1,60 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Extensions.DependencyModel;
+using NUnit.Framework;
 using NUnit.Framework.Internal;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using VL.Lang;
 using VL.Lang.Symbols;
 using VL.Model;
-using VVVV.NuGetAssemblyLoader;
 
 namespace MyTests
 {
     [TestFixture]
     public class PatchTests
     {
-        static string[] Packs = new string[]{ 
-        
-        //  FIX ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //@"C:\Program Files\vvvv\vvvv_gamma_2020.1.4\lib\packs",
+        static PatchTests()
+        {
+            var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            MainLibPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\..\"));
+        }
 
-        };
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            var RepositoriesPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\..\"));
+            var VLPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\..\..\vvvv50\"));
 
+            var searchPaths = ImmutableArray.CreateBuilder<string>();
 
+            // Add the vvvv_stride\public-vl\VL.Stride\packages folder
+            searchPaths.Add(MainLibPath);
+
+            // Add the vvvv_stride\public-vl folder
+            searchPaths.Add(RepositoriesPath);
+
+            // Add the vvvv_stride\vvvv50 folder
+            searchPaths.Add(VLPath);
+
+            Session = new VLSession("gamma", DependencyContext.Load(typeof(PatchTests).Assembly), includeUserPackages: false, searchPaths: searchPaths)
+            {
+                CheckSolution = false,
+                IgnoreDynamicEnumErrors = true,
+                NoCache = true,
+                KeepTargetCode = false
+            };
+        }
+
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            Session.Dispose();
+        }
 
         public static IEnumerable<string> NormalPatches()
         {
@@ -56,44 +85,10 @@ namespace MyTests
 
 
 
-        public static readonly VLSession Session;
-        public static string MainLibPath;
-        public static string RepositoriesPath;
-        public static string VLPath;
+        public VLSession Session;
+        public static readonly string MainLibPath;
 
-        static PatchTests()
-        {
-            var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            MainLibPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\..\"));
-            RepositoriesPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\..\"));
-            VLPath = Path.GetFullPath(Path.Combine(MainLibPath, @"..\..\..\vvvv50\"));
-
-            foreach (var pack in Packs)
-                AssemblyLoader.AddPackageRepositories(pack);
-
-            // Add the vvvv_stride\public-vl\VL.Stride\packages folder
-            AssemblyLoader.AddPackageRepositories(MainLibPath);
-
-            // Add the vvvv_stride\public-vl folder
-            AssemblyLoader.AddPackageRepositories(RepositoriesPath);
-
-            // Add the vvvv_stride\vvvv50 folder
-            AssemblyLoader.AddPackageRepositories(VLPath);
-
-            Session = new VLSession("gamma", includeUserPackages: false)
-            {
-                CheckSolution = false,
-                IgnoreDynamicEnumErrors = true,
-                NoCache = true,
-                KeepTargetCode = false
-            };
-        }
-
-
-
-
-
-        static Solution FCompiledSolution;
+        Solution FCompiledSolution;
 
 
         /// <summary>
@@ -101,14 +96,14 @@ namespace MyTests
         /// </summary>
         /// <param name="filePath"></param>
         [TestCaseSource(nameof(NormalPatches))]
-        public static async Task IsntRed(string filePath)
+        public async Task IsntRedAsync(string filePath)
         {
             filePath = Path.Combine(MainLibPath, filePath);
             var solution = FCompiledSolution ?? (FCompiledSolution = await CompileAsync(NormalPatches()));
-            var document = solution.GetOrAddDocument(filePath);
+            var document = await solution.LoadDocumentAsync(filePath);
 
             // Check document structure
-            Assert.True(document.IsValid);
+            Assert.True(document.IsValid, message: string.Join(", ", document.AllModelErrors));
 
             // Check dependenices
             foreach (var dep in document.GetDocSymbols().Dependencies)
@@ -118,11 +113,9 @@ namespace MyTests
             CheckNodes(document.AllTopLevelDefinitions);
         }
 
-        static async Task<Solution> CompileAsync(IEnumerable<string> docs)
+        async Task<Solution> CompileAsync(IEnumerable<string> docs)
         {
-            var solution = Session.CurrentSolution;
-            foreach (var f in docs)
-                solution = solution.GetOrAddDocument(Path.Combine(MainLibPath, f)).Solution;
+            var solution = await Session.CurrentSolution.LoadDocumentsAsync(docs.Select(d => Path.Combine(MainLibPath, d)));
             return await solution.WithFreshCompilationAsync();
         }
 
