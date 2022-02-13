@@ -11,6 +11,7 @@ using System.Reflection;
 using VL.Core;
 using VL.Model;
 using VL.Stride.Shaders.ShaderFX;
+using ServiceRegistry = VL.Core.ServiceRegistry;
 
 namespace VL.Stride.Rendering
 {
@@ -86,7 +87,7 @@ namespace VL.Stride.Rendering
                         remarks: shaderMetadata.Remarks,
                         newNode: nodeBuildContext =>
                         {
-                            var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
+                            var gameHandle = ServiceRegistry.Current.GetGameHandle();
                             var game = gameHandle.Resource;
 
                             var tempParameters = new ParameterCollection(); // only needed for pin construction - parameter updater will later take care of multiple sinks

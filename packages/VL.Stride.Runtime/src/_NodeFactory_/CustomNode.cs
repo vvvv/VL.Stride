@@ -3,6 +3,7 @@ using Stride.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reflection;
 using VL.Core;
@@ -377,19 +378,7 @@ namespace VL.Stride
             return this;
         }
 
-        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, TInstance, T> getter, string summary = default, string remarks = default, bool isVisible = true)
-        {
-            outputs.Add(new CustomPinDesc(name, summary, remarks)
-            {
-                Name = name.InsertSpaces(),
-                Type = typeof(T),
-                CreatePin = (node, instance) => new CachedOutputPin<T>(node, instance, x => getter(node.Context, instance)),
-                IsVisible = isVisible
-            });
-            return this;
-        }
-
-        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<NodeContext, (Func<TInstance, T>, IDisposable)> ctor, string summary = default, string remarks = default, bool isVisible = true)
+        public CustomNodeDesc<TInstance> AddCachedOutput<T>(string name, Func<CompositeDisposable, Func<TInstance, T>> ctor, string summary = default, string remarks = default, bool isVisible = true)
         {
             outputs.Add(new CustomPinDesc(name, summary, remarks)
             {
@@ -397,7 +386,8 @@ namespace VL.Stride
                 Type = typeof(T),
                 CreatePin = (node, instance) =>
                 {
-                    var (getter, disposable) = ctor(node.Context);
+                    var disposable = new CompositeDisposable();
+                    var getter = ctor(disposable);
                     return new CachedOutputPin<T>(node, instance, getter, disposable);
                 },
                 IsVisible = isVisible

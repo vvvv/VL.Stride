@@ -13,6 +13,7 @@ using VL.Core;
 using VL.Model;
 using VL.Stride.Graphics;
 using VL.Stride.Engine;
+using ServiceRegistry = VL.Core.ServiceRegistry;
 
 namespace VL.Stride.Rendering
 {
@@ -137,7 +138,7 @@ namespace VL.Stride.Rendering
                         remarks: shaderMetadata.Remarks,
                         newNode: nodeBuildContext =>
                         {
-                            var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
+                            var gameHandle = ServiceRegistry.Current.GetGameHandle();
                             var effect = new TextureFXEffect("TextureFXEffect") { Name = shaderName };
 
                             BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var textureFXEffectMixin, effect.Parameters);
@@ -337,7 +338,7 @@ namespace VL.Stride.Rendering
                                 inputs.Insert(inputs.Count - 2, renderFormat);
                             }
 
-                            var gameHandle = nodeContext.GetGameHandle();
+                            var gameHandle = ServiceRegistry.Current.GetGameHandle();
                             var game = gameHandle.Resource;
                             var scheduler = game.Services.GetService<SchedulerSystem>();
                             var graphicsDevice = game.GraphicsDevice;

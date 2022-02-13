@@ -5,6 +5,7 @@ using System;
 using VL.Core;
 using VL.Lib.Basics.Resources;
 using Buffer = Stride.Graphics.Buffer;
+using ServiceRegistry = VL.Core.ServiceRegistry;
 
 namespace VL.Stride.Graphics
 {
@@ -67,7 +68,7 @@ namespace VL.Stride.Graphics
 
             public BufferBuilder(NodeContext nodeContext)
             {
-                gameHandle = nodeContext.GetGameHandle();
+                gameHandle = ServiceRegistry.Current.GetGameHandle();
             }
 
             public void Dispose()
@@ -153,7 +154,7 @@ namespace VL.Stride.Graphics
 
             public BufferViewBuilder(NodeContext nodeContext)
             {
-                gameHandle = nodeContext.GetGameHandle();
+                gameHandle = ServiceRegistry.Current.GetGameHandle();
             }
 
             public void Dispose()

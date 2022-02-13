@@ -4,6 +4,7 @@ using Stride.Graphics;
 using System;
 using VL.Core;
 using VL.Lib.Basics.Resources;
+using ServiceRegistry = VL.Core.ServiceRegistry;
 
 namespace VL.Stride.Graphics
 {
@@ -66,7 +67,7 @@ namespace VL.Stride.Graphics
 
             public TextureBuilder(NodeContext nodeContext)
             {
-                gameHandle = nodeContext.GetGameHandle();
+                gameHandle = ServiceRegistry.Current.GetGameHandle();
             }
 
             public void Dispose()
@@ -184,7 +185,7 @@ namespace VL.Stride.Graphics
 
             public TextureViewBuilder(NodeContext nodeContext)
             {
-                gameHandle = nodeContext.GetGameHandle();
+                gameHandle = ServiceRegistry.Current.GetGameHandle();
             }
 
             public void Dispose()
