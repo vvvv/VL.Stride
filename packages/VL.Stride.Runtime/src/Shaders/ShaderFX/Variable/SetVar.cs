@@ -86,7 +86,7 @@ namespace VL.Stride.Shaders.ShaderFX
         }
     }
 
-    public sealed class GpuValueBuilder<T> : IMonadBuilder<T, SetVar<T>>
+    public sealed class GpuValueBuilder<T> : IMonadBuilder2<T, SetVar<T>>
         where T : struct
     {
         private readonly InputValue<T> inputValue;
@@ -102,6 +102,13 @@ namespace VL.Stride.Shaders.ShaderFX
         {
             inputValue.Input = value;
             return gpuValue;
+        }
+
+        public SetVar<T> Return(VL.Core.InputValue<T> value)
+        {
+            if (value.IsDefault)
+                return null;
+            return Return(value.Value);
         }
     }
 }
