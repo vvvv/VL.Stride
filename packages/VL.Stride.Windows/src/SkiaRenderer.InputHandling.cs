@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Subjects;
 using VL.Lib.IO.Notifications;
 using VL.Skia;
 using WinFormsKeys = System.Windows.Forms.Keys;
@@ -22,10 +23,12 @@ namespace VL.Stride.Windows
             if (inputManager is null)
                 return Disposable.Empty;
 
+            var subscription = new CompositeDisposable();
+
             var renderTarget = context.CommandList.RenderTarget;
             var callerInfo = CallerInfo.InRenderer(renderTarget.Width, renderTarget.Height, canvas, graphicsContext);
 
-            var mouseButtonListener = NewMouseButtonListener(inputSource, callerInfo);
+            var mouseButtonListener = NewMouseButtonListener(inputSource, callerInfo, subscription);
             inputManager.AddListener(mouseButtonListener);
             var mouseWheelListener = NewMouseWheelListener(inputSource, callerInfo);
             inputManager.AddListener(mouseWheelListener);
@@ -36,14 +39,14 @@ namespace VL.Stride.Windows
             var textListener = NewTextInputListener(inputSource, callerInfo);
             inputManager.AddListener(textListener);
 
-            var subscription = Disposable.Create(() =>
+            subscription.Add(Disposable.Create(() =>
             {
                 inputManager.RemoveListener(mouseButtonListener);
                 inputManager.RemoveListener(mouseWheelListener);
                 inputManager.RemoveListener(pointerListener);
                 inputManager.RemoveListener(keyListener);
                 inputManager.RemoveListener(textListener);
-            });
+            }));
 
             return subscription;
         }
@@ -77,8 +80,12 @@ namespace VL.Stride.Windows
             });
         }
 
-        private IInputEventListener NewMouseButtonListener(IInputSource inputSource, CallerInfo callerInfo)
+        private IInputEventListener NewMouseButtonListener(IInputSource inputSource, CallerInfo callerInfo, CompositeDisposable subscription)
         {
+            // We don't receive any click events from Stride - so let's use our existing emulation code for that (tested since beta times)
+            var eventStream = new Subject<MouseNotification>().DisposeBy(subscription);
+            var mouse = new VL.Lib.IO.Mouse(eventStream, injectMouseClicks: true, keepSingleSubscription: false);
+            mouse.Notifications.Subscribe(n => Layer.Notify(n, callerInfo)).DisposeBy(subscription);
             return new AnonymousEventListener<MouseButtonEvent>(e =>
             {
                 if (e.Device.Source != inputSource || Layer is null)
@@ -86,9 +93,9 @@ namespace VL.Stride.Windows
 
                 var mouseDevice = e.Device as IMouseDevice;
                 if (e.IsDown)
-                    Layer.Notify(new MouseDownNotification(mouseDevice.Position * mouseDevice.SurfaceSize, mouseDevice.SurfaceSize, ToWinFormsButton(e.Button), this), callerInfo);
+                    eventStream.OnNext(new MouseDownNotification(mouseDevice.Position * mouseDevice.SurfaceSize, mouseDevice.SurfaceSize, ToWinFormsButton(e.Button), this));
                 else
-                    Layer.Notify(new MouseUpNotification(mouseDevice.Position * mouseDevice.SurfaceSize, mouseDevice.SurfaceSize, ToWinFormsButton(e.Button), this), callerInfo);
+                    eventStream.OnNext(new MouseUpNotification(mouseDevice.Position * mouseDevice.SurfaceSize, mouseDevice.SurfaceSize, ToWinFormsButton(e.Button), this));
             });
         }
 
