@@ -121,11 +121,6 @@ namespace VL.Stride.Windows
 
         private IInputEventListener NewTextInputListener(IInputSource inputSource, CallerInfo callerInfo)
         {
-            // TODO: Not sure why but not getting anything here :/
-            foreach (var device in inputSource.Devices.Values)
-                if (device is ITextInputDevice textInput)
-                    textInput.EnabledTextInput();
-
             return new AnonymousEventListener<TextInputEvent>(e =>
             {
                 if (e.Device.Source != inputSource || Layer is null)
