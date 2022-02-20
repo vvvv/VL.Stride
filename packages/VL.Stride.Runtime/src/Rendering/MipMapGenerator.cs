@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using VL.Core;
 using VL.Lib.Basics.Resources;
 using VL.Stride.Engine;
+using ServiceRegistry = VL.Core.ServiceRegistry;
 
 namespace VL.Stride.Rendering
 {
@@ -26,8 +27,8 @@ namespace VL.Stride.Rendering
 
         public MipMapGenerator(NodeContext nodeContext)
         {
-            graphicsDeviceHandle = nodeContext.GetDeviceHandle().DisposeBy(this);
-            var gameHandle = nodeContext.GetGameHandle().DisposeBy(this);
+            graphicsDeviceHandle = ServiceRegistry.Current.GetDeviceHandle().DisposeBy(this);
+            var gameHandle = ServiceRegistry.Current.GetGameHandle().DisposeBy(this);
             schedulerSystem = gameHandle.Resource.Services.GetService<SchedulerSystem>();
         }
 

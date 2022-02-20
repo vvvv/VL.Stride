@@ -12,18 +12,8 @@ namespace VL.Stride.Windows.Core
         protected override void RegisterServices(IVLFactory factory)
         {
             // VL.MediaFoundation asks for a Direct3D11 device
-            factory.RegisterService<NodeContext, IResourceProvider<SharpDX.Direct3D11.Device>>(nodeContext =>
-            {
-                return ResourceProvider.NewPooledPerApp(nodeContext, () =>
-                {
-                    var gameProvider = nodeContext.GetGameProvider();
-                    return gameProvider
-                        .Bind(game =>
-                        {
-                            return SharpDXInterop.GetNativeDevice(game.GraphicsDevice) as SharpDX.Direct3D11.Device;
-                        });
-                });
-            });
+            var services = ServiceRegistry.Current;
+            services.RegisterProvider(game => ResourceProvider.Return(SharpDXInterop.GetNativeDevice(game.GraphicsDevice) as SharpDX.Direct3D11.Device));
         }
     }
 }

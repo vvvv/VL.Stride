@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using VL.Core;
 using VL.Model;
 using VL.Stride.Rendering.ComputeEffect;
+using ServiceRegistry = VL.Core.ServiceRegistry;
 
 namespace VL.Stride.Rendering
 {
@@ -69,7 +70,7 @@ namespace VL.Stride.Rendering
                         remarks: shaderMetadata.Remarks,
                         newNode: nodeBuildContext =>
                         {
-                            var gameHandle = nodeBuildContext.NodeContext.GetGameHandle();
+                            var gameHandle = ServiceRegistry.Current.GetGameHandle();
                             var renderContext = RenderContext.GetShared(gameHandle.Resource.Services);
                             var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
                             var effect = new VLComputeEffectShader(renderContext, shaderName, mixinParams);
