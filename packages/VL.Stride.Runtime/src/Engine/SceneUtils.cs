@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Collections.TreePatching;
+using Session = VL.Lang.PublicAPI.Session;
 
 namespace VL.Stride.Engine
 {
@@ -25,24 +26,24 @@ namespace VL.Stride.Engine
             var manager = GetParentManager(scene);
 
             // Subscribe to warnings of the manager and make them visible in the patch
-            var cachedMessages = default(List<VL.Lang.Message>);
-            manager.ToggleWarning.Subscribe(v => ToggleMessages(v))
+            var warnings = new CompositeDisposable()
                 .DisposeBy(scene);
 
-            // Ensure warning gets removed on dispose
-            Disposable.Create(() => ToggleMessages(false))
+            manager.ToggleWarning.Subscribe(v =>
+                {
+                    warnings.Clear();
+                    if (v)
+                    {
+                        foreach (var id in nodeContext.Path.Stack)
+                        {
+                            Session.AddPersistentMessage(new VL.Lang.Message(id, Lang.MessageSeverity.Warning, "Scene should only be connected to one parent scene."))
+                                .DisposeBy(warnings);
+                        }
+                    }
+                })
                 .DisposeBy(scene);
 
             return scene;
-
-            void ToggleMessages(bool on)
-            {
-                var messages = cachedMessages ?? (cachedMessages = nodeContext.Path.Stack
-                    .Select(id => new VL.Lang.Message(id, Lang.MessageSeverity.Warning, "Scene should only be connected to one parent scene."))
-                    .ToList());
-                foreach (var m in messages)
-                    VL.Lang.PublicAPI.Session.ToggleMessage(m, on);
-            }
         }
 
         /// <summary>
