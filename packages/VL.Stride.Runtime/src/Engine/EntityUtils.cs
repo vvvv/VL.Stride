@@ -56,7 +56,7 @@ namespace VL.Stride.Engine
             var manager = entity.Tags.Get(parentManagerKey);
             if (manager is null)
             {
-                manager = new TreeNodeParentManager<object, Entity>(entity, (p, c) => SetParent(p, c), (p, c) => c.SetParent(null))
+                manager = new TreeNodeParentManager<object, Entity>(entity, (p, c) => SetParent(p, c), (p, c) => Detach(c))
                     .DisposeBy(entity);
                 entity.Tags.Set(parentManagerKey, manager);
             }
@@ -71,6 +71,14 @@ namespace VL.Stride.Engine
                 child.SetParent(entity);
             else
                 throw new ArgumentException("Parent must either be a Scene or an Entity.", nameof(parent));
+        }
+
+        static void Detach(Entity child)
+        {
+            // First from parent
+            child.SetParent(null);
+            // Then from scene
+            child.Scene = null;
         }
     }
 }
