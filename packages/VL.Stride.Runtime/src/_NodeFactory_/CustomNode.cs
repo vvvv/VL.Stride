@@ -5,12 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reflection;
 using VL.Core;
 using VL.Core.Diagnostics;
 using VL.Lib.Basics.Resources;
-using VL.Lib.Collections.TreePatching;
-using VL.Lib.Experimental;
+using VL.Stride.Engine;
 
 namespace VL.Stride
 {
@@ -64,29 +62,10 @@ namespace VL.Stride
                 name: name,
                 ctor: nodeContext =>
                 {
-                    var component = new TComponent();
-                    var manager = new TreeNodeParentManager<Entity, EntityComponent>(component, (e, c) => e.Add(c), (e, c) => e.Remove(c));
-                    var sender = new Sender<object, object>(nodeContext, component, manager);
-                    var cachedMessages = default(List<VL.Lang.Message>);
-                    var subscription = manager.ToggleWarning.Subscribe(v => ToggleMessages(v));
+                    var container = new CompositeDisposable();
+                    var component = new TComponent().WithParentManager(nodeContext, container);
                     init?.Invoke(component);
-                    return (component, () =>
-                        {
-                            ToggleMessages(false);
-                            manager.Dispose();
-                            sender.Dispose();
-                            subscription.Dispose();
-                        }
-                    );
-
-                    void ToggleMessages(bool on)
-                    {
-                        var messages = cachedMessages ?? (cachedMessages = nodeContext.Path.Stack
-                            .Select(id => new VL.Lang.Message(id, Lang.MessageSeverity.Warning, "Component should only be connected to one Entity."))
-                            .ToList());
-                        foreach (var m in messages)
-                            VL.Lang.PublicAPI.Session.ToggleMessage(m, on);
-                    }
+                    return (component, () => container.Dispose());
                 }, 
                 category: category, 
                 copyOnWrite: false);

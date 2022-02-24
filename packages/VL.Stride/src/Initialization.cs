@@ -9,6 +9,9 @@ using Stride.Graphics;
 using System.Windows.Forms;
 using System;
 using VL.Lib.Animation;
+using StrideApp = Stride.Graphics.SDL.Application;
+using SDL = SDL2.SDL;
+using System.Runtime.InteropServices;
 
 [assembly: AssemblyInitializer(typeof(VL.Stride.Lib.Initialization))]
 
@@ -29,7 +32,7 @@ namespace VL.Stride.Lib
             {
                 var clockSubscription = default(IDisposable);
                 var assetBuildService = default(AssetBuilderServiceScript);
-                EventHandler processSdlEventsHandler = (s, e) => global::Stride.Graphics.SDL.Application.ProcessEvents();
+                var messageFilter = default(MessageFilter);
 
                 return ResourceProvider.New(() =>
                 {
@@ -58,7 +61,11 @@ namespace VL.Stride.Lib
                     if (UseSDL)
                     {
                         gameContext = new GameContextSDL(null, 0, 0, isUserManagingRun: true);
-                        Application.Idle += processSdlEventsHandler;
+                        // SDL_PumpEvents shall not run the message loop (Translate/Dispatch) - already done by windows forms
+                        // This calls also needs to be done after the Stride loaded the native SDL library - otherwise crash
+                        SDL.SDL_SetHint(SDL.SDL_HINT_WINDOWS_ENABLE_MESSAGELOOP, "0");
+                        // Add a message filter which intercepts WM_CHAR messages the Windows Forms loop would otherwise drop because it doesn't know the SDL created windows.
+                        Application.AddMessageFilter(messageFilter = new MessageFilter());
                     }
                     else
                     {
@@ -100,11 +107,10 @@ namespace VL.Stride.Lib
                         game.Script.Scheduler.Run();
                     }
 
-                    // Remove the event handlers
-                    if (UseSDL)
-                    {
-                        Application.Idle -= processSdlEventsHandler;
-                    }
+                    // Remove the message filter
+                    if (messageFilter != null)
+                        Application.RemoveMessageFilter(messageFilter);
+
                     clockSubscription?.Dispose();
                 })
                 .ShareInParallel();
@@ -118,6 +124,46 @@ namespace VL.Stride.Lib
                     window.Visible = false;
                 }).ShareInParallel();
             });
+        }
+
+        sealed class MessageFilter : IMessageFilter
+        {
+            bool IMessageFilter.PreFilterMessage(ref Message m)
+            {
+                if (m.Msg >= 256 && m.Msg <= 264)
+                {
+                    // For these message types the Windows Forms main loop will look for a Control with the given HWND.
+                    // If it can't find one it will not do the Translate/Dispatch call -> the SDL windows never receive any text input.
+                    if (m.HWnd != null && Control.FromHandle(m.HWnd) is null)
+                    {
+                        // Is it a SDL window?
+                        foreach (var window in StrideApp.Windows)
+                        {
+                            if (window.Handle == m.HWnd)
+                            {
+                                TranslateMessage(ref m);
+                                DispatchMessage(ref m);
+
+                                StrideApp.ProcessEvents();
+
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                // The WndProc of SDL only creates and enqueues SDL events - those need to be dequed and processed
+                StrideApp.ProcessEvents();
+
+                // Let the normal main loop continue to do its work
+                return false;
+            }
+
+            [DllImport("user32.dll")]
+            static extern bool TranslateMessage([In] ref Message m);
+
+            [DllImport("user32.dll")]
+            static extern IntPtr DispatchMessage([In] ref Message m);
         }
     }
 }
