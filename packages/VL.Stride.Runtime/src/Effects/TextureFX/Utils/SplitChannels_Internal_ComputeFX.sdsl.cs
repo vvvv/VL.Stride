@@ -20,7 +20,6 @@ namespace Stride.Rendering
     {
         public static readonly ObjectParameterKey<Texture> Tex = ParameterKeys.NewObject<Texture>();
         public static readonly ValueParameterKey<Vector2> InputSize = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<float> SampleLevel = ParameterKeys.NewValue<float>();
         public static readonly ObjectParameterKey<Texture> Channel0 = ParameterKeys.NewObject<Texture>();
         public static readonly ObjectParameterKey<Texture> Channel1 = ParameterKeys.NewObject<Texture>();
         public static readonly ObjectParameterKey<Texture> Channel2 = ParameterKeys.NewObject<Texture>();

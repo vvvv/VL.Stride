@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Collections.TreePatching;
+using Session = VL.Lang.PublicAPI.Session;
 
 namespace VL.Stride.Engine
 {
@@ -25,24 +26,24 @@ namespace VL.Stride.Engine
             var manager = GetParentManager(entity);
 
             // Subscribe to warnings of the manager and make them visible in the patch
-            var cachedMessages = default(List<VL.Lang.Message>);
-            manager.ToggleWarning.Subscribe(v => ToggleMessages(v))
+            var warnings = new CompositeDisposable()
                 .DisposeBy(entity);
 
-            // Ensure warning gets removed on dispose
-            Disposable.Create(() => ToggleMessages(false))
+            manager.ToggleWarning.Subscribe(v =>
+                {
+                    warnings.Clear();
+                    if (v)
+                    {
+                        foreach (var id in nodeContext.Path.Stack)
+                        {
+                            Session.AddPersistentMessage(new VL.Lang.Message(id, Lang.MessageSeverity.Warning, "Entity should only be connected to one parent entity or scene."))
+                                .DisposeBy(warnings);
+                        }
+                    }
+                })
                 .DisposeBy(entity);
 
             return entity;
-
-            void ToggleMessages(bool on)
-            {
-                var messages = cachedMessages ?? (cachedMessages = nodeContext.Path.Stack
-                    .Select(id => new VL.Lang.Message(id, Lang.MessageSeverity.Warning, "Entity should only be connected to one parent entity or scene."))
-                    .ToList());
-                foreach (var m in messages)
-                    VL.Lang.PublicAPI.Session.ToggleMessage(m, on);
-            }
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace VL.Stride.Engine
             var manager = entity.Tags.Get(parentManagerKey);
             if (manager is null)
             {
-                manager = new TreeNodeParentManager<object, Entity>(entity, (p, c) => SetParent(p, c), (p, c) => c.SetParent(null))
+                manager = new TreeNodeParentManager<object, Entity>(entity, (p, c) => SetParent(p, c), (p, c) => Detach(c))
                     .DisposeBy(entity);
                 entity.Tags.Set(parentManagerKey, manager);
             }
@@ -70,6 +71,14 @@ namespace VL.Stride.Engine
                 child.SetParent(entity);
             else
                 throw new ArgumentException("Parent must either be a Scene or an Entity.", nameof(parent));
+        }
+
+        static void Detach(Entity child)
+        {
+            // First from parent
+            child.SetParent(null);
+            // Then from scene
+            child.Scene = null;
         }
     }
 }
