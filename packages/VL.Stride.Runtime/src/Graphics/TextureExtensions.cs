@@ -102,14 +102,21 @@ namespace VL.Stride.Graphics
         // TODO: Can be deleted once backported (Stride commit 92512973841694bcfe96bcee23bf3b94ef75b4d4)
         public static void SaveTexture(this Texture texture, CommandList commandList, Stream stream, ImageFileType imageFileType = ImageFileType.Png)
         {
-            if (!IsSupportedFormat(texture.Format))
+            if (!IsSupportedFormat(imageFileType, texture.Format))
                 throw new ArgumentException($"The pixel format {texture.Format} is not supported. Supported formats are R8G8B8A8, B8G8R8A8, B8G8R8X8 and R8 and A8.");
 
             // The original method crashes the application if provided with a wrong pixel format
             texture.Save(commandList, stream, imageFileType);
 
-            static bool IsSupportedFormat(StridePixelFormat format)
+            static bool IsSupportedFormat(ImageFileType imageFileType, StridePixelFormat format)
             {
+                switch (imageFileType)
+                {
+                    case ImageFileType.Stride:
+                    case ImageFileType.Dds:
+                        return true;
+                }
+
                 switch (format)
                 {
                     case StridePixelFormat.B8G8R8A8_UNorm:
