@@ -24,6 +24,7 @@ namespace VL.Stride.Engine
             yield return new StrideNodeDesc<VROverlayRenderer>(factory, category: vrCategory) { CopyOnWrite = false };
 
             yield return factory.NewNode(name: "VRDevice", category: vrCategory, copyOnWrite: false, hasStateOutput: false, ctor: n => new VRDeviceSplitter(n))
+                .AddCachedInput("Tracking Space", x => x.TrackingSpace, (x, v) => x.TrackingSpace = v, summary: "Sets the tracking space of the tracked devices. Only works when the OpenVR backend is used. The default is 'No value' which means that the setting of OpenVR is used, the setting is only applied if the value of this pin is changed.")
                 .AddOutput(nameof(VRDevice.State), x => x.v.Device?.State ?? DeviceState.Invalid)
                 .AddOutput(nameof(VRDevice.LeftHand), x => x.v.Device?.LeftHand)
                 .AddOutput(nameof(VRDevice.RightHand), x => x.v.Device?.RightHand)
@@ -82,11 +83,23 @@ namespace VL.Stride.Engine
             private Spread<TrackedItem> trackedItems = Spread<TrackedItem>.Empty;
             private TrackedItem[] lastTrackedItems;
             public VRDeviceSystem v;
+            private Optional<TrackingSpace> trackingSpace = new Optional<TrackingSpace>();
 
             public VRDeviceSplitter(NodeContext nodeContext)
             {
                 gameHandle = ServiceRegistry.Current.GetGameHandle();
                 v = gameHandle.Resource.Services.GetService<VRDeviceSystem>();
+            }
+
+            public Optional<TrackingSpace> TrackingSpace
+            {
+                get => trackingSpace;
+                set
+                {
+                    if (value.HasValue)
+                        v.Device?.SetTrackingSpace(value.Value);
+                    trackingSpace = value;
+                }
             }
 
             public Spread<TrackedItem> TrackedItems
