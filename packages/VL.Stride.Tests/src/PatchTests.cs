@@ -13,7 +13,7 @@ using VL.Lang;
 using VL.Lang.Symbols;
 using VL.Model;
 
-namespace MyTests
+namespace VL.Stride
 {
     [TestFixture]
     public class PatchTests
@@ -41,19 +41,13 @@ namespace MyTests
             // Add the vvvv_stride\vvvv50 folder
             searchPaths.Add(VLPath);
 
-            Session = new VLSession("gamma", DependencyContext.Load(typeof(PatchTests).Assembly), includeUserPackages: false, searchPaths: searchPaths)
-            {
-                CheckSolution = false,
-                IgnoreDynamicEnumErrors = true,
-                NoCache = true,
-                KeepTargetCode = false
-            };
+            TestEnvironment = new TestEnvironment(DependencyContext.Load(typeof(PatchTests).Assembly), searchPaths, new [] { "VL.Stride" });
         }
 
         [OneTimeTearDown]
         public void TearDown()
         {
-            Session.Dispose();
+            TestEnvironment.Dispose();
         }
 
         public static IEnumerable<string> NormalPatches()
@@ -85,11 +79,8 @@ namespace MyTests
 
 
 
-        public VLSession Session;
+        public TestEnvironment TestEnvironment;
         public static readonly string MainLibPath;
-
-        Solution FCompiledSolution;
-
 
         /// <summary>
         /// Checks if the document comes with compile time errors (e.g. red nodes). Doesn't actually run the patches.
@@ -99,8 +90,8 @@ namespace MyTests
         public async Task IsntRedAsync(string filePath)
         {
             filePath = Path.Combine(MainLibPath, filePath);
-            var solution = FCompiledSolution ?? (FCompiledSolution = await CompileAsync(NormalPatches()));
-            var document = await solution.LoadDocumentAsync(filePath);
+
+            var document = await TestEnvironment.LoadAndCompileAsync(filePath);
 
             // Check document structure
             Assert.True(document.IsValid, message: string.Join(", ", document.AllModelErrors));
@@ -111,12 +102,6 @@ namespace MyTests
 
             // Check all containers and process node definitions, including application entry point
             CheckNodes(document.AllTopLevelDefinitions);
-        }
-
-        async Task<Solution> CompileAsync(IEnumerable<string> docs)
-        {
-            var solution = await Session.CurrentSolution.LoadDocumentsAsync(docs.Select(d => Path.Combine(MainLibPath, d)));
-            return await solution.WithFreshCompilationAsync();
         }
 
         public static void CheckNodes(IEnumerable<Node> nodes)
@@ -136,14 +121,5 @@ namespace MyTests
 
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // Running Tests patches not supported yet. We for now can only check for compile time errors (like red nodes)
-
-
-        /// <summary>
-        /// Yield all test patches that shall run
-        /// </summary>
-        public static IEnumerable<string> TestPatches()
-        {
-            yield return $@"C:\dev\vl-libs\VL.DemoLib\src\NUnitTests\tests\tests.vl";
-        }
     }
 }
