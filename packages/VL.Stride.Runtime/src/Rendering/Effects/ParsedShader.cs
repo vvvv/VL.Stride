@@ -5,7 +5,6 @@ using Stride.Core.Shaders.Ast.Stride;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
-using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
 using System;
 using System.Collections.Generic;
