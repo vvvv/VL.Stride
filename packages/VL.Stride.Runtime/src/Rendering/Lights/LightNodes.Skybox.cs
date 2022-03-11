@@ -12,6 +12,7 @@ using System;
 using VL.Core;
 using VL.Lib.Basics.Resources;
 using VL.Stride.Engine;
+using ServiceRegistry = VL.Core.ServiceRegistry;
 
 namespace VL.Stride.Rendering.Lights
 {
@@ -32,7 +33,7 @@ namespace VL.Stride.Rendering.Lights
 
             public SkyboxRenderer(NodeContext nodeContext)
             {
-                gameHandle = nodeContext.GetGameHandle().DisposeBy(this);
+                gameHandle = ServiceRegistry.Current.GetGameHandle().DisposeBy(this);
                 schedulerSystem = gameHandle.Resource.Services.GetService<SchedulerSystem>();
 
                 Skybox = new Skybox();

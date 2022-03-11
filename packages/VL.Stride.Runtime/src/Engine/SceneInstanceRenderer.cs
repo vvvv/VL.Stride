@@ -59,11 +59,15 @@ namespace VL.Stride.Engine
     static class SceneInstanceExt
     {
         static MethodInfo drawMethod = typeof(SceneInstance).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Draw");
+        static object[] arg = new object[1];
 
         public static void Draw(this SceneInstance sceneInstance, RenderContext renderContext)
         {
             if (sceneInstance != null)
-                drawMethod.Invoke(sceneInstance, new[] { renderContext });
+            {
+                arg[0] = renderContext;
+                drawMethod.Invoke(sceneInstance, arg);
+            }
         }
     }
 }

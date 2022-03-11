@@ -173,16 +173,19 @@ namespace VL.Stride.Rendering
                     var generator = new TProceduralModel();
                     return (generator, default);
                 })
-                .AddCachedOutput("Output", nodeContext =>
+                .AddCachedOutput<Mesh>("Output", lifetime =>
                 {
                     var disposable = new SerialDisposable();
-                    Func<TProceduralModel, Mesh> getter = generator =>
+                    lifetime.Add(disposable);
+
+                    var gameProvider = ServiceRegistry.Current.GetGameProvider();
+                    return generator =>
                     {
-                        var key = (typeof(TProceduralModel), generator.Scale, generator.UvScale, generator.LocalOffset, generator.NumberOfTextureCoordinates, getKey(generator));
-                        var provider = ResourceProvider.NewPooledPerApp(nodeContext, key, _ =>
+                        var key = (gameProvider, typeof(TProceduralModel), generator.Scale, generator.UvScale, generator.LocalOffset, generator.NumberOfTextureCoordinates, getKey(generator));
+                        var provider = ResourceProvider.NewPooledSystemWide(key, _ =>
                         {
-                            return nodeContext.GetGameProvider()
-                                .Bind(game =>
+                            return gameProvider.Bind(
+                                game =>
                                 {
                                     var model = new Model();
                                     generator.Generate(game.Services, model);
@@ -201,7 +204,6 @@ namespace VL.Stride.Rendering
                         disposable.Disposable = meshHandle;
                         return meshHandle.Resource;
                     };
-                    return (getter, disposable);
                 });
         }
 

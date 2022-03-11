@@ -19,8 +19,8 @@ namespace Stride.Rendering
     public static partial class MapColor_TextureFXKeys
     {
         public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>();
-        public static readonly ValueParameterKey<Vector2> Center = ParameterKeys.NewValue<Vector2>(new Vector2(0.0f,0.0f));
-        public static readonly ValueParameterKey<Vector2> Direction = ParameterKeys.NewValue<Vector2>(new Vector2(0.5f,0.5f));
+        public static readonly ValueParameterKey<Vector2> Start = ParameterKeys.NewValue<Vector2>(new Vector2(0.0f,0.0f));
+        public static readonly ValueParameterKey<Vector2> End = ParameterKeys.NewValue<Vector2>(new Vector2(1.0f,1.0f));
         public static readonly ValueParameterKey<float> MapSmooth = ParameterKeys.NewValue<float>(0.0f);
     }
 }

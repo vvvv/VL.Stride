@@ -5,7 +5,7 @@
 
     <PackageId>$(AssemblyName)</PackageId>
     <Description>A 3d graphics rendering library</Description>
-    <PackageTags>3d, graphics, renderer, gpu, vr, spout, image, texture, textureplayer, video, model, material, shader, touch, scenewindow, renderwindow</PackageTags>
+    <PackageTags>3d, graphics, renderer, gpu, vr, spout, image, texture, filter, textureplayer, video, model, material, shader, touch, scenewindow, renderwindow, texturewindow</PackageTags>
     <Authors>vvvv and open-source contributors</Authors>
     <Company>vvvv</Company>
   </PropertyGroup>
@@ -53,6 +53,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Stride.Graphics" Version="$(StrideVersion)" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- No need to copy to output folder as it already gets delivered by Stride -->
+    <Reference Include="$(PkgStride_Graphics)\runtimes\win\lib\netstandard2.0\SDL2-CS.dll">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
   </ItemGroup>
   
   <ItemGroup>

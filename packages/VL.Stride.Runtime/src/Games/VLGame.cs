@@ -142,10 +142,9 @@ namespace VL.Stride.Games
 
         protected override void Update(GameTime gameTime)
         {
-            var factory = Services.GetService<IVLFactory>();
+            var nodeFactoryRegistry = Services.GetService<NodeFactoryRegistry>();
 
             // Ensure all the paths referenced by VL are visible to the effect system
-            var nodeFactoryRegistry = factory?.GetService<NodeFactoryRegistry>();
             if (nodeFactoryRegistry != null)
                 UpdateShaderPaths(nodeFactoryRegistry);
 

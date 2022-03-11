@@ -18,7 +18,7 @@ namespace VL.Stride.Graphics
             yield return new CustomNodeDesc<MutablePipelineState>(factory,
                 ctor: nodeContext =>
                 {
-                    var deviceHandle = nodeContext.GetDeviceHandle();
+                    var deviceHandle = ServiceRegistry.Current.GetDeviceHandle();
                     return (CreateInitialPipelineState(deviceHandle), () => deviceHandle.Dispose());
                 },
                 name: "PipelineState",
@@ -80,18 +80,19 @@ namespace VL.Stride.Graphics
                 .AddCachedInput(nameof(SamplerStateDescription.MaxMipLevel), x => x.v.MaxMipLevel, (x, v) => x.v.MaxMipLevel = v, float.MaxValue)
                 .AddCachedInput(nameof(SamplerStateDescription.MipMapLevelOfDetailBias), x => x.v.MipMapLevelOfDetailBias, (x, v) => x.v.MipMapLevelOfDetailBias = v, 0f)
                 .AddCachedInput(nameof(SamplerStateDescription.CompareFunction), x => x.v.CompareFunction, (x, v) => x.v.CompareFunction = v, CompareFunction.Never)
-                .AddCachedOutput("Output", nodeContext =>
+                .AddCachedOutput<SamplerState>("Output", lifetime =>
                 {
+                    var gdh = ServiceRegistry.Current.GetDeviceHandle();
+                    lifetime.Add(gdh);
+
                     var disposable = new SerialDisposable();
-                    Func<StructRef<SamplerStateDescription>, SamplerState> getter = generator =>
+                    lifetime.Add(disposable);
+                    return generator =>
                     {
-                        var gdh = nodeContext.GetDeviceHandle();
                         var st = SamplerState.New(gdh.Resource, generator.v);
-                        gdh.Dispose();
                         disposable.Disposable = st;
                         return st;
                     };
-                    return (getter, disposable);
                 });
             ;
 

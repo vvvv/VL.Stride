@@ -32,26 +32,16 @@ namespace VL.Stride.Core
     {
         protected override void RegisterServices(IVLFactory factory)
         {
+            var services = VL.Core.ServiceRegistry.Current;
+
             // Graphics device
-            factory.RegisterService<NodeContext, IResourceProvider<GraphicsDevice>>(nodeContext =>
-            {
-                var gameProvider = nodeContext.GetGameProvider();
-                return gameProvider.Bind(game => ResourceProvider.Return(game.GraphicsDevice));
-            });
+            services.RegisterProvider(game => ResourceProvider.Return(game.GraphicsDevice));
 
             // Graphics context
-            factory.RegisterService<NodeContext, IResourceProvider<GraphicsContext>>(nodeContext =>
-            {
-                var gameProvider = nodeContext.GetGameProvider();
-                return gameProvider.Bind(game => ResourceProvider.Return(game.GraphicsContext));
-            });
+            services.RegisterProvider(game => ResourceProvider.Return(game.GraphicsContext));
 
             // Input manager
-            factory.RegisterService<NodeContext, IResourceProvider<InputManager>>(nodeContext =>
-            {
-                var gameProvider = nodeContext.GetGameProvider();
-                return gameProvider.Bind(game => ResourceProvider.Return(game.Input));
-            });
+            services.RegisterProvider(game => ResourceProvider.Return(game.Input));
 
             RegisterNodeFactories(factory);
         }
@@ -97,15 +87,16 @@ namespace VL.Stride.Core
             lock (serviceCache)
             {
                 // Keep Stride services per root container (which is usually the session)
-                var strideServices = serviceCache.GetValue(factory.ServiceProvider, CreateStrideServices);
+                var root = factory.GetService<CompositeDisposable>();
+                var strideServices = serviceCache.GetValue(root, CreateStrideServices);
                 factory.RegisterNodeFactory(NodeBuilding.NewNodeFactory(factory, name, f => init(strideServices, f)));
             }
         }
 
-        static readonly ConditionalWeakTable<IServiceProvider, ServiceRegistry> serviceCache = new ConditionalWeakTable<IServiceProvider, ServiceRegistry>();
+        static readonly ConditionalWeakTable<CompositeDisposable, ServiceRegistry> serviceCache = new ConditionalWeakTable<CompositeDisposable, ServiceRegistry>();
 
         // Taken from Stride/SkyboxGeneratorContext
-        static ServiceRegistry CreateStrideServices(IServiceProvider serviceProvider)
+        static ServiceRegistry CreateStrideServices(CompositeDisposable subscriptions)
         {
             var services = new ServiceRegistry();
 
@@ -132,7 +123,6 @@ namespace VL.Stride.Core
             ((IContentable)effectSystem).LoadContent();
             ((EffectCompilerCache)effectSystem.Compiler).CompileEffectAsynchronously = false;
 
-            var subscriptions = serviceProvider.GetService<CompositeDisposable>();
             subscriptions?.Add(effectSystem);
             subscriptions?.Add(graphicsDevice);
 

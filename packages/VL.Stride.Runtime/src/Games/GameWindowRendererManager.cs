@@ -773,14 +773,15 @@ namespace VL.Stride.Games
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
         {
-            if (!isChangingDevice && !window.IsFullscreen && ((window.ClientBounds.Height != 0) || (window.ClientBounds.Width != 0)))
+            var clientSize = window.ClientBounds.Size;
+            if (!isChangingDevice && !window.IsFullscreen && ((clientSize.Height != 0) || (clientSize.Width != 0)))
             {
-                resizedBackBufferWidth = window.ClientBounds.Width;
-                resizedBackBufferHeight = window.ClientBounds.Height;
+                resizedBackBufferWidth = clientSize.Width;
+                resizedBackBufferHeight = clientSize.Height;
 
                 deviceSettingsChanged = true;
                 isBackBufferToResize = true;
-                
+
                 ApplyRequestedChanges();
 
                 Debug.WriteLine("Manager Window Resize To: " + window.ClientBounds);
@@ -876,14 +877,12 @@ namespace VL.Stride.Games
                     //it is mostly useful only at initialization actually tho because Window_OrientationChanged does the same logic on runtime change
                     if (window.CurrentOrientation != currentWindowOrientation)
                     {
-                        if ((window.ClientBounds.Height > window.ClientBounds.Width && preferredBackBufferWidth > preferredBackBufferHeight) ||
-                            (window.ClientBounds.Width > window.ClientBounds.Height && preferredBackBufferHeight > preferredBackBufferWidth))
+                        if ((height > width && preferredBackBufferWidth > preferredBackBufferHeight) ||
+                            (width > height && preferredBackBufferHeight > preferredBackBufferWidth))
                         {
                             //Client size and Back Buffer size are different things
                             //in this case all we care is if orientation changed, if so we swap width and height
-                            var w = preferredBackBufferWidth;
-                            preferredBackBufferWidth = preferredBackBufferHeight;
-                            preferredBackBufferHeight = w;
+                            (preferredBackBufferWidth, preferredBackBufferHeight) = (preferredBackBufferHeight, preferredBackBufferWidth);
                         }
                     }
 
@@ -891,7 +890,7 @@ namespace VL.Stride.Games
                     try
                     {
                         // Notifies the game window for the new orientation
-                        var orientation = SelectOrientation(supportedOrientations, PreferredBackBufferWidth, PreferredBackBufferHeight, true);
+                        var orientation = SelectOrientation(supportedOrientations, preferredBackBufferWidth, preferredBackBufferHeight, true);
 
                         // Desktop doesn't have orientation (unless on Windows 8?)
                         //window.SetSupportedOrientations(orientation);
@@ -904,8 +903,17 @@ namespace VL.Stride.Games
                         var presenter = windowRenderer.Presenter;
 
                         isFullScreen = presentationParameters.IsFullScreen;
-                        window.BeginScreenDeviceChange(presentationParameters.IsFullScreen);
-                        isBeginScreenDeviceChange = true;
+
+                        // In high-DPI cases changing the window size for non-borderless windows doesn't work properly in SDL.
+                        // We basically end up in a feedback where the width and height of the window shrink.
+                        // In other words calling SDL_SetWindowSize(window, SDL_GetWindowSize(window)) moves and shrinks the window.
+                        // Let's therefor break the feedback by resizing the window only when necessary.
+                        if (width != presentationParameters.BackBufferWidth || height != presentationParameters.BackBufferHeight || window.IsFullscreen != presentationParameters.IsFullScreen)
+                        {
+                            window.BeginScreenDeviceChange(presentationParameters.IsFullScreen);
+                            isBeginScreenDeviceChange = true;
+                        }
+
                         bool needToCreateNewDevice = true;
 
                         // If we are not forced to create a new device and this is already an existing GraphicsDevice
