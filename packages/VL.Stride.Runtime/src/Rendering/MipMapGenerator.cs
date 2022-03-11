@@ -94,8 +94,8 @@ namespace VL.Stride.Rendering
             if (MaxMipMapCount > 0)
                 mipMapCount = Math.Min(mipMapCount, MaxMipMapCount);
 
-            var textureDescription = TextureDescription.New2D(width, height, mipMapCount, inputTexture.Format, TextureFlags.ShaderResource | TextureFlags.RenderTarget);
-            var renderTarget = Texture.New(graphicsDeviceHandle.Resource, textureDescription, null);
+            var textureDescription = TextureDescription.New2D(width, height, mipMapCount, inputTexture.ViewFormat, TextureFlags.ShaderResource | TextureFlags.RenderTarget);
+            var renderTarget = Texture.New(graphicsDeviceHandle.Resource, textureDescription);
             AllocateTextureViewsForMipMaps(renderTarget);
             return renderTarget;
         }
@@ -110,7 +110,7 @@ namespace VL.Stride.Rendering
                 {
                     Type = ViewType.Single,
                     MipLevel = i,
-                    Format = parentTexture.Format,
+                    Format = parentTexture.ViewFormat,
                     ArraySlice = 0,
                     Flags = parentTexture.Flags,
                 };
