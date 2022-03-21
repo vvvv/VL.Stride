@@ -116,6 +116,9 @@ namespace VL.Stride.Lib
                 .ShareInParallel();
             });
 
+            // Older code paths (like CEF) use obsolete IVLFactory.CreateService(NodeContext => IResourceProvider<Game>)
+            factory.RegisterService<NodeContext, IResourceProvider<Game>>(ctx => ctx.GetGameProvider());
+
             services.RegisterProvider(game =>
             {
                 game.Window.Visible = true;
