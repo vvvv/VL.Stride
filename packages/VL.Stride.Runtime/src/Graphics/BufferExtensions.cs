@@ -14,8 +14,51 @@ using MapMode = Stride.Graphics.MapMode;
 
 namespace VL.Stride.Graphics
 {
+    public enum StructuredBufferType
+    {
+        None = BufferFlags.None,
+        StructuredBuffer = BufferFlags.StructuredBuffer,
+        StructuredAppendBuffer = BufferFlags.StructuredAppendBuffer,
+        StructuredCounterBuffer = BufferFlags.StructuredCounterBuffer
+    }
+
     public static class BufferExtensions
     {
+        /// <summary>
+        /// Following the spec from: https://docs.microsoft.com/en-us/windows/win32/api/d3d11/ne-d3d11-d3d11_buffer_uav_flag
+        /// </summary>
+        /// <param name="bufferFlags"></param>
+        /// <param name="viewFormat"></param>
+        /// <param name="structuredBufferType"></param>
+        /// <param name="flags"></param>
+        /// <param name="format"></param>
+        public static void CombineWithStructuredBufferTypeFlag(BufferFlags bufferFlags, PixelFormat viewFormat, StructuredBufferType structuredBufferType, out BufferFlags flags, out PixelFormat format)
+        {
+            switch (structuredBufferType)
+            {
+                case StructuredBufferType.None:
+                    flags = bufferFlags;
+                    format = viewFormat;
+                    break;
+                case StructuredBufferType.StructuredBuffer:
+                    flags = bufferFlags | BufferFlags.StructuredBuffer;
+                    format = viewFormat;
+                    break;
+                case StructuredBufferType.StructuredAppendBuffer:
+                    flags = bufferFlags | BufferFlags.StructuredAppendBuffer;
+                    format = PixelFormat.None;
+                    break;
+                case StructuredBufferType.StructuredCounterBuffer:
+                    flags = bufferFlags | BufferFlags.StructuredCounterBuffer;
+                    format = PixelFormat.None;
+                    break;
+                default:
+                    flags = bufferFlags;
+                    format = viewFormat;
+                    break;
+            }
+        }
+
         public static Buffer New(GraphicsDevice graphicsDevice, BufferDescription description, BufferViewDescription viewDescription, IntPtr intialData)
         {
             var buffer = BufferCtor(graphicsDevice);
