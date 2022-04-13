@@ -24,6 +24,7 @@ using Stride.Core.IO;
 using Stride.Core.BuildEngine;
 using System.Collections.Concurrent;
 using System.Reactive.Disposables;
+using System.Reactive.Threading.Tasks;
 
 namespace VL.Stride.Assets
 {

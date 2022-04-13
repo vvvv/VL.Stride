@@ -31,7 +31,7 @@ namespace VL.Stride.Rendering
                         renderContext.RenderOutput.RenderTargetFormat0 = renderTarget.ViewFormat;
                         renderContext.RenderOutput.RenderTargetCount = 1;
 
-                        renderContext.ViewportState ??= viewportState;
+                        renderContext.ViewportState = viewportState;
                         renderContext.ViewportState.Viewport0 = new Viewport(0, 0, renderTarget.ViewWidth, renderTarget.ViewHeight);
                     }
                     context.CommandList.SetRenderTargetAndViewport(depthBuffer, renderTarget);
