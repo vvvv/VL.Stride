@@ -10,8 +10,8 @@ using System.Windows.Forms;
 using System;
 using VL.Lib.Animation;
 using StrideApp = Stride.Graphics.SDL.Application;
-using SDL = SDL2.SDL;
 using System.Runtime.InteropServices;
+using Silk.NET.SDL;
 
 [assembly: AssemblyInitializer(typeof(VL.Stride.Lib.Initialization))]
 
@@ -63,7 +63,7 @@ namespace VL.Stride.Lib
                         gameContext = new GameContextSDL(null, 0, 0, isUserManagingRun: true);
                         // SDL_PumpEvents shall not run the message loop (Translate/Dispatch) - already done by windows forms
                         // This calls also needs to be done after the Stride loaded the native SDL library - otherwise crash
-                        SDL.SDL_SetHint(SDL.SDL_HINT_WINDOWS_ENABLE_MESSAGELOOP, "0");
+                        Sdl.GetApi().SetHint(Sdl.HintWindowsEnableMessageloop, "0");
                         // Add a message filter which intercepts WM_CHAR messages the Windows Forms loop would otherwise drop because it doesn't know the SDL created windows.
                         Application.AddMessageFilter(messageFilter = new MessageFilter());
                     }

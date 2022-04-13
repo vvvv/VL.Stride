@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" Id="CWTbJ7dBwqtLwCqXKAv402" LanguageVersion="2021.4.0.586" Version="0.128">
+<Document xmlns:p="property" Id="CWTbJ7dBwqtLwCqXKAv402" LanguageVersion="2022.5.0.44" Version="0.128">
   <NugetDependency Id="HbAhAevw0FVN9sGbXw9dz9" Location="VL.CoreLib" Version="2021.4.0-0568-gba571a190a" />
   <Patch Id="AXcrkz7wtuiLTLQMfXYFvQ">
     <Canvas Id="UNxfqzqFZ0sNZX8LT3rUat" DefaultCategory="Stride" CanvasType="FullCategory">
@@ -469,13 +469,15 @@
                   <ControlPoint Id="IKi4O4ztwA5My5sSuJIbXs" Bounds="248,714" Name="Bytes" Alignment="Bottom" />
                   <ControlPoint Id="A41YCVr3rDPPGHTZdQC6Su" Bounds="563,714" Alignment="Bottom" />
                   <ControlPoint Id="Uhcq1WW1q7jPMei6mvW0di" Bounds="512,258" Alignment="Top" />
+                  <ControlPoint Id="LFLp9qpyeBXOdzeh3TrRQw" Bounds="407,714" Name="Success" Alignment="Bottom" />
+                  <ControlPoint Id="NpgniX7moAINw5lPzizEnf" Bounds="551,258" Name="Success" Alignment="Top" />
                   <Patch Id="BaTcZ8yj7v2QPjM24J0S6L" ManuallySortedPins="true">
                     <Patch Id="IE1s54DqQ1MPE4mVoqPllP" Name="Create" ManuallySortedPins="true" />
                     <Patch Id="ByriwQjbumDMPzSg0ipioU" Name="Then" ManuallySortedPins="true" />
                     <Node Bounds="248,349,317,275" Id="SSRuxO6g6eAQbOIF8niW6j">
                       <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="VL.CoreLib.Experimental.vl">
-                        <Choice Kind="ProcessAppFlag" Name="Try" />
                         <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                        <Choice Kind="ProcessStatefulRegion" Name="Try (1 Output)" />
                       </p:NodeReference>
                       <Pin Id="A4dHf3J7BEyPyE3xUAZ5BU" Name="Default Output" Kind="InputPin" />
                       <Pin Id="PqStlX6ksA0P95D1R8Y26b" Name="Result" Kind="OutputPin" />
@@ -511,10 +513,20 @@
                             <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                             <Choice Kind="OperationCallFlag" Name="Read" />
                             <CategoryReference Kind="AssemblyCategory" Name="Stream" NeedsToBeDirectParent="true" />
+                            <PinReference Kind="InputPin" Name="Buffer">
+                              <p:DataTypeReference p:Type="TypeReference" LastCategoryFullName="System" LastSymbolSource="System.Runtime.dll">
+                                <Choice Kind="TypeFlag" Name="Array`1" />
+                                <p:TypeArguments>
+                                  <TypeReference LastCategoryFullName="System" LastSymbolSource="System.Runtime.dll">
+                                    <Choice Kind="TypeFlag" Name="Byte" />
+                                  </TypeReference>
+                                </p:TypeArguments>
+                              </p:DataTypeReference>
+                            </PinReference>
                           </p:NodeReference>
                           <Pin Id="RPD4jd930mKNGNnPzP1u7K" Name="Input" Kind="StateInputPin" />
                           <Pin Id="EsY0xEYY0tSNOpaGHhAlVc" Name="Buffer" Kind="InputPin" />
-                          <Pin Id="BV27D7qV2CgLGiMPaII39B" Name="Offset" Kind="InputPin" />
+                          <Pin Id="IrBzv6IlgrKQR4OlFRRxUq" Name="Offset" Kind="InputPin" />
                           <Pin Id="IBXEti5lSCVPHLe2qkKhS5" Name="Count" Kind="InputPin" DefaultValue="16">
                             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                               <Choice Kind="TypeFlag" Name="Integer32" />
@@ -550,8 +562,6 @@
                     <ControlPoint Id="MdpKImWPZDFQZXwmG7wMzQ" Bounds="249,302" />
                     <ControlPoint Id="Pp1nlmoisREPpgrjUi9sfv" Bounds="360,285" />
                   </Patch>
-                  <ControlPoint Id="LFLp9qpyeBXOdzeh3TrRQw" Bounds="407,714" Name="Success" Alignment="Bottom" />
-                  <ControlPoint Id="NpgniX7moAINw5lPzizEnf" Bounds="551,258" Name="Success" Alignment="Top" />
                 </Node>
                 <Pad Id="FtV97XRLSgvLJIQKRXwkwZ" SlotId="E034k0iJJ48OfLPZdXj2EW" Bounds="392,214" />
                 <ControlPoint Id="Mk9vxm6QO5cPR0hpfL9u5n" Bounds="218,114" />
@@ -1753,8 +1763,8 @@
                     <Patch Id="C6dplA5ZLGhLLFWXVBCcoa" Name="Then" ManuallySortedPins="true" />
                     <Node Bounds="248,349,292,243" Id="UNXhtz80hZ4O5r5tkorhcE">
                       <p:NodeReference LastCategoryFullName="Control" LastSymbolSource="VL.CoreLib.Experimental.vl">
-                        <Choice Kind="ProcessAppFlag" Name="Try" />
                         <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                        <Choice Kind="ProcessStatefulRegion" Name="Try (1 Output)" />
                       </p:NodeReference>
                       <Pin Id="RdjbB1O2Eo8NLCm5rCCgzF" Name="Default Output" Kind="InputPin" />
                       <Pin Id="QOGNaZVENQkMBYAgiRPZCZ" Name="Result" Kind="OutputPin" />
@@ -1780,10 +1790,20 @@
                             <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
                             <CategoryReference Kind="AssemblyCategory" Name="Stream" NeedsToBeDirectParent="true" />
                             <Choice Kind="OperationCallFlag" Name="Write" />
+                            <PinReference Kind="InputPin" Name="Buffer">
+                              <p:DataTypeReference p:Type="TypeReference" LastCategoryFullName="System" LastSymbolSource="System.Runtime.dll">
+                                <Choice Kind="TypeFlag" Name="Array`1" />
+                                <p:TypeArguments>
+                                  <TypeReference LastCategoryFullName="System" LastSymbolSource="System.Runtime.dll">
+                                    <Choice Kind="TypeFlag" Name="Byte" />
+                                  </TypeReference>
+                                </p:TypeArguments>
+                              </p:DataTypeReference>
+                            </PinReference>
                           </p:NodeReference>
                           <Pin Id="HUqUx7vYe0vL1w2wBBbdsl" Name="Input" Kind="StateInputPin" />
                           <Pin Id="LLJbb64Ui5RPPLhEICkVvv" Name="Buffer" Kind="InputPin" />
-                          <Pin Id="N7rckxPijtZM2iPgdvrNss" Name="Offset" Kind="InputPin" />
+                          <Pin Id="RSxGbbTMAMsP5OH7zHDLsV" Name="Offset" Kind="InputPin" />
                           <Pin Id="NlvXim4hJWWMD1PrPCoZ0x" Name="Count" Kind="InputPin" DefaultValue="16">
                             <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
                               <Choice Kind="TypeFlag" Name="Integer32" />

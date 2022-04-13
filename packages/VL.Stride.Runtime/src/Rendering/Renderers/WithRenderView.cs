@@ -14,7 +14,7 @@ namespace VL.Stride.Rendering
             var renderView = RenderView;
             if (renderView != null)
             {
-                var viewport = context?.RenderContext?.ViewportState?.Viewport0;
+                var viewport = context?.RenderContext?.ViewportState.Viewport0;
 
                 if (viewport is null)
                 {

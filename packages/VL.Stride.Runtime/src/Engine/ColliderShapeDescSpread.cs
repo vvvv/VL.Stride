@@ -1,4 +1,5 @@
-﻿using Stride.Physics;
+﻿using Stride.Core;
+using Stride.Physics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace VL.Stride.Engine
     {
         public Spread<IColliderShapeDesc> ColliderShapeDescs { get; set; } = Spread<IColliderShapeDesc>.Empty;
 
-        public ColliderShape CreateShape()
+        public ColliderShape CreateShape(IServiceRegistry registry)
         {
             throw new NotImplementedException();
         }
