@@ -22,7 +22,7 @@ namespace VL.Stride.Assets
             try
             {
                 //set msbuild
-                PackageSessionPublicHelper.FindAndSetMSBuildVersion();
+                //PackageSessionPublicHelper.FindAndSetMSBuildVersion();
             }
             catch (Exception e)
             {
