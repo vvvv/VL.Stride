@@ -3,4 +3,11 @@
   <!-- In our main repo this should get picked up and import targets which override the build version targets -->
   <Import Project="$([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..\..))" 
           Condition="Exists($([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..\..)))" />
+
+  <!-- Remove Stride content files from non-entry points -->
+  <Target Name="_RemoveStrideDependencyContentFiles" AfterTargets="_StrideCopyContent">
+    <ItemGroup>
+      <Content Remove="@(_StrideDependencyContent)" Condition=" '$(StrideIsExecutable)' == '' or '$(StrideIsExecutable)' == 'false' " />
+    </ItemGroup>
+  </Target>
 </Project>
