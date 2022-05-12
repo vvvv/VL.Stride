@@ -24,7 +24,7 @@ Follow the [GitHub Flow](https://guides.github.com/introduction/flow/) to contri
 
 A deep bow before those who believed in VL.Stride from the beginning and substantially supported its development:
 
-* [Marshmellow Laser Feast](http://marshmallowlaserfeast.com)
+* [Marshmallow Laser Feast](http://marshmallowlaserfeast.com)
 * [schnellebuntebilder](http://schnellebuntebilder.de)
 * [m box](http://m-box.de)
 * [Refik Anadol](http://refikanadol.com)
