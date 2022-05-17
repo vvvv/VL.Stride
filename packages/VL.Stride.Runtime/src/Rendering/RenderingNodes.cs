@@ -156,6 +156,17 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.ConeModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddCachedInput(nameof(Models.ConeModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
                 .AddDefaultPins();
+
+            yield return factory.NewMeshNode((Models.CappedCylinderModel x) => (x.BaseRadius, x.TopRadius, x.Clockwise, x.FromAngle, x.ToAngle, x.Height, x.SharedVertices, x.Slices))
+                .AddCachedInput(nameof(Models.CappedCylinderModel.BaseRadius), x => x.BaseRadius, (x, v) => x.BaseRadius = v, 0.5f)
+                .AddCachedInput(nameof(Models.CappedCylinderModel.TopRadius), x => x.TopRadius, (x, v) => x.TopRadius = v, 0.75f)
+                .AddCachedInput(nameof(Models.CappedCylinderModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false)
+                .AddCachedInput(nameof(Models.CappedCylinderModel.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
+                .AddCachedInput(nameof(Models.CappedCylinderModel.ToAngle), x => x.FromAngle, (x, v) => x.ToAngle = v, 1f)
+                .AddCachedInput(nameof(Models.CappedCylinderModel.Height), x => x.Height, (x, v) => x.Height = v, 1f)
+                .AddCachedInput(nameof(Models.CappedCylinderModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
+                .AddCachedInput(nameof(Models.CappedCylinderModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
+                .AddDefaultPins();
             // TextureFX
             yield return factory.NewNode(c => new MipMapGenerator(c), name: "MipMap", category: "Stride.Textures.Experimental.Utils", copyOnWrite: false, hasStateOutput: false)
                 .AddInput("Input", x => x.InputTexture, (x, v) => x.InputTexture = v)
