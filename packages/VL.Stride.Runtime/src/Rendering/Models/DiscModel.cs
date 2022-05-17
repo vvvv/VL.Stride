@@ -6,7 +6,7 @@ using Stride.Rendering.ProceduralModels;
 namespace VL.Stride.Rendering.Models
 {
     /// <summary>
-    /// 
+    /// Class used to generate a Stride Disc model mesh using geometry3Sharp
     /// </summary>
     [DataContract("DiscModel")]
     [Display("DiscModel")] // This name shows up in the procedural model dropdown list
@@ -50,19 +50,20 @@ namespace VL.Stride.Rendering.Models
         public int Slices { get; set; } = 16;
 
         /// <summary>
-        /// 
+        /// Uses the DMesh3 instance generated from a PuncturedDiscGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the PuncturedDisc generated with the classes public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
-            var puncturedDiscGenerator = new PuncturedDiscGenerator();
-
-            puncturedDiscGenerator.Clockwise = Clockwise;
-            puncturedDiscGenerator.EndAngleDeg = ToAngle * 360;
-            puncturedDiscGenerator.InnerRadius = InnerRadius;
-            puncturedDiscGenerator.OuterRadius = OuterRadius;
-            puncturedDiscGenerator.Slices = Slices;
-            puncturedDiscGenerator.StartAngleDeg = FromAngle * 360;
+            var puncturedDiscGenerator = new PuncturedDiscGenerator
+            {
+                Clockwise = Clockwise,
+                EndAngleDeg = ToAngle * 360,
+                InnerRadius = InnerRadius,
+                OuterRadius = OuterRadius,
+                Slices = Slices,
+                StartAngleDeg = FromAngle * 360
+            };
 
             var meshGenerator = puncturedDiscGenerator.Generate();
 

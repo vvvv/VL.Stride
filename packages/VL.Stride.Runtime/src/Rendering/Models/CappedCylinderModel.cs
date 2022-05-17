@@ -6,7 +6,7 @@ using Stride.Rendering.ProceduralModels;
 namespace VL.Stride.Rendering.Models
 {
     /// <summary>
-    /// 
+    /// Class used to generate a Stride CappedCylinder model mesh using geometry3Sharp
     /// </summary>
     [DataContract("CappedCylinderModel")]
     [Display("CappedCylinderModel")] // This name shows up in the procedural model dropdown list
@@ -63,21 +63,22 @@ namespace VL.Stride.Rendering.Models
         public int Slices { get; set; } = 16;
 
         /// <summary>
-        /// 
+        /// Uses the DMesh3 instance generated from a CappedCylinderGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the CappedCylinder generated with the classes public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
-            var cappedCylinderGenerator = new CappedCylinderGenerator();
-
-            cappedCylinderGenerator.BaseRadius = BaseRadius;
-            cappedCylinderGenerator.TopRadius = TopRadius;
-            cappedCylinderGenerator.Clockwise = Clockwise;
-            cappedCylinderGenerator.EndAngleDeg = ToAngle * 360;
-            cappedCylinderGenerator.Height = Height;
-            cappedCylinderGenerator.NoSharedVertices = !SharedVertices;
-            cappedCylinderGenerator.Slices = Slices;
-            cappedCylinderGenerator.StartAngleDeg = FromAngle * 360;
+            var cappedCylinderGenerator = new CappedCylinderGenerator
+            {
+                BaseRadius = BaseRadius,
+                TopRadius = TopRadius,
+                Clockwise = Clockwise,
+                EndAngleDeg = ToAngle * 360,
+                Height = Height,
+                NoSharedVertices = !SharedVertices,
+                Slices = Slices,
+                StartAngleDeg = FromAngle * 360
+            };
 
             var meshGenerator = cappedCylinderGenerator.Generate();
 

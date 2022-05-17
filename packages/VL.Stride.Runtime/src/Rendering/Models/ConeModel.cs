@@ -6,7 +6,7 @@ using Stride.Rendering.ProceduralModels;
 namespace VL.Stride.Rendering.Models
 {
     /// <summary>
-    /// 
+    /// Class used to generate a Stride Cone model mesh using geometry3Sharp
     /// </summary>
     [DataContract("ConeModel")]
     [Display("ConeModel")] // This name shows up in the procedural model dropdown list
@@ -57,20 +57,21 @@ namespace VL.Stride.Rendering.Models
         public int Slices { get; set; } = 16;
 
         /// <summary>
-        /// 
+        /// Uses the DMesh3 instance generated from a ConeGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cone generated with the classes public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
-            var coneGenerator = new ConeGenerator();
-
-            coneGenerator.BaseRadius = BaseRadius;
-            coneGenerator.Clockwise = Clockwise;
-            coneGenerator.EndAngleDeg = ToAngle * 360;
-            coneGenerator.Height = Height;
-            coneGenerator.NoSharedVertices = !SharedVertices;
-            coneGenerator.Slices = Slices;
-            coneGenerator.StartAngleDeg = FromAngle * 360;
+            var coneGenerator = new ConeGenerator
+            {
+                BaseRadius = BaseRadius,
+                Clockwise = Clockwise,
+                EndAngleDeg = ToAngle * 360,
+                Height = Height,
+                NoSharedVertices = !SharedVertices,
+                Slices = Slices,
+                StartAngleDeg = FromAngle * 360
+            };
 
             var meshGenerator = coneGenerator.Generate();
 
