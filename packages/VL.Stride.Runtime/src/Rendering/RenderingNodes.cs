@@ -146,6 +146,16 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(TorusProceduralModel.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
                 .AddDefaultPins();
 
+            //g3 primitives
+            yield return factory.NewMeshNode((Models.ConeModel x) => (x.BaseRadius, x.Clockwise, x.FromAngle, x.ToAngle, x.Height, x.SharedVertices, x.Slices))
+                .AddCachedInput(nameof(Models.ConeModel.BaseRadius), x => x.BaseRadius, (x, v) => x.BaseRadius = v, 0.5f)
+                .AddCachedInput(nameof(Models.ConeModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false)
+                .AddCachedInput(nameof(Models.ConeModel.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
+                .AddCachedInput(nameof(Models.ConeModel.ToAngle), x => x.FromAngle, (x, v) => x.ToAngle = v, 1f)
+                .AddCachedInput(nameof(Models.ConeModel.Height), x => x.Height, (x, v) => x.Height = v, 1f)
+                .AddCachedInput(nameof(Models.ConeModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
+                .AddCachedInput(nameof(Models.ConeModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
+                .AddDefaultPins();
             // TextureFX
             yield return factory.NewNode(c => new MipMapGenerator(c), name: "MipMap", category: "Stride.Textures.Experimental.Utils", copyOnWrite: false, hasStateOutput: false)
                 .AddInput("Input", x => x.InputTexture, (x, v) => x.InputTexture = v)
