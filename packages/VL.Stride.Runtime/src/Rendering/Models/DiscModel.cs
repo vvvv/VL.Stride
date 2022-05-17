@@ -30,7 +30,6 @@ namespace VL.Stride.Rendering.Models
         [DataMember(12)]
         public bool Clockwise { get; set; } = false;
 
-
         /// <summary>
         /// Initial angle in cycles 
         /// </summary>

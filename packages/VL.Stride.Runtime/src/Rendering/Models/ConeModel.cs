@@ -24,7 +24,6 @@ namespace VL.Stride.Rendering.Models
         [DataMember(11)]
         public bool Clockwise { get; set; } = false;
 
-
         /// <summary>
         /// Initial angle in cycles 
         /// </summary>
@@ -42,7 +41,6 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         [DataMember(14)]
         public float Height { get; set; } = 1;
-
 
         /// <summary>
         /// 
