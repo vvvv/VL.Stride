@@ -167,6 +167,17 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.CappedCylinderModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
                 .AddDefaultPins();
 
+            yield return factory.NewMeshNode((Models.OpenCylinderModel x) => (x.BaseRadius, x.TopRadius, x.Clockwise, x.FromAngle, x.ToAngle, x.Height, x.SharedVertices, x.Slices))
+                .AddCachedInput(nameof(Models.OpenCylinderModel.BaseRadius), x => x.BaseRadius, (x, v) => x.BaseRadius = v, 0.5f)
+                .AddCachedInput(nameof(Models.OpenCylinderModel.TopRadius), x => x.TopRadius, (x, v) => x.TopRadius = v, 0.75f)
+                .AddCachedInput(nameof(Models.OpenCylinderModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false)
+                .AddCachedInput(nameof(Models.OpenCylinderModel.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
+                .AddCachedInput(nameof(Models.OpenCylinderModel.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
+                .AddCachedInput(nameof(Models.OpenCylinderModel.Height), x => x.Height, (x, v) => x.Height = v, 1f)
+                .AddCachedInput(nameof(Models.OpenCylinderModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
+                .AddCachedInput(nameof(Models.OpenCylinderModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
+                .AddDefaultPins();
+
             yield return factory.NewMeshNode((Models.DiscModel x) => (x.OuterRadius, x.InnerRadius, x.Clockwise, x.FromAngle, x.ToAngle, x.Slices))
                 .AddCachedInput(nameof(Models.DiscModel.OuterRadius), x => x.OuterRadius, (x, v) => x.OuterRadius = v, 1f)
                 .AddCachedInput(nameof(Models.DiscModel.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.5f)
