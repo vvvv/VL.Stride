@@ -187,6 +187,11 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.DiscModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
                 .AddDefaultPins();
 
+            yield return factory.NewMeshNode((Models.SphereModel x) => (x.Radius))
+                .AddCachedInput(nameof(Models.SphereModel.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddCachedInput(nameof(Models.SphereModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
+                .AddDefaultPins();
+
             // TextureFX
             yield return factory.NewNode(c => new MipMapGenerator(c), name: "MipMap", category: "Stride.Textures.Experimental.Utils", copyOnWrite: false, hasStateOutput: false)
                 .AddInput("Input", x => x.InputTexture, (x, v) => x.InputTexture = v)
