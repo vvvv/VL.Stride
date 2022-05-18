@@ -66,7 +66,7 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the CappedCylinder generated with the classes public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
-            var cappedCylinderGenerator = new CappedCylinderGenerator
+            var generator = new CappedCylinderGenerator
             {
                 BaseRadius = BaseRadius,
                 TopRadius = TopRadius,
@@ -78,7 +78,7 @@ namespace VL.Stride.Rendering.Models
                 StartAngleDeg = FromAngle * 360
             };
 
-            var meshGenerator = cappedCylinderGenerator.Generate();
+            var meshGenerator = generator.Generate();
 
             return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "CappedCylinderModel");
         }

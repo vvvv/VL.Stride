@@ -60,7 +60,7 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cone generated with the classes public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
-            var coneGenerator = new ConeGenerator
+            var generator = new ConeGenerator
             {
                 BaseRadius = BaseRadius,
                 Clockwise = Clockwise,
@@ -71,7 +71,7 @@ namespace VL.Stride.Rendering.Models
                 StartAngleDeg = FromAngle * 360
             };
 
-            var meshGenerator = coneGenerator.Generate();
+            var meshGenerator = generator.Generate();
 
             return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeModel");
         }

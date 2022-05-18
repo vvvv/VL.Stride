@@ -54,7 +54,7 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the PuncturedDisc generated with the classes public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
-            var puncturedDiscGenerator = new PuncturedDiscGenerator
+            var generator = new PuncturedDiscGenerator
             {
                 Clockwise = Clockwise,
                 EndAngleDeg = ToAngle * 360,
@@ -64,7 +64,7 @@ namespace VL.Stride.Rendering.Models
                 StartAngleDeg = FromAngle * 360
             };
 
-            var meshGenerator = puncturedDiscGenerator.Generate();
+            var meshGenerator = generator.Generate();
 
             return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "DiscModel");
         }
