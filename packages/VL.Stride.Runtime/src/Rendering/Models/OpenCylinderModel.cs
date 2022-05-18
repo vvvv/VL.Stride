@@ -63,7 +63,7 @@ namespace VL.Stride.Rendering.Models
         /// <summary>
         /// Uses the DMesh3 instance generated from a OpenCylinderGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
         /// </summary>
-        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the CappedCylinder generated with the classes public property values</returns>
+        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Open Cylinder generated with the classes public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
             var generator = new OpenCylinderGenerator
