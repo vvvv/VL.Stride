@@ -178,6 +178,15 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.OpenCylinderModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
                 .AddDefaultPins();
 
+            yield return factory.NewMeshNode((Models.TubeModel x) => (x.Path, x.Closed, x.Shape, x.Capped, x.SharedVertices))
+                .AddCachedInput(nameof(Models.TubeModel.Path), x => x.Path, (x, v) => x.Path = v)
+                .AddCachedInput(nameof(Models.TubeModel.Closed), x => x.Closed, (x, v) => x.Closed = v,false)
+                .AddCachedInput(nameof(Models.TubeModel.Shape), x => x.Shape, (x, v) => x.Shape = v)
+                .AddCachedInput(nameof(Models.TubeModel.Capped), x => x.Capped, (x, v) => x.Capped = v, true)
+                .AddCachedInput(nameof(Models.TubeModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false)
+                .AddCachedInput(nameof(Models.TubeModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
+                .AddDefaultPins();
+
             yield return factory.NewMeshNode((Models.DiscModel x) => (x.OuterRadius, x.InnerRadius, x.Clockwise, x.FromAngle, x.ToAngle, x.Slices))
                 .AddCachedInput(nameof(Models.DiscModel.OuterRadius), x => x.OuterRadius, (x, v) => x.OuterRadius = v, 1f)
                 .AddCachedInput(nameof(Models.DiscModel.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.5f)
