@@ -58,8 +58,8 @@ namespace VL.Stride.Rendering.Models
         {
             if (Path != null && Path.Count > 0)
             {
-                var path = new DCurve3(Utils.ToVector3dSpread(Path), Closed);
-                var tubeShape = new Polygon2d(Utils.ToVector2dSpread(Shape));
+                var path = new DCurve3(Utils.ToVector3dList(Path), Closed);
+                var tubeShape = new Polygon2d(Utils.ToVector2dList(Shape));
 
                 var generator = new TubeGenerator(path, tubeShape)
                 {
