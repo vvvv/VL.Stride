@@ -196,6 +196,13 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.DiscModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
                 .AddDefaultPins();
 
+            yield return factory.NewMeshNode((Models.GriddedRectModel x) => (x.EdgeVertices, x.Width, x.Height, x.Clockwise))
+                .AddCachedInput(nameof(Models.GriddedRectModel.EdgeVertices), x => x.EdgeVertices, (x, v) => x.EdgeVertices = v, 2)
+                .AddCachedInput(nameof(Models.GriddedRectModel.Width), x => x.Width, (x, v) => x.Width = v, 1f)
+                .AddCachedInput(nameof(Models.GriddedRectModel.Height), x => x.Height, (x, v) => x.Height = v, 0.5f)
+                .AddCachedInput(nameof(Models.GriddedRectModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
+                .AddDefaultPins();
+
             yield return factory.NewMeshNode((Models.GridBoxModel x) => (x.EdgeVertices, x.Clockwise, x.SharedVertices))
                 .AddCachedInput(nameof(Models.GridBoxModel.EdgeVertices), x => x.EdgeVertices, (x, v) => x.EdgeVertices = v, 2)
                 .AddCachedInput(nameof(Models.GridBoxModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
