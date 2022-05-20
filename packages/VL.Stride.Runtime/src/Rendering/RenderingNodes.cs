@@ -178,6 +178,14 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.OpenCylinderModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
                 .AddDefaultPins();
 
+            yield return factory.NewMeshNode((Models.VerticalGeneralizedCylinderModel x) => (x.Capped, x.Sections, x.Clockwise, x.SharedVertices, x.Slices))
+                .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderModel.Capped), x => x.Capped, (x, v) => x.Capped = v, true)
+                .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderModel.Sections), x => x.Sections, (x, v) => x.Sections = v)
+                .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false)
+                .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
+                .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
+                .AddDefaultPins();
+
             yield return factory.NewMeshNode((Models.TubeModel x) => (x.Path, x.Closed, x.Shape, x.Capped, x.SharedVertices))
                 .AddCachedInput(nameof(Models.TubeModel.Path), x => x.Path, (x, v) => x.Path = v)
                 .AddCachedInput(nameof(Models.TubeModel.Closed), x => x.Closed, (x, v) => x.Closed = v,false)
