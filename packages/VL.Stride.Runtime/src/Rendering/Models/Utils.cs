@@ -111,5 +111,15 @@ namespace VL.Stride.Rendering.Models
             }
             return null;
         }
+
+        /// <summary>
+        /// Converts a VL.Stride.Rendering.Models.Corner to a g3.RoundRectGenerator.Corner
+        /// </summary>
+        /// <param name="corner">A VL.Stride.Rendering.Models.RoundRectModel.Corner</param>
+        /// <returns>A g3.RoundRectGenerator.Corner</returns>
+        public static RoundRectGenerator.Corner ToCorner(RoundRectModel.Corner corner)
+        {
+            return (RoundRectGenerator.Corner)((byte)corner);
+        }
     }
 }
