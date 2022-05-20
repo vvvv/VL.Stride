@@ -203,6 +203,15 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.GriddedRectModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
                 .AddDefaultPins();
 
+            yield return factory.NewMeshNode((Models.RoundRectModel x) => (x.CornerSteps, x.Width, x.Height, x.Radius, x.SharpCorners, x.Clockwise))
+                .AddCachedInput(nameof(Models.RoundRectModel.CornerSteps), x => x.CornerSteps, (x, v) => x.CornerSteps = v, 4)
+                .AddCachedInput(nameof(Models.RoundRectModel.Width), x => x.Width, (x, v) => x.Width = v, 2f)
+                .AddCachedInput(nameof(Models.RoundRectModel.Height), x => x.Height, (x, v) => x.Height = v, 1f)
+                .AddCachedInput(nameof(Models.RoundRectModel.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.25f)
+                .AddCachedInput(nameof(Models.RoundRectModel.SharpCorners), x => x.SharpCorners, (x, v) => x.SharpCorners = v, Models.RoundRectModel.Corner.None)
+                .AddCachedInput(nameof(Models.RoundRectModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
+                .AddDefaultPins();
+
             yield return factory.NewMeshNode((Models.GridBoxModel x) => (x.EdgeVertices, x.Clockwise, x.SharedVertices))
                 .AddCachedInput(nameof(Models.GridBoxModel.EdgeVertices), x => x.EdgeVertices, (x, v) => x.EdgeVertices = v, 2)
                 .AddCachedInput(nameof(Models.GridBoxModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
