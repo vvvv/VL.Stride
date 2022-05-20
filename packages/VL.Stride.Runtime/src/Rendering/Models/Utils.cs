@@ -67,7 +67,7 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         /// <param name="vectors">IList of Stride Vector3</param>
         /// <returns>An equivalent IList of geomtry3Sharp Vector3d</returns>
-        public static IList<Vector3d> ToVector3dSpread(Spread<Vector3> vectors)
+        public static IList<Vector3d> ToVector3dList(Spread<Vector3> vectors)
         {
             if (vectors != null && vectors.Count > 0)
             {
@@ -98,7 +98,7 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         /// <param name="vectors">IList of Stride Vector2</param>
         /// <returns>An equivalent IList of geomtry3Sharp Vector2d</returns>
-        public static IList<Vector2d> ToVector2dSpread(Spread<Vector2> vectors)
+        public static IList<Vector2d> ToVector2dList(Spread<Vector2> vectors)
         {
             if (vectors != null && vectors.Count > 0)
             {
