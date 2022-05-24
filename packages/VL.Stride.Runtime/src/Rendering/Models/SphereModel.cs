@@ -13,15 +13,21 @@ namespace VL.Stride.Rendering.Models
     public class SphereModel : PrimitiveProceduralModelBase
     {
         /// <summary>
-        /// Sphere's radius
+        /// Sphere's amount of vertices
         /// </summary>
         [DataMember(10)]
+        public int EdgeVertices { get; set; } = 8;
+
+        /// <summary>
+        /// Sphere's radius
+        /// </summary>
+        [DataMember(11)]
         public float Radius { get; set; } = 0.5f;
 
         /// <summary>
         /// 
         /// </summary>
-        [DataMember(11)]
+        [DataMember(12)]
         public bool SharedVertices { get; set; } = false;
 
         /// <summary>
@@ -32,6 +38,7 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new Sphere3Generator_NormalizedCube()
             {
+                EdgeVertices = EdgeVertices,
                 Radius = Radius,
                 NoSharedVertices = !SharedVertices
             };
