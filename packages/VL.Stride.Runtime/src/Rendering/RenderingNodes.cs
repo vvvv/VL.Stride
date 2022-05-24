@@ -228,7 +228,8 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.GridBoxModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.SphereModel x) => (x.Radius))
+            yield return factory.NewMeshNode((Models.SphereModel x) => (x.EdgeVertices, x.Radius, x.SharedVertices))
+                .AddCachedInput(nameof(Models.SphereModel.EdgeVertices), x => x.EdgeVertices, (x, v) => x.EdgeVertices = v, 8)
                 .AddCachedInput(nameof(Models.SphereModel.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
                 .AddCachedInput(nameof(Models.SphereModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddDefaultPins();
