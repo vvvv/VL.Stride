@@ -220,8 +220,10 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.RoundRectModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.GridBoxModel x) => (x.EdgeVertices, x.Clockwise, x.SharedVertices))
+            yield return factory.NewMeshNode((Models.GridBoxModel x) => (x.Center, x.EdgeVertices, x.Extent, x.Clockwise, x.SharedVertices))
+                .AddCachedInput(nameof(Models.GridBoxModel.Center), x => x.Center, (x, v) => x.Center = v, Vector3.Zero)
                 .AddCachedInput(nameof(Models.GridBoxModel.EdgeVertices), x => x.EdgeVertices, (x, v) => x.EdgeVertices = v, 2)
+                .AddCachedInput(nameof(Models.GridBoxModel.Extent), x => x.Extent, (x, v) => x.Extent = v, Vector3.One)
                 .AddCachedInput(nameof(Models.GridBoxModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
                 .AddCachedInput(nameof(Models.GridBoxModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddDefaultPins();
