@@ -186,7 +186,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.TubeModel x) => (x.Path, x.Closed, x.Shape, x.Capped, x.SharedVertices))
+            yield return factory.NewMeshNode((Models.TubeModel x) => (x.Path, x.Closed, x.Shape, x.Capped, x.Clockwise, x.SharedVertices))
                 .AddCachedInput(nameof(Models.TubeModel.Path), x => x.Path, (x, v) => x.Path = v)
                 .AddCachedInput(nameof(Models.TubeModel.Closed), x => x.Closed, (x, v) => x.Closed = v,false)
                 .AddCachedInput(nameof(Models.TubeModel.Shape), x => x.Shape, (x, v) => x.Shape = v)
