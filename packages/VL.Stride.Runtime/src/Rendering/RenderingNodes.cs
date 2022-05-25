@@ -204,11 +204,12 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.DiscMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.GriddedRectModel x) => (x.EdgeVertices, x.Width, x.Height, x.Clockwise))
-                .AddCachedInput(nameof(Models.GriddedRectModel.EdgeVertices), x => x.EdgeVertices, (x, v) => x.EdgeVertices = v, 2)
-                .AddCachedInput(nameof(Models.GriddedRectModel.Width), x => x.Width, (x, v) => x.Width = v, 1f)
-                .AddCachedInput(nameof(Models.GriddedRectModel.Height), x => x.Height, (x, v) => x.Height = v, 0.5f)
-                .AddCachedInput(nameof(Models.GriddedRectModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
+            yield return factory.NewMeshNode((Models.RoundRectMesh x) => (x.CornerSteps, x.Size, x.Radius, x.SharpCorners, x.Clockwise))
+                .AddCachedInput(nameof(Models.RoundRectMesh.CornerSteps), x => x.CornerSteps, (x, v) => x.CornerSteps = v, 4)
+                .AddCachedInput(nameof(Models.RoundRectMesh.Size), x => x.Size, (x, v) => x.Size = v, Vector2.One)
+                .AddCachedInput(nameof(Models.RoundRectMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.25f)
+                .AddCachedInput(nameof(Models.RoundRectMesh.SharpCorners), x => x.SharpCorners, (x, v) => x.SharpCorners = v, Models.RoundRectMesh.Corner.None)
+                .AddCachedInput(nameof(Models.RoundRectMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
                 .AddDefaultPins();
 
             yield return factory.NewMeshNode((Models.BoxMesh2 x) => (x.Tessellation, x.Clockwise, x.SharedVertices))
