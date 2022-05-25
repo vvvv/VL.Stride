@@ -43,7 +43,7 @@ namespace VL.Stride.Rendering.Models
             {
                 var vi = g3Mesh.GetVertexAll(i);
                 var normal = new Vector3(vi.n.x, vi.n.y, vi.n.z);
-                var uv = new Vector2(vi.uv.x, vi.uv.y);
+                var uv = new Vector2(vi.uv.x, 1 - vi.uv.y);
                 vertices[i] = new VertexPositionNormalTexture(new Vector3((float)vi.v.x, (float)vi.v.y, (float)vi.v.z), normal, uv);
             }
 
