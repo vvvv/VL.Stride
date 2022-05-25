@@ -17,19 +17,20 @@ namespace VL.Stride.Rendering.Models
         /// GridBox's amount of vertices per edge
         /// </summary>
         [DataMember(10)]
-        public int Tessellation { get; set; } = 2;
+        public int Tessellation { get; set; } = 2;        
 
         /// <summary>
         /// 
         /// </summary>
         [DataMember(11)]
-        public bool Clockwise { get; set; } = false;
-
+        public bool SharedVertices { get; set; } = false;
+        
         /// <summary>
         /// 
         /// </summary>
         [DataMember(12)]
-        public bool SharedVertices { get; set; } = false;
+        public bool Clockwise { get; set; } = false;
+
 
         /// <summary>
         /// Uses the DMesh3 instance generated from a GridBox3Generator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
@@ -40,8 +41,8 @@ namespace VL.Stride.Rendering.Models
             var generator = new GridBox3Generator
             {
                 EdgeVertices = Tessellation,
-                Clockwise = Clockwise,
                 NoSharedVertices = !SharedVertices,
+                Clockwise = Clockwise
             };
 
             var meshGenerator = generator.Generate();

@@ -43,10 +43,10 @@ namespace VL.Stride.Rendering.Models
         public float TipRadius { get; set; } = 0f;
 
         /// <summary>
-        /// 
+        /// Amount of slices to split the ArrowMesh into. Higher calues result in smoother surfaces.
         /// </summary>
         [DataMember(15)]
-        public bool Clockwise { get; set; } = false;
+        public int Tessellation { get; set; } = 16;
 
         /// <summary>
         /// 
@@ -55,10 +55,10 @@ namespace VL.Stride.Rendering.Models
         public bool SharedVertices { get; set; } = false;
 
         /// <summary>
-        /// Amount of slices to split the ArrowMesh into. Higher calues result in smoother surfaces.
+        /// 
         /// </summary>
         [DataMember(17)]
-        public int Tessellation { get; set; } = 16;
+        public bool Clockwise { get; set; } = false;
 
         /// <summary>
         /// Uses the DMesh3 instance generated from a Radial3DArrowGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
@@ -74,10 +74,10 @@ namespace VL.Stride.Rendering.Models
                 StickLength = StickLength,
                 StickRadius = StickRadius,
                 TipRadius = TipRadius,
-                Clockwise = Clockwise,
+                Slices = Tessellation,
                 NoSharedVertices = !SharedVertices,
-                Slices = Tessellation
-            };
+                Clockwise = Clockwise
+        };
 
             var meshGenerator = generator.Generate();
 

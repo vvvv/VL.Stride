@@ -25,28 +25,28 @@ namespace VL.Stride.Rendering.Models
         public float InnerRadius { get; set; } = 0.5f;
 
         /// <summary>
-        /// 
-        /// </summary>
-        [DataMember(12)]
-        public bool Clockwise { get; set; } = false;
-
-        /// <summary>
         /// Initial angle in cycles 
         /// </summary>
-        [DataMember(13)]
+        [DataMember(12)]
         public float FromAngle { get; set; } = 0f;
 
         /// <summary>
         /// Final angle in cycles
         /// </summary>
-        [DataMember(14)]
+        [DataMember(13)]
         public float ToAngle { get; set; } = 1f;
 
         /// <summary>
         /// Amount of slices to split the cylinder into. Higher calues result in smoother surfaces.
         /// </summary>
-        [DataMember(15)]
+        [DataMember(14)]
         public int Tessellation { get; set; } = 16;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember(15)]
+        public bool Clockwise { get; set; } = false;
 
         /// <summary>
         /// Uses the DMesh3 instance generated from a PuncturedDiscGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
@@ -56,12 +56,12 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new PuncturedDiscGenerator
             {
-                Clockwise = Clockwise,
+                StartAngleDeg = FromAngle * 360,
                 EndAngleDeg = ToAngle * 360,
                 InnerRadius = InnerRadius,
                 OuterRadius = OuterRadius,
                 Slices = Tessellation,
-                StartAngleDeg = FromAngle * 360
+                Clockwise = Clockwise
             };
 
             var meshGenerator = generator.Generate();
