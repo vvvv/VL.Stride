@@ -8,11 +8,11 @@ using VL.Lib.Collections;
 namespace VL.Stride.Rendering.Models
 {
     /// <summary>
-    /// Class used to generate a Stride Tube model mesh using geometry3Sharp
+    /// Class used to generate a Stride Tube mesh using geometry3Sharp
     /// </summary>
-    [DataContract("TubeModel")]
-    [Display("TubeModel")] // This name shows up in the procedural model dropdown list
-    public class TubeModel : PrimitiveProceduralModelBase
+    [DataContract("TubeMesh")]
+    [Display("TubeMesh")] // This name shows up in the procedural model dropdown list
+    public class TubeMesh : PrimitiveProceduralModelBase
     {
         /// <summary>
         /// Tube's path as a list of 3D vectors
@@ -42,13 +42,13 @@ namespace VL.Stride.Rendering.Models
         /// 
         /// </summary>
         [DataMember(14)]
-        public bool Clockwise { get; set; } = false;
+        public bool SharedVertices { get; set; } = false;
 
         /// <summary>
         /// 
         /// </summary>
         [DataMember(15)]
-        public bool SharedVertices { get; set; } = false;
+        public bool Clockwise { get; set; } = false;
 
         /// <summary>
         /// Uses the DMesh3 instance generated from a TubeGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
@@ -64,15 +64,15 @@ namespace VL.Stride.Rendering.Models
                 var generator = new TubeGenerator(path, tubeShape)
                 {
                     Capped = Capped,
-                    Clockwise = Clockwise,
                     NoSharedVertices = !SharedVertices,
+                    Clockwise = Clockwise
                 };
 
                 var meshGenerator = generator.Generate();
 
-                return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "TubeModel");
+                return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "TubeMesh");
             }
-            return new GeometricMeshData<VertexPositionNormalTexture>(new VertexPositionNormalTexture[0], new int[0],false) { Name = "TubeModel" };
+            return new GeometricMeshData<VertexPositionNormalTexture>(new VertexPositionNormalTexture[0], new int[0],false) { Name = "TubeMesh" };
         }
     }
 }
