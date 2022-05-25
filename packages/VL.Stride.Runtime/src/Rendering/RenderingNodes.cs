@@ -195,13 +195,13 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.TubeModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.DiscModel x) => (x.OuterRadius, x.InnerRadius, x.Clockwise, x.FromAngle, x.ToAngle, x.Slices))
-                .AddCachedInput(nameof(Models.DiscModel.OuterRadius), x => x.OuterRadius, (x, v) => x.OuterRadius = v, 1f)
-                .AddCachedInput(nameof(Models.DiscModel.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.5f)
-                .AddCachedInput(nameof(Models.DiscModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
-                .AddCachedInput(nameof(Models.DiscModel.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
-                .AddCachedInput(nameof(Models.DiscModel.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
-                .AddCachedInput(nameof(Models.DiscModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
+            yield return factory.NewMeshNode((Models.DiscMesh x) => (x.OuterRadius, x.InnerRadius, x.Clockwise, x.FromAngle, x.ToAngle, x.Tessellation))
+                .AddCachedInput(nameof(Models.DiscMesh.OuterRadius), x => x.OuterRadius, (x, v) => x.OuterRadius = v, 1f)
+                .AddCachedInput(nameof(Models.DiscMesh.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.5f)
+                .AddCachedInput(nameof(Models.DiscMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
+                .AddCachedInput(nameof(Models.DiscMesh.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
+                .AddCachedInput(nameof(Models.DiscMesh.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
+                .AddCachedInput(nameof(Models.DiscMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
                 .AddDefaultPins();
 
             yield return factory.NewMeshNode((Models.GriddedRectModel x) => (x.EdgeVertices, x.Width, x.Height, x.Clockwise))
