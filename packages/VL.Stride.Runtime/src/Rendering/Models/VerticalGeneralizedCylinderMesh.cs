@@ -9,9 +9,9 @@ namespace VL.Stride.Rendering.Models
     /// <summary>
     /// Class used to generate a Stride VerticalGeneralizedCylinder model mesh using geometry3Sharp
     /// </summary>
-    [DataContract("VerticalGeneralizedCylinderModel")]
-    [Display("VerticalGeneralizedCylinderModel")] // This name shows up in the procedural model dropdown list
-    public class VerticalGeneralizedCylinderModel : PrimitiveProceduralModelBase
+    [DataContract("VerticalGeneralizedCylinderMesh")]
+    [Display("VerticalGeneralizedCylinderMesh")] // This name shows up in the procedural model dropdown list
+    public class VerticalGeneralizedCylinderMesh : PrimitiveProceduralModelBase
     {
         /// <summary>
         /// Boolean value indicating if the cylinder should have caps
@@ -26,10 +26,10 @@ namespace VL.Stride.Rendering.Models
         public Spread<CircularSection> Sections { get; set; }
 
         /// <summary>
-        /// 
+        /// Amount of slices to split the cylinder into. Higher calues result in smoother surfaces.
         /// </summary>
         [DataMember(12)]
-        public bool Clockwise { get; set; } = false;
+        public int Tessellation { get; set; } = 16;
 
         /// <summary>
         /// 
@@ -38,10 +38,10 @@ namespace VL.Stride.Rendering.Models
         public bool SharedVertices { get; set; } = false;
 
         /// <summary>
-        /// Amount of slices to split the cylinder into. Higher calues result in smoother surfaces.
+        /// 
         /// </summary>
         [DataMember(14)]
-        public int Slices { get; set; } = 16;
+        public bool Clockwise { get; set; } = false;
 
         /// <summary>
         /// Uses the DMesh3 instance generated from a VerticalGeneralizedCylinderGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
@@ -53,14 +53,14 @@ namespace VL.Stride.Rendering.Models
             {
                 Capped = Capped,
                 Sections = Utils.ToCircularSectionArray(Sections),
-                Clockwise = Clockwise,
+                Slices = Tessellation,
                 NoSharedVertices = !SharedVertices,
-                Slices = Slices
+                Clockwise = Clockwise
             };
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "VerticalGeneralizedCylinderModel");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "VerticalGeneralizedCylinderMesh");
         }
 
         /// <summary>

@@ -127,7 +127,7 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         /// <param name="sections">A spread of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection</param>
         /// <returns>An equivalent array of g3.VerticalGeneralizedCylinderGenerator.CircularSection</returns>
-        public static MeshGenerator.CircularSection[] ToCircularSectionArray(Spread<VerticalGeneralizedCylinderModel.CircularSection> sections)
+        public static MeshGenerator.CircularSection[] ToCircularSectionArray(Spread<VerticalGeneralizedCylinderMesh.CircularSection> sections)
         {
             if (sections != null && sections.Count > 0)
             {
@@ -148,7 +148,7 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         /// <param name="section">An instance of a spread of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection</param>
         /// <returns>An equivalent instance of g3.VerticalGeneralizedCylinderGenerator.CircularSection</returns>
-        public static MeshGenerator.CircularSection ToCircularSection(VerticalGeneralizedCylinderModel.CircularSection section)
+        public static MeshGenerator.CircularSection ToCircularSection(VerticalGeneralizedCylinderMesh.CircularSection section)
         {
             if (section != null)
                 return new MeshGenerator.CircularSection(section.Radius, section.SectionY);
