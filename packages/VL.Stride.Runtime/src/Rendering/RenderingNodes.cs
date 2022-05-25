@@ -225,10 +225,10 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.GridBoxModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.SphereModel x) => (x.EdgeVertices, x.Radius, x.SharedVertices))
-                .AddCachedInput(nameof(Models.SphereModel.EdgeVertices), x => x.EdgeVertices, (x, v) => x.EdgeVertices = v, 8)
-                .AddCachedInput(nameof(Models.SphereModel.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
-                .AddCachedInput(nameof(Models.SphereModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
+            yield return factory.NewMeshNode((Models.BoxSphereMesh x) => (x.Radius, x.Tessellation, x.SharedVertices))
+                .AddCachedInput(nameof(Models.BoxSphereMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
+                .AddCachedInput(nameof(Models.BoxSphereMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 8)
+                .AddCachedInput(nameof(Models.BoxSphereMesh.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddDefaultPins();
 
             yield return factory.NewMeshNode((Models.ArrowMesh x) => (x.StickLength, x.StickRadius, x.HeadLength, x.HeadBaseRadius, x.TipRadius, x.Tessellation, x.Clockwise, x.SharedVertices))

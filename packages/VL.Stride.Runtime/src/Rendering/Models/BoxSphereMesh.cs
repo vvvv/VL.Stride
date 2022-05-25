@@ -8,21 +8,21 @@ namespace VL.Stride.Rendering.Models
     /// <summary>
     /// Class used to generate a Stride Sphere model mesh using geometry3Sharp
     /// </summary>
-    [DataContract("SphereModel")]
-    [Display("SphereModel")] // This name shows up in the procedural model dropdown list
-    public class SphereModel : PrimitiveProceduralModelBase
+    [DataContract("BoxSphereMesh")]
+    [Display("BoxSphereMesh")] // This name shows up in the procedural model dropdown list
+    public class BoxSphereMesh : PrimitiveProceduralModelBase
     {
-        /// <summary>
-        /// Sphere's amount of vertices
-        /// </summary>
-        [DataMember(10)]
-        public int EdgeVertices { get; set; } = 8;
-
         /// <summary>
         /// Sphere's radius
         /// </summary>
-        [DataMember(11)]
+        [DataMember(10)]
         public float Radius { get; set; } = 0.5f;
+
+        /// <summary>
+        /// Sphere's amount of vertices
+        /// </summary>
+        [DataMember(11)]
+        public int Tessellation { get; set; } = 8;
 
         /// <summary>
         /// 
@@ -38,14 +38,14 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new Sphere3Generator_NormalizedCube()
             {
-                EdgeVertices = EdgeVertices,
+                EdgeVertices = Tessellation,
                 Radius = Radius,
                 NoSharedVertices = !SharedVertices
             };
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "SphereModel");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxSphereMesh");
         }
     }
 }
