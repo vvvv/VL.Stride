@@ -215,7 +215,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.TubeMesh.Shape), x => x.Shape, (x, v) => x.Shape = v)
                 .AddCachedInput(nameof(Models.TubeMesh.Capped), x => x.Capped, (x, v) => x.Capped = v, true)
                 .AddCachedInput(nameof(Models.TubeMesh.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
-                .AddCachedInput(nameof(Models.TubeMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
+                .AddCachedInput(nameof(Models.TubeMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
 
             yield return factory.NewMeshNode((Models.VerticalGeneralizedCylinderMesh x) => (x.Capped, x.Sections, x.Tessellation, x.SharedVertices, x.Clockwise))

@@ -48,7 +48,7 @@ namespace VL.Stride.Rendering.Models
         /// 
         /// </summary>
         [DataMember(15)]
-        public bool Clockwise { get; set; } = false;
+        public bool Clockwise { get; set; } = true;
 
         /// <summary>
         /// Uses the DMesh3 instance generated from a TubeGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
