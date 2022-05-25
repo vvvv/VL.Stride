@@ -234,15 +234,15 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.SphereModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.Radial3DArrowModel x) => (x.HeadBaseRadius, x.HeadLength, x.StickLength, x.StickRadius, x.TipRadius, x.Clockwise, x.SharedVertices, x.Slices))
-                .AddCachedInput(nameof(Models.Radial3DArrowModel.HeadBaseRadius), x => x.HeadBaseRadius, (x, v) => x.HeadBaseRadius = v, 0.3333f)
-                .AddCachedInput(nameof(Models.Radial3DArrowModel.HeadLength), x => x.HeadLength, (x, v) => x.HeadLength = v, 0.5f)
-                .AddCachedInput(nameof(Models.Radial3DArrowModel.StickLength), x => x.StickLength, (x, v) => x.StickLength = v, 1f)
-                .AddCachedInput(nameof(Models.Radial3DArrowModel.StickRadius), x => x.StickRadius, (x, v) => x.StickRadius = v, 0.125f)
-                .AddCachedInput(nameof(Models.Radial3DArrowModel.TipRadius), x => x.TipRadius, (x, v) => x.TipRadius = v, 0f)
-                .AddCachedInput(nameof(Models.Radial3DArrowModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false)
-                .AddCachedInput(nameof(Models.Radial3DArrowModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
-                .AddCachedInput(nameof(Models.Radial3DArrowModel.Slices), x => x.Slices, (x, v) => x.Slices = v, 16)
+            yield return factory.NewMeshNode((Models.ArrowMesh x) => (x.StickLength, x.StickRadius, x.HeadLength, x.HeadBaseRadius, x.TipRadius, x.Tessellation, x.Clockwise, x.SharedVertices))
+                .AddCachedInput(nameof(Models.ArrowMesh.StickLength), x => x.StickLength, (x, v) => x.StickLength = v, 1f)
+                .AddCachedInput(nameof(Models.ArrowMesh.StickRadius), x => x.StickRadius, (x, v) => x.StickRadius = v, 0.125f)
+                .AddCachedInput(nameof(Models.ArrowMesh.HeadLength), x => x.HeadLength, (x, v) => x.HeadLength = v, 0.5f)
+                .AddCachedInput(nameof(Models.ArrowMesh.HeadBaseRadius), x => x.HeadBaseRadius, (x, v) => x.HeadBaseRadius = v, 0.3333f)
+                .AddCachedInput(nameof(Models.ArrowMesh.TipRadius), x => x.TipRadius, (x, v) => x.TipRadius = v, 0f)
+                .AddCachedInput(nameof(Models.ArrowMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
+                .AddCachedInput(nameof(Models.ArrowMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false)
+                .AddCachedInput(nameof(Models.ArrowMesh.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddDefaultPins();
 
             // TextureFX
