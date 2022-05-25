@@ -217,14 +217,6 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.BoxMesh2.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.GridBoxModel x) => (x.Center, x.EdgeVertices, x.Extent, x.Clockwise, x.SharedVertices))
-                .AddCachedInput(nameof(Models.GridBoxModel.Center), x => x.Center, (x, v) => x.Center = v, Vector3.Zero)
-                .AddCachedInput(nameof(Models.GridBoxModel.EdgeVertices), x => x.EdgeVertices, (x, v) => x.EdgeVertices = v, 2)
-                .AddCachedInput(nameof(Models.GridBoxModel.Extent), x => x.Extent, (x, v) => x.Extent = v, Vector3.One)
-                .AddCachedInput(nameof(Models.GridBoxModel.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true)
-                .AddCachedInput(nameof(Models.GridBoxModel.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
-                .AddDefaultPins();
-
             yield return factory.NewMeshNode((Models.BoxSphereMesh x) => (x.Radius, x.Tessellation, x.SharedVertices))
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 8)
