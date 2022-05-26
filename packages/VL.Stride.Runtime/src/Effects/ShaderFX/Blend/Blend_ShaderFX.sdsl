@@ -1,0 +1,18 @@
+﻿shader Blend_ShaderFX : ComputeFloat4, BlendOperations
+{
+	[EnumType("VL.Stride.Effects.Common.BlendMode")]
+    int Type;
+
+    [Default(1.0)]
+    compose ComputeFloat Fader;
+
+    compose ComputeFloat4 Color0;
+    compose ComputeFloat4 Color1;
+
+    bool ComputeAlpha = true;
+
+    override float4 Compute()
+    {
+        return Blend(Color0.Compute(), Color1.Compute(), Fader.Compute(), ComputeAlpha, Type);
+    }
+};
