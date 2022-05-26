@@ -1,0 +1,20 @@
+﻿[Category("Filter")]
+[Summary("Inverts the image colors")]
+
+shader Invert_TextureFX : FilterBase, InvertOperations
+{
+    [Default(1.0)]
+    compose ComputeFloat Factor;
+
+    bool InvertAlpha = false;
+        
+    [EnumType("VL.Stride.Effects.Common.Invert")]
+    int Type;
+
+    float4 Filter(float4 tex0col)
+    {
+        return Invert(tex0col, Factor.Compute(), InvertAlpha, Type);
+    }
+};
+
+
