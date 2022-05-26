@@ -34,7 +34,7 @@ namespace VL.Stride.Rendering.Models
         /// ArrowMesh's head base radius
         /// </summary>
         [DataMember(13)]
-        public float HeadBaseRadius { get; set; } = 0.25f;
+        public float HeadRadius { get; set; } = 0.25f;
 
         /// <summary>
         /// ArrowMesh's tip radius
@@ -69,7 +69,7 @@ namespace VL.Stride.Rendering.Models
 
         var generator = new Radial3DArrowGenerator
             {
-                HeadBaseRadius = HeadBaseRadius,
+                HeadBaseRadius = HeadRadius,
                 HeadLength = HeadLength,
                 StickLength = StickLength,
                 StickRadius = StickRadius,

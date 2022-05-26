@@ -29,7 +29,7 @@ namespace VL.Stride.Rendering.Models
         /// 
         /// </summary>
         [DataMember(12)]
-        public bool Clockwise { get; set; } = false;
+        public bool Clockwise { get; set; } = true;
 
 
         /// <summary>

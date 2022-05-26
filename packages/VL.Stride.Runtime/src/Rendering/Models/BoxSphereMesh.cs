@@ -31,6 +31,12 @@ namespace VL.Stride.Rendering.Models
         public bool SharedVertices { get; set; } = false;
 
         /// <summary>
+        /// 
+        /// </summary>
+        [DataMember(13)]
+        public bool Clockwise { get; set; } = true;
+
+        /// <summary>
         /// Uses the DMesh3 instance generated from a Sphere3Generator_NormalizedCube to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
         /// </summary>
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Sphere generated with the classes public property values</returns>
@@ -40,7 +46,8 @@ namespace VL.Stride.Rendering.Models
             {
                 EdgeVertices = Tessellation,
                 Radius = Radius,
-                NoSharedVertices = !SharedVertices
+                NoSharedVertices = !SharedVertices,
+                Clockwise = Clockwise
             };
 
             var meshGenerator = generator.Generate();
