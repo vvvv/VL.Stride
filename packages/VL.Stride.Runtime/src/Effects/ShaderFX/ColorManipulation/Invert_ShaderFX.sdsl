@@ -1,0 +1,21 @@
+﻿[Summary("Inverts the input")]
+
+shader Invert_ShaderFX : ComputeFloat4, InvertOperations
+{
+    compose ComputeFloat4 Color;
+
+    [Default(1.0)]
+    compose ComputeFloat Factor;
+
+    bool InvertAlpha = false;
+        
+    [EnumType("VL.Stride.Effects.Common.Invert")]
+    int Type;
+
+    override float4 Compute()
+    {
+        return Invert(Color.Compute(), Factor.Compute(), InvertAlpha, Type);
+    }
+};
+
+

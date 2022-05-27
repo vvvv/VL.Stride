@@ -1,0 +1,24 @@
+﻿//Vibrance
+//by Christian Cann Schuldt Jensen ~ CeeJay.dk
+//Vibrance intelligently boosts the saturation of pixels so pixels that had little color get a larger boost than pixels that had a lot.
+//This avoids oversaturation of pixels that were already very saturated.
+
+shader VibranceOperations : ShaderUtils, ColorUtilityTemp
+{
+    float4 Vibrance(float4 color, float3 factorRGB)
+    {
+		float3 c = color.rgb;
+  
+		float luma = GetLuminance(color);
+
+		float max_color = max(c.r, max(c.g, c.b)); // Find the strongest color
+		float min_color = min(c.r, min(c.g, c.b)); // Find the weakest color
+
+		float color_saturation = max_color - min_color; // The difference between the two is the saturation
+		c = lerp(luma, c, 1.0 + (factorRGB * (1.0 - (sign(factorRGB) * color_saturation))));
+
+		return float4(c, color.a);
+    }
+};
+
+

@@ -59,6 +59,16 @@ shader ShaderUtils
         return dot(color, float3(0.299f, 0.587f, 0.114f));
     }
 
+
+    // Returns the luminance of a !! linear !! rgb color
+    // many source shows different RGB value as the one above
+    //see this one as an example : https://github.com/tobspr/GLSL-Color-Spaces/blob/master/ColorSpaces.inc.glsl
+    float GetLuminance(float3 rgb) 
+    {
+        return dot(float3(0.212656f, 0.715158f, 0.072186f), rgb);
+    }
+
+
     float4 BitsToColor(float f)
     {
         uint u = asuint(f);
