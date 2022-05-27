@@ -170,8 +170,8 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.ConeMesh2 x) => (x.BaseRadius, x.FromAngle, x.ToAngle, x.Height, x.Tessellation, x.SharedVertices, x.Clockwise))
-                .AddCachedInput(nameof(Models.ConeMesh2.BaseRadius), x => x.BaseRadius, (x, v) => x.BaseRadius = v, 0.5f)
+            yield return factory.NewMeshNode((Models.ConeMesh2 x) => (x.Radius, x.FromAngle, x.ToAngle, x.Height, x.Tessellation, x.SharedVertices, x.Clockwise))
+                .AddCachedInput(nameof(Models.ConeMesh2.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
                 .AddCachedInput(nameof(Models.ConeMesh2.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
                 .AddCachedInput(nameof(Models.ConeMesh2.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
                 .AddCachedInput(nameof(Models.ConeMesh2.Height), x => x.Height, (x, v) => x.Height = v, 1f)

@@ -13,10 +13,10 @@ namespace VL.Stride.Rendering.Models
     public class ConeMesh2 : PrimitiveProceduralModelBase
     {
         /// <summary>
-        /// Cone's base radius
+        /// Cone's radius
         /// </summary>
         [DataMember(10)]
-        public float BaseRadius { get; set; } = 0.5f;
+        public float Radius { get; set; } = 0.5f;
 
         /// <summary>
         /// Cone's initial angle in cycles 
@@ -56,7 +56,7 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new ConeGenerator
             {
-                BaseRadius = BaseRadius,
+                BaseRadius = Radius,
                 EndAngleDeg = ToAngle * 360,
                 Height = Height,
                 NoSharedVertices = !SharedVertices,
