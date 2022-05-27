@@ -7,7 +7,7 @@ using Stride.Rendering.ProceduralModels;
 namespace VL.Stride.Rendering.Models
 {
     /// <summary>
-    /// Class used to generate a Stride GridRect model mesh using geometry3Sharp
+    /// Generates a Rounded Rectangle mesh
     /// </summary>
     [DataContract("RoundRectMesh")]
     [Display("RoundRectMesh")] // This name shows up in the procedural model dropdown list
@@ -20,7 +20,7 @@ namespace VL.Stride.Rendering.Models
         public int CornerSteps { get; set; } = 4;
 
         /// <summary>
-        /// RoundRect's width
+        /// RoundRect's size as a 2D vector
         /// </summary>
         [DataMember(11)]
         public Vector2 Size { get; set; } = Vector2.One;
@@ -33,21 +33,18 @@ namespace VL.Stride.Rendering.Models
         public float Radius { get; set; } = 0.25f;
 
         /// <summary>
-        /// RoundRect's corner radius
+        /// RoundRect's configurable sharp corners. Use the Corner enum's OR operator to configure multiple sharp corners at once
         /// </summary>
         [DataMember(13)]
         public Corner SharpCorners { get; set; } = Corner.None;
 
-        /// <summary>
-        /// 
-        /// </summary>
         [DataMember(14)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
         /// Uses the DMesh3 instance generated from a RoundRectGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
         /// </summary>
-        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the RoundRect generated with the classes public property values</returns>
+        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the RoundRect generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
             var generator = new RoundRectGenerator
