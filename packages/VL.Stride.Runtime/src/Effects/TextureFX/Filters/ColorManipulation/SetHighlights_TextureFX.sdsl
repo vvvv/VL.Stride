@@ -1,0 +1,12 @@
+﻿[Category("Filter")]
+[Summary("Set the Highlights of a texture")]
+[Tags("Color Grading")]
+
+shader SetHighlights_TextureFX : FilterBase, ColorGradingOperations
+{
+    float4 Filter(float4 tex0col)
+    {
+        float4 tex = Texture1.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        return SetHighlights(tex0col, tex);
+    }
+};

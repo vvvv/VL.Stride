@@ -1,11 +1,164 @@
-﻿//from https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/ColorMatrix.fx
-
-shader ColorMatrixOperations : ShaderUtils, ColorUtilityTemp
+﻿shader ColorGradingOperations : ShaderUtils
 {
-    float4 ColorMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
+    float4 Lift(float4 color, float lift, float4 liftColor)
     {
-	    float4x4 ColorMatrix = float4x4(red, green, blue, alpha);
-	    return saturate(mul(ColorMatrix, color));
+		color *= (1.5 - 0.5 * (lift * liftColor + 1.0)) + 0.5 * (lift * liftColor + 1.0) - 0.5;
+		return color;
+    }
+
+
+    float4 Gamma(float4 tex0col, float gamma, float4 gammaColor)
+    {
+		float4 color = tex0col.rgb;
+		color = pow(abs(color), 1.0 / (gamma * gammaColor.rgb + 1.0));
+		return color;
+    }
+
+
+    float4 Gain(float4 color, float gain, float4 gainColor)
+    {
+		color *= gain * gainColor + 1.0; 
+		return color;
+    }
+
+
+    float4 Exposure(float4 color, float exposure, float4 exposureColor)
+    {
+		color *= pow(2.0, exposure * exposureColor);
+		return color;
+    }
+
+
+    float4 GetShadows(float4 color)
+    {
+        return SmoothLerp(float4(0.0, 0.0, 0.0, color.a), color, GetLuminanceWeight(color, 1).x);
+    }
+
+
+    float4 SetShadows(float4 color, float4 shadows)
+    {
+        return SmoothLerp(color, shadows, GetLuminanceWeight(color, 1).x);
+    }
+
+
+    float4 GetMidtones(float4 color)
+    {
+        return SmoothLerp(float4(0.0, 0.0, 0.0, color.a), color, GetLuminanceWeight(color, 1).y);
+    }
+
+
+    float4 SetMidtones(float4 color, float4 shadows)
+    {
+        return SmoothLerp(color, shadows, GetLuminanceWeight(color, 1).y);
+    }
+
+
+    float4 GetHighlights(float4 color)
+    {
+        return SmoothLerp(float4(0.0, 0.0, 0.0, color.a), color, GetLuminanceWeight(color, 1).z);
+    }
+
+
+    float4 SetHighlights(float4 color, float4 shadows)
+    {
+        return SmoothLerp(color, shadows, GetLuminanceWeight(color, 1).z);
+    }
+
+
+    float4 SetShadowsMidtonesHighlights(float4 color,float4 shadows, float4 midtones,  float4 highlights)
+    {
+        color = SetShadows(color, shadows);
+        color = SetMidtones(color, midtones);
+        color = SetHighlights(color, highlights);
+        return color;
+    }
+
+    float4 SmoothLerp(float4 c0, float4 c1, float fade)
+    {
+        //return lerp(c0, c1, fade);
+        return float4(iLerp(c0.rgb, c1.rgb, fade), 1.0);
+        //return lerp(c0, c1, smoothstep(0.0, 1.0, smoothstep(0.0, 1.0, fade)));
+    }
+
+    float getsat(float3 c)
+    {
+        float mi = min(min(c.x, c.y), c.z);
+        float ma = max(max(c.x, c.y), c.z);
+        return (ma - mi)/(ma+ 1e-7);
+    }
+
+    float3 iLerp(float3 a, float3 b, float x)
+    {
+        float DSP_STR = 1.5;
+        //Interpolated base color (with singularity fix)
+        float3 ic = lerp(a, b, x) + float3(1e-6,0.,0.);
+    
+        //Saturation difference from ideal scenario
+        float sd = abs(getsat(ic) - lerp(getsat(a), getsat(b), x));
+    
+        //Displacement direction
+        float3 dir = normalize(float3(2.0 * ic.x - ic.y - ic.z, 2.0 * ic.y - ic.x - ic.z, 2.0 * ic.z - ic.y - ic.x));
+        ////Simple Lighntess
+        float lgt = dot(float3(1.0, 1.0, 1.0), ic);
+    
+        ////Extra scaling factor for the displacement
+        float ff = dot(dir, normalize(ic));
+    
+        ////Displace the color
+        ic += DSP_STR*dir*sd*ff*lgt;
+        return clamp(ic,0.,1.);
+    }
+
+    float3 GetLuminanceWeight(float4 color, int range)
+    {
+        float3 Weight;
+        float Luma = GetLuminance(color.rgb);
+
+        switch(range)
+        {
+            /*
+            Clear cutoff between shadows and highlights
+            Maximizes precision at the loss of harsher transitions between contrasts
+            Curves look like:
+            Shadows                Highlights             Midtones
+            ‾‾‾—_   	                         _—‾‾‾         _——‾‾‾——_
+                 ‾‾——__________    __________——‾‾         ___—‾         ‾—___
+            0.0.....0.5.....1.0    0.0.....0.5.....1.0    0.0.....0.5.....1.0
+            
+            */
+            case 0:
+            {
+                Weight.x  = Curve( max( 1.0f - Luma * 2.0f, 0.0f ));
+                Weight.z  = Curve( max(( Luma - 0.5f ) * 2.0f, 0.0f ));
+                Weight.y  = saturate( 1.0f - Weight.x - Weight.z );
+            } break;
+
+            /*
+            Higher degree of blending between individual curves
+            F.e. shadows will still have a minimal weight all the way into highlight territory
+            Ensures smoother transition areas between contrasts
+            Curves look like:
+            Shadows                Highlights             Midtones
+            ‾‾‾—_                                _—‾‾‾          __---__
+                 ‾‾———————_____    _____———————‾‾         ___-‾‾       ‾‾-___
+            0.0.....0.5.....1.0    0.0.....0.5.....1.0    0.0.....0.5.....1.0
+            
+            */
+            case 1:
+            {
+                Weight.x  = pow( 1.0f - Luma, 4.0f );
+                Weight.z  = pow( Luma, 4.0f );
+                Weight.y  = saturate( 1.0f - Weight.x - Weight.z );
+            } break;
+        }
+
+        return Weight;
+    }
+
+
+    float Curve(float x)
+    {
+        return x * x * x * ( x * ( x * 6.0f - 15.0f ) + 10.0f );
     }
 };
 
