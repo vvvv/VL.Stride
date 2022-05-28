@@ -1,0 +1,13 @@
+﻿[Summary("Colorize one color using three others")]
+[Tags("Color Grading")]
+
+shader TriColor_ShaderFX : ComputeFloat4, TriColorOperations
+{
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Color;
+
+    override float4 Compute()
+    {
+        return TriColor(Color.Compute());
+    }
+};

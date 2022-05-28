@@ -16,9 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Invert_TextureFXKeys
+    public static partial class Pulse_TextureFXKeys
     {
-        public static readonly ValueParameterKey<bool> InvertAlpha = ParameterKeys.NewValue<bool>(false);
-        public static readonly ValueParameterKey<int> InvertType = ParameterKeys.NewValue<int>();
+        public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<int> ChannelType = ParameterKeys.NewValue<int>();
     }
 }

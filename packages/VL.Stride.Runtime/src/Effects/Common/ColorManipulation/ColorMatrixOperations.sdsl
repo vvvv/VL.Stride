@@ -1,0 +1,12 @@
+﻿//from https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/ColorMatrix.fx
+
+shader ColorMatrixOperations : ShaderUtils, ColorUtilityTemp
+{
+    float4 ColorMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
+    {
+	    float4x4 ColorMatrix = float4x4(red, green, blue, alpha);
+	    return saturate(mul(ColorMatrix, color));
+    }
+};
+
+

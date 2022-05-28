@@ -1,0 +1,25 @@
+﻿[Category("Filter")]
+[Summary("")]
+
+shader Pulse_TextureFX : FilterBase, PulseOperations
+{
+    [Default(1.0)]
+    compose ComputeFloat Center;
+
+    [Default(1.0)]
+    compose ComputeFloat SlopeWidth;
+
+    [Default(1.0)]
+    compose ComputeFloat CenterWidth;
+
+    bool Invert;
+
+    int ChannelType;
+
+    float4 Filter(float4 tex0col)
+    {
+        return Pulse(tex0col, Center.Compute(), SlopeWidth.Compute(), CenterWidth.Compute(), Invert, ChannelType);
+    }
+};
+
+

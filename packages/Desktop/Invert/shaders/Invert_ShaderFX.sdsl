@@ -1,0 +1,26 @@
+﻿[Summary("Inverts the input")]
+
+shader Invert_ShaderFX : ComputeFloat4
+{
+    cbuffer PerMaterial
+    {
+        stage int ThisIsNotWorking = 1;
+    }
+
+    override float4 Compute()
+    {
+        float4 c;
+
+        switch(ThisIsNotWorking)
+        {
+            case 0:
+                c = float4(1.0, 0.0, 0.0, 1.0);
+                break;
+
+            case 1:
+                c = float4(0.0, 1.0, 0.0, 1.0);
+                break;
+        }
+        return c;
+    }
+};
