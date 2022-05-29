@@ -104,6 +104,17 @@ shader ShaderUtils
         return (RGB - 0.5) * C + HSL.z;
     }
 
+    float4 RGBToCMYK(float3 c)
+    {
+	    float w = max(max(c.r, c.g), c.b) ;
+	    return clamp(float4((w-c.rgb) / w, 1.0 - w ), 0.00000001, 1.0);
+    }
+
+    float3 CMYKToRGB(float4 c)
+    {
+	    return 1 - min(1, c.rgb * (1 - c.w) + c.w);
+    }
+
     /* previous RGBtoHSL */
     //float3 RGBtoHSV(in float3 RGB)
     //{

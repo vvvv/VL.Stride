@@ -6,23 +6,4 @@
 // and re-save the associated .sdfx.
 // </auto-generated>
 
-using System;
-using Stride.Core;
-using Stride.Rendering;
-using Stride.Graphics;
-using Stride.Shaders;
-using Stride.Core.Mathematics;
-using Buffer = Stride.Graphics.Buffer;
-
-namespace Stride.Rendering
-{
-    public static partial class HSCB_TextureFXKeys
-    {
-        public static readonly ValueParameterKey<float> Hue = ParameterKeys.NewValue<float>(.0f);
-        public static readonly ValueParameterKey<float> HueCycles = ParameterKeys.NewValue<float>(1.0f);
-        public static readonly ValueParameterKey<float> Saturation = ParameterKeys.NewValue<float>(1.0f);
-        public static readonly ValueParameterKey<float> SaturationBalance = ParameterKeys.NewValue<float>(.0f);
-        public static readonly ValueParameterKey<float> Contrast = ParameterKeys.NewValue<float>(.0f);
-        public static readonly ValueParameterKey<float> Brightness = ParameterKeys.NewValue<float>(.0f);
-    }
-}
+// Nothing to generate

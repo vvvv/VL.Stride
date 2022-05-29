@@ -16,9 +16,11 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Invert_ShaderFXKeys
+    public static partial class TransformRGBA_TextureFXKeys
     {
-        public static readonly ValueParameterKey<int> InvertType = ParameterKeys.NewValue<int>();
-        public static readonly ValueParameterKey<bool> InvertAlpha = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<Matrix> TransformR = ParameterKeys.NewValue<Matrix>();
+        public static readonly ValueParameterKey<Matrix> TransformG = ParameterKeys.NewValue<Matrix>();
+        public static readonly ValueParameterKey<Matrix> TransformB = ParameterKeys.NewValue<Matrix>();
+        public static readonly ValueParameterKey<Matrix> TransformA = ParameterKeys.NewValue<Matrix>();
     }
 }

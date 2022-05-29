@@ -16,9 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Invert_ShaderFXKeys
+    public static partial class ThresholdOperationsKeys
     {
-        public static readonly ValueParameterKey<int> InvertType = ParameterKeys.NewValue<int>();
-        public static readonly ValueParameterKey<bool> InvertAlpha = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<bool> Antialiasing = ParameterKeys.NewValue<bool>();
     }
 }
