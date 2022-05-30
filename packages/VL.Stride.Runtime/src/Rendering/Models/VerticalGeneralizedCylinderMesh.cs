@@ -2,7 +2,7 @@
 using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
-using VL.Lib.Collections;
+using System.Collections.Generic;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -20,10 +20,10 @@ namespace VL.Stride.Rendering.Models
         public bool Capped { get; set; } = true;
 
         /// <summary>
-        /// Spread of circular sections that make up the cylinder
+        /// IReadOnlyList of circular sections that make up the cylinder
         /// </summary>
         [DataMember(11)]
-        public Spread<CircularSection> Sections { get; set; }
+        public IReadOnlyList<CircularSection> Sections { get; set; }
 
         /// <summary>
         /// Cylinder's tessellation (amount of radial slices to split the cylinder into). Higher values result in smoother surfaces
