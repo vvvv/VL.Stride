@@ -6,64 +6,58 @@ using Stride.Rendering.ProceduralModels;
 namespace VL.Stride.Rendering.Models
 {
     /// <summary>
-    /// Class used to generate a Stride ArrowMesh using geometry3Sharp
+    /// Generates a radial 3D Arrow mesh
     /// </summary>
     [DataContract("ArrowMesh")]
     [Display("ArrowMesh")] // This name shows up in the procedural model dropdown list
     public class ArrowMesh : PrimitiveProceduralModelBase
     {
         /// <summary>
-        /// ArrowMesh's stick length
+        /// Arrow's stick length
         /// </summary>
         [DataMember(10)]
         public float StickLength { get; set; } = 1f;
 
         /// <summary>
-        /// ArrowMesh's stick radius
+        /// Arrow's stick radius
         /// </summary>
         [DataMember(11)]
         public float StickRadius { get; set; } = 0.125f;
 
         /// <summary>
-        /// ArrowMesh's base radius
+        /// Arrow's head length
         /// </summary>
         [DataMember(12)]
         public float HeadLength { get; set; } = 0.5f;
 
         /// <summary>
-        /// ArrowMesh's head base radius
+        /// Arrow's head radius
         /// </summary>
         [DataMember(13)]
         public float HeadRadius { get; set; } = 0.25f;
 
         /// <summary>
-        /// ArrowMesh's tip radius
+        /// Arrow's tip radius
         /// </summary>
         [DataMember(14)]
         public float TipRadius { get; set; } = 0f;
 
         /// <summary>
-        /// Amount of slices to split the ArrowMesh into. Higher calues result in smoother surfaces.
+        /// Arrow's tessellation (amount of radial slices to split the arrow into). Higher values result in smoother surfaces.
         /// </summary>
         [DataMember(15)]
         public int Tessellation { get; set; } = 16;
 
-        /// <summary>
-        /// 
-        /// </summary>
         [DataMember(16)]
         public bool SharedVertices { get; set; } = false;
 
-        /// <summary>
-        /// 
-        /// </summary>
         [DataMember(17)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
         /// Uses the DMesh3 instance generated from a Radial3DArrowGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
         /// </summary>
-        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the ArrowMesh generated with the classes public property values</returns>
+        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the ArrowMesh generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
 

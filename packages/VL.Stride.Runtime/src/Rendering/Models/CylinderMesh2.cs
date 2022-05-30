@@ -6,7 +6,7 @@ using Stride.Rendering.ProceduralModels;
 namespace VL.Stride.Rendering.Models
 {
     /// <summary>
-    /// Class used to generate a Stride Cylinder model mesh using geometry3Sharp
+    /// Generates a Cylinder mesh
     /// </summary>
     [DataContract("CylinderMesh2")]
     [Display("CylinderMesh2")] // This name shows up in the procedural model dropdown list
@@ -31,13 +31,13 @@ namespace VL.Stride.Rendering.Models
         public float TopRadius { get; set; } = 0.5f;
 
         /// <summary>
-        /// Initial angle in cycles 
+        /// Cylinder's initial angle in cycles 
         /// </summary>
         [DataMember(13)]
         public float FromAngle { get; set; } = 0f;
 
         /// <summary>
-        /// Final angle in cycles
+        /// Cylinder's final angle in cycles
         /// </summary>
         [DataMember(14)]
         public float ToAngle { get; set; } = 1f;
@@ -49,27 +49,21 @@ namespace VL.Stride.Rendering.Models
         public float Height { get; set; } = 1;
 
         /// <summary>
-        /// Amount of slices to split the cylinder into. Higher calues result in smoother surfaces.
+        /// Cylinder's tessellation (amount of radial slices to split the cylinder into). Higher values result in smoother surfaces
         /// </summary>
         [DataMember(16)]
         public int Tessellation { get; set; } = 16;
 
-        /// <summary>
-        /// 
-        /// </summary>
         [DataMember(17)]
         public bool SharedVertices { get; set; } = false;
 
-        /// <summary>
-        /// 
-        /// </summary>
         [DataMember(18)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
         /// Uses the DMesh3 instance generated from a OpenCylinderGenerator or CappedCylinderGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
         /// </summary>
-        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cylinder generated with the classes public property values</returns>
+        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cylinder generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
             MeshGenerator generator;

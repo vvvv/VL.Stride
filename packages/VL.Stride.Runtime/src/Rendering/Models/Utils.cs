@@ -16,7 +16,7 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         /// <param name="g3Mesh">A g3 DMesh3 instance</param>
         /// <param name="name">The model name</param>
-        /// <returns></returns>
+        /// <returns>An equivalent Stride GeometricMeshData</returns>
         public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(DMesh3 g3Mesh, string name)
         {
             if (g3Mesh is null)
@@ -30,7 +30,7 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         /// <param name="g3Mesh">A g3 SimpleMesh instance</param>
         /// <param name="name">The model name</param>
-        /// <returns></returns>
+        /// <returns>An equivalent Stride GeometricMeshData</returns>
         public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(SimpleMesh g3Mesh, string name)
         {
             if (g3Mesh is null || g3Mesh.VertexCount == 0)

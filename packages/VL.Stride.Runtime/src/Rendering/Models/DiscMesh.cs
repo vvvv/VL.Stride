@@ -6,7 +6,7 @@ using Stride.Rendering.ProceduralModels;
 namespace VL.Stride.Rendering.Models
 {
     /// <summary>
-    /// Class used to generate a Stride Disc model mesh using geometry3Sharp
+    /// Generates a Disc mesh
     /// </summary>
     [DataContract("DiscMesh")]
     [Display("DiscMesh")] // This name shows up in the procedural model dropdown list
@@ -25,19 +25,19 @@ namespace VL.Stride.Rendering.Models
         public float InnerRadius { get; set; } = 0.5f;
 
         /// <summary>
-        /// Initial angle in cycles 
+        /// Disc's initial angle in cycles 
         /// </summary>
         [DataMember(12)]
         public float FromAngle { get; set; } = 0f;
 
         /// <summary>
-        /// Final angle in cycles
+        /// Disc's final angle in cycles
         /// </summary>
         [DataMember(13)]
         public float ToAngle { get; set; } = 1f;
 
         /// <summary>
-        /// Amount of slices to split the cylinder into. Higher calues result in smoother surfaces.
+        /// Disc's tessellation (amount of radial slices to split the cylinder into). Higher values result in smoother surfaces
         /// </summary>
         [DataMember(14)]
         public int Tessellation { get; set; } = 16;
@@ -51,7 +51,7 @@ namespace VL.Stride.Rendering.Models
         /// <summary>
         /// Uses the DMesh3 instance generated from a PuncturedDiscGenerator to create an equivalent Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]>
         /// </summary>
-        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the PuncturedDisc generated with the classes public property values</returns>
+        /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the PuncturedDisc generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
             var generator = new PuncturedDiscGenerator
