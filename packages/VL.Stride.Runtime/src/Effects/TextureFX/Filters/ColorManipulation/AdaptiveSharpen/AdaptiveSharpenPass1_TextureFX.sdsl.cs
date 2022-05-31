@@ -20,6 +20,6 @@ namespace Stride.Rendering
     {
         public static readonly ValueParameterKey<Vector2> p1 = ParameterKeys.NewValue<Vector2>();
         public static readonly ValueParameterKey<float> curve_height = ParameterKeys.NewValue<float>(1.0f);
-        public static readonly ValueParameterKey<float> a_offset = ParameterKeys.NewValue<float>(2.0f);
+        public static readonly ValueParameterKey<float> a_offset = ParameterKeys.NewValue<float>(2.0);
     }
 }

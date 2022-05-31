@@ -16,9 +16,10 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Blend_ShaderFXKeys
+    public static partial class Checkerboard_TextureFXKeys
     {
-        public static readonly ValueParameterKey<int> BlendMode = ParameterKeys.NewValue<int>();
-        public static readonly ValueParameterKey<bool> ComputeAlpha = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<Vector2> CellCount = ParameterKeys.NewValue<Vector2>(int2(8,8));
+        public static readonly ValueParameterKey<Color4> Black = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));
+        public static readonly ValueParameterKey<Color4> White = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
     }
 }

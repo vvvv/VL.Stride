@@ -19,7 +19,6 @@ namespace Stride.Rendering
     public static partial class Tunnels_TextureFXKeys
     {
         public static readonly ValueParameterKey<int> Type = ParameterKeys.NewValue<int>();
-        public static readonly ValueParameterKey<float> Time = ParameterKeys.NewValue<float>();
         public static readonly ValueParameterKey<float> Rotation = ParameterKeys.NewValue<float>(0);
         public static readonly ValueParameterKey<float> Distance = ParameterKeys.NewValue<float>(0.5f);
         public static readonly ValueParameterKey<float> Offset = ParameterKeys.NewValue<float>(0.0f);

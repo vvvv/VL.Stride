@@ -16,9 +16,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class Blend_ShaderFXKeys
+    public static partial class Dither_TextureFXKeys
     {
-        public static readonly ValueParameterKey<int> BlendMode = ParameterKeys.NewValue<int>();
-        public static readonly ValueParameterKey<bool> ComputeAlpha = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<float> Threshhold = ParameterKeys.NewValue<float>(6.5f);
     }
 }
