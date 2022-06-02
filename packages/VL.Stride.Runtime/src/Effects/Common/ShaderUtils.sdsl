@@ -9,6 +9,7 @@ shader ShaderUtils
     static const float OneOverTwoPi =   0.15915494309189533576888376337251;
     static const float Epsilon =        0.0000000596; // as 5.96e-08 
 
+
     // SPRITES UTILS ==============================================================
  
     void CircleSpriteDiscard(float2 uv)
@@ -33,6 +34,7 @@ shader ShaderUtils
         float2(1,0)
     };
 
+
     // CULLING ==============================================================
 
     bool DotCulling(float3 pos, float3 eye, float3 viewDirection, float CullingThreshold)
@@ -48,6 +50,7 @@ shader ShaderUtils
         return dotValue;
     }
 
+
     // COLOR UTILS ==============================================================
 
     // Approximates luminance from an RGB value
@@ -55,6 +58,16 @@ shader ShaderUtils
     {
         return dot(color, float3(0.299f, 0.587f, 0.114f));
     }
+
+
+    // Returns the luminance of a !! linear !! rgb color
+    // many source shows different RGB value as the one above
+    //see this one as an example : https://github.com/tobspr/GLSL-Color-Spaces/blob/master/ColorSpaces.inc.glsl
+    float GetLuminance(float3 rgb) 
+    {
+        return dot(float3(0.212656f, 0.715158f, 0.072186f), rgb);
+    }
+
 
     float4 BitsToColor(float f)
     {
@@ -89,6 +102,17 @@ shader ShaderUtils
         float3 RGB = HUEtoRGB(HSL.x);
         float C = (1 - abs(2 * HSL.z - 1)) * HSL.y;
         return (RGB - 0.5) * C + HSL.z;
+    }
+
+    float4 RGBToCMYK(float3 c)
+    {
+	    float w = max(max(c.r, c.g), c.b) ;
+	    return clamp(float4((w-c.rgb) / w, 1.0 - w ), 0.00000001, 1.0);
+    }
+
+    float3 CMYKToRGB(float4 c)
+    {
+	    return 1 - min(1, c.rgb * (1 - c.w) + c.w);
     }
 
     /* previous RGBtoHSL */
@@ -191,9 +215,9 @@ shader ShaderUtils
         return backPart + interPart + frontPart;
     }
 
+
     // VALUE UTILS ==============================================================
-   
-    
+
     float ScaleOffsetScale(float x, float3 sos)
     {
         return ((x * sos.x) + sos.y) * sos.z;
@@ -253,4 +277,13 @@ shader ShaderUtils
         float y = cos(a) * pt.y - sin(a) * pt.x;
         return float2(x,y);
     }
+
+
+    // TRANSFORM 2D ==============================================================
+
+    float2 TransformUV(float2 uv, float4x4 transform)
+    {
+        return mul(float4((uv.xy * 2 - 1) * float2(1, -1) * 0.5, 0, 1), transform).xy * float2(1, -1) + 0.5;
+    }
+
 };

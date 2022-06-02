@@ -1,0 +1,20 @@
+﻿[Category("Filter")]
+[Summary("Get the Midtones of a texture")]
+[Tags("Color Grading")]
+
+shader Lift_TextureFX : FilterBase, ColorGradingOperations
+{
+    [Default(0.0)]
+    compose ComputeFloat Lift;
+
+    [Default(1.0, 1.0, 1.0, 1.0)]
+    compose ComputeFloat4 LiftColor;
+
+    float4 Filter(float4 tex0col)
+    {
+        //return Lift(tex0col, Lift.Compute(), LiftColor.Compute());
+        //float4 color;
+        tex0col = tex0col * (1.5 - 0.5 * (Lift.Compute() * LiftColor.Compute() + 1.0)) + 0.5 * (Lift.Compute() * LiftColor.Compute() + 1.0) - 0.5;
+		return tex0col;
+    }
+};

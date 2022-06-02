@@ -1,0 +1,25 @@
+﻿[Summary("Pulse")]
+[Tags("")]
+
+shader Pulse_ShaderFX : ComputeFloat4, PulseOperations
+{
+    [Default(1.0, 1.0, 1.0, 1.0)]
+    compose ComputeFloat4 Color;
+
+    [Default(1.0)]
+    compose ComputeFloat Center;
+
+    [Default(1.0)]
+    compose ComputeFloat SlopeWidth;
+
+    [Default(1.0)]
+    compose ComputeFloat CenterWidth;
+
+    stage bool Invert;
+    stage int ChannelType;
+
+    override float4 Compute()
+    {
+        return Pulse(Color.Compute(), Center.Compute(), SlopeWidth.Compute(), CenterWidth.Compute(), Invert, ChannelType);
+    }
+};

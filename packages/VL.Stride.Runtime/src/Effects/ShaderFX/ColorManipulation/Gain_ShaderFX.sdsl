@@ -1,0 +1,20 @@
+﻿[Summary("Inverts the input")]
+
+shader Gain_ShaderFX : ComputeFloat4, ColorGradingOperations
+{
+    [Default(1.0, 1.0, 1.0, 1.0)]
+    compose ComputeFloat4 Color;
+
+    [Default(1.0)]
+    compose ComputeFloat Gain;
+
+    [Default(1.0, 1.0, 1.0, 1.0)]
+    compose ComputeFloat4 GainColor;
+
+    override float4 Compute()
+    {
+        return Gain(Color.Compute(), Gain.Compute(), GainColor.Compute());
+    }
+};
+
+

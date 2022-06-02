@@ -31,9 +31,12 @@ shader Pixelate_TextureFX : MixerBase
         }
         pixels = 5 + 1000 * segment_progress * segment_progress;
         float2 newUV = round(streams.TexCoord * pixels) / pixels;	
+
         float4 c1 = Texture0.SampleLevel(Sampler0, newUV, 0);
         float4 c2 = Texture1.SampleLevel(Sampler1, newUV, 0);
+
         float lerp_progress = saturate((fader - 0.4) / 0.2);
+
         return lerp(c1,c2, lerp_progress);	
     }
 };

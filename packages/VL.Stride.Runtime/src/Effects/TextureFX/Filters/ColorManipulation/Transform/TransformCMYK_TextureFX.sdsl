@@ -1,0 +1,26 @@
+﻿[Category("Filter")]
+[Summary("")]
+
+shader TransformCMYK_TextureFX : FilterBase, ShaderUtils
+{
+    float4x4 TransformC;
+    float4x4 TransformM;
+    float4x4 TransformY;
+    float4x4 TransformK;
+    float4x4 TransformA;
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+
+        float C = RGBToCMYK(Texture0.SampleLevel(Sampler0, TransformUV(uv, TransformC), 0).rgb).r;
+        float M = RGBToCMYK(Texture0.SampleLevel(Sampler1, TransformUV(uv, TransformM), 0).rgb).g;
+        float Y = RGBToCMYK(Texture0.SampleLevel(Sampler2, TransformUV(uv, TransformY), 0).rgb).b;
+        float K = RGBToCMYK(Texture0.SampleLevel(Sampler3, TransformUV(uv, TransformK), 0).rgb).a;
+        float A = Texture0.SampleLevel(Sampler4, TransformUV(uv, TransformA), 0).a;
+
+        return float4(CMYKToRGB(float4(C, M, Y, K)), A);
+    }
+};
+
+

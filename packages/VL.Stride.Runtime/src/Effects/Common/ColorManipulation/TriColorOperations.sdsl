@@ -1,0 +1,68 @@
+﻿// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Filter/TriColor.tfx
+
+shader TriColorOperations : ShaderUtils, ColorUtilityTemp
+{
+    #define linstep(a, b, x) (saturate((x-a)/(b-a)))
+    #define linstepf(a, b, x) (((x-a)/(b-a)))
+
+    [Default(0.0f, 0.0f, 0.0f, 1.0f)]
+    compose ComputeFloat4 ColorA;
+
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 ColorB;
+
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 ColorC;
+
+    [Default(0.5)]
+    compose ComputeFloat Center;
+
+    [Default(0.5)]
+    compose ComputeFloat Smooth;
+
+    bool SingleChannel = true;
+    bool ClampColor = true;
+
+    float4 TriColor(float4 color)
+    {
+        float4 col = color;
+        float4 fd = color;
+
+        float center = Center.Compute();
+        float smooth = Smooth.Compute();
+
+        float4 colorA = ColorA.Compute();
+        float4 colorB = ColorB.Compute();
+        float4 colorC = ColorC.Compute();
+
+        if(SingleChannel)
+        {
+            fd = GetLuminance(col.rgb);
+        }
+        
+        fd = lerp(fd, sign(fd) * pow(abs(fd), center / (1.000001 - center)), 1 - 0.5 * saturate(smooth * 2.0 - 1.0));
+
+        float Smooth2 = saturate(smooth * 2) / 2.0;
+        Smooth2 = saturate(smooth);
+        
+        float sm = (1.0 - Smooth2) / (0.000001 + Smooth2);
+
+        float4 fd1 = max(0.0, 1.0 - linstepf(0.0, 1.0, (fd * 2.0  - 0.6666) * sm + 0.6666));
+        float4 fd2 = max(0.0, linstepf(0.0, 1.0, (fd * 2.0 - 1.3333) * sm + 0.3333));
+
+        if(ClampColor)
+        {
+            fd1 = saturate(fd1);
+            fd2 = saturate(fd2);
+        }
+
+        col = colorB;
+        col = lerp(col, colorA, fd1);
+        col = lerp(col, colorC, fd2);
+
+        return col;
+    }
+};
+
+

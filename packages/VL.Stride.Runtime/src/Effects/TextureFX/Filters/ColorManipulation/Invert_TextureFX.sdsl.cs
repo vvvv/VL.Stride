@@ -18,9 +18,7 @@ namespace Stride.Rendering
 {
     public static partial class Invert_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Factor = ParameterKeys.NewValue<float>(1);
-        public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>(true);
-        public static readonly ValueParameterKey<bool> InvertRGB = ParameterKeys.NewValue<bool>(false);
         public static readonly ValueParameterKey<bool> InvertAlpha = ParameterKeys.NewValue<bool>(false);
+        public static readonly ValueParameterKey<int> InvertType = ParameterKeys.NewValue<int>();
     }
 }

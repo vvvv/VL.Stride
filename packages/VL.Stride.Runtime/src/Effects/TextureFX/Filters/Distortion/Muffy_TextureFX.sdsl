@@ -6,7 +6,7 @@
 shader Muffy_TextureFX : FilterBase
 {
     float RingAmount = 2.5f;
-    float RingSize = 2.0f;
+    float2 RingSize = float2(2.0f, 2.0f);
     
     //there seems to be no pre-defined Sampler with Mirror
     SamplerState s0
@@ -20,7 +20,7 @@ shader Muffy_TextureFX : FilterBase
     {
         float2 uv = streams.TexCoord;
 
-        float4 col = Texture0.SampleLevel(s0, uv + ((sin(uv.y * RingSize*10.0)*RingAmount ) * cos (uv.x)) + (sin(uv.x * RingSize*10.0)*RingAmount), 0);
+        float4 col = Texture0.SampleLevel(s0, uv + ((sin(uv * RingSize*10.0)*RingAmount ) * cos (uv)) + (sin(uv * RingSize*10.0)*RingAmount), 0);
     
         return col;
     }

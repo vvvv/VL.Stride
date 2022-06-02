@@ -1,22 +1,18 @@
 ﻿[Category("Filter")]
 [Summary("Inverts the image colors")]
-shader Invert_TextureFX : FilterBase
+
+shader Invert_TextureFX : FilterBase, InvertOperations
 {
-    float Factor = 1;
-    bool Invert = true;
-    bool InvertRGB = false;
+    [Default(1.0)]
+    compose ComputeFloat Factor;
+
     bool InvertAlpha = false;
+        
+    [EnumType("VL.Stride.Effects.Common.Invert")]
+    int InvertType;
 
     float4 Filter(float4 tex0col)
     {
-        float4 c = tex0col;
-        float4 e = c;
-        if (Invert) e.rgb = 1 - e.rgb;
-        if (InvertRGB) e.rgb -= 2 * (e.rgb - dot(e.rgb,1) / 3.); // ohh this is the cutest
-        if (InvertAlpha) e.a = 1 - e.a;
-        c.rgb = lerp(c, e, Factor);
-        return c;
+        return Invert(tex0col, Factor.Compute(), InvertAlpha, InvertType);
     }
 };
-
-

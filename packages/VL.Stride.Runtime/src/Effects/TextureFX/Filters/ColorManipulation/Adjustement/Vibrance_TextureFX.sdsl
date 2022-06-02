@@ -1,0 +1,15 @@
+﻿[Category("Filter")]
+[Summary("Boosts the saturation of pixels avoiding oversaturation were already very saturated")]
+
+shader Vibrance_TextureFX : FilterBase, VibranceOperations
+{
+    [Default(1.0, 1.0, 1.0)]
+    compose ComputeFloat3 VibranceRGB;
+
+    float4 Filter(float4 tex0col)
+    {
+        return Vibrance(tex0col, VibranceRGB.Compute());
+    }
+};
+
+
