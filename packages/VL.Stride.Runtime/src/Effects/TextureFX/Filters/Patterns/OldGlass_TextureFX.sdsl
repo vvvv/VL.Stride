@@ -1,0 +1,49 @@
+//Created by Artistides Garcia AKA Lasal https://www.aristidesgarcia.de/
+
+[Category("Filter")]
+[Summary("")]
+
+shader OldGlass_TextureFX : FilterBase, ShaderUtils
+{
+    [Default(0.5, 0.5, 0.5, 0.5)]
+    compose ComputeFloat4 FactorXY;
+
+    compose ComputeFloat2 Steps;
+    compose ComputeFloat2 Amount;
+    compose ComputeFloat BubblePow;
+    compose ComputeFloat2 Bubble;
+    compose ComputeFloat Fade;
+
+    float2 Posterize(float2 uv, float2 steps)
+    {
+        return (floor(uv * steps) / steps);
+    }
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+        float2 steps = Steps.Compute();
+        float2 amount = Amount.Compute();
+
+        float2 step0 = 1.0 / steps;
+        float2 step1 = amount / steps;
+
+        float2 mapped = clamp( Map(uv, float2(0.0, 0.0), step0, float2(1.0, 1.0), float2(0.0, 0.0)), 0, 1);
+
+        mapped *= step1;
+        step1 /= float2(-2.0, -2.0);
+
+        float2 posterized = Posterize(uv, steps);
+
+        float distanced = 1.0 - pow(distance(mapped, float2(0.5, 0.5)), BubblePow.Compute());
+
+        float2 total = mapped + posterized + step1;
+
+        float2 lerp0 = lerp(1.0, pouet, Bubble.Compute());
+        float2 lerp1 = lerp(0.0, lerp0, Fade.Compute());
+
+        float2 finalUV = lerp(uv, total, lerp1);
+
+        return Texture0.SampleLevel(LinearSampler, finalUV, 0);	
+    }
+};

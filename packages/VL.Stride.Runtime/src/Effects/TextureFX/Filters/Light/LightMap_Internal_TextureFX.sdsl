@@ -1,0 +1,83 @@
+//@author: timpernagel,mburk
+//@help: Generating a Light/Shadow-texture based on a 2D texture.  
+//@tags: texture
+//@credits:
+//Ported from a super well documented OpenGL version by Matt DesLauriers:
+//https://github.com/mattdesl/lwjgl-basics/wiki/2D-Pixel-Perfect-Shadows
+
+shader LightMap_Internal_TextureFX : TextureFX
+{
+    float2 lightPos;
+    float2 lightSize = float2(1, 1);
+    float shadowSoftness = 1.0f;
+
+    
+
+    [Color]
+    float4 Color  = float4(1, 1, 1, 1);
+
+    float Gamma  = 0.5f;
+
+
+    static float THRESHOLD = 0.75f;
+
+
+    float dosample(float2 coord, float r) 
+    {
+	    return step(r, Texture0.Sample(LinearSampler, coord.xy).r).r;
+    }   
+
+    stage override float4 Shading()
+    {
+        float2 tUV =  streams.TexCoord; 
+
+        float2 resolution = 1/Texture0TexelSize;
+        
+        tUV +=  lightPos * float2(-1,1);
+	    tUV = ((float2((tUV*2-1)*float2(1,-1)*.5)*(1/lightSize)).xy*float2(1,-1)+0.5);
+	
+	    //rectangular to polar
+	    float2 norm = tUV * 2.0 - 1.0;
+	    float theta = -atan2(norm.y, norm.x);
+	    float r = length(norm);
+	    float coord = (theta + ShaderUtils.Pi) / (2.0*ShaderUtils.Pi);
+	
+	    //the tex coord to sample our 1D lookup texture
+	    //always 0.0 on y axis
+	    float2 tc = float2(coord, 0.0);
+	
+	    //the center tex coord, which gives us hard shadows	
+	    float center = dosample(tc, r);
+	
+	    //we multiply the blur amount by our distance from center
+	    //this leads to more blurriness as the shadow "fades away"
+	    float blur = (1./resolution.x)  * smoothstep(0., 1, r)*shadowSoftness;
+	
+	    //now we use a simple gaussian blur
+	    float sum = 0.0;
+	
+	    sum += dosample(float2(tc.x - 4.0*blur, tc.y), r) * 0.05;
+	    sum += dosample(float2(tc.x - 3.0*blur, tc.y), r) * 0.09;
+	    sum += dosample(float2(tc.x - 2.0*blur, tc.y), r) * 0.12;
+	    sum += dosample(float2(tc.x - 1.0*blur, tc.y), r) * 0.15;
+	
+	    sum += center * 0.16;
+	
+	    sum += dosample(float2(tc.x + 1.0*blur, tc.y), r) * 0.15;
+	    sum += dosample(float2(tc.x + 2.0*blur, tc.y), r) * 0.12;
+	    sum += dosample(float2(tc.x + 3.0*blur, tc.y), r) * 0.09;
+	    sum += dosample(float2(tc.x + 4.0*blur, tc.y), r) * 0.05;
+	
+	    //sum of 1.0 -> in light, 0.0 -> in shadow
+	
+	    //multiply the summed amount by our distance, which gives us a radial falloff
+	    //then multiply by vertex (light) color
+	    //	float4 c = texture2d.Sample(Sampler,input.uv);
+	
+	    float g = Gamma/(1.00001-Gamma);
+	    float4 c =  float4(Color.xyz, sum * pow(smoothstep(1.0, 0.0, r),g));
+	    //	c +=  float4(Color.xyz, sum * smoothstep(1.0, 0.0, r));
+	    return c;
+
+    }
+};

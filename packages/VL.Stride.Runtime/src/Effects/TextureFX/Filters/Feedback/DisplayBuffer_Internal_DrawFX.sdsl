@@ -1,0 +1,19 @@
+﻿shader DisplayBuffer_Internal_DrawFX : VS_PS_Base, ColorBase, ShaderUtils, Texturing
+{
+    float2 Reso;
+    int pixSize = 8;
+    StructuredBuffer<float4> sbInput;
+
+    override stage void VSMain()
+    {
+        streams.ShadingPosition = mul(streams.Position, WorldViewProjection);
+    }
+
+    override stage void PSMain() 
+    {
+        float4 c = 0.1;
+        int2 iuv = floor((streams.TexCoord*Reso+0.0));
+        c = sbInput[min(iuv, Reso).x + floor(iuv.y/(uint)pixSize)*Reso.x];
+        streams.ColorTarget = c;
+    }
+};

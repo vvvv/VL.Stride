@@ -1,0 +1,42 @@
+﻿[Category("Filter")]
+[Summary("")]
+[Tags("")]
+
+shader ASCII_TextureFX : FilterBase
+{
+    bool Grayscale = false;
+    int CharacterCount = 176;
+    int2 CharacterSize = float2(4.0, 6.0);
+    float GridSize;
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 R = ViewSize * 0.5;
+
+        float2 uv = streams.TexCoord * R - 0.25;
+
+        int2 gridSize = CharacterSize * (1 - GridSize); 
+        float4 c = Texture0.SampleLevel(PointSampler, floor(uv / gridSize) * gridSize / R + 0.5 / R, 0);
+
+        float grey = mx(c.rgb);
+
+        grey = pow(grey, 5.0);
+
+        float Quantized = round(grey * CharacterCount) / CharacterCount;
+
+        float letter = Texture1.SampleLevel(PointSampler, (frac(uv / gridSize) + float2(Quantized * CharacterCount, 0)) / float2(CharacterCount, 1), 0);
+
+        c.rgb = normalize(c.rgb) * sqrt(3) * letter;
+
+        if(Grayscale)c.rgb=letter;
+
+        return c;
+    }
+
+    float mx (float3 p)
+    {
+        return max(p.x, max(p.y, p.z));
+    }
+};
+
+

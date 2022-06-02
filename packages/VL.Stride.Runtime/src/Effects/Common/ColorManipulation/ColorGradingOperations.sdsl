@@ -7,10 +7,9 @@
     }
 
 
-    float4 Gamma(float4 tex0col, float gamma, float4 gammaColor)
+    float4 Gamma(float4 color, float gamma, float4 gammaColor)
     {
-		float4 color = tex0col.rgb;
-		color = pow(abs(color), 1.0 / (gamma * gammaColor.rgb + 1.0));
+		color = pow(abs(color), 1.0 / (gamma * gammaColor + 1.0));
 		return color;
     }
 
