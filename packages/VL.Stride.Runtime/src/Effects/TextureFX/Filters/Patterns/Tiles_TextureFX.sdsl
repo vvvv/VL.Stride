@@ -1,0 +1,16 @@
+[Category("Filter")]
+[Summary("")]
+
+shader Tiles_TextureFX : FilterBase
+{
+    [Default(0.5, 0.5, 0.5, 0.5)]
+    compose ComputeFloat4 FactorXY;
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 sz = min(max(0.5 / ViewSize, (FactorXY.Compute().xy * 0.5 ) * ViewSize), ViewSize);
+        float2 vp = streams.TexCoord * ViewSize;
+
+        return Texture0.SampleLevel(Sampler0, floor(vp / sz) * sz / ViewSize + 0.5 / ViewSize, 0);	
+    }
+};

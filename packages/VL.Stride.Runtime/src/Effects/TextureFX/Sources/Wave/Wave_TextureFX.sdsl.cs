@@ -16,10 +16,11 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class AdaptiveSharpenPass1_TextureFXKeys
+    public static partial class Wave_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Vector2> p1 = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<float> curve_height = ParameterKeys.NewValue<float>(1.0f);
-        public static readonly ValueParameterKey<float> a_offset = ParameterKeys.NewValue<float>(2.0f);
+        public static readonly ValueParameterKey<Color4> From = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));
+        public static readonly ValueParameterKey<Color4> To = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
+        public static readonly ValueParameterKey<bool> isHorizontal = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<int> type = ParameterKeys.NewValue<int>(0);
     }
 }

@@ -16,10 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class AdaptiveSharpenPass1_TextureFXKeys
+    public static partial class Pulse_ShaderFXKeys
     {
-        public static readonly ValueParameterKey<Vector2> p1 = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<float> curve_height = ParameterKeys.NewValue<float>(1.0f);
-        public static readonly ValueParameterKey<float> a_offset = ParameterKeys.NewValue<float>(2.0f);
+        public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<int> ChannelType = ParameterKeys.NewValue<int>();
     }
 }

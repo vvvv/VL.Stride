@@ -1,0 +1,20 @@
+﻿shader MapFloat : ComputeFloat
+{
+    compose ComputeFloat Value;
+
+    compose ComputeFloat FromMinimum;
+    compose ComputeFloat FromMaximum;
+
+    compose ComputeFloat ToMinimum;
+    compose ComputeFloat ToMaximum;
+
+    float Map(float value, float inMin, float inMax, float outMin, float outMax) 
+    {
+      return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+    }
+
+    override float Compute()
+    {
+        return Map(Value.Compute(), FromMinimum.Compute(), FromMaximum.Compute(), ToMinimum.Compute(), ToMaximum.Compute());
+    }
+};

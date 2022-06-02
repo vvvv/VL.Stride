@@ -1,0 +1,18 @@
+[Category("Mixer")]
+[Tags("blend fade compose mix")]
+[Summary("Blend between two textures using selectable blendmode")]
+
+shader Blend_TextureFX : MixerBase, BlendOperations
+{
+	[EnumType("VL.Stride.Effects.Common.BlendMode")]
+    int Type;
+    bool ComputeAlpha = true;
+
+    float4 Mix(float4 tex0col, float4 tex1col, float fader)
+    {
+        float4 c0 = tex0col;
+        float4 c1 = tex1col;
+
+        return Blend(c0, c1, fader, ComputeAlpha, Type);
+    }
+};

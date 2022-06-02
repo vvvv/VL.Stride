@@ -13,16 +13,22 @@
 [Category("Source")]
 [Summary("Returns a bubbly noise texture")]
 [DontConvertToSRgbOnWrite]
+
 shader BubbleNoise_TextureFX : TextureFX
 {
-    float Time;
-    float Frequency = 3.5f;
-    float Contrast = 0.15f;
+    compose ComputeFloat Time;
 
-    [Color]
-    float4 BackgroundColor = float4(0, 0, 0, 1);
-    [Color]
-    float4 BubbleColor = float4(1, 1, 1, 1);
+    [Default(3.5f)]
+    compose ComputeFloat Frequency;
+
+    [Default(0.15f)]
+    compose ComputeFloat Contrast;
+
+    [Default(0.0, 0.0, 0.0, 0.0)]
+    compose ComputeFloat4 BackgroundColor;
+
+    [Default(1.0, 1.0, 1.0, 1.0)]
+    compose ComputeFloat4 BubbleColor;
 
 
     float3 mod289(float3 x)
@@ -124,11 +130,10 @@ shader BubbleNoise_TextureFX : TextureFX
 
     float surface3 (float3 coord) 
     {
-
-        float n = Contrast/2;		
-        n += 1.0 * abs( cnoise( coord * Frequency ) );
-        n += 0.5 * abs( cnoise( coord * Frequency * 2.0 ) );
-        n += 0.25 * abs( cnoise( coord * Frequency * 4.0 ) );
+        float n = Contrast.Compute()/2;		
+        n += 1.0 * abs( cnoise( coord * Frequency.Compute() ) );
+        n += 0.5 * abs( cnoise( coord * Frequency.Compute() * 2.0 ) );
+        n += 0.25 * abs( cnoise( coord * Frequency.Compute() * 4.0 ) );
 
         return n;
     }
@@ -142,12 +147,12 @@ shader BubbleNoise_TextureFX : TextureFX
         float2 offsetSize = float2(1.0, 1.0) / R.xy;
         
         float n = 
-            surface3(float3(uv.x, uv.y, Time * 0.1)) * 0.2 +
-            surface3(float3(uv.x - offsetSize.x, uv.y, Time * 0.1)) * 0.2 +
-            surface3(float3(uv.x + offsetSize.x, uv.y, Time * 0.1)) * 0.2 +
-            surface3(float3(uv.x, uv.y - offsetSize.y, Time * 0.1)) * 0.2 +
-            surface3(float3(uv.x, uv.y + offsetSize.y, Time * 0.1)) * 0.2;
+            surface3(float3(uv.x, uv.y, Time.Compute() * 0.1)) * 0.2 +
+            surface3(float3(uv.x - offsetSize.x, uv.y, Time.Compute() * 0.1)) * 0.2 +
+            surface3(float3(uv.x + offsetSize.x, uv.y, Time.Compute() * 0.1)) * 0.2 +
+            surface3(float3(uv.x, uv.y - offsetSize.y, Time.Compute() * 0.1)) * 0.2 +
+            surface3(float3(uv.x, uv.y + offsetSize.y, Time.Compute() * 0.1)) * 0.2;
     
-        return lerp (BackgroundColor, BubbleColor, n);
+        return lerp (BackgroundColor.Compute(), BubbleColor.Compute(), n);
     }
 };

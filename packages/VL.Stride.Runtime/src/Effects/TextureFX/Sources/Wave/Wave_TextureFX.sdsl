@@ -1,0 +1,108 @@
+﻿[TextureSource]
+[Category("Source")]
+[Summary("Returns a texture with a linear gradient")]
+[Tags("ramp")]
+[OutputFormat("R16G16B16A16_Float")]
+shader Wave_TextureFX : TextureFX
+{
+    [Color] float4 From = float4(0,0,0,1);
+    [Color] float4 To = float4(1,1,1,1);
+    bool isHorizontal;
+
+    [Default(0.0f)]
+    compose ComputeFloat Time;
+
+    [Default(2.2f)]
+    compose ComputeFloat Frequency;
+
+    [Default(1.0f)]
+    compose ComputeFloat Multiply;
+
+    [Default(2.2f)]
+    compose ComputeFloat Pedestal;
+
+    [Default(0.0f)]
+    compose ComputeFloat Gain;
+
+    [EnumType("VL.Stride.Effects.Common.Wave")]
+    int type = 0;
+
+    stage override float4 Shading()
+    {
+        float2 uv = streams.TexCoord;
+        float fade = isHorizontal ? uv.x : uv.y;
+
+        float frequency = Frequency.Compute();
+        float multiply = Multiply.Compute();
+        float pedestal = Pedestal.Compute();
+        float gain = Gain.Compute();
+
+        fade += Time.Compute();
+
+        //MIRROR
+        fade = abs(frac(fmod(fade, 1 / frequency ) * frequency) - 0.5) * 2.0;
+
+        switch(type)
+        {
+            //TRIANGLE
+            case 0 : fade = abs(frac(fmod(fade, 1 / frequency * 2) * frequency) ) * 1.0; break;
+
+            //RECTANGLE
+            case 1 : fade = step(fade * pedestal, 0.5); break;
+
+            //ARCSINE
+            case 2 : fade = asin(fade * pedestal); break;
+
+            //SIN
+            case 3 : fade = sin(fade * pedestal); break;
+
+            //PARABOLA
+            case 4 : fade = parabola(fade, pedestal); break;
+
+            //INTEGRALSMOOTHSTEP
+            case 5 : fade = integralSmoothstep(fade, pedestal - 1 ); break;
+
+            //EXPONENTIAL
+            case 6 : fade = exp(saturate(fade * pedestal)); break;
+
+            //QUAIMPULSE
+            case 7 : fade = quaImpulse(fade, pedestal); break;
+        }
+
+
+        float4 c = lerp(From, To, fade) * multiply;
+        c *= gain + 1.0;
+        return float4(c.rgb, 1.0);
+    }
+
+    float quaImpulse( float k, float x )
+    {
+        return 2.0*sqrt(k)*x/(1.0+k*x*x);
+    }
+
+    float gain(float x, float k) 
+    {
+        float a = 0.5*pow(2.0*((x<0.5)?x:1.0-x), k);
+        return (x<0.5)?a:1.0-a;
+    }
+
+    float parabola( float x, float k )
+    {
+        return pow( 4.0*x*(1.0-x), k );
+    }
+
+    float integralSmoothstep( float x, float T )
+    {
+        if( x>T ) return x - T/2.0;
+        return x*x*x*(1.0-x*0.5/T)/T/T;
+    }
+
+
+    float cubicPulse( float c, float w, float x )
+    {
+        x = abs(x - c);
+        if( x>w ) return 0.0;
+        x /= w;
+        return 1.0 - x*x*(3.0-2.0*x);
+    }
+};

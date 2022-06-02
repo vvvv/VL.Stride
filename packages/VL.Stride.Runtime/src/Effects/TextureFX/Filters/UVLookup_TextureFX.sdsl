@@ -1,0 +1,13 @@
+﻿[Category("Filter")]
+[Summary("UV lookup texture")]
+shader UVLookup_TextureFX : FilterBase
+{
+    bool Relative = true;
+
+    float4 Filter(float4 tex0col)
+    {   
+        float2 c1 = Texture1.SampleLevel(LinearSampler, streams.TexCoord, 0);
+	    if(Relative) c1 += streams.TexCoord;
+        return Texture0.SampleLevel(LinearSampler, c1, 0);
+    }
+};
