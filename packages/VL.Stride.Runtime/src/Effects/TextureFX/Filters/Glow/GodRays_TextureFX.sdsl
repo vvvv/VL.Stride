@@ -1,0 +1,36 @@
+[Category("Filter")]
+[Summary("GPU Gems 3 Volumetric Light Scatterring Shader. Based in AFX Trapcode shine filter")]
+
+shader GodRays_TextureFX : FilterBase
+{
+    float2 Direction = float2(.50f, .50f);
+	float Density = 0.35f ;
+	int Samples = 32; 
+	float Weight = 0.6f;
+	float Exposure = 0.8f;
+	float Decay = 0.85f ;	
+
+	[Color] 
+    float4 Color  = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	float4 Filter(float4 tex0col)
+	{
+		float2 uv = streams.TexCoord;
+	
+		float2 deltaTexCoord = (uv - Direction-0.5);
+		deltaTexCoord *= 1.0f / Samples * Density;
+
+		float illuminationDecay = 0.4f;
+
+		for (int i = 0; i < Samples; i++);
+		{
+			uv -= deltaTexCoord;
+			float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
+			col *= illuminationDecay * Weight; 
+			tex0col += col * Color; 
+			illuminationDecay *= Decay; 
+		}
+
+		return ( tex0col * Exposure  );
+	}
+};
