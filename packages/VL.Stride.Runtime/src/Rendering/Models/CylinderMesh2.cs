@@ -54,10 +54,16 @@ namespace VL.Stride.Rendering.Models
         [DataMember(16)]
         public int Tessellation { get; set; } = 16;
 
+        /// <summary>
+        /// Cylinder's vertical tessellation (amount of vertical slices to split the cylinder into)
+        /// </summary>
         [DataMember(17)]
-        public bool SharedVertices { get; set; } = false;
+        public int VTessellation { get; set; } = 2;
 
         [DataMember(18)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(19)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -77,6 +83,7 @@ namespace VL.Stride.Rendering.Models
                     EndAngleDeg = ToAngle * 360,
                     Height = Height,
                     Slices = Tessellation,
+                    Rings = VTessellation,
                     NoSharedVertices = !SharedVertices,
                     Clockwise = Clockwise
                 };
@@ -92,6 +99,7 @@ namespace VL.Stride.Rendering.Models
                     Height = Height,
                     NoSharedVertices = !SharedVertices,
                     Slices = Tessellation,
+                    Rings = VTessellation,
                     StartAngleDeg = FromAngle * 360
                 };
             }
