@@ -12,8 +12,8 @@
     override stage void PSMain() 
     {
         float4 c = 0.1;
-        int2 iuv = floor((streams.TexCoord*Reso+0.0));
-        c = sbInput[min(iuv, Reso).x + floor(iuv.y/(uint)pixSize)*Reso.x];
+        int2 iuv = floor((streams.TexCoord * Reso));
+        c = sbInput[min(iuv, Reso).x + floor(iuv.y / (uint)pixSize) * Reso.x];
         streams.ColorTarget = c;
     }
 };

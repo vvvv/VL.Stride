@@ -1,0 +1,21 @@
+[Category("Filter")]
+[Summary("")]
+
+shader WarpTime_Internal_TextureFX : FilterBase, ShaderUtils, Texturing
+{
+    int Slice;
+    Texture2DArray TexArray;
+    int frameCount;
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 col = 0;
+
+        for(uint i = 0; i < frameCount; i++)
+        {
+            col += TexArray.SampleLevel(LinearSampler, float3(streams.TexCoord, i), 0);
+        }
+
+        return col / frameCount;
+    }
+};

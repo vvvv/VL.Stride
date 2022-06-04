@@ -24,11 +24,12 @@ shader BubbleNoise_TextureFX : TextureFX
     [Default(0.15f)]
     compose ComputeFloat Contrast;
 
-    [Default(0.0, 0.0, 0.0, 0.0)]
-    compose ComputeFloat4 BackgroundColor;
+    [Color]
+    float4 BackgroundColor = float4(0.0, 0.0, 0.0, 0.0);
 
-    [Default(1.0, 1.0, 1.0, 1.0)]
-    compose ComputeFloat4 BubbleColor;
+    [Color]
+    float4 BubbleColor = float4(0.0, 0.0, 0.0, 0.0);
+
 
 
     float3 mod289(float3 x)
@@ -153,6 +154,6 @@ shader BubbleNoise_TextureFX : TextureFX
             surface3(float3(uv.x, uv.y - offsetSize.y, Time.Compute() * 0.1)) * 0.2 +
             surface3(float3(uv.x, uv.y + offsetSize.y, Time.Compute() * 0.1)) * 0.2;
     
-        return lerp (BackgroundColor.Compute(), BubbleColor.Compute(), n);
+        return lerp (BackgroundColor, BubbleColor, n);
     }
 };
