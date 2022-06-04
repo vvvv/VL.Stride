@@ -1,0 +1,38 @@
+[Category("Filter")]
+[WantsMips("Texture0")]
+
+shader BlurNoMips_TextureFX : FilterBase
+{
+	[Default(0.5f)]
+    compose ComputeFloat Width;
+
+	[Default(1, 1, 1, 1)]
+    compose ComputeFloat4 Map;
+
+    float4 Filter(float4 tex0col)
+    {
+		float2 uv = streams.TexCoord;
+
+		float lod = log2(max(ViewSize.x, ViewSize.y));
+		float4 map = Map.Compute();// Texture1.SampleLevel(LinearSampler, uv, 0);
+
+		map = max(map.x, max(map.y, map.z)) * map.a;
+		lod = map.x * (Width.Compute()) * log2(max(ViewSize.x, ViewSize.y));
+		float4 c = 0;
+		float2 off = 0.5 / ViewSize * pow(2, lod) * saturate(lod);
+
+		c += Texture0.SampleLevel(LinearSampler, uv + float2(0,0) * off,0);
+		c += Texture0.SampleLevel(LinearSampler, uv + float2(1,1)*off,0);
+		c += Texture0.SampleLevel(LinearSampler, uv + float2(1,-1)*off,0);
+		c += Texture0.SampleLevel(LinearSampler, uv + float2(-1,-1)*off,0);
+		c += Texture0.SampleLevel(LinearSampler, uv + float2(-1,1)*off,0);
+		off *= 1.86;
+		c += Texture0.SampleLevel(LinearSampler, uv + float2(0,1)*off,0);
+		c += Texture0.SampleLevel(LinearSampler, uv + float2(0,-1)*off,0);
+		c += Texture0.SampleLevel(LinearSampler, uv + float2(-1,0)*off,0);
+		c += Texture0.SampleLevel(LinearSampler, uv + float2(1,0)*off,0);
+		c/=9;
+
+		return c;
+    }
+};
