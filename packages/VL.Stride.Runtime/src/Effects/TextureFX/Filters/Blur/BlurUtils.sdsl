@@ -1,0 +1,27 @@
+﻿shader BlurUtils : ShaderUtils
+{
+    void ClacLodAndOffset(float2 viewSize, float strength, out float lod, out float2 off)
+    {
+        lod = strength * Lod(viewSize);
+        off = 0.5 / viewSize * pow(2, lod) * saturate(lod);
+    }
+
+    float4 BlurPass(Texture2D tex, SamplerState s0, float2 texCoord, float2 off, float lod)
+    {
+        float4 c = 0;
+        
+        c += tex.SampleLevel(s0, texCoord + float2( 0,  0) * off, lod);
+        c += tex.SampleLevel(s0, texCoord + float2( 1,  1) * off, lod);
+        c += tex.SampleLevel(s0, texCoord + float2( 1, -1) * off, lod);
+        c += tex.SampleLevel(s0, texCoord + float2(-1, -1) * off, lod);
+        c += tex.SampleLevel(s0, texCoord + float2(-1,  1) * off, lod);
+        off *= 1.86;
+        c += tex.SampleLevel(s0, texCoord + float2( 0,  1) * off, lod);
+        c += tex.SampleLevel(s0, texCoord + float2( 0, -1) * off, lod);
+        c += tex.SampleLevel(s0, texCoord + float2(-1,  0) * off, lod);
+        c += tex.SampleLevel(s0, texCoord + float2( 1,  0) * off, lod);
+        c /= 9;
+
+        return c;
+    }
+};
