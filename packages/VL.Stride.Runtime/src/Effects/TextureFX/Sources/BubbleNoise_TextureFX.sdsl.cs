@@ -6,4 +6,19 @@
 // and re-save the associated .sdfx.
 // </auto-generated>
 
-// Nothing to generate
+using System;
+using Stride.Core;
+using Stride.Rendering;
+using Stride.Graphics;
+using Stride.Shaders;
+using Stride.Core.Mathematics;
+using Buffer = Stride.Graphics.Buffer;
+
+namespace Stride.Rendering
+{
+    public static partial class BubbleNoise_TextureFXKeys
+    {
+        public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0,0.0,0.0,1.0));
+        public static readonly ValueParameterKey<Color4> BubbleColor = ParameterKeys.NewValue<Color4>(new Color4(1.0,1.0,1.0,1.0));
+    }
+}
