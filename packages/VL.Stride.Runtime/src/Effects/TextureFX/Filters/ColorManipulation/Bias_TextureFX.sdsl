@@ -1,0 +1,40 @@
+﻿//ported from Noodles contribution by EveryoneIsHappy aka Kyle McLean
+
+[Category("Filter")]
+[Summary("")]
+
+shader Bias_TextureFX : FilterBase
+{
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Amount;
+
+    // Schlick's version of Bias & Gain w/ inversion on 0 to -1 for bias/gain values
+    // these functions expect an input in 0 - 1 range
+
+    float bias(float x, float ctrl = 0.5)
+    {
+ 	    return ctrl > 0 ?  (x / ((((1.0/ctrl) - 2.0)*(1.0 - x))+1.0)) :  1-(x / ((((1.0/abs(ctrl)) - 2.0)*(1.0 - x))+1.0));
+    }
+
+    float2 bias(float2 x, float2 ctrl = 0.5)
+    {
+ 	    return float2(bias(x.x, ctrl.x), bias(x.y, ctrl.y));
+    }
+
+    float3 bias(float3 x, float3 ctrl = 0.5)
+    {
+
+ 	    return float3(bias(x.x, ctrl.x), bias(x.y, ctrl.y), bias(x.z, ctrl.z));
+    }
+
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 c = tex0col;
+        float4 amount = Amount.Compute();
+	    c.rgb = bias(c.rgb, amount.xyz);
+	    return c;
+    }
+};
+
+
