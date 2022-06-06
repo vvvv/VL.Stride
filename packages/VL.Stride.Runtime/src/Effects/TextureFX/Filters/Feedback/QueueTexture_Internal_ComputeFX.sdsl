@@ -1,0 +1,24 @@
+shader QueueTexture_Internal_ComputeFX : ComputeShaderBase, Texturing
+{
+    RWTexture2DArray<float4> RWArray;
+    int2 Reso;
+    int counter;
+    int frameCount;
+
+    override void Compute()
+    {
+        uint2 uv = streams.DispatchThreadId.xy;
+
+        if (any(uv >= Reso))
+            return;
+
+        RWArray[uint3(uv, frameCount - 1)] = Texture0.Load(int3(uv, 0));
+
+        for(uint i = 0; i < frameCount; i++)
+        {
+            RWArray[uint3(uv, i)] = RWArray[uint3(uv, i + 1)];
+        }
+
+
+    }
+};
