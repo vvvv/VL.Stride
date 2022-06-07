@@ -1,0 +1,98 @@
+﻿[Category("Filter")]
+[Summary("4X4 Color Matrix")]
+
+shader ColorWaveShaper_TextureFX : FilterBase, ShaderUtils
+{
+    [Default(1.0, 1.0, 1.0, 1.0)]
+    compose ComputeFloat4 Frequency;
+
+    [Default(0.0, 0.0, 0.0, 0.0)]
+    compose ComputeFloat4 Phase;
+
+    bool Grayscale;
+    bool Alpha;
+
+    [EnumType("VL.Stride.Effects.Common.ColorWave")]
+    int type;
+
+    float4 TexIN()
+    {
+        float4 c = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        if(Grayscale)c.rgb = dot(c.rgb, normalize(float3(0.33, 0.59, 0.11)) / 1.5);
+        return c;
+    }
+
+    float4 Linear(float4 color)
+    {
+        float4 c = color;
+        c = (c * Frequency.Compute() + Phase.Compute());
+        return c;
+    }
+
+    float4 Inverse(float4 color)
+    {
+        float4 c = color;
+        float pa = c.a;
+        c = 1 - (c * Frequency.Compute() + Phase.Compute());
+        if(!Alpha)c.a = pa;
+        return c;
+    }
+
+    float4 Triangle(float4 color)
+    {
+        float4 c = color;
+        float pa = c.a;
+        c = 1.0 - 2.0 * abs(frac((c) * Frequency.Compute() + Phase.Compute())-.5);
+        if(!Alpha)c.a=pa;
+        return c;
+    }
+
+    float4 Sin(float4 color)
+    {
+        float4 c = color;
+        float pa = c.a;
+        c = 0.5 + 0.5 * cos((c * Frequency.Compute() + Phase.Compute()) * acos(-1.0) * 2.0);
+        if(!Alpha)c.a=pa;
+        return c;
+    }
+
+    float4 Rectangle(float4 color)
+    {
+        float4 c = color;
+        float pa = c.a;
+        c = step(-(frac((c * Frequency.Compute() * 254.0 / 255.0 + Phase.Compute())) - 0.5), 0);
+        if(!Alpha)c.a=pa;
+        return c;
+    }
+
+    float4 Frac(float4 color)
+    {
+        float4 c = color;
+        float pa = c.a;
+        c = (frac((c * Frequency.Compute() * 254.0 / 255.0 + Phase.Compute())));
+        if(!Alpha)c.a=pa;
+        return c;
+    }
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 c = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        if(Grayscale)c.rgb = GetLuminance(c.rgb);
+
+        float4 result;
+
+        switch(type)
+        {
+            case 0 : result = Linear(c); break;
+            case 1 : result = Inverse(c); break;
+            case 2 : result = Triangle(c); break;
+            case 3 : result = Sin(c); break;
+            case 4 : result = Rectangle(c); break;
+            case 5 : result = Frac(c); break;
+        }
+
+        return result;
+    }
+};
+
+
