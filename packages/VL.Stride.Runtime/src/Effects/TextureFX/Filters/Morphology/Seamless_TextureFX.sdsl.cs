@@ -18,6 +18,7 @@ namespace Stride.Rendering
 {
     public static partial class Seamless_TextureFXKeys
     {
+        public static readonly ValueParameterKey<int> type = ParameterKeys.NewValue<int>();
         public static readonly ValueParameterKey<Matrix> tTex = ParameterKeys.NewValue<Matrix>();
     }
 }

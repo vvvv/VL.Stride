@@ -5,6 +5,9 @@
 
 shader Seamless_TextureFX : FilterBase, ShaderUtils
 {
+    int type;
+
+
     float4 hash4( float2 p ) 
     { 
         return frac(sin(float4( 1.0 + dot(p, float2(37.0, 17.0)), 
@@ -13,7 +16,50 @@ shader Seamless_TextureFX : FilterBase, ShaderUtils
                                             4.0 + dot(p, float2(23.0, 31.0)))) * 103.0); 
     }
 
-    float4 textureNoTile(Texture2D tex, in float2 uv )
+    float4 textureNoTile0( in float2 uv )
+    {
+        float2 iuv = floor( uv );
+        float2 fuv = frac( uv );
+
+ 
+        // generate per-tile transform (needs GL_NEAREST_MIPMAP_LINEARto work right)
+        float4 ofa = Texture1.SampleLevel( LinearRepeatSampler, (iuv + float2(0.5,0.5))/256.0, 0 );
+        float4 ofb = Texture1.SampleLevel( LinearRepeatSampler, (iuv + float2(1.5,0.5))/256.0, 0 );
+        float4 ofc = Texture1.SampleLevel( LinearRepeatSampler, (iuv + float2(0.5,1.5))/256.0, 0 );
+        float4 ofd = Texture1.SampleLevel( LinearRepeatSampler, (iuv + float2(1.5,1.5))/256.0 , 0);
+
+        // generate per-tile transform
+        //float4 ofa = hash4( iuv + float2(0.0,0.0) );
+        //float4 ofb = hash4( iuv + float2(1.0,0.0) );
+        //float4 ofc = hash4( iuv + float2(0.0,1.0) );
+        //float4 ofd = hash4( iuv + float2(1.0,1.0) );
+
+    
+        float2 fddx = ddx( uv );
+        float2 fddy = ddy( uv );
+
+        // transform per-tile uvs
+        ofa.zw = sign(ofa.zw-0.5);
+        ofb.zw = sign(ofb.zw-0.5);
+        ofc.zw = sign(ofc.zw-0.5);
+        ofd.zw = sign(ofd.zw-0.5);
+    
+        // uv's, and derivarives (for correct mipmapping)
+        float2 uva = uv*ofa.zw + ofa.xy; float2 ddxa = fddx*ofa.zw; float2 ddya = fddy*ofa.zw;
+        float2 uvb = uv*ofb.zw + ofb.xy; float2 ddxb = fddx*ofb.zw; float2 ddyb = fddy*ofb.zw;
+        float2 uvc = uv*ofc.zw + ofc.xy; float2 ddxc = fddx*ofc.zw; float2 ddyc = fddy*ofc.zw;
+        float2 uvd = uv*ofd.zw + ofd.xy; float2 ddxd = fddx*ofd.zw; float2 ddyd = fddy*ofd.zw;
+        
+        // fetch and blend
+        float2 b = smoothstep(0.25,0.75,fuv);
+    
+        return lerp( lerp( Texture0.SampleGrad( LinearRepeatSampler, uva, ddxa, ddya ), 
+                         Texture0.SampleGrad( LinearRepeatSampler, uvb, ddxb, ddyb ), b.x ), 
+                    lerp( Texture0.SampleGrad( LinearRepeatSampler, uvc, ddxc, ddyc ),
+                         Texture0.SampleGrad( LinearRepeatSampler, uvd, ddxd, ddyd ), b.x), b.y );
+    }
+
+    float4 textureNoTile1(in float2 uv )
     {
         float2 p = floor( uv );
         float2 f = frac( uv );
@@ -34,7 +80,7 @@ shader Seamless_TextureFX : FilterBase, ShaderUtils
             float2 r = g - f + o.xy;
             float d = dot(r,r);
             float w = exp(-5.0*d );
-            float4 c = tex.SampleGrad( LinearRepeatSampler, uv+ o.zw , myddx, myddy );
+            float4 c = Texture0.SampleGrad( LinearRepeatSampler, uv+ o.zw , myddx, myddy );
             va += w*c;
             wt += w;
         }
@@ -43,11 +89,51 @@ shader Seamless_TextureFX : FilterBase, ShaderUtils
         return va/wt;
     }
 
+    float4 textureNoTile2(in float2 uv)
+    {
+        // sample variation pattern    
+        float k = Texture1.SampleLevel(LinearRepeatSampler, 0.005*uv, 0 ).x; // cheap (cache friendly) lookup    
+    
+        // compute index    
+        float index = k * 8.0;
+        float i = floor( index );
+        float f = frac( index );
+
+        // offsets for the different virtual patterns    
+        float2 offa = sin(float2(3.0, 7.0) * (i + 0.0)); // can replace with any other hash    
+        float2 offb = sin(float2(3.0, 7.0) * (i + 1.0)); // can replace with any other hash    
+
+        // compute derivatives for mip-mapping    
+        float2 dx = ddx(uv), dy = ddy(uv);
+    
+        // sample the two closest virtual patterns    
+        float4 cola = Texture0.SampleGrad( LinearRepeatSampler, uv + offa, dx, dy );
+        float4 colb = Texture0.SampleGrad( LinearRepeatSampler, uv + offb, dx, dy );
+
+        // interpolate between the two virtual patterns    
+        return lerp( cola, colb, smoothstep(0.2, 0.8, f-0.1 * sum(cola-colb)) );
+
+    }
+
+    float sum (float3 v) 
+    { 
+        return v.x + v.y + v.z; 
+    }
+
     float4x4 tTex;
 
     float4 Filter(float4 tex0col)
     {   
         float2 uv = TransformUV(streams.TexCoord, tTex);
-	    return textureNoTile( Texture0, uv);
+        float4 col;
+
+        switch(type)
+        {
+            case 0 : col = textureNoTile0(uv); break;
+            case 1 : col = textureNoTile1(uv); break;
+            case 2 : col = textureNoTile2(uv); break;
+        }
+
+	    return col;
     }
 };
