@@ -16,8 +16,11 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class GlitchMPG_TextureFXKeys
+    public static partial class AngularFlow_TextureFXKeys
     {
-        public static readonly ValueParameterKey<bool> Greyscale = ParameterKeys.NewValue<bool>();
+        public static readonly ObjectParameterKey<Texture> From = ParameterKeys.NewObject<Texture>();
+        public static readonly ObjectParameterKey<Texture> To = ParameterKeys.NewObject<Texture>();
+        public static readonly ValueParameterKey<Vector2> Offset = ParameterKeys.NewValue<Vector2>();
+        public static readonly ValueParameterKey<Vector2> OffsetScale = ParameterKeys.NewValue<Vector2>();
     }
 }
