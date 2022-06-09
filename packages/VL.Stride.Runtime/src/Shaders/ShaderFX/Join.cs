@@ -16,6 +16,73 @@ namespace VL.Stride.Shaders.ShaderFX
         }
     }
 
+    public class JoinVector3 : ComputeValue<Vector3>
+    {
+        public JoinVector3(IComputeValue<float> x, IComputeValue<float> y, IComputeValue<float> z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+
+            ShaderName = "JoinFloat3";
+        }
+
+        public IComputeValue<float> X { get; }
+        public IComputeValue<float> Y { get; }
+        public IComputeValue<float> Z { get; }
+
+        public override IEnumerable<IComputeNode> GetChildren(object context = null)
+        {
+            return ReturnIfNotNull(X, Y, Z);
+        }
+
+        public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            var shaderSource = new ShaderClassSource(ShaderName);
+
+            var mixin = shaderSource.CreateMixin();
+
+            mixin.AddComposition(X, "x", context, baseKeys);
+            mixin.AddComposition(Y, "y", context, baseKeys);
+            mixin.AddComposition(Z, "z", context, baseKeys);
+
+            return mixin;
+        }
+    }
+
+
+    public class JoinVector2 : ComputeValue<Vector2>
+    {
+        public JoinVector2(IComputeValue<float> x, IComputeValue<float> y)
+        {
+            X = x;
+            Y = y;
+
+            ShaderName = "JoinFloat2";
+        }
+
+        public IComputeValue<float> X { get; }
+        public IComputeValue<float> Y { get; }
+
+        public override IEnumerable<IComputeNode> GetChildren(object context = null)
+        {
+            return ReturnIfNotNull(X, Y);
+        }
+
+        public override ShaderSource GenerateShaderSource(ShaderGeneratorContext context, MaterialComputeColorKeys baseKeys)
+        {
+            var shaderSource = new ShaderClassSource(ShaderName);
+
+            var mixin = shaderSource.CreateMixin();
+
+            mixin.AddComposition(X, "x", context, baseKeys);
+            mixin.AddComposition(Y, "y", context, baseKeys);
+
+            return mixin;
+        }
+    }
+
+
     public class Join<T> : ComputeValue<T>
     {
         public Join(IComputeValue<float> x, IComputeValue<float> y, IComputeValue<float> z, IComputeValue<float> w)

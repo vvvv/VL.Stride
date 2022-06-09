@@ -1,0 +1,64 @@
+﻿[Category("Filter")]
+[Summary("Offset the UV coordinates for sampling the 1st input by the 2nd inputs red & green channels")]
+[Tags("uv, offset, distort")]
+[DontConvertToLinearOnRead("Texture1")]
+
+shader CircleSampling_TextureFX : FilterBase, ShaderUtils, BlurUtils, BlendOperations
+{
+    float CyclesToRadians(float angle)
+    {
+        return (Pi / 180) * angle;
+    }
+
+    float2 FromPolar(float angle, float radius)
+    {
+        float rad = CyclesToRadians(angle);
+        return float2(cos(angle), sin(angle)) * radius;
+    }
+
+    float2 CreateCircle(float2 center, float2 size, float factor, float phase, float index, float count)
+    {
+        float angle = (index / count) *  factor * 6.28319 + phase * 6.28319;
+        float2 pos = FromPolar(angle, 1.0);
+        pos *= size * 0.5;
+        pos += center;
+        return pos;
+    }
+
+    int Count;
+
+    [Default(0.0)]
+    compose ComputeFloat Factor;
+
+    [Default(0.0)]
+    compose ComputeFloat Phase;
+
+    [Default(0.0f, 0.0f)]
+    compose ComputeFloat2 Center;
+
+    [Default(0.0f, 0.0f)]
+    compose ComputeFloat2 Size;
+
+    [EnumType("VL.Stride.Effects.Common.BlendMode")]
+    int type;
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+        float factor = Factor.Compute();
+        float phase = Phase.Compute();
+        float2 size = Size.Compute();
+        float2 center = Center.Compute();
+
+        float4 c = 0;
+        float2 shift = 0;
+
+        for(int i = 0; i < Count; i++)
+        {
+            shift = CreateCircle(center, size, factor, phase, i, Count);
+            c = Blend(c, Texture0.SampleLevel(LinearRepeatSampler, streams.TexCoord + shift, 0), 1.0, true, type);
+        }
+
+        return c;
+    }
+};

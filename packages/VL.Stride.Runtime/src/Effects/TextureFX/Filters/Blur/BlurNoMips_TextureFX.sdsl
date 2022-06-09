@@ -6,14 +6,9 @@ shader BlurNoMips_TextureFX : FilterBase, BlurUtils
 	[Default(0.5f)]
     compose ComputeFloat Width;
 
-	[Default(1, 1, 1, 1)]
-    compose ComputeFloat4 Map;
-
     float4 Filter(float4 tex0col)
     {
-		float4 map = Map.Compute();
-		map = max(map.x, max(map.y, map.z)) * map.a;
-		float lod = map.x * Width.Compute() * Lod(ViewSize);
+		float lod = Width.Compute() * Lod(ViewSize);
 		float2 off = 1.0 / ViewSize * pow(2, lod);
 
 		return BlurPass(Texture0, LinearSampler, streams.TexCoord, off, 0);
