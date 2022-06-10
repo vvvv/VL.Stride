@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class CircleSampling_TextureFXKeys
+    public static partial class LinearSpreadSampling_TextureFXKeys
     {
         public static readonly ValueParameterKey<int> Count = ParameterKeys.NewValue<int>(1);
         public static readonly ValueParameterKey<int> type = ParameterKeys.NewValue<int>();

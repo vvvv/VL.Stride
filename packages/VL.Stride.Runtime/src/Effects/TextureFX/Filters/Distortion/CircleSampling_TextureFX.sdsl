@@ -25,7 +25,7 @@ shader CircleSampling_TextureFX : FilterBase, ShaderUtils, BlurUtils, BlendOpera
         return pos;
     }
 
-    int Count;
+    int Count = 1;
 
     [Default(0.0)]
     compose ComputeFloat Factor;
@@ -37,7 +37,7 @@ shader CircleSampling_TextureFX : FilterBase, ShaderUtils, BlurUtils, BlendOpera
     compose ComputeFloat2 Center;
 
     [Default(0.0f, 0.0f)]
-    compose ComputeFloat2 Size;
+    compose ComputeFloat2 Width;
 
     [EnumType("VL.Stride.Effects.Common.BlendMode")]
     int type;
@@ -47,7 +47,7 @@ shader CircleSampling_TextureFX : FilterBase, ShaderUtils, BlurUtils, BlendOpera
         float2 uv = streams.TexCoord;
         float factor = Factor.Compute();
         float phase = Phase.Compute();
-        float2 size = Size.Compute();
+        float2 size = Width.Compute();
         float2 center = Center.Compute();
 
         float4 c = 0;

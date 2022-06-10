@@ -11,11 +11,13 @@ shader Checkerboard_TextureFX : TextureFX
     [Color]
     float4 White = float4(1, 1, 1, 1);
 
+    float4x4 Transform;
+
     stage override float4 Shading()
     {
         //compute size
         float2 stepHV = 1 / float2(CellCount.x, CellCount.y);
-        float2 uv = streams.TexCoord;
+        float2 uv = TransformUV(streams.TexCoord, Transform);
 
         //compute black|white
         float2 cHV = abs(uv) / stepHV;

@@ -1,0 +1,56 @@
+﻿[Category("Filter")]
+[Summary("Offset the UV coordinates for sampling the 1st input by the 2nd inputs red & green channels")]
+[Tags("uv, offset, distort")]
+[DontConvertToLinearOnRead("Texture1")]
+
+shader LinearSpreadSampling_TextureFX : FilterBase, ShaderUtils, BlurUtils, BlendOperations
+{
+    float2 GetRange(float width, float center)
+    {   
+        float2 range;
+        range.x = center - width / 2;
+        range.y = center + width / 2;
+        return range;
+    }
+
+    float CreateLinear(float center, float width, float phase, float index, float count)
+    {
+        float2 range = GetRange(width, center);
+        return lerp(range.x, range.y, frac((phase + 0.5 / count) + index / count));
+    }
+
+    int Count = 1;
+
+    [Default(0.0)]
+    compose ComputeFloat Phase;
+
+    [Default(0.0f)]
+    compose ComputeFloat Center;
+
+    [Default(0.0f)]
+    compose ComputeFloat Width;
+
+    [EnumType("VL.Stride.Effects.Common.BlendMode")]
+    int type;
+
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+
+        float phase = Phase.Compute();
+        float size = Width.Compute();
+        float center = Center.Compute();
+
+        float4 c = 0;
+        float shift = 0;
+
+        for(int i = 0; i < Count; i++)
+        {
+            shift = CreateLinear(center, size, phase, i, Count);
+            c = Blend(c, Texture0.SampleLevel(LinearSampler, float2(streams.TexCoord.x + shift, streams.TexCoord.y), 0), 1.0, true, type);
+        }
+
+        return c;
+    }
+};
