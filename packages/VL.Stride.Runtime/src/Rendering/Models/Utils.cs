@@ -2,7 +2,6 @@
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using System.Collections.Generic;
-using VL.Lib.Collections;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -63,11 +62,11 @@ namespace VL.Stride.Rendering.Models
         }
 
         /// <summary>
-        /// Converts an IList of Stride Vector3 to an IList of geomtry3Sharp Vector3d
+        /// Converts an IReadOnlyList of Stride Vector3 to an IReadOnlyList of geomtry3Sharp Vector3d
         /// </summary>
-        /// <param name="vectors">IList of Stride Vector3</param>
-        /// <returns>An equivalent IList of geomtry3Sharp Vector3d</returns>
-        public static IList<Vector3d> ToVector3dList(Spread<Vector3> vectors)
+        /// <param name="vectors">IReadOnlyList of Stride Vector3</param>
+        /// <returns>An equivalent IReadOnlyList of geomtry3Sharp Vector3d</returns>
+        public static IReadOnlyList<Vector3d> ToVector3dList(IReadOnlyList<Vector3> vectors)
         {
             if (vectors != null && vectors.Count > 0)
             {
@@ -94,11 +93,11 @@ namespace VL.Stride.Rendering.Models
         }
 
         /// <summary>
-        /// Converts an IList of Stride Vector2 to an IList of geomtry3Sharp Vector2d
+        /// Converts an IReadOnlyList of Stride Vector2 to an IReadOnlyList of geomtry3Sharp Vector2d
         /// </summary>
-        /// <param name="vectors">IList of Stride Vector2</param>
-        /// <returns>An equivalent IList of geomtry3Sharp Vector2d</returns>
-        public static IList<Vector2d> ToVector2dList(Spread<Vector2> vectors)
+        /// <param name="vectors">IReadOnlyList of Stride Vector2</param>
+        /// <returns>An equivalent IReadOnlyList of geomtry3Sharp Vector2d</returns>
+        public static IReadOnlyList<Vector2d> ToVector2dList(IReadOnlyList<Vector2> vectors)
         {
             if (vectors != null && vectors.Count > 0)
             {
@@ -123,11 +122,11 @@ namespace VL.Stride.Rendering.Models
         }
 
         /// <summary>
-        /// Converts a spread of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection to an array of g3.VerticalGeneralizedCylinderGenerator.CircularSection
+        /// Converts an IReadOnlyList of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection to an array of g3.VerticalGeneralizedCylinderGenerator.CircularSection
         /// </summary>
-        /// <param name="sections">A spread of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection</param>
+        /// <param name="sections">An IReadOnlyList of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection</param>
         /// <returns>An equivalent array of g3.VerticalGeneralizedCylinderGenerator.CircularSection</returns>
-        public static MeshGenerator.CircularSection[] ToCircularSectionArray(Spread<VerticalGeneralizedCylinderMesh.CircularSection> sections)
+        public static MeshGenerator.CircularSection[] ToCircularSectionArray(IReadOnlyList<VerticalGeneralizedCylinderMesh.CircularSection> sections)
         {
             if (sections != null && sections.Count > 0)
             {
@@ -146,7 +145,7 @@ namespace VL.Stride.Rendering.Models
         /// <summary>
         /// Converts a VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection to a g3.VerticalGeneralizedCylinderGenerator.CircularSection
         /// </summary>
-        /// <param name="section">An instance of a spread of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection</param>
+        /// <param name="section">An instance of an IReadOnlyList of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection</param>
         /// <returns>An equivalent instance of g3.VerticalGeneralizedCylinderGenerator.CircularSection</returns>
         public static MeshGenerator.CircularSection ToCircularSection(VerticalGeneralizedCylinderMesh.CircularSection section)
         {

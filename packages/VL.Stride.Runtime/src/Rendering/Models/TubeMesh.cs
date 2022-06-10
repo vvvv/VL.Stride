@@ -3,7 +3,7 @@ using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
-using VL.Lib.Collections;
+using System.Collections.Generic;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -15,10 +15,10 @@ namespace VL.Stride.Rendering.Models
     public class TubeMesh : PrimitiveProceduralModelBase
     {
         /// <summary>
-        /// Tube's path as a Spread of 3D vectors
+        /// Tube's path as an IReadOnlyList of 3D vectors
         /// </summary>
         [DataMember(10)]
-        public Spread<Vector3> Path { get; set; }
+        public IReadOnlyList<Vector3> Path { get; set; }
 
         /// <summary>
         /// Boolean value indicating if the tube's path should be a closed loop
@@ -27,10 +27,10 @@ namespace VL.Stride.Rendering.Models
         public bool Closed { get; set; }
 
         /// <summary>
-        /// Tube's shape as a Spread of 2D vectors
+        /// Tube's shape as an IReadOnlyList of 2D vectors
         /// </summary>
         [DataMember(12)]
-        public Spread<Vector2> Shape { get; set; }
+        public IReadOnlyList<Vector2> Shape { get; set; }
 
         /// <summary>
         /// Boolean value indicating if the tube should have caps

@@ -42,10 +42,16 @@ namespace VL.Stride.Rendering.Models
         [DataMember(14)]
         public int Tessellation { get; set; } = 16;
 
+        /// <summary>
+        /// Cone's vertical tessellation (amount of vertical slices to split the cone into)
+        /// </summary>
         [DataMember(15)]
-        public bool SharedVertices { get; set; } = false;
+        public int VTessellation { get; set; } = 2;
 
         [DataMember(16)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(17)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -61,6 +67,7 @@ namespace VL.Stride.Rendering.Models
                 Height = Height,
                 NoSharedVertices = !SharedVertices,
                 Slices = Tessellation,
+                Rings = VTessellation,
                 StartAngleDeg = FromAngle * 360,
                 Clockwise = Clockwise
             };
