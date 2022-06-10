@@ -18,8 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class Muffy_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> RingAmount = ParameterKeys.NewValue<float>(2.5f);
-        public static readonly ValueParameterKey<Vector2> RingSize = ParameterKeys.NewValue<Vector2>(new Vector2(2.0f,2.0f));
         public static readonly ObjectParameterKey<SamplerState> s0 = ParameterKeys.NewObject<SamplerState>();
     }
 }

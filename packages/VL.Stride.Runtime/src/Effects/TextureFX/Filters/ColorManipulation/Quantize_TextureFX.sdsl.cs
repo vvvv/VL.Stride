@@ -18,7 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class Quantize_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Vector4> StepSize = ParameterKeys.NewValue<Vector4>(new Vector4(0.1f,0.1f,0.1f,0.1f));
         public static readonly ValueParameterKey<uint> Mode = ParameterKeys.NewValue<uint>();
         public static readonly ValueParameterKey<bool> QuantizeAlpha = ParameterKeys.NewValue<bool>();
     }

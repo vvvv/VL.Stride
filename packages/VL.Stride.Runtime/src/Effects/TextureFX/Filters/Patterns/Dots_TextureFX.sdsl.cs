@@ -18,10 +18,7 @@ namespace Stride.Rendering
 {
     public static partial class Dots_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Vector2> PixelSize = ParameterKeys.NewValue<Vector2>(new Vector2(32.0f,32.0f));
         public static readonly ValueParameterKey<bool> Alpha = ParameterKeys.NewValue<bool>(false);
         public static readonly ValueParameterKey<bool> Point = ParameterKeys.NewValue<bool>(false);
-        public static readonly ValueParameterKey<float> Smooth = ParameterKeys.NewValue<float>(0.0f);
-        public static readonly ValueParameterKey<Vector2> Scale = ParameterKeys.NewValue<Vector2>(new Vector2(1.0f,1.0f));
     }
 }

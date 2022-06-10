@@ -61,7 +61,7 @@ shader Tunnels_TextureFX : FilterBase
             case 1 : tunnel = TunnelCylinder(p); break;
             case 2 : tunnel = TunnelFly(p); break;
         }
-		float4 col = Texture0.SampleLevel(Sampler0, tunnel.xy, 0);
+		float4 col = Texture0.SampleLevel(LinearRepeatSampler, tunnel.xy, 0);
 		float fog = 1/(1+(FogDistance*10.0) * pow(tunnel.z/Distance.Compute(), 2));
 		return lerp(col, FogColor, fog);
 	}

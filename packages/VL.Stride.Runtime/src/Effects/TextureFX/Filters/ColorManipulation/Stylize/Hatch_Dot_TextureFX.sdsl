@@ -14,9 +14,7 @@ shader Hatch_Dot_TextureFX : FilterBase
     float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
-        float2 R = ViewSize;
-
-        float2 x = uv*R - 0.5;
+        float2 x = uv * ViewSize - 0.5;
 
         float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
         col.rgb = sqrt(col.rgb);
