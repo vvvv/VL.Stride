@@ -1,0 +1,38 @@
+﻿[Category("Filter")]
+[Summary("Offset the UV coordinates for sampling the 1st input by the 2nd inputs red & green channels")]
+[Tags("uv, offset, distort")]
+[DontConvertToLinearOnRead("Texture1")]
+
+shader RandomSpreadSampling_TextureFX : FilterBase, ShaderUtils, HappyNoise, BlendOperations
+{
+    int Count = 1;
+
+    [Default(0.0f, 0.0f)]
+    compose ComputeFloat2 Center;
+
+    [Default(0.0f, 0.0f)]
+    compose ComputeFloat2 Width;
+
+    [EnumType("VL.Stride.Effects.Common.BlendMode")]
+    int type;
+
+    int Seed;
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+
+        float2 size = Width.Compute();
+        float2 center = Center.Compute();
+
+        float4 c = 0;
+        float shift = 0;
+
+        for(int i = 0; i < Count; i++)
+        {
+            c = Blend(c, Texture0.SampleLevel(LinearSampler, streams.TexCoord + Map(hash21(i + Seed * (i +1)), 0.0, 1.0, -1.0, 1.0) * size + center, 0), 1.0, true, type);
+        }
+
+        return c;
+    }
+};
