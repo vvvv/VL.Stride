@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class ColorMatrixOperationsKeys
+    public static partial class ColorSpaceMatrix_ShaderFXKeys
     {
         public static readonly ValueParameterKey<int> type = ParameterKeys.NewValue<int>();
     }

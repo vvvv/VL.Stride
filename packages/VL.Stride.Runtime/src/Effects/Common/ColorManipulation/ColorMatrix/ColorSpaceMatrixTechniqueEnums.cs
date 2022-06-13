@@ -5,5 +5,6 @@
         RGBA,
         HSLA,
         HSVA,
+        CMYK,
     };
 }

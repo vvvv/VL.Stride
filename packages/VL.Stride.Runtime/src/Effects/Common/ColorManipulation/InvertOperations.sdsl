@@ -7,53 +7,22 @@
 
         switch((uint)type%12)
         {
-            case 0:
-                c = InvertRGB(c);
-                break;
-
-            case 1:
-                c = InvertRed(c);
-                break;
-
-            case 2:
-                c = InvertGreen(c);
-                break;
-
-            case 3:
-                c = InvertBlue(c);
-                break;
-
-            case 4:
-                c = InvertRedGreen(c);
-                break;
-
-            case 5:
-                c = InvertRedBlue(c);
-                break;
-
-            case 6:
-                c = InvertGreenBlue(c);
-                break;
-
-            case 7:
-                c = InvertValue(c);
-                break;
-
-            case 8:
-                c = InvertLightness(c);
-                break;
-
-            case 9:
-                c = InvertSaturation(c);
-                break;
-
-            case 10:
-                c = InvertHue(c);
-                break;
-
-            case 11:
-                c = RGBShift(c);
-                break;
+            case 0 : c = InvertRGB(c); break;
+            case 1 : c = InvertRed(c); break;
+            case 2 : c = InvertGreen(c); break;
+            case 3 : c = InvertBlue(c); break;
+            case 4 : c = InvertRedGreen(c); break;
+            case 5 : c = InvertRedBlue(c); break;
+            case 6 : c = InvertGreenBlue(c); break;
+            case 7 : c = InvertValue(c); break;
+            case 8 : c = InvertLightness(c);break;
+            case 9 : c = InvertSaturation(c); break;
+            case 10 : c = InvertHue(c); break;
+            case 11 : c = RGBShift(c); break;
+            case 12 : c = InvertCyan(c); break;
+            case 13 : c = InvertMagenta(c); break;
+            case 14 : c = InvertYellow(c); break;
+            case 15 : c = InvertBlack(c); break;
         }
 
         if (invertAlpha) InvertAlpha(c);
@@ -143,6 +112,34 @@
     {
         c.a = 1 - c.a;
         return c;
+    }
+
+    float4 InvertCyan(float4 c)
+    {
+        float4 cmyk = base.RGBToCMYK(c.rgb);
+        cmyk.x = 1 - cmyk.x;
+        return float4(base.CMYKToRGB(cmyk), c.a);
+    }
+
+    float4 InvertMagenta(float4 c)
+    {
+        float4 cmyk = base.RGBToCMYK(c.rgb);
+        cmyk.y = 1 - cmyk.y;
+        return float4(base.CMYKToRGB(cmyk), c.a);
+    }
+
+    float4 InvertYellow(float4 c)
+    {
+        float4 cmyk = base.RGBToCMYK(c.rgb);
+        cmyk.z = 1 - cmyk.z;
+        return float4(base.CMYKToRGB(cmyk), c.a);
+    }
+        
+    float4 InvertBlack(float4 c)
+    {
+        float4 cmyk = base.RGBToCMYK(c.rgb);
+        cmyk.w = 1 - cmyk.w;
+        return float4(base.CMYKToRGB(cmyk), c.a);
     }
 };
 
