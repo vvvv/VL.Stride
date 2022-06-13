@@ -3,23 +3,11 @@
 
 shader ColorMatrix_ShaderFX : ComputeFloat4, ColorMatrixOperations
 {
-    [Default(1.0, 1.0, 1.0)]
+    [Default(1.0, 1.0, 1.0, 1.0)]
     compose ComputeFloat4 Color;
-
-    [Default(1.0, 1.0, 1.0)]
-    compose ComputeFloat4 Red;
-
-    [Default(1.0, 1.0, 1.0)]
-    compose ComputeFloat4 Green;
-
-    [Default(1.0, 1.0, 1.0)]
-    compose ComputeFloat4 Blue;
-
-    [Default(1.0, 1.0, 1.0)]
-    compose ComputeFloat4 Alpha;
 
     override float4 Compute()
     {
-        return ColorMatrix(Color.Compute(), Red.Compute(), Green.Compute(), Blue.Compute(), Alpha.Compute());
+        return ColorMatrix(Color.Compute());
     }
 };

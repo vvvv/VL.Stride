@@ -1,0 +1,79 @@
+﻿[Category("Filter")]
+[Summary("")]
+
+shader TransformColorSpace_TextureFX : FilterBase, ShaderUtils
+{
+    float4x4 Transform0;
+    float4x4 Transform1;
+    float4x4 Transform2;
+    float4x4 Transform3;
+
+    [EnumType("VL.Stride.Effects.Common.TransformColorSpace")]
+    int type;
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 c;
+
+        switch(type)
+        {
+            case 0 : c = TransformRGBA(); break;
+            case 1 : c = TransformHSVA(); break;
+            case 2 : c = TransformHSLA(); break;
+            case 3 : c = TransformCMYK(); break;
+        }
+
+        return c;
+    }
+
+    float4 TransformRGBA()
+    {
+        float2 uv = streams.TexCoord;
+
+        float R = Texture0.SampleLevel(Sampler0, TransformUV(uv, Transform0), 0).r;
+        float G = Texture0.SampleLevel(Sampler1, TransformUV(uv, Transform1), 0).g;
+        float B = Texture0.SampleLevel(Sampler2, TransformUV(uv, Transform2), 0).b;
+        float A = Texture0.SampleLevel(Sampler3, TransformUV(uv, Transform3), 0).a;
+
+        return float4(R, G, B, A);
+    }
+
+    float4 TransformHSVA()
+    {
+        float2 uv = streams.TexCoord;
+
+        float H = RGBtoHSV(Texture0.SampleLevel(Sampler0, TransformUV(uv, Transform0), 0).rgb).r;
+        float S = RGBtoHSV(Texture0.SampleLevel(Sampler1, TransformUV(uv, Transform1), 0).rgb).g;
+        float V = RGBtoHSV(Texture0.SampleLevel(Sampler2, TransformUV(uv, Transform2), 0).rgb).b;
+        float A = Texture0.SampleLevel(Sampler3, TransformUV(uv, Transform3), 0).a;
+
+        return float4( HSVtoRGB(float3(H, S, V)), A);
+    }
+
+    float4 TransformHSLA()
+    {
+        float2 uv = streams.TexCoord;
+
+        float H = RGBtoHSL(Texture0.SampleLevel(Sampler0, TransformUV(uv, Transform0), 0).rgb).r;
+        float S = RGBtoHSL(Texture0.SampleLevel(Sampler1, TransformUV(uv, Transform1), 0).rgb).g;
+        float L = RGBtoHSL(Texture0.SampleLevel(Sampler2, TransformUV(uv, Transform2), 0).rgb).b;
+        float A = Texture0.SampleLevel(Sampler3, TransformUV(uv, Transform3), 0).a;
+
+        return float4( HSLtoRGB(float3(H, S, L)), A);
+    }
+
+    float4 TransformCMYK()
+    {
+        float2 uv = streams.TexCoord;
+
+        float C = RGBToCMYK(Texture0.SampleLevel(Sampler0, TransformUV(uv, Transform0), 0).rgb).r;
+        float M = RGBToCMYK(Texture0.SampleLevel(Sampler1, TransformUV(uv, Transform1), 0).rgb).g;
+        float Y = RGBToCMYK(Texture0.SampleLevel(Sampler2, TransformUV(uv, Transform2), 0).rgb).b;
+        float K = RGBToCMYK(Texture0.SampleLevel(Sampler3, TransformUV(uv, Transform3), 0).rgb).a;
+        float A = Texture0.SampleLevel(LinearSampler, uv, 0).a;
+
+        return float4(CMYKToRGB(float4(C, M, Y, K)), A);
+    }
+};
+
+

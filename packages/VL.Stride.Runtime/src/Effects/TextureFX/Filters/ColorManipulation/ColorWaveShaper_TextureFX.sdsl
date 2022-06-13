@@ -43,7 +43,7 @@ shader ColorWaveShaper_TextureFX : FilterBase, ShaderUtils
         float4 c = color;
         float pa = c.a;
         c = 1.0 - 2.0 * abs(frac((c) * Frequency.Compute() + Phase.Compute())-.5);
-        if(!Alpha)c.a=pa;
+        if(!Alpha)c.a = pa;
         return c;
     }
 
@@ -52,7 +52,7 @@ shader ColorWaveShaper_TextureFX : FilterBase, ShaderUtils
         float4 c = color;
         float pa = c.a;
         c = 0.5 + 0.5 * cos((c * Frequency.Compute() + Phase.Compute()) * acos(-1.0) * 2.0);
-        if(!Alpha)c.a=pa;
+        if(!Alpha)c.a = pa;
         return c;
     }
 
@@ -61,7 +61,7 @@ shader ColorWaveShaper_TextureFX : FilterBase, ShaderUtils
         float4 c = color;
         float pa = c.a;
         c = step(-(frac((c * Frequency.Compute() * 254.0 / 255.0 + Phase.Compute())) - 0.5), 0);
-        if(!Alpha)c.a=pa;
+        if(!Alpha)c.a = pa;
         return c;
     }
 
@@ -70,7 +70,7 @@ shader ColorWaveShaper_TextureFX : FilterBase, ShaderUtils
         float4 c = color;
         float pa = c.a;
         c = (frac((c * Frequency.Compute() * 254.0 / 255.0 + Phase.Compute())));
-        if(!Alpha)c.a=pa;
+        if(!Alpha)c.a = pa;
         return c;
     }
 

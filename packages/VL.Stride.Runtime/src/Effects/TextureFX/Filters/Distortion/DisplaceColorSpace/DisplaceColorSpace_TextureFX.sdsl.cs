@@ -16,11 +16,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class TransformHSL_TextureFXKeys
+    public static partial class DisplaceColorSpace_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Matrix> TransformH = ParameterKeys.NewValue<Matrix>();
-        public static readonly ValueParameterKey<Matrix> TransformS = ParameterKeys.NewValue<Matrix>();
-        public static readonly ValueParameterKey<Matrix> TransformL = ParameterKeys.NewValue<Matrix>();
-        public static readonly ValueParameterKey<Matrix> TransformA = ParameterKeys.NewValue<Matrix>();
+        public static readonly ValueParameterKey<int> type = ParameterKeys.NewValue<int>();
     }
 }

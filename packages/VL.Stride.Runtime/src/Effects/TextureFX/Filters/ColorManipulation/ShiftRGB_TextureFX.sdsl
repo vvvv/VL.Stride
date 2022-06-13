@@ -25,11 +25,10 @@ shader ShiftRGB_TextureFX : FilterBase
     {
         float4 c = tex0col;
         float2 uv = streams.TexCoord;
-        float sh = Shift;
 
-        c.r = ts(Texture0, uv, sh * .1).r;
-        c.g = ts(Texture0, uv, sh * 0).g;
-        c.b = ts(Texture0, uv, sh * -.1).b;
+        c.r = ts(Texture0, uv, Shift * .1).r;
+        c.g = ts(Texture0, uv, Shift * 0).g;
+        c.b = ts(Texture0, uv, Shift * -.1).b;
 
         c.rgb = HSVtoRGB(-float3(Hue,0,0) + RGBtoHSV(c.rgb));
 

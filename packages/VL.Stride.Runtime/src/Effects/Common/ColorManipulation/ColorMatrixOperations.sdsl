@@ -2,10 +2,54 @@
 
 shader ColorMatrixOperations : ShaderUtils, ColorUtilityTemp
 {
-    float4 ColorMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
+
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Channel0;
+
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Channel1;
+
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Channel2;
+
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Alpha;
+
+    [EnumType("VL.Stride.Effects.Common.ColorSpaceMatrix")]
+    int type;
+
+    float4 ColorMatrix(float4 Color)
+    {
+        float4 c;
+
+        switch(type)
+        {
+            case 0 : c = RGBAMatrix(Color, Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Alpha.Compute()); break;
+            case 1 : c = HSLAMatrix(Color, Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Alpha.Compute()); break;
+            case 2 : c = HSVAMatrix(Color, Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Alpha.Compute()); break;
+        }
+
+        return c;
+    }
+
+    float4 RGBAMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
     {
 	    float4x4 ColorMatrix = float4x4(red, green, blue, alpha);
 	    return saturate(mul(ColorMatrix, color));
+    }
+
+    float4 HSLAMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
+    {
+	    float4x4 ColorMatrix = float4x4(red, green, blue, alpha);
+        float4 result = saturate(mul(ColorMatrix, color));
+	    return float4(HSLtoRGB(result.rgb), result.a);
+    }
+
+    float4 HSVAMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
+    {
+	    float4x4 ColorMatrix = float4x4(red, green, blue, alpha);
+        float4 result = saturate(mul(ColorMatrix, color));
+	    return float4(HSVtoRGB(result.rgb), result.a);
     }
 };
 
