@@ -79,8 +79,8 @@ namespace VL.Stride.Rendering.Models
                 {
                     BaseRadius = BaseRadius,
                     TopRadius = TopRadius,
-                    StartAngleDeg = FromAngle * 360,
-                    EndAngleDeg = ToAngle * 360,
+                    StartAngleDeg = (1 - ToAngle) * 360,
+                    EndAngleDeg = (1 - FromAngle) * 360,
                     Height = Height,
                     Slices = Tessellation,
                     Rings = VTessellation,
