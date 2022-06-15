@@ -63,12 +63,12 @@ namespace VL.Stride.Rendering.Models
             var generator = new ConeGenerator
             {
                 BaseRadius = Radius,
-                EndAngleDeg = ToAngle * 360,
+                EndAngleDeg = (1 - FromAngle) * 360,
                 Height = Height,
                 NoSharedVertices = !SharedVertices,
                 Slices = Tessellation,
                 Rings = VTessellation,
-                StartAngleDeg = FromAngle * 360,
+                StartAngleDeg = (1 - ToAngle) * 360,
                 Clockwise = Clockwise
             };
 
