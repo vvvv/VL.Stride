@@ -72,6 +72,7 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cylinder generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
+            bool closed = ((1 - FromAngle) - (1 - ToAngle)) > 0.99f;
             MeshGenerator generator;
             if (Capped)
             {
@@ -82,7 +83,7 @@ namespace VL.Stride.Rendering.Models
                     StartAngleDeg = (1 - ToAngle) * 360,
                     EndAngleDeg = (1 - FromAngle) * 360,
                     Height = Height,
-                    Slices = Tessellation,
+                    Slices = closed ? Tessellation : Tessellation + 1,
                     Rings = VTessellation,
                     NoSharedVertices = !SharedVertices,
                     Clockwise = Clockwise
@@ -94,13 +95,13 @@ namespace VL.Stride.Rendering.Models
                 {
                     BaseRadius = BaseRadius,
                     TopRadius = TopRadius,
-                    Clockwise = Clockwise,
-                    EndAngleDeg = ToAngle * 360,
+                    StartAngleDeg = (1 - ToAngle) * 360,
+                    EndAngleDeg = (1 - FromAngle) * 360,
                     Height = Height,
-                    NoSharedVertices = !SharedVertices,
-                    Slices = Tessellation,
+                    Slices = closed ? Tessellation : Tessellation + 1,
                     Rings = VTessellation,
-                    StartAngleDeg = FromAngle * 360
+                    NoSharedVertices = !SharedVertices,
+                    Clockwise = Clockwise
                 };
             }
 
