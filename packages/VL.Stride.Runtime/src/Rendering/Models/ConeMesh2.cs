@@ -60,13 +60,14 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cone generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
+            bool closed = ((1 - FromAngle) - (1 - ToAngle)) > 0.99f;
             var generator = new ConeGenerator
             {
                 BaseRadius = Radius,
                 EndAngleDeg = (1 - FromAngle) * 360,
                 Height = Height,
                 NoSharedVertices = !SharedVertices,
-                Slices = Tessellation,
+                Slices = closed ? Tessellation : Tessellation + 1,
                 Rings = VTessellation,
                 StartAngleDeg = (1 - ToAngle) * 360,
                 Clockwise = Clockwise
