@@ -49,9 +49,13 @@ namespace VL.Stride.Rendering.Models
         public int VTessellation { get; set; } = 2;
 
         [DataMember(16)]
-        public bool SharedVertices { get; set; } = false;
+        public LateralSlopeUVModes LateralSlopeUVMode { get; set; } = LateralSlopeUVModes.SideProjected;
+
 
         [DataMember(17)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(18)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -60,15 +64,17 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cone generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
+            bool closed = ((1 - FromAngle) - (1 - ToAngle)) > 0.99f;
             var generator = new ConeGenerator
             {
                 BaseRadius = Radius,
                 EndAngleDeg = (1 - FromAngle) * 360,
-                Height = Height,
-                NoSharedVertices = !SharedVertices,
-                Slices = Tessellation,
-                Rings = VTessellation,
                 StartAngleDeg = (1 - ToAngle) * 360,
+                Height = Height,
+                Slices = closed ? Tessellation : Tessellation + 1,
+                Rings = VTessellation,
+                LateralSlopeUVMode = LateralSlopeUVMode == LateralSlopeUVModes.TopProjected ? ConeGenerator.LateralSlopeUVModes.TopProjected : ConeGenerator.LateralSlopeUVModes.SideProjected,
+                NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
             };
 
@@ -76,5 +82,11 @@ namespace VL.Stride.Rendering.Models
 
             return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeMesh2");
         }
+    }
+
+    public enum LateralSlopeUVModes
+    {
+        TopProjected,
+        SideProjected
     }
 }
