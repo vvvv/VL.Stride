@@ -49,9 +49,13 @@ namespace VL.Stride.Rendering.Models
         public int VTessellation { get; set; } = 2;
 
         [DataMember(16)]
-        public bool SharedVertices { get; set; } = false;
+        public LateralSlopeUVModes LateralSlopeUVMode { get; set; } = LateralSlopeUVModes.SideProjected;
+
 
         [DataMember(17)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(18)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -65,11 +69,12 @@ namespace VL.Stride.Rendering.Models
             {
                 BaseRadius = Radius,
                 EndAngleDeg = (1 - FromAngle) * 360,
+                StartAngleDeg = (1 - ToAngle) * 360,
                 Height = Height,
-                NoSharedVertices = !SharedVertices,
                 Slices = closed ? Tessellation : Tessellation + 1,
                 Rings = VTessellation,
-                StartAngleDeg = (1 - ToAngle) * 360,
+                LateralSlopeUVMode = LateralSlopeUVMode == LateralSlopeUVModes.TopProjected ? ConeGenerator.LateralSlopeUVModes.TopProjected : ConeGenerator.LateralSlopeUVModes.SideProjected,
+                NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
             };
 
@@ -77,5 +82,11 @@ namespace VL.Stride.Rendering.Models
 
             return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeMesh2");
         }
+    }
+
+    public enum LateralSlopeUVModes
+    {
+        TopProjected,
+        SideProjected
     }
 }
