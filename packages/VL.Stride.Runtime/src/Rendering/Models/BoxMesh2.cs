@@ -40,7 +40,7 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxMesh2");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxMesh2", UvScale);
         }
     }
 }

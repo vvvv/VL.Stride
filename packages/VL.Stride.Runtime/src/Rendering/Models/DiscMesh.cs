@@ -66,7 +66,7 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "DiscMesh");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "DiscMesh", UvScale);
         }
     }
 }

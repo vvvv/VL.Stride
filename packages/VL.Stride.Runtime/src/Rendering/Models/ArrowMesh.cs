@@ -75,7 +75,7 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ArrowMesh");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ArrowMesh", UvScale);
         }
     }
 }

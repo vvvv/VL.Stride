@@ -59,7 +59,7 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "RoundRectMesh");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "RoundRectMesh", UvScale);
         }
 
         /// <summary>
