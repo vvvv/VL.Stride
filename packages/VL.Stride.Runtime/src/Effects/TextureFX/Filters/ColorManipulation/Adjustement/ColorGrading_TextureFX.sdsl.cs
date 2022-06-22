@@ -16,10 +16,9 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class BlurRadialPass_Internal_TextureFXKeys
+    public static partial class ColorGrading_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Vector2> Center = ParameterKeys.NewValue<Vector2>();
-        public static readonly ValueParameterKey<bool> Aspect = ParameterKeys.NewValue<bool>(true);
-        public static readonly ValueParameterKey<int> Samples = ParameterKeys.NewValue<int>(16);
+        public static readonly ValueParameterKey<int> GradingFunction = ParameterKeys.NewValue<int>();
+        public static readonly ValueParameterKey<int> AdjustementWeight = ParameterKeys.NewValue<int>();
     }
 }

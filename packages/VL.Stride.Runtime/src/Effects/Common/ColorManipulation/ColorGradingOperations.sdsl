@@ -1,5 +1,40 @@
 ﻿shader ColorGradingOperations : ShaderUtils
 {
+    float4 Vibrance(float4 color, float vibrance)
+    {
+		float3 c = color.rgb;
+  
+		float luma = GetLuminance(color.rgb);
+
+		float max_color = max(c.r, max(c.g, c.b)); // Find the strongest color
+		float min_color = min(c.r, min(c.g, c.b)); // Find the weakest color
+
+		float color_saturation = max_color - min_color; // The difference between the two is the saturation
+		c = lerp(luma, c, 1.0 + (vibrance * (1.0 - (sign(vibrance) * color_saturation))));
+
+		return float4(c, color.a);
+    }
+
+    float4 Hue(float4 color, float hue, float hueColor)
+    {
+        return float4(HSVtoRGB(float3(hue, 0, 0) + RGBtoHSV(color)), color.a);
+    }
+
+    float4 Contrast(float4 color, float contrast, float contrastColor)
+    {
+        return (color - 0.5) * (contrast + 1.0) * contrastColor + 0.5;
+    }
+
+    float4 Brightness(float4 color, float brightness, float4 brightnessColor)
+    {
+        return (color - 0.5) + 0.5 + brightness * brightnessColor;
+    }
+    
+    float4 BrightnessContrast(float4 color, float brightness, float contrast)
+    {
+        return (color - 0.5) * contrast + 0.5 + brightness;
+    }
+
     float4 Lift(float4 color, float lift, float4 liftColor)
     {
 		color *= (1.5 - 0.5 * (lift * liftColor + 1.0)) + 0.5 * (lift * liftColor + 1.0) - 0.5;

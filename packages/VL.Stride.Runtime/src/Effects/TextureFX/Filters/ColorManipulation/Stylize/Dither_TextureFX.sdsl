@@ -5,8 +5,10 @@
 [Summary("Applies a dithering effect")]
 shader Dither_TextureFX : FilterBase
 {
-    float Threshhold = 6.5f;
-    
+    //float Threshhold = 6.5f;
+    compose ComputeFloat Threshhold;
+
+    //BAYER
     float FindClosest (int x, int y, float c0)
     {
         float4x4 dither = float4x4
@@ -18,7 +20,7 @@ shader Dither_TextureFX : FilterBase
         );
     
         float limit = 0.0;
-        float a = Threshhold * 10;
+        float a = Threshhold.Compute() * 10;
 
         if(x < 4)
         {
@@ -54,16 +56,22 @@ shader Dither_TextureFX : FilterBase
         }
     }   
 
+
+    compose ComputeFloat2 DitherXY;
+
     float4 Filter(float4 tex0col)
     {
+
         float2 uv = streams.TexCoord;
         float2 R = ViewSize;
         
-        int x = int((uv.x*R.x)%8);
-        int y = int((uv.y*R.y)%8);
+        float2 ditherxy = DitherXY.Compute();
+        int x = int((uv.x * R.x)%ditherxy.x);
+        int y = int((uv.y * R.y)%ditherxy.y);
     
         float4 finalCol;
     
+        
         finalCol.r = FindClosest(x, y, tex0col.r);
         finalCol.g = FindClosest(x, y, tex0col.g);
         finalCol.b = FindClosest(x, y, tex0col.b);

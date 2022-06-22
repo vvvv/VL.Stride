@@ -1,0 +1,61 @@
+﻿[Category("Filter")]
+[Summary("Get the Midtones of a texture")]
+[Tags("Color Grading")]
+
+shader ColorGrading_TextureFX : FilterBase, ColorGradingOperations
+{
+    [Default(1.0)]
+    compose ComputeFloat Strength;
+
+    [Default(1.0, 1.0, 1.0, 1.0)]
+    compose ComputeFloat4 Color;
+
+    [EnumType("VL.Stride.Effects.Common.ColorGradingFunction")]
+    int GradingFunction;
+
+    [EnumType("VL.Stride.Effects.Common.AdjustementWeight")]
+    int AdjustementWeight;
+
+    float4 Filter(float4 tex0col)
+    {
+        float rs;
+
+        switch(AdjustementWeight)
+        {
+            case 0 : rs = float4(1.0, 1.0, 1.0, 1.0); break; //Full
+            case 1 : rs = GetLuminanceWeight(tex0col, 0).x; break; //Shadows
+            case 2 : rs = GetLuminanceWeight(tex0col, 0).y; break; // Midtones
+            case 3 : rs = GetLuminanceWeight(tex0col, 0).z; break; //Highlights
+            case 4 : rs = tex0col.r; break; //Red
+            case 5 : rs = tex0col.g; break; //Green
+            case 6 : rs = tex0col.b; break; //Blue
+            case 7 : rs = RGBtoHSV(tex0col).z; break; // Value
+            case 8 : rs = RGBtoHSL(tex0col).z; break; // Lightness
+            case 9 : rs = RGBtoHSV(tex0col).y; break; // Saturation
+            case 10 : rs = RGBtoHSV(tex0col).x; break; // Hue
+            case 11 : rs = RGBToCMYK(tex0col).x; break; // Cyan
+            case 12 : rs = RGBToCMYK(tex0col).y; break; // Magenta
+            case 13 : rs = RGBToCMYK(tex0col).z; break; // Yellow
+            case 14 : rs = RGBToCMYK(tex0col).w; break; // Black
+            case 15 : rs = tex0col.a; break; // Alpha
+        }
+
+        float strength = Strength.Compute() * rs;
+
+        float4 c;
+
+        switch(GradingFunction)
+        {
+            case 0 : c = Brightness(tex0col, strength, Color.Compute()); break;
+            case 1 : c = Contrast(tex0col, strength, Color.Compute()); break;
+            case 2 : c = Vibrance(tex0col, strength); break;
+            case 3 : c = Hue(tex0col, strength, Color.Compute()); break;
+            case 4 : c = Gamma(tex0col, strength, Color.Compute()); break;
+            case 5 : c = Exposure(tex0col, strength, Color.Compute()); break;
+            case 6 : c = Gain(tex0col, strength, Color.Compute()); break;
+            case 7 : c = tex0col * (1.5 - 0.5 * (strength * Color.Compute() + 1.0)) + 0.5 * (strength * Color.Compute() + 1.0) - 0.5; break;
+        }
+
+        return c;
+    }
+};
