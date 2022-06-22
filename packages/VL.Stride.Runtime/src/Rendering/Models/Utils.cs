@@ -15,6 +15,7 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         /// <param name="g3Mesh">A g3 DMesh3 instance</param>
         /// <param name="name">The model name</param>
+        /// <param name="UVScale">UV scale factor as a Vector2</param>
         /// <returns>An equivalent Stride GeometricMeshData</returns>
         public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(DMesh3 g3Mesh, string name, Vector2 UVScale)
         {
@@ -29,6 +30,7 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         /// <param name="g3Mesh">A g3 SimpleMesh instance</param>
         /// <param name="name">The model name</param>
+        /// <param name="UVScale">UV scale factor as a Vector2</param>
         /// <returns>An equivalent Stride GeometricMeshData</returns>
         public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(SimpleMesh g3Mesh, string name, Vector2 UVScale)
         {
