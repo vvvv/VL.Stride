@@ -16,11 +16,11 @@ namespace VL.Stride.Rendering.Models
         /// Box's tessellation (amount of vertices per edge)
         /// </summary>
         [DataMember(10)]
-        public int Tessellation { get; set; } = 2;        
+        public int Tessellation { get; set; } = 2;
 
         [DataMember(11)]
         public bool SharedVertices { get; set; } = false;
-        
+
         [DataMember(12)]
         public bool Clockwise { get; set; } = true;
 
