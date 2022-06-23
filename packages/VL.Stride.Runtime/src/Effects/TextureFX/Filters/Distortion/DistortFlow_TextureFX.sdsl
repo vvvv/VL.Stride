@@ -1,0 +1,44 @@
+﻿[Category("Filter")]
+[Summary("")]
+[Tags("uv, offset, distort")]
+[DontConvertToLinearOnRead("Texture1")]
+
+shader DistortFlow_TextureFX : FilterBase
+{
+	[Default(0.25)]
+	compose ComputeFloat Amount;
+
+	[Default(0.5)]
+	compose ComputeFloat MapSmooth;
+
+	int Iterations = 1;
+
+	float smp(float2 x, float lod = 0)
+	{
+		float4 c = Texture1.SampleLevel(LinearSampler, x, lod);
+		return max(c.r, max(c.g, c.b)) * c.a;
+	}
+
+    float4 Filter(float4 tex0col)
+    {
+		float amount = Amount.Compute();
+		float mapSmooth = MapSmooth.Compute();
+
+		float lod = saturate(mapSmooth) * log2(max(ViewSize.x, ViewSize.y));
+		float2 off = pow(2, mapSmooth * 6) * ViewSize / ViewSize.x;
+		float2 dir = 0;
+		float2 dx = streams.TexCoord;
+
+		for(int i = 0; i < Iterations; i++)
+		{
+			dir = float2(smp(dx - off * float2(1,0) / ViewSize, lod) - smp(dx + off * float2(1, 0) / ViewSize, lod),
+					smp(dx - off * float2(0,1) / ViewSize, lod) - smp(dx + off * float2(0, 1) / ViewSize, lod));
+
+			dir = dir.yx * float2(1, -1) * pow(2, mapSmooth * 8);
+
+			dx= dx + dir * 0.01 * amount * exp(abs(amount));
+		}
+
+		return Texture0.Sample(AnisotropicRepeatSampler, dx);;
+    }
+};

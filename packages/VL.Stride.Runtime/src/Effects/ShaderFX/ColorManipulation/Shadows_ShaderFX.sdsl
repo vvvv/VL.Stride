@@ -1,0 +1,13 @@
+﻿[Summary("Color Matrix")]
+[Tags("Color Grading")]
+
+shader Shadows_ShaderFX : ComputeFloat4, ColorGradingOperations
+{
+    [Default(1.0, 1.0, 1.0, 1.0)]
+    compose ComputeFloat4 Color;
+
+    override float4 Compute()
+    {
+        return GetShadows(Color);
+    }
+};

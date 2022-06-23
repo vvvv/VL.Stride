@@ -1,0 +1,302 @@
+﻿shader BlendOperations : ShaderUtils
+{
+    float3 ColorCompositing (float as, float ab, float ar, float3 Cs, float3 Cb, float3 Bbs)
+    {
+        return (1 - (as / ar)) * Cb + (as / ar) * (1 - ab) * Cs + ab * Bbs;
+    }
+
+    float4 ComputeAlpha(float4 c0, float4 c1, float4 composite)
+    {
+        float alpha = (c1.a + c0.a * (1.0 - c1.a));
+        float3 color = ColorCompositing(c1.a, c0.a, alpha, c1.rgb, c0.rgb, composite.rgb);
+
+        return float4(color, alpha);
+    }
+
+    float4 Blend(float4 c0, float4 c1, float fader, bool computeAlpha, int type)
+    {
+        float4 col;
+        c1.a *= saturate(fader);
+
+        switch(type)
+        {
+            //MIX
+            case 0 : col = Normal(c0, c1); break;
+            case 1 : col = Average(c0, c1); break;
+            case 2 : col = GeometricMean(c0, c1); break;
+
+            //DARKEN
+            case 3 : col = Darken(c0, c1); break;
+            case 4 : col = Multiply(c0, c1); break;
+            case 5 : col = ColorBurn(c0, c1); break;
+            case 6 : col = LinearBurn(c0, c1); break;
+            case 7 : col = DarkerColor(c0, c1); break;
+
+            //LIGHTEN
+            case 8 : col = Lighten(c0, c1); break;
+            case 9 : col = Screen(c0, c1); break;
+            case 10 : col = Add(c0, c1); break;
+            case 11 : col = LighterColor(c0, c1); break;
+            case 12 : col = Glow(c0, c1); break;
+
+            //CONTRAST
+            case 13 : col = Overlay(c0, c1); break;
+            case 14 : col = Softlight(c0, c1); break;
+            case 15 : col = ColorDodge(c0, c1); break;
+            case 16 : col = Reflect(c0, c1); break;
+            case 17 : col = HardMix(c0, c1); break;
+            case 18 : col = Freeze(c0, c1); break;
+            case 19 : col = Pinlight(c0, c1); break;
+            case 20 : col = Hardlight(c0, c1); break;
+            case 21 : col = VividLight(c0, c1); break;
+            case 22 : col = LinearLight(c0, c1); break;
+
+            //INVERSION
+            case 23 : col = Difference(c0, c1); break;
+            case 24 : col = Exclusion(c0, c1); break;
+            case 25 : col = Subtract(c0, c1); break;
+            case 26 : col = Divide(c0, c1); break;
+            case 27 : col = Negation(c0, c1); break;
+            case 28 : col = AdditiveSubstractive(c0, c1); break;
+            case 29 : col = Heat(c0, c1); break;
+            case 30 : col = Phoenix(c0, c1); break;
+            case 31 : col = GrainExtract(c0, c1); break;
+            case 32 : col = GrainMerge(c0, c1); break;
+
+            //COMPONENT
+            case 33 : col = Hue(c0, c1); break;
+            case 34 : col = Saturation(c0, c1); break;
+            case 35 : col = Color(c0, c1); break;
+            case 36 : col = Lightness(c0, c1); break;
+            case 37 : col = Value(c0, c1); break;
+            case 38 : col = Red(c0, c1); break;
+            case 39 : col = Green(c0, c1); break;
+            case 40 : col = Blue(c0, c1); break;
+        }
+
+        return (computeAlpha) ? ComputeAlpha(c1, c0, col) : col;
+    }
+
+
+    /// BLENDMODES FUNCTIONS
+
+    float4 Normal(float4 c0, float4 c1)
+    {
+        return c1;
+    }
+    
+    float4 Add(float4 c0, float4 c1)
+    {
+        return c0 + c1;
+    }
+
+    float4 Multiply(float4 c0, float4 c1)
+    {
+        return c0 * c1;
+    }
+
+    float4 Average(float4 c0, float4 c1)
+    {
+        return (c0 + c1) * 0.5;
+    }
+
+    float4 HardMix(float4 c0, float4 c1)
+    {
+        return floor(c0 + c1);
+    }
+
+    float4 LighterColor(float4 c0, float4 c1)
+    {
+        return (c0.r + c0.g + c0.b > c1.r + c1.g + c1.b) ? c0 : c1;
+    }
+
+    float4 DarkerColor(float4 c0, float4 c1)
+    {
+        return (c0.r + c0.g + c0.b < c1.r + c1.g + c1.b) ? c0 : c1;
+    }
+
+    float4 Reflect(float4 c0, float4 c1)
+    {
+        return (c1 == 1.0) ? c1 : min(c0 * c0 / (1.0 - c1), 1.0);
+    }
+
+    float4 Screen(float4 c0, float4 c1)
+    {
+        return 1.0 - ((1.0 - c0) * (1.0 - c1));
+    }
+
+    float4 Subtract(float4 c0, float4 c1)
+    {
+        return c0 - c1;
+    }
+
+    float4 Darken(float4 c0, float4 c1)
+    {
+        return min(c0, c1);
+    }
+
+    float4 Lighten(float4 c0, float4 c1)
+    {
+        return max(c0, c1);
+    }
+
+    float4 Difference(float4 c0, float4 c1)
+    {
+        return abs(c0 - c1);
+    }
+
+    float4 Exclusion(float4 c0, float4 c1)
+    {
+        return c0 + c1 - 2.0 * c0 * c1;
+    }
+
+    float4 Overlay(float4 c0, float4 c1)
+    {
+        return (c0 < 0.5) ? (2.0 * c0 * c1) : 1.0 - 2.0 * (1 - c0) * (1.0 - c1);
+    }
+
+    float4 Negation(float4 c0, float4 c1)
+    {
+        return 1.0 - abs(1.0 - c0 - c1);;
+    }
+
+    float4 Divide(float4 c0, float4 c1)
+    {
+        return c0 / c1;
+    }
+
+    float4 ColorDodge(float4 c0, float4 c1)
+    {
+        return c0 / (1.0 - c1);
+    }
+
+    float4 Hardlight(float4 c0, float4 c1)
+    {
+        return (c1 < 0.5) ? (2.0 * c0 * c1) : 1.0 - 2.0 * (1.0 - c0) * (1.0 - c1);
+    }
+
+    float4 Glow(float4 c0, float4 c1)
+    {
+        return Reflect(c1, c0);
+    }
+
+    float4 Pinlight(float4 c0, float4 c1)
+    {
+        return (c1 < 0.5) ? Darken(c0, (2.0 * c1)) : Lighten(c0, (2.0 * (c1 - 0.5)));
+    }
+ 
+    float4 Softlight(float4 c0, float4 c1)
+    {
+        return 2.0 * c0 * c1 + c0 * c0 - 2.0 * c0 * c0 * c1;
+    }
+
+    float4 ColorBurn(float4 c0, float4 c1)
+    {
+        return (c1 == 0.0) ? c1 : max((1.0 - (1.0 - c0) / c1), 0.0);
+    }
+
+    float4 LinearBurn(float4 c0, float4 c1)
+    {
+        return (c0 + c1) - 1.0;
+    }
+
+    float4 Heat(float4 c0, float4 c1)
+    {
+        return 1.0 - Glow(c0, c1);
+    }
+
+    float4 Freeze(float4 c0, float4 c1)
+    {
+        return (c1 == 0.0) ? 0.0 : 1.0 - pow(1.0 - c0, 2.0) / c1;
+    }
+
+    float4 VividLight(float4 c0, float4 c1)
+    {
+        return (c1 < 0.5) ? ColorBurn(c0, 2.0 * c1) : ColorDodge(c0, (2.0 * (c1 - 0.5)));
+    }
+
+    float4 LinearLight(float4 c0, float4 c1)
+    {
+        return (c1 < 0.5) ? max(c0 + 2.0 * c1 - 1.0, 0.0) : min(c0 + 2.0 * (c1 - 0.5), 1.0);
+    }
+
+    float4 Phoenix(float4 c0, float4 c1)
+    {
+        return min(c0, c1) - max(c0, c1) + 1.0;
+    }
+
+    float4 Red(float4 c0, float4 c1)
+    {
+        return float4(c1.r, c0.g, c0.b, 1.0);
+    }
+
+    float4 Green(float4 c0, float4 c1)
+    {
+        return float4(c0.r, c1.g, c0.b, 1.0);
+    }
+
+    float4 Blue(float4 c0, float4 c1)
+    {
+        return float4(c0.r, c0.g, c1.b, 1.0);
+    }
+
+    float4 GeometricMean(float4 c0, float4 c1)
+    {
+        return sqrt(c0 * c1);
+    }
+
+    float4 Value(float4 c0, float4 c1)
+    {
+        float3 hsv0 = RGBtoHSV(c0.rgb);
+        float3 hsv1 = RGBtoHSV(c1.rgb);
+        float3 col = HSVtoRGB(float3(hsv0.x, hsv0.y, hsv1.z));
+        return float4(col, c1.a);
+    }
+
+    float4 Lightness(float4 c0, float4 c1)
+    {
+        float3 hsv0 = RGBtoHSL(c0.rgb);
+        float3 hsv1 = RGBtoHSL(c1.rgb);
+        float3 col = HSLtoRGB(float3(hsv0.x, hsv0.y, hsv1.z));
+        return float4(col, c1.a);
+    }
+
+    float4 Color(float4 c0, float4 c1)
+    {
+        float3 hsv0 = RGBtoHSL(c0.rgb);
+        float3 hsv1 = RGBtoHSL(c1.rgb);
+        float3 col = HSLtoRGB(float3(hsv1.x, hsv1.y, hsv0.z));
+        return float4(col, c1.a);
+    }
+
+    float4 Hue(float4 c0, float4 c1)
+    {
+        float3 hsv0 = RGBtoHSL(c0.rgb);
+        float3 hsv1 = RGBtoHSL(c1.rgb);
+        float3 col = HSLtoRGB(float3(hsv1.x, hsv0.y, hsv0.z));
+        return float4(col, c1.a);
+    }
+
+    float4 Saturation(float4 c0, float4 c1)
+    {
+        float3 hsv0 = RGBtoHSV(c0.rgb);
+        float3 hsv1 = RGBtoHSV(c1.rgb);
+        float3 col = HSVtoRGB(float3(hsv0.x, hsv1.y, hsv0.z));
+        return float4(col, c1.a);
+    }
+
+    float4 GrainExtract(float4 c0, float4 c1)
+    {
+        return (c0 - c1) + 0.5;
+    }
+
+    float4 GrainMerge(float4 c0, float4 c1)
+    {
+        return (c0 - c1) - 0.5;
+    }
+
+    float4 AdditiveSubstractive(float4 c0, float4 c1)
+    {
+        return c1 - sqrt(c0);
+    }
+};

@@ -1,0 +1,146 @@
+﻿shader InvertOperations : ShaderUtils, ColorUtilityTemp
+{
+    float4 Invert(float4 color, float factor, bool invertAlpha, int type)
+    {
+        float4 o = color;
+        float4 c = o;
+
+        switch((uint)type%12)
+        {
+            case 0 : c = InvertRGB(c); break;
+            case 1 : c = InvertRed(c); break;
+            case 2 : c = InvertGreen(c); break;
+            case 3 : c = InvertBlue(c); break;
+            case 4 : c = InvertRedGreen(c); break;
+            case 5 : c = InvertRedBlue(c); break;
+            case 6 : c = InvertGreenBlue(c); break;
+            case 7 : c = InvertValue(c); break;
+            case 8 : c = InvertLightness(c);break;
+            case 9 : c = InvertSaturation(c); break;
+            case 10 : c = InvertHue(c); break;
+            case 11 : c = RGBShift(c); break;
+            case 12 : c = InvertCyan(c); break;
+            case 13 : c = InvertMagenta(c); break;
+            case 14 : c = InvertYellow(c); break;
+            case 15 : c = InvertBlack(c); break;
+        }
+
+        if (invertAlpha) InvertAlpha(c);
+        c.rgb = lerp(o, c, factor);
+
+        return c;
+    }
+
+
+    float4 InvertRGB(float4 c)
+    {
+        c.rgb = 1 - c.rgb;
+        return c;
+    }
+
+    float4 InvertRed(float4 c)
+    {
+        c.r = 1 - c.r;
+        return c;
+    }
+
+    float4 InvertGreen(float4 c)
+    {
+        c.g = 1 - c.g;
+        return c;
+    }
+
+    float4 InvertBlue(float4 c)
+    {
+        c.b = 1 - c.b;
+        return c;
+    }
+
+    float4 InvertRedGreen(float4 c)
+    {
+        c.rg = 1 - c.rg;
+        return c;
+    }
+
+    float4 InvertRedBlue(float4 c)
+    {
+        c.rb = 1 - c.rb;
+        return c;
+    }
+
+    float4 InvertGreenBlue(float4 c)
+    {
+        c.gb = 1 - c.gb;
+        return c;
+    }
+
+    float4 InvertValue(float4 c)
+    {
+        float3 hsv = base.RGBtoHSV(c.rgb);
+        hsv.z = 1 - hsv.z;
+        return float4(base.HSVtoRGB(hsv), c.a);
+    }
+    
+    float4 InvertLightness(float4 c)
+    {
+        float3 hsv = base.RGBtoHCV(c.rgb);
+        hsv.z = 1 - hsv.z;
+        return float4(base.HSLtoRGB(hsv), c.a);
+    }
+
+    float4 InvertSaturation(float4 c)
+    {
+        float3 hsv = base.RGBtoHCV(c.rgb);
+        hsv.y = 1 - hsv.y;
+        return float4(base.HSLtoRGB(hsv), c.a);
+    }
+
+    float4 InvertHue(float4 c)
+    {
+        c.rgb -= 2 * (c.rgb - dot(c.rgb, 1.0) / 3.0);
+        return float4(c.rgb, c.a);
+    }
+
+    float4 RGBShift(float4 c)
+    {
+        c = InvertRGB(c);
+        c = InvertHue(c);
+        return c;
+    }
+
+    float4 InvertAlpha(float4 c)
+    {
+        c.a = 1 - c.a;
+        return c;
+    }
+
+    float4 InvertCyan(float4 c)
+    {
+        float4 cmyk = base.RGBToCMYK(c.rgb);
+        cmyk.x = 1 - cmyk.x;
+        return float4(base.CMYKToRGB(cmyk), c.a);
+    }
+
+    float4 InvertMagenta(float4 c)
+    {
+        float4 cmyk = base.RGBToCMYK(c.rgb);
+        cmyk.y = 1 - cmyk.y;
+        return float4(base.CMYKToRGB(cmyk), c.a);
+    }
+
+    float4 InvertYellow(float4 c)
+    {
+        float4 cmyk = base.RGBToCMYK(c.rgb);
+        cmyk.z = 1 - cmyk.z;
+        return float4(base.CMYKToRGB(cmyk), c.a);
+    }
+        
+    float4 InvertBlack(float4 c)
+    {
+        float4 cmyk = base.RGBToCMYK(c.rgb);
+        cmyk.w = 1 - cmyk.w;
+        return float4(base.CMYKToRGB(cmyk), c.a);
+    }
+};
+
+

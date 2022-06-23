@@ -18,10 +18,7 @@ namespace Stride.Rendering
 {
     public static partial class BubbleNoise_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Time = ParameterKeys.NewValue<float>();
-        public static readonly ValueParameterKey<float> Frequency = ParameterKeys.NewValue<float>(3.5f);
-        public static readonly ValueParameterKey<float> Contrast = ParameterKeys.NewValue<float>(0.15f);
-        public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));
-        public static readonly ValueParameterKey<Color4> BubbleColor = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
+        public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0f, 0.0f, 0.0f, 1.0f));
+        public static readonly ValueParameterKey<Color4> BubbleColor = ParameterKeys.NewValue<Color4>(new Color4(1.0f, 1.0f, 1.0f, 1.0f));
     }
 }

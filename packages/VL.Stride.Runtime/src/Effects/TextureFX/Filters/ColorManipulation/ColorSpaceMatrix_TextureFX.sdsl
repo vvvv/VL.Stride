@@ -1,0 +1,37 @@
+﻿[Category("Filter")]
+[Summary("4X4 Color Matrix")]
+
+shader ColorSpaceMatrix_TextureFX : FilterBase, ColorSpaceMatrixOperations
+{
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Channel0;
+
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Channel1;
+
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Channel2;
+
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Channel3;
+
+    [EnumType("VL.Stride.Effects.Common.ColorSpaceMatrix")]
+    int type;
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 c;
+
+        switch(type)
+        {
+            case 0 : c = RGBAMatrix(tex0col, Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Channel3.Compute()); break;
+            case 1 : c = HSLAMatrix(tex0col, Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Channel3.Compute()); break;
+            case 2 : c = HSVAMatrix(tex0col, Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Channel3.Compute()); break;
+            case 3 : c = CMYKMatrix(tex0col, Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Channel3.Compute()); break;
+        }
+
+        return c;
+    }
+};
+
+

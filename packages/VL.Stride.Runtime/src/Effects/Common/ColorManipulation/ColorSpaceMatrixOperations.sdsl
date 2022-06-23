@@ -1,0 +1,33 @@
+﻿//from https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/ColorMatrix.fx
+
+shader ColorSpaceMatrixOperations : ShaderUtils, ColorUtilityTemp
+{
+    float4 RGBAMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
+    {
+	    float4x4 ColorMatrix = float4x4(red, green, blue, alpha);
+	    return saturate(mul(ColorMatrix, color));
+    }
+
+    float4 HSLAMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
+    {
+	    float4x4 ColorMatrix = float4x4(red, green, blue, alpha);
+        float4 result = saturate(mul(ColorMatrix, float4(RGBtoHSL(color), color.a)));
+	    return float4(HSLtoRGB(result.rgb), result.a);
+    }
+
+    float4 HSVAMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
+    {
+	    float4x4 ColorMatrix = float4x4(red, green, blue, alpha);
+        float4 result = saturate(mul(ColorMatrix, float4(RGBtoHSV(color), color.a)));
+	    return float4(HSVtoRGB(result.rgb), result.a);
+    }
+
+    float4 CMYKMatrix(float4 color, float4 red, float4 green, float4 blue, float4 alpha)
+    {
+	    float4x4 ColorMatrix = float4x4(red, green, blue, alpha);
+        float4 result = saturate(mul(ColorMatrix, RGBToCMYK(color.rgb)));
+	    return float4(CMYKToRGB(result), color.a);
+    }
+};
+
+

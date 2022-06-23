@@ -19,8 +19,5 @@ namespace Stride.Rendering
     public static partial class Magnify_TextureFXKeys
     {
         public static readonly ValueParameterKey<Vector2> Center = ParameterKeys.NewValue<Vector2>(new Vector2(0.5f,0.5f));
-        public static readonly ValueParameterKey<float> InnerRadius = ParameterKeys.NewValue<float>(0.25f);
-        public static readonly ValueParameterKey<float> Magnification = ParameterKeys.NewValue<float>(2.0f);
-        public static readonly ValueParameterKey<float> OuterRadius = ParameterKeys.NewValue<float>(0.5f);
     }
 }

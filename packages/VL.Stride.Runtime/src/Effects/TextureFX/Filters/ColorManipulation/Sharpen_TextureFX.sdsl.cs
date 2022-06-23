@@ -18,8 +18,8 @@ namespace Stride.Rendering
 {
     public static partial class Sharpen_TextureFXKeys
     {
-        public static readonly ValueParameterKey<float> Amount = ParameterKeys.NewValue<float>(1.0f);
-        public static readonly ValueParameterKey<float> Radius = ParameterKeys.NewValue<float>(0.1f);
+        public static readonly ValueParameterKey<float> Amount = ParameterKeys.NewValue<float>(0.1f);
+        public static readonly ValueParameterKey<float> Radius = ParameterKeys.NewValue<float>(0.0f);
         public static readonly ValueParameterKey<float> Saturation = ParameterKeys.NewValue<float>(0.0f);
         public static readonly ValueParameterKey<float> Gamma = ParameterKeys.NewValue<float>(0.0f);
     }

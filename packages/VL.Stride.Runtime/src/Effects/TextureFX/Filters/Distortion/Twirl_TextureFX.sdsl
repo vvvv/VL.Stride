@@ -1,0 +1,38 @@
+[Category("Filter")]
+[Summary("")]
+
+shader Twirl_TextureFX : FilterBase, ShaderUtils
+{
+
+	[Default(1.0)]
+    compose ComputeFloat Angle;
+
+	[Default(1.0)]
+    compose ComputeFloat Radius;
+
+    float2 Center;
+
+    stage SamplerState LinearMirrorSampler
+    {
+        Filter = MIN_MAG_MIP_LINEAR;
+        AddressU = Mirror;
+        AddressV = Mirror;
+    };
+
+
+    float4 Filter(float4 tex0col)
+    {
+        float effectRadius = Radius.Compute();
+        float effectAngle = Angle.Compute();
+
+        float2 center = Center + 0.5;
+
+        float2 uv = streams.TexCoord - center;
+    
+        float len = length(uv * float2(ViewSize.x / ViewSize.y, 1.));
+        float angle = atan2(uv.y, uv.x) + effectAngle * smoothstep(effectRadius, 0.0, len);
+        float radius = length(uv);
+
+        return  Texture0.SampleLevel(LinearMirrorSampler, float2(radius * cos(angle), radius * sin(angle)) + center, 0);
+    }
+};

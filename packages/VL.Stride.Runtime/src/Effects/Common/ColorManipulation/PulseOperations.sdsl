@@ -1,0 +1,48 @@
+﻿//from InstanceNoodle vvvv beta contribution by Kyle McLean aka EveryoneIsHappy
+
+shader PulseOperations : ShaderUtils
+{
+    float4 Pulse(float4 color, float center, float slopeWidth, float centerWidth, bool invert, int type)
+    {
+	    float v = 0;
+
+        switch(type)
+        {
+            case 0:
+                v = color.r;
+                break;
+            case 1:
+                v = color.g;
+                break;
+            case 2:
+                v = color.b;
+                break;
+            case 3:
+                v = RGBtoHSV(color).x;
+                break;
+            case 4:
+                v = RGBtoHSV(color).y;
+                break;
+            case 5:
+                v = RGBtoHSV(color).z;
+                break;
+            case 6:
+                v = RGBtoHSL(color).z;
+                break;
+            case 7:
+                v = color.a;
+                break;
+        }
+
+        centerWidth *= 0.5;
+        v = abs(v - center);
+	    v -= centerWidth;
+        if(v > slopeWidth) return 0.0f;
+        v /= slopeWidth;
+
+        if (invert) return 1.0 - v;
+	    return v;
+    }
+};
+
+

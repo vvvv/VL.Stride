@@ -1,0 +1,185 @@
+﻿[Category("Filter")]
+[Summary("Offset the UV coordinates for sampling the 1st input by the 2nd inputs red & green channels")]
+[Tags("uv, offset, distort")]
+[DontConvertToLinearOnRead("Texture1")]
+
+shader DisplaceColorSpace_TextureFX : FilterBase, ShaderUtils
+{
+    [Default(0.5f, 0.5f)]
+	compose ComputeFloat2 Offset;
+
+    [Default(0.1f, 0.1f)]
+	compose ComputeFloat2 OffsetScale;
+
+    [EnumType("VL.Stride.Effects.Common.DisplaceColorSpace")]
+    int type;
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 offset = InTex1();
+        float2 off = (offset.rg - Offset.Compute()) * OffsetScale.Compute(); 
+
+        float2 uv = streams.TexCoord;
+        
+        float4 c;
+
+        switch(type)
+        {
+            case 0 : c = DisplaceRed(); break;
+            case 1 : c = DisplaceGreen(); break;
+            case 2 : c = DisplaceBlue(); break;
+            case 3 : c = DisplaceRedGreen(); break;
+            case 4 : c = DisplaceRedBlue(); break;
+            case 5 : c = DisplaceGreenBlue(); break;
+            case 6 : c = DisplaceValue(); break;
+            case 7 : c = DisplaceLightness(); break;
+            case 8 : c = DisplaceSaturation(); break;
+            case 9 : c = DisplaceHue(); break;
+            case 10 : c = DisplaceCyan(); break;
+            case 11 : c = DisplaceMagenta(); break;
+            case 12 : c = DisplaceYellow(); break;
+            case 13 : c = DisplaceBlack(); break;
+            case 14 : c = DisplaceAlpha(); break;
+        }
+
+        return c;
+    }
+
+    float2 OffsetUV()
+    {
+        return streams.TexCoord + float2((InTex1().rg - Offset.Compute()) * OffsetScale.Compute());
+    }
+
+    float4 DisplaceRed()
+    {
+        float red = Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).r;
+        float4 col = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        return float4(red, col.g, col.b, col.a);
+    }
+
+    float4 DisplaceGreen()
+    {
+        float green = Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).g;
+        float4 col = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        return float4(col.r, green, col.b, col.a);
+    }
+
+    float4 DisplaceBlue()
+    {
+        float blue = Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).b;
+        float4 col = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        return float4(col.r, col.g, blue, col.a);
+    }
+
+    float4 DisplaceAlpha()
+    {
+        float alpha = Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).a;
+        float4 col = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        return float4(col.r, col.g, col.b, alpha);
+    }
+
+    float4 DisplaceRedGreen()
+    {
+        float2 redGreen = Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rg;
+        float4 col = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        return float4(redGreen.x, redGreen.y, col.b, col.a);
+    }
+
+    float4 DisplaceRedBlue()
+    {
+        float2 redBlue = Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rb;
+        float4 col = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        return float4(redBlue.x, col.g, redBlue.y, col.a);
+    }
+
+    float4 DisplaceGreenBlue()
+    {
+        float2 greenBlue = Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).gb;
+        float4 col = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        return float4(col.r, greenBlue.x, greenBlue.y, col.a);
+    }
+
+    float4 DisplaceValue()
+    {
+        float H = RGBtoHSV(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).r;
+        float S = RGBtoHSV(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).g;
+        float V = RGBtoHSV(Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rgb).b;
+
+        float A = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).a;
+        return float4(HSVtoRGB(float3(H, S, V)), A);
+    }
+
+    float4 DisplaceLightness()
+    {
+        float H = RGBtoHSL(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).r;
+        float S = RGBtoHSL(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).g;
+        float L = RGBtoHSL(Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rgb).b;
+
+        float A = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).a;
+        return float4(HSLtoRGB(float3(H, S, L)), A);
+    }
+
+    float4 DisplaceSaturation()
+    {
+        float H = RGBtoHSV(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).r;
+        float S = RGBtoHSV(Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rgb).g;
+        float V = RGBtoHSV(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).b;
+
+        float A = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).a;
+        return float4(HSVtoRGB(float3(H, S, V)), A);
+    }
+
+    float4 DisplaceHue()
+    {
+        float H = RGBtoHSV(Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rgb).r;
+        float S = RGBtoHSV(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).g;
+        float V = RGBtoHSV(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).b;
+
+        float A = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).a;
+        return float4(HSVtoRGB(float3(H, S, V)), A);
+    }
+
+    float4 DisplaceCyan()
+    {
+        float C = RGBToCMYK(Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rgb).r;
+        float M = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).g;
+        float Y = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).b;
+        float K = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).a;
+
+        float A = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).a;
+        return float4(CMYKToRGB(float4(C, M, Y, K)), A);
+    }
+
+    float4 DisplaceMagenta()
+    {
+        float C = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).r;
+        float M = RGBToCMYK(Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rgb).g;
+        float Y = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).b;
+        float K = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).a;
+
+        float A = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).a;
+        return float4(CMYKToRGB(float4(C, M, Y, K)), A);
+    }
+
+    float4 DisplaceYellow()
+    {
+        float C = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).r;
+        float M = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).g;
+        float Y = RGBToCMYK(Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rgb).b;
+        float K = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).a;
+
+        float A = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).a;
+        return float4(CMYKToRGB(float4(C, M, Y, K)), A);
+    }
+
+    float4 DisplaceBlack()
+    {
+        float C = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).r;
+        float M = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).g;
+        float Y = RGBToCMYK(Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).rgb).b;
+        float K = RGBToCMYK(Texture0.SampleLevel(LinearSampler, OffsetUV(), 0).rgb).a;
+
+        float A = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0).a;
+        return float4(CMYKToRGB(float4(C, M, Y, K)), A);
+    }
+};

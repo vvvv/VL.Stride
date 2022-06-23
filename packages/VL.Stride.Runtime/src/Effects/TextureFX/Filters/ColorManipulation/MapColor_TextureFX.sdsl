@@ -5,7 +5,8 @@
 [Summary("Applies colorization by converting input one to the specified color model and then taking the resulting values as pointer into the lookup table provided with input two")]
 [Tags("lookup LUT colorize")]
 [WantsMips("Texture1")]
-shader MapColor_TextureFX : FilterBase
+
+shader MapColor_TextureFX : FilterBase, ShaderUtils
 {
     [EnumType("VL.Stride.Effects.TextureFX.MapColorType")]
     int Type;
@@ -16,9 +17,7 @@ shader MapColor_TextureFX : FilterBase
     
     float4 Ramp(float2 f)
     {
-        float2 R = ViewSize;
-
-        float lod = log2(max(R.x, R.y)) * MapSmooth;
+        float lod = Lod(ViewSize) * MapSmooth;
         return Texture1.SampleLevel(Sampler1, Start + End*f, lod);
     }
 

@@ -1,0 +1,208 @@
+// Credits to https://www.shadertoy.com/view/Md2GDw and PrinceMio (WaltzBinaire) for porting it to beta;
+
+[Category("Filter")]
+[WantsMips("Texture0")]
+
+shader GlitchMPEG_TextureFX : FilterBase
+{
+	[Default(0.0f)]
+    compose ComputeFloat Time;
+
+	[Default(1.0f)]
+    compose ComputeFloat StopAmount;
+
+	[Default(1.0f)]
+    compose ComputeFloat KernelSize;
+
+	[Default(1.0f)]
+    compose ComputeFloat GlobalStrength;
+
+	bool Greyscale;
+
+	[EnumType("VL.Stride.Effects.Common.Glitch")]
+	int type;
+
+	[EnumType("VL.Stride.Effects.Common.Orientation")]
+	int orientation;
+
+	float nrand( float2 n )
+	{
+		return frac(sin(dot(n.xy, float2(12.9898, 78.233)))* 43758.5453);
+	}
+
+
+	float n2rand( float2 n,float seed )
+	{
+		float t = frac( seed );
+		float nrnd0 = nrand( n + 0.07*t );
+		float nrnd1 = nrand( n + 0.11*t );
+		return (nrnd0+nrnd1) / 2.0;
+	}
+
+
+	float3 getGlitchDisplace(float2 uv,float2 uv_noise,float block_thresh, float line_thresh,float amount) 
+	{
+		float2 uv_r = uv;
+		float2 uv_g = uv;
+		float2 uv_b = uv;
+
+		float3  result; 
+	
+		if (Texture1.SampleLevel(LinearSampler, uv_noise, 0).r * amount < block_thresh ||
+			Texture1.SampleLevel(LinearSampler, float2(uv_noise.y, 0.0), 0).g * amount < line_thresh) 
+		{
+			float2 dist = (frac(uv_noise) - 0.5) * 0.3;
+			uv_r += dist * 0.1;
+			uv_g += dist * 0.2;
+			uv_b += dist * 0.125;
+		}
+
+		result.r = Texture0.SampleLevel(LinearSampler, uv_r,0).r;
+		result.g = Texture0.SampleLevel(LinearSampler, uv_g,0).g;
+		result.b = Texture0.SampleLevel(LinearSampler, uv_b,0).b;	
+
+		return result;
+	}
+
+	float3 getGlitchDisplaceVert(float2 uv,float2 uv_noise,float block_thresh, float line_thresh,float amount) 
+	{
+		float2 uv_r = uv;
+		float2 uv_g = uv;
+		float2 uv_b = uv;
+
+		float3  result; 
+	
+		if (Texture1.SampleLevel(LinearSampler, uv_noise, 0).r * amount < block_thresh ||
+			Texture1.SampleLevel(LinearSampler, float2(uv_noise.x, 0.0), 0).g * amount > line_thresh) 
+		{
+			float2 dist = (frac(uv_noise) - 0.5) * 0.3;
+			uv_r += dist * 0.1;
+			uv_g += dist * 0.2;
+			uv_b += dist * 0.125;
+		}
+
+		result.r = Texture0.SampleLevel(LinearSampler, uv_r,0).r;
+		result.g = Texture0.SampleLevel(LinearSampler, uv_g,0).g;
+		result.b = Texture0.SampleLevel(LinearSampler, uv_b,0).b;	
+
+		return result;
+	}
+
+
+	float3 getGlitchDiscolorLine(float2 uv,float2 uv_noise,float noiseTime,float3 color,float line_thresh,float amount)
+	{
+		float3 locColor = Texture0.SampleLevel(LinearSampler, float2(uv.x + noiseTime, uv.y), 0).rgb;
+
+		if (Texture1.SampleLevel(LinearSampler, float2(uv_noise.y, 0.0),0).r * amount < line_thresh) 
+		{
+			return lerp(float3(0, dot(locColor, float3(locColor.r,locColor.g,1)), 0.0), locColor,frac(noiseTime*uv.y));
+		}   
+		else 
+			return color;
+	}
+
+
+	float3 getGlitchLuma(float2 uv_noise,float3 color,float block_thresh,float amount) 
+	{
+		if (Texture1.SampleLevel(LinearSampler, uv_noise,0).g *amount < block_thresh)
+			return color.ggg;
+		else 
+			return color;
+	}
+
+
+	float3 getGlitchRGBLines(float2 uv,float2 uv_noise,float3 color,float block_thresh,float line_thresh,float amount) 
+	{
+		if (Texture1.SampleLevel(LinearSampler, uv_noise, 0).g * amount < block_thresh ||
+			Texture1.SampleLevel(LinearSampler, float2(uv_noise.y, 0.0),0).g * amount*2 < line_thresh) {
+		
+			float lines = frac((uv * ViewSize).y / 9.0);
+			float3 mask = float3(3.0, 0.0, 0.0);
+			
+			if (lines > 0.333)
+				mask = float3(0.0, 3.0, 0.0);
+			if (lines > 0.666)
+				mask = float3(0.0, 0.0, 3.0);
+
+			return color.xyz *= mask;
+			}
+		else return color;
+	}
+
+
+	float3 getGlitchRGBLinesVert(float2 uv,float2 uv_noise,float3 color,float block_thresh,float line_thresh,float amount) 
+	{
+			if (Texture1.SampleLevel(LinearSampler, float2(uv.y,0 ), 0).g * amount < block_thresh ||
+			Texture1.SampleLevel(LinearSampler, float2(uv.x,0),0).g * amount < line_thresh) 
+			{	
+				float lines = frac((uv * ViewSize).y / 9.0);
+				float3 mask = float3(3.0, 0.0, 0.0);
+			
+				if (lines > 0.333)
+					mask = float3(0.0, 3.0, 0.0);
+				if (lines > 0.666)
+					mask = float3(0.0, 0.0, 3.0);				
+					mask *= Texture1.SampleLevel(LinearSampler, float2(uv_noise.x, uv_noise.y), 0).rgb;		
+					return color.xyz * mask;
+			}
+			else return color;
+	}
+
+
+	float getNoisedTime(float amount)
+	{
+		float time = Time.Compute();
+		float randStop = n2rand(float2(time, time), 1);
+		return randStop>amount? time : floor(time) / 10.0;	
+	}
+
+	float getSizeofBlocks(float size,float noiseTime)
+	{
+		float sizeOfBlocks = (6.0 * size) + floor(n2rand(float2(noiseTime, noiseTime), noiseTime) * 8.0);
+		return pow(2, sizeOfBlocks);	
+	}
+
+
+    float4 Filter(float4 tex0col)
+    {
+		float4 FragColor = tex0col;
+		float stopAmount = StopAmount.Compute();
+		float kernelSize = KernelSize.Compute();
+		float globalStrength = GlobalStrength.Compute();
+
+		float2 uv = streams.TexCoord;
+
+		float noiseTime = getNoisedTime(stopAmount);
+		float sizeOfBlocks = getSizeofBlocks(kernelSize, noiseTime);
+	
+		float2 block = floor(uv * ViewSize / float2(sizeOfBlocks, sizeOfBlocks));
+		float2 uv_noise = block / float2(256.0, 256.0);
+	
+		float timeLocal;
+
+		switch(orientation)
+		{
+			case 0 : timeLocal = n2rand(float2(uv_noise.x, noiseTime), noiseTime); break;
+			case 1 : timeLocal = n2rand(float2(uv_noise.y, noiseTime), noiseTime); break;
+		}
+		
+	
+		uv_noise += floor(float2(timeLocal, timeLocal) * float2(1234.0, 3543.0)) / float2(256, 256);
+
+		float block_thresh = pow(frac(timeLocal * 1236.0453), 2.0) * 0.10;
+		float line_thresh = pow(frac(timeLocal * 2236.0453), 3.0) * 0.5;
+
+		switch(type)
+		{
+			case 0 : FragColor.rgb = getGlitchDisplace(uv, uv_noise, block_thresh, line_thresh, 1 / globalStrength); break;
+			case 1 : FragColor.rgb = getGlitchDiscolorLine(uv, uv_noise, noiseTime, FragColor.rgb, line_thresh, 1 / globalStrength); break;
+			case 2 : FragColor.rgb = getGlitchRGBLines(uv, uv_noise, FragColor.rgb, block_thresh, line_thresh, 1 / globalStrength); break;
+			case 3 : FragColor.rgb = getGlitchRGBLinesVert(uv, uv_noise, FragColor.rgb, block_thresh, line_thresh, 1 / globalStrength ); break;
+			case 4 : FragColor.rgb = getGlitchLuma(uv_noise, FragColor.rgb, block_thresh, 1 / globalStrength); break;
+		}
+		
+		if (Greyscale) FragColor.rgb = float3(FragColor.r, FragColor.r, FragColor.r);
+
+		return FragColor;
+    }
+};

@@ -1,0 +1,12 @@
+﻿[Category("Filter")]
+[Summary("")]
+shader Threshold_ShaderFX : ComputeFloat4, ThresholdOperations
+{
+    [Default(1.0f, 1.0f, 1.0f, 1.0f)]
+    compose ComputeFloat4 Color;
+
+    override float4 Compute()
+    {
+        Threshold(Color.Compute());
+    }
+};

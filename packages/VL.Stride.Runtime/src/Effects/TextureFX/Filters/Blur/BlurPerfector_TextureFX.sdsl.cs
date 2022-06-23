@@ -6,19 +6,4 @@
 // and re-save the associated .sdfx.
 // </auto-generated>
 
-using System;
-using Stride.Core;
-using Stride.Rendering;
-using Stride.Graphics;
-using Stride.Shaders;
-using Stride.Core.Mathematics;
-using Buffer = Stride.Graphics.Buffer;
-
-namespace Stride.Rendering
-{
-    public static partial class BlurPerfector_TextureFXKeys
-    {
-        public static readonly ValueParameterKey<float> Radius = ParameterKeys.NewValue<float>(0.2f);
-        public static readonly ValueParameterKey<float> Threshold = ParameterKeys.NewValue<float>(0.2f);
-    }
-}
+// Nothing to generate

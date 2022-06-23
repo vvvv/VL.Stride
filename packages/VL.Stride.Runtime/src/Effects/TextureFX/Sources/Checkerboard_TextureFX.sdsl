@@ -2,20 +2,26 @@
 [Category("Source")]
 [Summary("Creates a checkerboard pattern")]
 [Tags("chessboard")]
+
 shader Checkerboard_TextureFX : TextureFX
 {
-    int2 CellCount = int2(8, 8);
+    //int2 CellCount = int2(8, 8);
+    [Default(8.0f, 8.0f)]
+    compose ComputeFloat2 CellCount;
 
     [Color]
     float4 Black = float4(0, 0, 0, 1);
     [Color]
     float4 White = float4(1, 1, 1, 1);
 
+    float4x4 Transform;
+
     stage override float4 Shading()
     {
         //compute size
-        float2 stepHV = 1 / float2(CellCount.x, CellCount.y);
-        float2 uv = streams.TexCoord;
+        float2 cellCount = CellCount.Compute();
+        float2 stepHV = 1 / float2(cellCount.x, cellCount.y);
+        float2 uv = TransformUV(streams.TexCoord, Transform);
 
         //compute black|white
         float2 cHV = abs(uv) / stepHV;

@@ -1,0 +1,58 @@
+//@author: timpernagel,mburk
+//@help: Generating a Light/Shadow-texture based on a 2D texture.  
+//@tags: texture
+//@credits:
+//Ported from a super well documented OpenGL version by Matt DesLauriers:
+//https://github.com/mattdesl/lwjgl-basics/wiki/2D-Pixel-Perfect-Shadows
+
+shader GenerateShadowMap_Internal_TextureFX : TextureFX
+{
+    float2 lightPos;
+    float2 lightSize;
+
+    float2 resolution = float2(512,512);
+
+    static float THRESHOLD = 0.75f;
+
+    stage override float4 Shading()
+    {
+
+        float2 uv = streams.TexCoord; 
+
+        float distance = 1.0;
+    
+        for (float y=0.0; y<resolution.y; y+=1.0) 
+        {
+        
+            //rectangular to polar filter		
+            float2 norm = float2(uv.x, y/resolution.y) * 2.0 - 1.0;
+            float theta = ShaderUtils.Pi*1.5 + norm.x * ShaderUtils.Pi;
+            float r = (1.0 + norm.y) * 0.5;
+        
+            //coord which we will sample from occlude map
+            float2 coord = (float2(-r * sin(theta), -r * cos(theta))*lightSize)/2.0 + 0.5;
+                
+            coord +=  lightPos * float2(1,-1);
+        
+            //sample the occlusion map
+            float4 data = Texture0.Sample(LinearSampler,coord);
+        
+            //the current distance is how far from the top we've come
+            float dst = y/resolution.y;
+        
+            //if we've hit an opaque fragment (occluder), then get new distance
+            //if the new distance is below the current, then we'll use that for our ray
+            float caster = data.a;
+        
+            if (caster > THRESHOLD) 
+            {
+                distance = min(distance, dst);
+                //NOTE: we could probably use "break" or "return" here
+            }
+        }
+    
+        float4 c = float4(distance, distance, distance, 1.0);
+        return c;
+
+    }
+};

@@ -1,0 +1,20 @@
+﻿shader MapFloat4 : ComputeFloat4
+{
+    compose ComputeFloat4 Value;
+
+    compose ComputeFloat4 FromMinimum;
+    compose ComputeFloat4 FromMaximum;
+
+    compose ComputeFloat4 ToMinimum;
+    compose ComputeFloat4 ToMaximum;
+
+    float4 Map(float4 value, float4 inMin, float4 inMax, float4 outMin, float4 outMax) 
+    {
+      return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+    }
+
+    override float4 Compute()
+    {
+        return Map(Value.Compute(), FromMinimum.Compute(), FromMaximum.Compute(), ToMinimum.Compute(), ToMaximum.Compute());
+    }
+};

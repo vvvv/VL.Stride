@@ -1,0 +1,36 @@
+[Category("Filter")]
+[WantsMips("Texture0")]
+
+shader BlurRadialPass_Internal_TextureFX : FilterBase, ShaderUtils
+{
+    float2 Center;
+    bool Aspect = true;
+
+    int Samples = 16;
+    
+    [Default(0.0)]
+    compose ComputeFloat Rotate;
+
+    [Default(1.0)]
+    compose ComputeFloat Zoom;
+
+    float4 Filter(float4 tex0col)
+    {
+        float zoom = Zoom.Compute();
+        float rotate = Rotate.Compute();
+
+	    float2 asp = lerp(1, ViewSize.x / ViewSize, Aspect);
+        float2 piv = 0.5 + Center * float2(0.5, -0.5);
+
+        float4 c = 0;
+
+        for (float i = 0; i < 1; i += 1.0 / Samples)
+        {
+            c += Texture0.SampleLevel(LinearSampler, r2d(( streams.TexCoord - piv) / asp, (i - 0.25) * rotate) / pow(2, zoom * (i - 0.25)) * asp + piv, 0);
+        }
+
+        c = c / Samples;
+
+        return c;
+    }
+};

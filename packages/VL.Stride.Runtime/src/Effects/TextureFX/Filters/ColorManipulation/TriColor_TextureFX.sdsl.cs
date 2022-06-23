@@ -6,24 +6,4 @@
 // and re-save the associated .sdfx.
 // </auto-generated>
 
-using System;
-using Stride.Core;
-using Stride.Rendering;
-using Stride.Graphics;
-using Stride.Shaders;
-using Stride.Core.Mathematics;
-using Buffer = Stride.Graphics.Buffer;
-
-namespace Stride.Rendering
-{
-    public static partial class TriColor_TextureFXKeys
-    {
-        public static readonly ValueParameterKey<Color4> ColorA = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,1.0f));
-        public static readonly ValueParameterKey<Color4> ColorB = ParameterKeys.NewValue<Color4>(new Color4(0.5f,0.5f,0.5f,1.0f));
-        public static readonly ValueParameterKey<Color4> ColorC = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
-        public static readonly ValueParameterKey<float> Smooth = ParameterKeys.NewValue<float>(0.5f);
-        public static readonly ValueParameterKey<float> Center = ParameterKeys.NewValue<float>(0.5f);
-        public static readonly ValueParameterKey<bool> SingleChannel = ParameterKeys.NewValue<bool>(true);
-        public static readonly ValueParameterKey<bool> ClampColor = ParameterKeys.NewValue<bool>(true);
-    }
-}
+// Nothing to generate

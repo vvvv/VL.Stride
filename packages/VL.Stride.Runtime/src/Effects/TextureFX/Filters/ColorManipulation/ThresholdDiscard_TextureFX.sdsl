@@ -1,0 +1,15 @@
+﻿[Category("Filter")]
+
+shader ThresholdDiscard_TextureFX : FilterBase
+{
+    compose ComputeFloat4 Discard;
+    compose ComputeFloat Threshold;
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 c = Texture1.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        return length(tex0col - Discard.Compute()) < Threshold.Compute() ? tex0col : c;
+    }
+};
+
+

@@ -1,0 +1,16 @@
+﻿[Summary("Inverts the input")]
+
+shader Vibrance_ShaderFX : ComputeFloat4, VibranceOperations
+{
+    compose ComputeFloat4 Color;
+
+    [Default(1.0, 1.0, 1.0)]
+    compose ComputeFloat3 VibranceRGB;
+
+    override float4 Compute()
+    {
+        return Vibrance(Color.Compute(), VibranceRGB.Compute());
+    }
+};
+
+

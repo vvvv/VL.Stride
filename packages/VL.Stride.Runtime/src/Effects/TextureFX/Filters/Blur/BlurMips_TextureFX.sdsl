@@ -1,0 +1,14 @@
+﻿[Category("Filter")]
+[Summary("Applies a blur effect")]
+[WantsMips("Texture0")]
+
+shader BlurMips_TextureFX : FilterBase, ShaderUtils
+{
+    [Default(0.25)]
+    compose ComputeFloat Strength; 
+
+    float4 Filter(float4 tex0col)
+    {
+        return Texture0.SampleLevel(LinearSampler, streams.TexCoord, Lod(ViewSize) * Strength.Compute());;
+    }
+};

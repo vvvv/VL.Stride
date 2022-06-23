@@ -1,0 +1,33 @@
+[Category("Filter")]
+[Summary("")]
+
+shader Garbage_TextureFX : FilterBase
+{
+    [Default(0.5)]
+    compose ComputeFloat Strength;
+
+    [Default(0.0)]
+    compose ComputeFloat Rotate;
+
+    [Default(1.0f)]
+    compose ComputeFloat Alpha;
+
+    float2 Scale;
+    float2 Offset;
+
+    override float2 r2d(float2 x,float a)
+    {
+        a *= acos(-1) * 2;
+        return float2(cos(a) * x.x + sin(a) * x.y, cos(a) * x.y - sin(a) * x.x);
+    }
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+        float4 c = tex0col;
+        float2 dx = r2d(uv - 0.5, Rotate.Compute()) * pow(2, Scale) + 0.5 + Offset;
+        float4 pre = Texture1.SampleLevel(LinearSampler, dx, 0);
+        c = float4(lerp(pre, c, lerp(1, c.a, Alpha.Compute())).rgb, pre.a + c.a);
+        return c;
+    }
+};

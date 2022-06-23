@@ -1,0 +1,29 @@
+[Summary("Generates the instance transformations")]
+
+shader Feedback_Internal_ComputeFX : ComputeShaderBase, ShaderUtils, TransformUtils, Global, Texturing
+{
+    int2 Reso = float2(512.0f, 512.0f); //mh?
+    bool Reset = true;
+    float Fade = 0.5f;
+
+    Texture2D TexCol;
+
+    [Color]
+    RWStructuredBuffer<float4> Out;
+
+    override void Compute()
+    {
+        uint3 DTid = streams.DispatchThreadId;
+
+        float2 uv = (float2(DTid.x % Reso.x, DTid.x / Reso.x) + 0.5) / Reso;
+        float4 c = Out[DTid.x];
+        float4 cc = TexCol.SampleLevel(LinearSampler, uv, 0);
+
+        Out[DTid.x] = lerp(lerp(cc, c, Fade), cc, cc.a);
+
+        if(Reset)
+        {
+            Out[DTid.x] = float4(cc.xyz, c.a);
+        }
+    }
+};

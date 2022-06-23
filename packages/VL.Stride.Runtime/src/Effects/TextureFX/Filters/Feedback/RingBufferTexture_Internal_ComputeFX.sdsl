@@ -1,0 +1,18 @@
+shader RingBufferTexture_Internal_ComputeFX : ComputeShaderBase, Texturing
+{
+    RWTexture2DArray<float4> RWArray;
+    int2 Reso;
+    int frameCount;
+    int frameCounter;
+
+    override void Compute()
+    {
+        uint2 uv = streams.DispatchThreadId.xy;
+        int currentFrame = fmod(frameCounter, frameCount);
+
+        if (any(uv >= Reso))
+            return;
+
+        RWArray[uint3(uv, currentFrame)] = Texture0.Load(int3(uv, 0));
+    }
+};

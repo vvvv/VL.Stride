@@ -1,0 +1,45 @@
+// source:
+// https://github.com/mrvux/dx11-vvvv-girlpower/blob/master/nodes/texture11/Filter/Dither.tfx
+
+[Category("Filter")]
+[Summary("Applies a dithering effect")]
+
+shader Charcoal_TextureFX : FilterBase
+{
+	[Default(1.0)]
+    compose ComputeFloat Strength;
+
+	[Color]
+    float4 BackgroundColor = float4(0.0, 0.0, 0.0, 1.0);
+
+    [Color]
+    float4 EdgeColor = float4(1.0, 1.0, 1.0, 1.0);
+
+    float4 Filter(float4 tex0col)
+    {
+	    float2 uv = streams.TexCoord;
+		float strength = Strength.Compute();
+
+	    float a = strength / ViewSize.x;
+	    float b = strength / ViewSize.y;
+
+	    float4 c1 = Texture0.SampleLevel(LinearSampler, uv, 0);
+	    float4 c2 = Texture0.SampleLevel(LinearSampler, uv + float2(a, 0), 0);
+	    float4 c3 = Texture0.SampleLevel(LinearSampler, uv + float2(0, b), 0);
+
+	    float f = 0;
+
+	    f += abs(c1.x-c2.x);
+	    f += abs(c1.y-c2.y);
+	    f += abs(c1.z-c2.z); 
+	    f += abs(c1.x-c3.x);
+	    f += abs(c1.y-c3.y);
+	    f += abs(c1.z-c3.z);
+	    f -= 0.2;  
+	    f = saturate(f);  
+
+	    c1.rgb = BackgroundColor.rgb * (1 - f) + EdgeColor.rgb * f;
+
+	    return c1;
+    }
+};

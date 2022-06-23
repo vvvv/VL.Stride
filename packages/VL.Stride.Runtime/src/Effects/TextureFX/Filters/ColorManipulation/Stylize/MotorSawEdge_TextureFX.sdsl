@@ -1,0 +1,43 @@
+[Category("Filter")]
+[Category("Filter")]
+[WantsMips("Texture0")]
+
+shader MotorSawEdge_TextureFX : FilterBase
+{
+    #define xoffset 0.866025
+    #define yoffset -0.5
+
+	[Default(1.0f)]
+    compose ComputeFloat PixelOffset;
+
+    [Default(1.0f)]
+    compose ComputeFloat Power;
+
+    int Booster = 256;
+
+    float4 Filter(float4 tex0col)
+    {
+        float2 uv = streams.TexCoord;
+        float pixeloffset = PixelOffset.Compute();
+        float power = Power.Compute();
+
+        float4 gray = float4(0.222, 0.707, 0.071, 1.0);
+
+        float2 OffsetXY;
+	    OffsetXY.x = xoffset * pixeloffset / ViewSize.x;
+	    OffsetXY.y = yoffset * pixeloffset / ViewSize.y;
+	
+	
+        float4 col = dot(gray, Texture0.SampleLevel(LinearSampler, float2(uv.x, uv.y),0)) * 3;
+
+        col -= dot(gray, Texture0.SampleLevel(LinearSampler, float2(uv.x, uv.y - pixeloffset / Booster), 0));
+        col -= dot(gray, Texture0.SampleLevel(LinearSampler, float2(uv.x + OffsetXY.x, uv.y + OffsetXY.y),0));
+        col -= dot(gray, Texture0.SampleLevel(LinearSampler, float2(uv.x - OffsetXY.x, uv.y + OffsetXY.y),0));
+
+        col = col * power;
+	    col = clamp(col,-100,100);
+	
+        col.a = 1;
+        return col;
+    }
+};

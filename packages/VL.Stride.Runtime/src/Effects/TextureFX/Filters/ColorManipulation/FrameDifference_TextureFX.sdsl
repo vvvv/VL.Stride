@@ -1,0 +1,20 @@
+﻿[Category("Filter")]
+[Summary("Output the difference between two texture")]
+
+shader FrameDifference_TextureFX : FilterBase
+{
+    [Default(1.0)]
+    compose ComputeFloat Boost;
+
+    bool Signed;
+    bool Alpha;
+    float4 Filter(float4 tex0col)
+    {
+        float4 pre = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
+        float4 cur = Texture1.SampleLevel(LinearSampler, streams.TexCoord, 0);
+	    float4 c = (pre-cur) * pow(2, Boost);
+	    if(!Signed)c = abs(c);
+	    if(!Alpha)c.a = cur.a;
+        return c;
+    }
+};

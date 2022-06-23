@@ -2,18 +2,22 @@
 [Summary("Offset the UV coordinates for sampling the 1st input by the 2nd inputs red & green channels")]
 [Tags("uv, offset, distort")]
 [DontConvertToLinearOnRead("Texture1")]
+
 shader Displace_TextureFX : FilterBase
 {
-    float2 Offset = float2(0.5f, 0.5f);
-    float2 OffsetScale = float2(0.1f, 0.1f);
+    [Default(0.5f, 0.5f)]
+	compose ComputeFloat2 Offset;
+
+    [Default(0.1f, 0.1f)]
+	compose ComputeFloat2 OffsetScale;
 
     float4 Filter(float4 tex0col)
     {
         float4 offset = InTex1();
-        float2 off = (offset.rg - Offset) * OffsetScale; 
+        float2 off = (offset.rg - Offset.Compute()) * OffsetScale.Compute(); 
 
         float2 uv = streams.TexCoord;
         
-        return Texture0.SampleLevel(Sampler0, uv + off.rg, 0);
+        return Texture0.SampleLevel(LinearRepeatSampler, uv + off.rg, 0);
     }
 };

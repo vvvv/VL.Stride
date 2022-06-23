@@ -6,23 +6,4 @@
 // and re-save the associated .sdfx.
 // </auto-generated>
 
-using System;
-using Stride.Core;
-using Stride.Rendering;
-using Stride.Graphics;
-using Stride.Shaders;
-using Stride.Core.Mathematics;
-using Buffer = Stride.Graphics.Buffer;
-
-namespace Stride.Rendering
-{
-    public static partial class Threshold_TextureFXKeys
-    {
-        public static readonly ValueParameterKey<Color4> OutputColorA = ParameterKeys.NewValue<Color4>(new Color4(0,0,0,1));
-        public static readonly ValueParameterKey<Color4> OutputColorB = ParameterKeys.NewValue<Color4>(new Color4(1,1,1,1));
-        public static readonly ValueParameterKey<float> Threshold = ParameterKeys.NewValue<float>(0.5f);
-        public static readonly ValueParameterKey<float> Smooth = ParameterKeys.NewValue<float>(0.02f);
-        public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
-        public static readonly ValueParameterKey<bool> Antialiasing = ParameterKeys.NewValue<bool>();
-    }
-}
+// Nothing to generate

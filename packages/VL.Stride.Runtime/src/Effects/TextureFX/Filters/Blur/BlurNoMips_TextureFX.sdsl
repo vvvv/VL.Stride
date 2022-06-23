@@ -1,0 +1,16 @@
+[Category("Filter")]
+[WantsMips("Texture0")]
+
+shader BlurNoMips_TextureFX : FilterBase, BlurUtils
+{
+	[Default(0.5f)]
+    compose ComputeFloat Width;
+
+    float4 Filter(float4 tex0col)
+    {
+		float lod = Width.Compute() * Lod(ViewSize);
+		float2 off = 1.0 / ViewSize * pow(2, lod);
+
+		return BlurPass(Texture0, LinearSampler, streams.TexCoord, off, 0);
+    }
+};
