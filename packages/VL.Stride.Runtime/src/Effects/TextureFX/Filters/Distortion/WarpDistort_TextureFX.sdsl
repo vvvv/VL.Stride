@@ -1,0 +1,47 @@
+﻿[Category("Filter")]
+[Summary("")]
+[Tags("uv, offset, distort")]
+[DontConvertToLinearOnRead("Texture1")]
+
+shader WarpDistort_TextureFX : FilterBase
+{
+	[Default(0.25)]
+	compose ComputeFloat Direction;
+
+	[Default(0.5)]
+	compose ComputeFloat Twirl;
+
+	[Default(0.5)]
+	compose ComputeFloat MapSmooth;
+
+	[Default(0.5)]
+	compose ComputeFloat Width;
+
+	int Iterations = 1;
+
+	float smp(float2 x, float lod = 0)
+	{
+		float4 c = Texture1.SampleLevel(LinearSampler, x, lod);
+		return max(c.r, max(c.g, c.b)) * c.a;
+	}
+
+    float4 Filter(float4 tex0col)
+    {
+		float mapSmooth = MapSmooth.Compute();
+		float twirl = Twirl.Compute();
+		float direction = Direction.Compute();
+		float width = Width.Compute();
+
+		float2 x = (streams.TexCoord);
+		float lod = saturate(mapSmooth) * log2(max(ViewSize.x, ViewSize.y));
+		float4 c = 0;
+		float2 off= 0.25 / ViewSize * pow(2, lod) * saturate(lod - 1) + 1.0 / ViewSize;
+
+		float4 map = Texture1.SampleLevel(LinearSampler, x, lod);// tex2Dlod(s1, float4(x,0,lod));
+		float ang = abs(map.x- 0.5) * twirl * 4;
+
+		float2 dir = sin((ang + direction + float2(0, 0.25)) * acos(-1) * 2);
+
+		return Texture0.SampleLevel(LinearSampler,  x + dir * ViewSize.x/ViewSize * 0.1 * width, 0);//
+    }
+};
