@@ -1,0 +1,60 @@
+// This is a reimplementation of this thing:
+// http://mainisusuallyafunction.blogspot.no/2011/10/quasicrystals-as-sums-of-waves-in-plane.html
+
+[TextureSource]
+[Category("Source")]
+[Summary("Returns a bubbly noise texture")]
+[DontConvertToSRgbOnWrite]
+
+shader QuasiCrystal_TextureFX : TextureFX, ShaderUtils
+{
+    compose ComputeFloat Time;
+
+    [Default(3.5f, 3.5f)]
+    compose ComputeFloat2 Scale;
+
+    [Default(5.0f)]
+    compose ComputeFloat N;
+
+	[Color]
+    float4 ColorA = float4(1.0, 1.0, 1.0, 1.0);
+
+	[Color]
+    float4 ColorB = float4(1.0, 0.0, 1.0, 1.0);
+
+    float post_process(float color) 
+    {
+	    float m = color % 2.0;
+	    if (m >= 1.0)
+		    color = 2.0 - m;
+	    else
+		    color = m;
+	    return color;
+    }
+
+    stage override float4 Shading()
+    {
+		float2 p = (streams.TexCoord.xy-0.5)* Scale.Compute()*100 ;
+
+		float4 rgba = float4(0.0, 0.0, 0.0, 0.0);
+
+		float n = N.Compute();
+
+		for (float i = 0.0; i < n; ++i) 
+		{
+			float a = i * (2.0 * Pi / n);
+			float t = cos((p.x * cos(a) + p.y * sin(a)) + Time.Compute() ) / 2.0;
+			rgba.r += t + i;
+			rgba.g += t + i;
+			rgba.b += t + i;
+			rgba.a += t + i;
+		}
+
+		rgba.r = post_process(rgba.r);
+		rgba.g = post_process(rgba.g);
+		rgba.b = post_process(rgba.b);
+		rgba.a = post_process(rgba.a);
+
+		return lerp(ColorA, ColorB, rgba);
+    }
+};
