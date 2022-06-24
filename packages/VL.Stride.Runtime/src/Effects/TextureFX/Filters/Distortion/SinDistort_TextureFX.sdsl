@@ -1,0 +1,51 @@
+﻿[Category("Filter")]
+[Summary("")]
+[Tags("uv, offset, distort")]
+[DontConvertToLinearOnRead("Texture1")]
+
+shader SinDistort_TextureFX : FilterBase
+{
+	[Default(0.25)]
+	compose ComputeFloat Shape;
+
+	[Default(0.5)]
+	compose ComputeFloat Frequency;
+
+	[Default(0.5, 0.5)]
+	compose ComputeFloat2 Phase;
+
+	[Default(0.5)]
+	compose ComputeFloat Amount;
+
+	int Iterations = 1;
+
+	float smp(float2 x, float lod = 0)
+	{
+		float4 c = Texture1.SampleLevel(LinearSampler, x, lod);
+		return max(c.r, max(c.g, c.b)) * c.a;
+	}
+
+    float4 Filter(float4 tex0col)
+    {
+		float lod = log2(max(ViewSize.x, ViewSize.y));
+		lod=0;
+		float4 c=0;
+		float2 asp=ViewSize/ViewSize.x;
+		float2 dx=(streams.TexCoord - 0.5)*asp;
+
+		float shape = Shape.Compute();
+		float frequency = Frequency.Compute();
+		float2 phase = Phase.Compute();
+		float amount = Amount.Compute();
+
+		for(int i=0; i < Iterations; i++)
+		{
+			float2 sz = pow(2, -shape * (i - Iterations * 0.5) + 3 + frequency);
+			dx+=sin(dx.yx * float2(1,-1)*sz + phase * pow(pow(2, shape),i)) * amount/sz;
+		}
+		float2 uv = dx/asp+.5;
+		c= Texture0.SampleLevel(LinearSampler, uv, 0);
+
+		return c;
+    }
+};

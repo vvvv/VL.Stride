@@ -16,9 +16,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class QuasiCrystal_TextureFXKeys
+    public static partial class SinDistort_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Color4> ColorA = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
-        public static readonly ValueParameterKey<Color4> ColorB = ParameterKeys.NewValue<Color4>(new Color4(1.0f,0.0f,1.0f,1.0f));
+        public static readonly ValueParameterKey<int> Iterations = ParameterKeys.NewValue<int>(1);
     }
 }
