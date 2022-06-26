@@ -41,7 +41,7 @@ namespace VL.Stride
             // Add the vvvv_stride\vvvv50 folder
             searchPaths.Add(VLPath);
 
-            TestEnvironment = new TestEnvironment(DependencyContext.Load(typeof(PatchTests).Assembly), searchPaths, new [] { "VL.Stride" });
+            TestEnvironment = new TestEnvironment(DependencyContext.Load(typeof(PatchTests).Assembly), searchPaths);
         }
 
         [OneTimeTearDown]
