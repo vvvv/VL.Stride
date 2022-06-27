@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -60,7 +61,7 @@ namespace VL.Stride.Rendering.Models
                 EndAngleDeg = ToAngle * 360,
                 InnerRadius = InnerRadius,
                 OuterRadius = OuterRadius,
-                Slices = Tessellation,
+                Slices = Math.Max(Tessellation, 2),
                 Clockwise = Clockwise
             };
 

@@ -3,6 +3,7 @@ using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -65,8 +66,8 @@ namespace VL.Stride.Rendering.Models
                 EndAngleDeg = (1 - FromAngle) * 360,
                 StartAngleDeg = (1 - ToAngle) * 360,
                 Height = Height,
-                Slices = closed ? Tessellation.X : Tessellation.X + 1,
-                Rings = Tessellation.Y,
+                Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
+                Rings = Math.Max(Tessellation.Y, 2),
                 LateralSlopeUVMode = LateralSlopeUVMode == LateralSlopeUVModes.TopProjected ? ConeGenerator.LateralSlopeUVModes.TopProjected : ConeGenerator.LateralSlopeUVModes.SideProjected,
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise

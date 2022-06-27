@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -33,7 +34,7 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new GridBox3Generator
             {
-                EdgeVertices = Tessellation,
+                EdgeVertices = Math.Max(Tessellation, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
             };

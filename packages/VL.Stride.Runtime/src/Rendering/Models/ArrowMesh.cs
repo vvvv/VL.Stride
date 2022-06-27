@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -68,7 +69,7 @@ namespace VL.Stride.Rendering.Models
                 StickLength = StickLength,
                 StickRadius = StickRadius,
                 TipRadius = TipRadius,
-                Slices = Tessellation,
+                Slices = Math.Max(Tessellation, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
         };
