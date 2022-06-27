@@ -67,7 +67,7 @@ namespace VL.Stride.Rendering.Models
                 StartAngleDeg = (1 - ToAngle) * 360,
                 Height = Height,
                 Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
-                Rings = Math.Max(Tessellation.Y, 2),
+                Rings = Math.Max(Tessellation.Y + 1, 2),
                 LateralSlopeUVMode = LateralSlopeUVMode == LateralSlopeUVModes.TopProjected ? ConeGenerator.LateralSlopeUVModes.TopProjected : ConeGenerator.LateralSlopeUVModes.SideProjected,
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
