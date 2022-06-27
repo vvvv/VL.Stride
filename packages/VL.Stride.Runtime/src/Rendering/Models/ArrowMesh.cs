@@ -62,7 +62,7 @@ namespace VL.Stride.Rendering.Models
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
 
-        var generator = new Radial3DArrowGenerator
+            var generator = new Radial3DArrowGenerator
             {
                 HeadBaseRadius = HeadRadius,
                 HeadLength = HeadLength,
@@ -72,7 +72,7 @@ namespace VL.Stride.Rendering.Models
                 Slices = Math.Max(Tessellation, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
-        };
+            };
 
             var meshGenerator = generator.Generate();
 
