@@ -1,7 +1,9 @@
 ﻿using g3;
 using Stride.Core;
+using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -37,25 +39,18 @@ namespace VL.Stride.Rendering.Models
         public float Height { get; set; } = 1;
 
         /// <summary>
-        /// Cone's tessellation (amount of radial slices to split the cone into). Higher values result in smoother surfaces
+        /// Cone's tessellation (amount of radial and of vertical slices to split the cone into). Higher values result in smoother surfaces
         /// </summary>
         [DataMember(14)]
-        public int Tessellation { get; set; } = 16;
+        public Int2 Tessellation { get; set; } = new Int2(16, 2);
 
-        /// <summary>
-        /// Cone's vertical tessellation (amount of vertical slices to split the cone into)
-        /// </summary>
         [DataMember(15)]
-        public int VTessellation { get; set; } = 2;
-
-        [DataMember(16)]
         public LateralSlopeUVModes LateralSlopeUVMode { get; set; } = LateralSlopeUVModes.SideProjected;
 
-
-        [DataMember(17)]
+        [DataMember(16)]
         public bool SharedVertices { get; set; } = false;
 
-        [DataMember(18)]
+        [DataMember(17)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -71,8 +66,8 @@ namespace VL.Stride.Rendering.Models
                 EndAngleDeg = (1 - FromAngle) * 360,
                 StartAngleDeg = (1 - ToAngle) * 360,
                 Height = Height,
-                Slices = closed ? Tessellation : Tessellation + 1,
-                Rings = VTessellation,
+                Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
+                Rings = Math.Max(Tessellation.Y + 1, 2),
                 LateralSlopeUVMode = LateralSlopeUVMode == LateralSlopeUVModes.TopProjected ? ConeGenerator.LateralSlopeUVModes.TopProjected : ConeGenerator.LateralSlopeUVModes.SideProjected,
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
@@ -80,7 +75,7 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeMesh2");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeMesh2", UvScale);
         }
     }
 

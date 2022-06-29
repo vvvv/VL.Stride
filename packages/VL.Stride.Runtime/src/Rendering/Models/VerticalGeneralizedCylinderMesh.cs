@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 using System.Collections.Generic;
 
 namespace VL.Stride.Rendering.Models
@@ -47,14 +48,14 @@ namespace VL.Stride.Rendering.Models
             {
                 Capped = Capped,
                 Sections = Utils.ToCircularSectionArray(Sections),
-                Slices = Tessellation,
+                Slices = Math.Max(Tessellation, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
             };
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "VerticalGeneralizedCylinderMesh");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "VerticalGeneralizedCylinderMesh", UvScale);
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -61,21 +62,21 @@ namespace VL.Stride.Rendering.Models
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
 
-        var generator = new Radial3DArrowGenerator
+            var generator = new Radial3DArrowGenerator
             {
                 HeadBaseRadius = HeadRadius,
                 HeadLength = HeadLength,
                 StickLength = StickLength,
                 StickRadius = StickRadius,
                 TipRadius = TipRadius,
-                Slices = Tessellation,
+                Slices = Math.Max(Tessellation, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
-        };
+            };
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ArrowMesh");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ArrowMesh", UvScale);
         }
     }
 }

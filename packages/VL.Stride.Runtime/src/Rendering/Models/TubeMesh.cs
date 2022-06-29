@@ -64,9 +64,9 @@ namespace VL.Stride.Rendering.Models
 
                 var meshGenerator = generator.Generate();
 
-                return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "TubeMesh");
+                return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "TubeMesh", UvScale);
             }
-            return new GeometricMeshData<VertexPositionNormalTexture>(new VertexPositionNormalTexture[0], new int[0],false) { Name = "TubeMesh" };
+            return new GeometricMeshData<VertexPositionNormalTexture>(new VertexPositionNormalTexture[0], new int[0], false) { Name = "TubeMesh" };
         }
     }
 }

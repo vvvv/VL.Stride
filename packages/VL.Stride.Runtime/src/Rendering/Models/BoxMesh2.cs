@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -16,11 +17,11 @@ namespace VL.Stride.Rendering.Models
         /// Box's tessellation (amount of vertices per edge)
         /// </summary>
         [DataMember(10)]
-        public int Tessellation { get; set; } = 2;        
+        public int Tessellation { get; set; } = 2;
 
         [DataMember(11)]
         public bool SharedVertices { get; set; } = false;
-        
+
         [DataMember(12)]
         public bool Clockwise { get; set; } = true;
 
@@ -33,14 +34,14 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new GridBox3Generator
             {
-                EdgeVertices = Tessellation,
+                EdgeVertices = Math.Max(Tessellation, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
             };
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxMesh2");
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxMesh2", UvScale);
         }
     }
 }
