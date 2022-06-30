@@ -47,10 +47,16 @@ namespace VL.Stride.Rendering.Models
         [DataMember(15)]
         public LateralSlopeUVModes LateralSlopeUVMode { get; set; } = LateralSlopeUVModes.SideProjected;
 
+        /// <summary>
+        /// Cone's vertical anchor position
+        /// </summary>
         [DataMember(16)]
-        public bool SharedVertices { get; set; } = false;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
 
         [DataMember(17)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(18)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -75,7 +81,7 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeMesh2", UvScale);
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 

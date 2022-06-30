@@ -19,10 +19,16 @@ namespace VL.Stride.Rendering.Models
         [DataMember(10)]
         public int Tessellation { get; set; } = 2;
 
+        /// <summary>
+        /// Box's vertical anchor position
+        /// </summary>
         [DataMember(11)]
-        public bool SharedVertices { get; set; } = false;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
 
         [DataMember(12)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(13)]
         public bool Clockwise { get; set; } = true;
 
 
@@ -41,7 +47,7 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxMesh2", UvScale);
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxMesh2", UvScale, Utils.CalculateYOffset(1f, Anchor) + 0.5f);//GridBox's vertical origin in g3 is offset 0.5 compared to other meshes
         }
     }
 }

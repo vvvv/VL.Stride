@@ -49,10 +49,16 @@ namespace VL.Stride.Rendering.Models
         [DataMember(15)]
         public int Tessellation { get; set; } = 16;
 
+        /// <summary>
+        /// Arrow's vertical anchor position
+        /// </summary>
         [DataMember(16)]
-        public bool SharedVertices { get; set; } = false;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
 
         [DataMember(17)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(18)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -76,7 +82,7 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ArrowMesh", UvScale);
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ArrowMesh", UvScale, Utils.CalculateYOffset(HeadLength + StickLength, Anchor));
         }
     }
 }

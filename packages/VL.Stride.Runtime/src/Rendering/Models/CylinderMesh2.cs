@@ -56,10 +56,16 @@ namespace VL.Stride.Rendering.Models
         [DataMember(16)]
         public Int2 Tessellation { get; set; } = new Int2(16, 2);
 
+        /// <summary>
+        /// Cylinder's vertical anchor position
+        /// </summary>
         [DataMember(17)]
-        public bool SharedVertices { get; set; } = false;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
 
         [DataMember(18)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(19)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -103,7 +109,7 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "CylinderMesh2", UvScale);
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "CylinderMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 }
