@@ -74,7 +74,7 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cylinder generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
-            bool closed = ((1 - FromAngle) - (1 - ToAngle)) > 0.99f;
+            bool closed = (1 - FromAngle) - (1 - ToAngle) == 1;
             MeshGenerator generator;
             if (Capped)
             {
