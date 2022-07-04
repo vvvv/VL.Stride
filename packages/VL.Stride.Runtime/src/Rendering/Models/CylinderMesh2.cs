@@ -62,8 +62,10 @@ namespace VL.Stride.Rendering.Models
         [DataMember(17)]
         public AnchorMode Anchor { get; set; } = AnchorMode.Center;
 
+        /* TODO: Implement UV/Normals properly and expose
         [DataMember(18)]
         public bool SharedVertices { get; set; } = false;
+        */
 
         [DataMember(19)]
         public bool Clockwise { get; set; } = false;
@@ -87,7 +89,7 @@ namespace VL.Stride.Rendering.Models
                     Height = Height,
                     Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                     Rings = Math.Max(Tessellation.Y + 1, 2),
-                    NoSharedVertices = !SharedVertices,
+                    NoSharedVertices = true,
                     Clockwise = Clockwise
                 };
             }
@@ -102,7 +104,7 @@ namespace VL.Stride.Rendering.Models
                     Height = Height,
                     Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                     Rings = Math.Max(Tessellation.Y + 1, 2),
-                    NoSharedVertices = !SharedVertices,
+                    NoSharedVertices = true,
                     Clockwise = Clockwise
                 };
             }
