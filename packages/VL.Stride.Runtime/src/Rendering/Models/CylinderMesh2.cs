@@ -56,10 +56,18 @@ namespace VL.Stride.Rendering.Models
         [DataMember(16)]
         public Int2 Tessellation { get; set; } = new Int2(16, 2);
 
+        /// <summary>
+        /// Cylinder's vertical anchor position
+        /// </summary>
         [DataMember(17)]
-        public bool SharedVertices { get; set; } = false;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
 
+        /* TODO: Implement UV/Normals properly and expose
         [DataMember(18)]
+        public bool SharedVertices { get; set; } = false;
+        */
+
+        [DataMember(19)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -68,7 +76,7 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cylinder generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
-            bool closed = ((1 - FromAngle) - (1 - ToAngle)) > 0.99f;
+            bool closed = (1 - FromAngle) - (1 - ToAngle) == 1;
             MeshGenerator generator;
             if (Capped)
             {
@@ -81,7 +89,7 @@ namespace VL.Stride.Rendering.Models
                     Height = Height,
                     Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                     Rings = Math.Max(Tessellation.Y + 1, 2),
-                    NoSharedVertices = !SharedVertices,
+                    NoSharedVertices = true,
                     Clockwise = Clockwise
                 };
             }
@@ -96,14 +104,14 @@ namespace VL.Stride.Rendering.Models
                     Height = Height,
                     Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                     Rings = Math.Max(Tessellation.Y + 1, 2),
-                    NoSharedVertices = !SharedVertices,
+                    NoSharedVertices = true,
                     Clockwise = Clockwise
                 };
             }
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "CylinderMesh2", UvScale);
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "CylinderMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 }

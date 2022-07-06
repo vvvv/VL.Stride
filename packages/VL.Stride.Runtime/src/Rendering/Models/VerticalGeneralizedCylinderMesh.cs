@@ -32,10 +32,16 @@ namespace VL.Stride.Rendering.Models
         [DataMember(12)]
         public int Tessellation { get; set; } = 16;
 
+        /// <summary>
+        /// Cylinder's vertical anchor position
+        /// </summary>
         [DataMember(13)]
-        public bool SharedVertices { get; set; } = false;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
 
         [DataMember(14)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(15)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -55,7 +61,22 @@ namespace VL.Stride.Rendering.Models
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "VerticalGeneralizedCylinderMesh", UvScale);
+            float minHeight = 0f;
+            float maxHeight = 0f;
+            foreach (var s in Sections)
+            {
+                if (s.SectionY > maxHeight)
+                {
+                    maxHeight = s.SectionY;
+                    continue;
+                }
+                if (s.SectionY < minHeight)
+                {
+                    minHeight = s.SectionY;
+                }
+            }
+
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "VerticalGeneralizedCylinderMesh", UvScale, Utils.CalculateYOffset(maxHeight - minHeight, Anchor));
         }
 
         /// <summary>

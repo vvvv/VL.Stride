@@ -47,10 +47,18 @@ namespace VL.Stride.Rendering.Models
         [DataMember(15)]
         public LateralSlopeUVModes LateralSlopeUVMode { get; set; } = LateralSlopeUVModes.SideProjected;
 
+        /// <summary>
+        /// Cone's vertical anchor position
+        /// </summary>
         [DataMember(16)]
-        public bool SharedVertices { get; set; } = false;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
 
+        /* TODO: Implement UV/Normals properly and expose
         [DataMember(17)]
+        public bool SharedVertices { get; set; } = false;
+        */
+
+        [DataMember(18)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -59,7 +67,7 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the Cone generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
-            bool closed = ((1 - FromAngle) - (1 - ToAngle)) > 0.99f;
+            bool closed = (1 - FromAngle) - (1 - ToAngle) == 1;
             var generator = new ConeGenerator
             {
                 BaseRadius = Radius,
@@ -69,13 +77,13 @@ namespace VL.Stride.Rendering.Models
                 Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                 Rings = Math.Max(Tessellation.Y + 1, 2),
                 LateralSlopeUVMode = LateralSlopeUVMode == LateralSlopeUVModes.TopProjected ? ConeGenerator.LateralSlopeUVModes.TopProjected : ConeGenerator.LateralSlopeUVModes.SideProjected,
-                NoSharedVertices = !SharedVertices,
+                NoSharedVertices = true,
                 Clockwise = Clockwise
             };
 
             var meshGenerator = generator.Generate();
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeMesh2", UvScale);
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 

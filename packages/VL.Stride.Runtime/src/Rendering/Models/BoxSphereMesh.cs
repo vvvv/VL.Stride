@@ -24,10 +24,16 @@ namespace VL.Stride.Rendering.Models
         [DataMember(11)]
         public int Tessellation { get; set; } = 8;
 
+        /// <summary>
+        /// Sphere's vertical anchor position
+        /// </summary>
         [DataMember(12)]
-        public bool SharedVertices { get; set; } = false;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
 
         [DataMember(13)]
+        public bool SharedVertices { get; set; } = false;
+
+        [DataMember(14)]
         public bool Clockwise { get; set; } = true;
 
         /// <summary>
@@ -45,8 +51,8 @@ namespace VL.Stride.Rendering.Models
             };
 
             var meshGenerator = generator.Generate();
-
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxSphereMesh", UvScale);
+            
+            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxSphereMesh", UvScale, Utils.CalculateYOffset(2* Radius, Anchor) + 0.5f); //Shpere's vertical origin in g3 is offset 0.5 compared to other meshes
         }
     }
 }

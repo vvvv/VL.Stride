@@ -17,12 +17,12 @@ namespace VL.Stride.Rendering.Models
         /// <param name="name">The model name</param>
         /// <param name="UVScale">UV scale factor as a Vector2</param>
         /// <returns>An equivalent Stride GeometricMeshData</returns>
-        public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(DMesh3 g3Mesh, string name, Vector2 UVScale)
+        public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(DMesh3 g3Mesh, string name, Vector2 UVScale, float yOffset = 0f)
         {
             if (g3Mesh is null)
                 return null;
 
-            return ToGeometricMeshData(new SimpleMesh(g3Mesh), name, UVScale);
+            return ToGeometricMeshData(new SimpleMesh(g3Mesh), name, UVScale, yOffset);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace VL.Stride.Rendering.Models
         /// <param name="name">The model name</param>
         /// <param name="UVScale">UV scale factor as a Vector2</param>
         /// <returns>An equivalent Stride GeometricMeshData</returns>
-        public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(SimpleMesh g3Mesh, string name, Vector2 UVScale)
+        public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(SimpleMesh g3Mesh, string name, Vector2 UVScale, float yOffset = 0f)
         {
             if (g3Mesh is null || g3Mesh.VertexCount == 0)
                 return null;
@@ -45,7 +45,7 @@ namespace VL.Stride.Rendering.Models
                 var vi = g3Mesh.GetVertexAll(i);
                 var normal = new Vector3(vi.n.x, vi.n.y, vi.n.z);
                 var uv = new Vector2(vi.uv.x, 1 - vi.uv.y) * UVScale;
-                vertices[i] = new VertexPositionNormalTexture(new Vector3((float)vi.v.x, (float)vi.v.y, (float)vi.v.z), normal, uv);
+                vertices[i] = new VertexPositionNormalTexture(new Vector3((float)vi.v.x, (float)vi.v.y + yOffset, (float)vi.v.z), normal, uv);
             }
 
             return new GeometricMeshData<VertexPositionNormalTexture>(vertices, g3Mesh.Triangles.ToArray(), isLeftHanded: true) { Name = name };
@@ -154,6 +154,22 @@ namespace VL.Stride.Rendering.Models
             if (section != null)
                 return new MeshGenerator.CircularSection(section.Radius, section.SectionY);
             return new MeshGenerator.CircularSection(0, 0);
+        }
+
+        public static float CalculateYOffset(float height, AnchorMode anchor)
+        {
+            switch (anchor)
+            {
+                case AnchorMode.Top:
+                    return -height;
+                case AnchorMode.Center:
+                    return (height / -2f);
+                    break;
+                case AnchorMode.Bottom:
+                default:
+                    return 0f;
+                    break;
+            }
         }
     }
 }
