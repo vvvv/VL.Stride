@@ -156,6 +156,12 @@ namespace VL.Stride.Rendering.Models
             return new MeshGenerator.CircularSection(0, 0);
         }
 
+        /// <summary>
+        /// Calculates the approriate Y offset for a mesh with the specified height and anchor mode
+        /// </summary>
+        /// <param name="height">Mesh height</param>
+        /// <param name="anchor">Anchor mode to be used</param>
+        /// <returns>The approriate Y offset for a mesh with the specified height and anchor mode</returns>
         public static float CalculateYOffset(float height, AnchorMode anchor)
         {
             switch (anchor)
@@ -164,11 +170,9 @@ namespace VL.Stride.Rendering.Models
                     return -height;
                 case AnchorMode.Center:
                     return (height / -2f);
-                    break;
                 case AnchorMode.Bottom:
                 default:
                     return 0f;
-                    break;
             }
         }
     }
