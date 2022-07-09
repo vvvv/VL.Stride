@@ -36,7 +36,7 @@ namespace VL.Stride.Rendering.Models
         /// RoundRect's configurable sharp corners. Use the Corner enum's OR operator to configure multiple sharp corners at once
         /// </summary>
         [DataMember(13)]
-        public Corner SharpCorners { get; set; } = Corner.None;
+        public SharpCorner SharpCorners { get; set; } = SharpCorner.None;
 
         [DataMember(14)]
         public bool Clockwise { get; set; } = false;
@@ -65,7 +65,7 @@ namespace VL.Stride.Rendering.Models
         /// <summary>
         /// Enum to address the individual corner of a RoundRectModel. Top-bottom and Left-right are inverted in respect to Stride (mesh is looking down) hence the order/value change
         /// </summary>
-        public enum Corner
+        public enum SharpCorner
         {
             None = 0,
             TopLeft = 1,
