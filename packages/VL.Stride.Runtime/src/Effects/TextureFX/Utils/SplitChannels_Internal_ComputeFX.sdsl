@@ -1,4 +1,4 @@
-﻿shader SplitChannels_Internal_ComputeFX : ComputeShaderBase
+﻿shader SplitChannels_Internal_ComputeFX : ComputeShaderBase, ShaderUtils
 {
 
     Texture2D Tex;
@@ -8,6 +8,9 @@
     RWTexture2D<float> Channel1;
     RWTexture2D<float> Channel2;
     RWTexture2D<float> Channel3;
+
+    [EnumType("VL.Stride.Effects.Common.ColorSpaceType")]
+    int ColorSpace;
 
     SamplerState TexSampler
     {
@@ -28,10 +31,27 @@
         float2 uv = (xy + 0.5) / InputSize;
         float4 col = Tex.SampleLevel(TexSampler, uv, 0);
 
+        switch ( ColorSpace )
+        {
+            //RGBA
+            case 0 : col = col; break;
+
+            //HSVA
+            case 1 : col = float4(RGBtoHSV(float3(col.r, col.g, col.b)), col.a); break;
+
+            //HSLA
+            case 2 : col = float4(RGBtoHSL(float3(col.r, col.g, col.b)), col.a); break;
+
+            //CMYK
+            case 3 : col = float4(RGBToCMYK(col.rgb)); break;
+
+            //CMYK
+            case 4 : col = float4(RGBtoOKLAB(col.rgb), col.a); break;
+        }
+
         Channel0[xy] = col.r;
         Channel1[xy] = col.g;
         Channel2[xy] = col.b;
         Channel3[xy] = col.a;
     }
-
 };    

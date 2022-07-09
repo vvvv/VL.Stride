@@ -24,6 +24,7 @@ namespace Stride.Rendering
         public static readonly ObjectParameterKey<Texture> Channel1 = ParameterKeys.NewObject<Texture>();
         public static readonly ObjectParameterKey<Texture> Channel2 = ParameterKeys.NewObject<Texture>();
         public static readonly ObjectParameterKey<Texture> Channel3 = ParameterKeys.NewObject<Texture>();
+        public static readonly ValueParameterKey<int> ColorSpace = ParameterKeys.NewValue<int>();
         public static readonly ObjectParameterKey<SamplerState> TexSampler = ParameterKeys.NewObject<SamplerState>();
     }
 }

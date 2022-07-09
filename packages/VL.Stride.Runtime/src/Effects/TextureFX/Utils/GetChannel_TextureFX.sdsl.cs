@@ -18,6 +18,6 @@ namespace Stride.Rendering
 {
     public static partial class GetChannel_TextureFXKeys
     {
-        public static readonly ValueParameterKey<uint> TextureChannel = ParameterKeys.NewValue<uint>();
+        public static readonly ValueParameterKey<int> TextureChannel = ParameterKeys.NewValue<int>();
     }
 }

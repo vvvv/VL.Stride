@@ -1,7 +1,7 @@
 ﻿[TextureSource]
 [Category("Utils")]
 [Tags("set r g b a")]
-shader JoinChannels_TextureFX : TextureFX
+shader JoinChannels_TextureFX : TextureFX, ShaderUtils
 {
     [Summary("The first channel, usually red")]
     [Default(1)]
@@ -19,13 +19,31 @@ shader JoinChannels_TextureFX : TextureFX
     [Default(1)]
     compose ComputeFloat Channel3;
 
+    [EnumType("VL.Stride.Effects.Common.ColorSpaceType")]
+    int ColorSpace;
+
     stage override float4 Shading()
     {
-        return float4(
-            Channel0.Compute(),
-            Channel1.Compute(),
-            Channel2.Compute(),
-            Channel3.Compute()
-        );
+        float4 c;
+
+        switch ( ColorSpace )
+        {
+            //RGBA
+            case 0 : c = float4(Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Channel3.Compute()); break;
+
+            //HSVA
+            case 1 : c = float4(HSVtoRGB(float3(Channel0.Compute(), Channel1.Compute(), Channel2.Compute())), Channel3.Compute()); break;
+
+            //HSLA
+            case 2 : c = float4(HSLtoRGB(float3(Channel0.Compute(), Channel1.Compute(), Channel2.Compute())), Channel3.Compute()); break;
+
+            //CMYK
+            case 3 : c = float4(CMYKToRGB(float4(Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Channel3.Compute())), 1.0); break;
+
+            //OKLAB
+            case 4 : c = float4(OKLABtoRGB(float3(Channel0.Compute(), Channel1.Compute(), Channel2.Compute())), Channel3.Compute()); break;
+        }
+
+        return c;// float4(Channel0.Compute(), Channel1.Compute(), Channel2.Compute(), Channel3.Compute());
     }
 };

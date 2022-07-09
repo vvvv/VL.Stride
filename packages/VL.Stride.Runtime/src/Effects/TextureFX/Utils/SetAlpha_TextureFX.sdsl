@@ -6,32 +6,54 @@ shader SetAlpha_TextureFX : TextureFX, ShaderUtils
     [Default(1, 1, 1, 1)]
     compose ComputeFloat4 AlphaMask;
 
-    [EnumType("VL.Stride.Effects.TextureFX.AlphaChannel")]
-    uint AlphaChannel = 1;
+    [EnumType("VL.Stride.Effects.Common.Channels")]
+    uint TextureChannel;
 
     [Default(1.0f)]
     compose ComputeFloat Opacity;
 
-    int Invert;
-    int KeepOriginal = true;
+    bool Invert;
+    bool KeepOriginal = true;
 
     stage override float4 Shading()
     {
+        //Red
+        //Green
+        //Blue
+        //Value
+        //Lightness
+        //Saturation
+        //Hue
+        //Cyan
+        //Magenta
+        //Yellow
+        //Black
+        //Alpha
+        //Long
+        //Medium
+        //Short
+
         float4 col = InTex0();
         float4 alphaMask = AlphaMask.Compute();
         float alpha;
 
-        switch(AlphaChannel)
+        switch(TextureChannel)
         {
-            case 0 : alpha = (alphaMask.r + alphaMask.g + alphaMask.b + alphaMask.a) / 4; break;
-            case 1 : alpha = alphaMask.r; break;
-            case 2 : alpha = alphaMask.g; break;
-            case 3 : alpha = alphaMask.b; break;
-            case 4 : alpha = alphaMask.a; break;
-            case 5 : alpha = RGBtoHSL(alphaMask.rgb).z; break;
-            case 6 : alpha = RGBtoHSV(alphaMask.rgb).y; break;
-            case 7 : alpha = RGBtoHSV(alphaMask.rgb).z; break;
-            case 8 : alpha = RGBtoHSV(alphaMask.rgb).x; break;
+            case 0 : alpha = alphaMask.r; break;
+            case 1 : alpha = alphaMask.g; break;
+            case 2 : alpha = alphaMask.b; break;
+            case 3 : alpha = RGBtoHSV(alphaMask.rgb).z; break;
+            case 4 : alpha = RGBtoHSL(alphaMask.rgb).z; break;
+            case 5 : alpha = RGBtoHSV(alphaMask.rgb).y; break;
+            case 6 : alpha = RGBtoHSV(alphaMask.rgb).x; break;
+            case 7 : alpha = RGBToCMYK(alphaMask.rgb).x; break;
+            case 8 : alpha = RGBToCMYK(alphaMask.rgb).y; break;
+            case 9 : alpha = RGBToCMYK(alphaMask.rgb).z; break;
+            case 10 : alpha = RGBToCMYK(alphaMask.rgb).w; break;
+            case 11 : alpha = alphaMask.a; break;
+            case 12 : alpha = RGBtoOKLAB(alphaMask.rgb).x; break;
+            case 13 : alpha = RGBtoOKLAB(alphaMask.rgb).y; break;
+            case 14 : alpha = RGBtoOKLAB(alphaMask.rgb).z; break;
         }
 
         if(Invert) alpha = 1.0 - alpha;

@@ -1,0 +1,32 @@
+﻿[TextureSource]
+[Category("Utils")]
+shader SpliterChannels_TextureFX : FilterBase, ShaderUtils
+{
+    [Default(1)]
+    compose ComputeFloat4 Channel0;
+
+    [EnumType("VL.Stride.Effects.Common.ColorSpaceType")]
+    int ColorSpace;
+
+    float4 Filter(float4 tex0col)
+    {
+        float4 c;
+
+        switch ( ColorSpace )
+        {
+            //RGBA
+            case 0 : c = tex0col; break;
+
+            //HSVA
+            case 1 : c = float4(RGBtoHSV(float3(tex0col.r, tex0col.g, tex0col.b)), tex0col.a); break;
+
+            //HSLA
+            case 2 : c = float4(RGBtoHSL(float3(tex0col.r, tex0col.g, tex0col.b)), tex0col.a); break;
+
+            //CMYK
+            case 3 : c = float4(RGBToCMYK(tex0col.rgb)); break;
+        }
+
+        return c;
+    }
+};

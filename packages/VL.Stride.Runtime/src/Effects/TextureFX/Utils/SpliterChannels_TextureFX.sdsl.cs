@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class JoinChannels_TextureFXKeys
+    public static partial class SpliterChannels_TextureFXKeys
     {
         public static readonly ValueParameterKey<int> ColorSpace = ParameterKeys.NewValue<int>();
     }

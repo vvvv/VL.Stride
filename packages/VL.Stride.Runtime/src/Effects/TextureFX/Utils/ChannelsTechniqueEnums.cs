@@ -1,14 +1,10 @@
 ﻿namespace VL.Stride.Effects.Common
 {
     /// <summary>
-    /// Operands of the Adjustement nodes.
+    /// Operands of the DisplaceColorSpace nodes.
     /// </summary>
-    public enum AdjustementWeight
+    public enum Channels
     {
-        Full,
-        Shadows,
-        Midtones,
-        Highlights,
         Red,
         Green,
         Blue,
@@ -23,6 +19,6 @@
         Alpha,
         Long,
         Medium,
-        Short
+        Short,
     };
 }

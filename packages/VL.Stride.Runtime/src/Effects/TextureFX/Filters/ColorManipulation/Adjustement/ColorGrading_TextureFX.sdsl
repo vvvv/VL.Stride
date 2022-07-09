@@ -38,6 +38,9 @@ shader ColorGrading_TextureFX : FilterBase, ColorGradingOperations
             case 13 : rs = RGBToCMYK(tex0col).z; break; // Yellow
             case 14 : rs = RGBToCMYK(tex0col).w; break; // Black
             case 15 : rs = tex0col.a; break; // Alpha
+            case 16 : rs = RGBtoOKLAB(tex0col.xyz).x; break; // Long (Oklab)
+            case 17 : rs = RGBtoOKLAB(tex0col.xyz).y; break; // Medium (Oklab)
+            case 18 : rs = RGBtoOKLAB(tex0col.xyz).z; break; // Short (Oklab)
         }
 
         float strength = Strength.Compute() * rs;

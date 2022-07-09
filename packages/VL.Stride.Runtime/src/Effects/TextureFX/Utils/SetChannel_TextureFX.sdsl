@@ -1,17 +1,33 @@
 ﻿[Category("Utils")]
 [Tags("replace r g b a")]
-shader SetChannel_TextureFX : FilterBase
+shader SetChannel_TextureFX : FilterBase, ShaderUtils
 {
     [Summary("The value to replace")]
     [Default(1)]
     compose ComputeFloat Channel;
 
     [Summary("The channel of the input texture to replace")]
-    [EnumType("VL.Stride.Effects.TextureFX.TextureChannel")]
+    [EnumType("VL.Stride.Effects.Common.Channels")]
     uint TextureChannel;
 
     float4 Filter(float4 tex0col)
     {
+        //Red
+        //Green
+        //Blue
+        //Value
+        //Lightness
+        //Saturation
+        //Hue
+        //Cyan
+        //Magenta
+        //Yellow
+        //Black
+        //Alpha
+        //Long
+        //Medium
+        //Short
+
         float channel = Channel.Compute();
 
         switch (TextureChannel)
@@ -19,9 +35,97 @@ shader SetChannel_TextureFX : FilterBase
             case 0 : tex0col.r = channel; break;
             case 1 : tex0col.g = channel; break;
             case 2 : tex0col.b = channel; break;
-            case 3 : tex0col.a = channel; break;
+            case 3 : tex0col = SetValue(tex0col, channel); break;
+            case 4 : tex0col = SetLightness(tex0col, channel); break;
+            case 5 : tex0col = SetSaturation(tex0col, channel); break;
+            case 6 : tex0col = SetHue(tex0col, channel); break;
+            case 7 : tex0col = SetCyan(tex0col, channel); break;
+            case 8 : tex0col = SetMagenta(tex0col, channel); break;
+            case 9 : tex0col = SetYellow(tex0col, channel); break;
+            case 10 : tex0col = SetBlack(tex0col, channel); break;
+            case 11 : tex0col.a = channel; break;
+            case 12 : tex0col = SetLong(tex0col, channel); break;
+            case 13 : tex0col = SetMedium(tex0col, channel); break;
+            case 14 : tex0col = SetShort(tex0col, channel); break;
         }
 
         return tex0col;
+    }
+
+    float4 SetValue(float4 c, float channel)
+    {
+        float3 hsv = RGBtoHSV(c.rgb);
+        hsv.z = channel;
+        return float4(HSVtoRGB(hsv), c.a);
+    }
+
+    float4 SetLightness(float4 c, float channel)
+    {
+        float3 hsl = RGBtoHSL(c.rgb);
+        hsl.z = channel;
+        return float4(HSLtoRGB(hsl), c.a);
+    }
+
+    float4 SetSaturation(float4 c, float channel)
+    {
+        float3 hsv = RGBtoHSV(c.rgb);
+        hsv.y = channel;
+        return float4(HSVtoRGB(hsv), c.a);
+    }
+
+    float4 SetHue(float4 c, float channel)
+    {
+        float3 hsv = RGBtoHSV(c.rgb);
+        hsv.x = channel;
+        return float4(HSVtoRGB(hsv), c.a);
+    }
+
+    float4 SetCyan(float4 c, float channel)
+    {
+        float4 cmyk = RGBToCMYK(c.rgb);
+        cmyk.x = channel;
+        return float4(CMYKToRGB(cmyk), c.a);
+    }
+
+    float4 SetMagenta(float4 c, float channel)
+    {
+        float4 cmyk = RGBToCMYK(c.rgb);
+        cmyk.y = channel;
+        return float4(CMYKToRGB(cmyk), c.a);
+    }
+
+    float4 SetYellow(float4 c, float channel)
+    {
+        float4 cmyk = RGBToCMYK(c.rgb);
+        cmyk.z = channel;
+        return float4(CMYKToRGB(cmyk), c.a);
+    }
+    
+    float4 SetBlack(float4 c, float channel)
+    {
+        float4 cmyk = RGBToCMYK(c.rgb);
+        cmyk.w = channel;
+        return float4(CMYKToRGB(cmyk), c.a);
+    }
+
+    float4 SetLong(float4 c, float channel)
+    {
+        float3 oklab = RGBtoOKLAB(c.rgb);
+        oklab.x = channel;
+        return float4(OKLABtoRGB(oklab), c.a);
+    }
+
+    float4 SetMedium(float4 c, float channel)
+    {
+        float3 oklab = RGBtoOKLAB(c.rgb);
+        oklab.y = channel;
+        return float4(OKLABtoRGB(oklab), c.a);
+    }
+
+    float4 SetShort(float4 c, float channel)
+    {
+        float3 oklab = RGBtoOKLAB(c.rgb);
+        oklab.z = channel;
+        return float4(OKLABtoRGB(oklab), c.a);
     }
 };

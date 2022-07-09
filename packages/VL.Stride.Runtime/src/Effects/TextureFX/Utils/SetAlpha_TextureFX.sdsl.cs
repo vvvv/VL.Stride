@@ -18,7 +18,8 @@ namespace Stride.Rendering
 {
     public static partial class SetAlpha_TextureFXKeys
     {
-        public static readonly ValueParameterKey<uint> AlphaChannel = ParameterKeys.NewValue<uint>(1);
-        public static readonly ValueParameterKey<float> Opacity = ParameterKeys.NewValue<float>(1);
+        public static readonly ValueParameterKey<uint> TextureChannel = ParameterKeys.NewValue<uint>();
+        public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>();
+        public static readonly ValueParameterKey<bool> KeepOriginal = ParameterKeys.NewValue<bool>(true);
     }
 }

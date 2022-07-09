@@ -1,14 +1,52 @@
 ﻿[Category("Utils")]
 [Tags("r g b a")]
 [OutputFormat("R32_Float")]
-shader GetChannel_TextureFX : FilterBase
+
+shader GetChannel_TextureFX : FilterBase, ShaderUtils
 {
     [Summary("The channel to retreive from the input texture")]
-    [EnumType("VL.Stride.Effects.TextureFX.TextureChannel")]
-    uint TextureChannel;
+    [EnumType("VL.Stride.Effects.Common.Channels")]
+    int TextureChannel;
 
     float4 Filter(float4 tex0col)
     {
-        return tex0col[TextureChannel];
+        //Red
+        //Green
+        //Blue
+        //Value
+        //Lightness
+        //Saturation
+        //Hue
+        //Cyan
+        //Magenta
+        //Yellow
+        //Black
+        //Alpha
+        //Long
+        //Medium
+        //Short
+
+        float c;
+
+        switch ( TextureChannel )
+        {
+            case 0 : c = tex0col.r; break;
+            case 1 : c = tex0col.g; break;
+            case 2 : c = tex0col.b; break;
+            case 3 : c = RGBtoHSV(tex0col.xyz).z; break;
+            case 4 : c = RGBtoHSL(tex0col.xyz).z; break;
+            case 5 : c = RGBtoHSV(tex0col.xyz).y; break;
+            case 6 : c = RGBtoHSV(tex0col.xyz).x; break;
+            case 7 : c = RGBToCMYK(tex0col.xyz).x; break;
+            case 8 : c = RGBToCMYK(tex0col.xyz).y; break;
+            case 9 : c = RGBToCMYK(tex0col.xyz).z; break;
+            case 10 : c = RGBToCMYK(tex0col.xyz).w; break;
+            case 11 : c = tex0col.a; break;
+            case 12 : c = RGBtoOKLAB(tex0col.xyz).x; break;
+            case 13 : c = RGBtoOKLAB(tex0col.xyz).y; break;
+            case 14 : c = RGBtoOKLAB(tex0col.xyz).z; break;
+        }
+
+        return c;
     }
 };

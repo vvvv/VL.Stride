@@ -1,0 +1,28 @@
+﻿[Category("Utils")]
+[Tags("r g b a")]
+
+shader SplitChannels_Internal_ShaderFX : ComputeFloat4, ShaderUtils
+{
+    [EnumType("VL.Stride.Effects.Common.ColorSpaceType")]
+    int ColorSpace;
+
+    [Default(1.0, 1.0, 1.0, 1.0)]
+    compose ComputeFloat4 Color;
+
+    override float4 Compute()
+    {
+        float4 color = Color.Compute();
+        float4 c;
+
+        switch ( ColorSpace )
+        {
+            case 0 : c = color; break;
+            case 1 : c = float4(RGBtoHSV(color.rgb), color.a); break;
+            case 2 : c = float4(RGBtoHSL(color.rgb), color.a); break;
+            case 3 : c = RGBToCMYK(color.rgb); break;
+            case 4 : c = float4(RGBtoOKLAB(color.rgb), color.a); break;
+        }
+
+        return c;
+    }
+};

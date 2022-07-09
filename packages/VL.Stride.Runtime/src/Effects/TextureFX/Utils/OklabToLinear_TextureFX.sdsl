@@ -1,0 +1,12 @@
+[Category("Utils")]
+[Summary("Converts a texture from Oklab to Linear color space")]
+[Tags("convert")]
+[OutputFormat("R16G16B16A16_Float")]
+
+shader OklabToLinear_TextureFX : TextureFX
+{
+    stage override float4 Shading()
+    {
+        return ColorUtilityTemp.OklabToLinear(InTex0());
+    }
+};

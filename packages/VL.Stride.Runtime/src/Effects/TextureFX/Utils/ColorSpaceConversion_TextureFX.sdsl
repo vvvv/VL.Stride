@@ -1,0 +1,57 @@
+[Category("Utils.Advanced")]
+[Summary("Converts a texture from one color space to another")]
+[Tags("convert")]
+[OutputFormat("R16G16B16A16_Float")]
+
+shader ColorSpaceConversion_TextureFX : TextureFX
+{
+    [EnumType("VL.Stride.Effects.Common.ColorSpaceConversion")]
+    int Conversion;
+
+    stage override float4 Shading()
+    {
+        //SRgbToLinear,
+        //SRgbToOklab,
+        //SRgbToGamma,
+
+        //GammaToLinear
+        //GammaToSRgb
+        //GammaToOklab
+
+        //LinearToSRgb,
+        //LinearToGamma,
+        //LinearToOklab,
+
+        //OklabToLinear,
+        //OklabToSRGB,
+        //OklabToGamma,
+
+        float4 c;
+
+        switch (Conversion)
+        {
+            //LINEAR
+            case 0 : c = ColorUtilityTemp.SRgbToLinearPrecise(InTex0()); break;
+            case 1 : c = ColorUtilityTemp.LinearToOklab(ColorUtilityTemp.SRgbToLinearPrecise(InTex0())); break;
+            case 2 : c = ColorUtilityTemp.LinearToGamma(ColorUtilityTemp.SRgbToLinearPrecise(InTex0()), 2.2f); break;
+
+            //GAMMA
+            case 3 : c = ColorUtilityTemp.GammaToLinear(InTex0(), 2.2); break;
+            case 4 : c = ColorUtilityTemp.LinearToSRgbPrecise(ColorUtilityTemp.GammaToLinear(InTex0(), 2.2)); break;
+            case 5 : c = ColorUtilityTemp.LinearToOklab(ColorUtilityTemp.GammaToLinear(InTex0(), 2.2)); break;
+
+            //LINEAR
+            case 6 : c = ColorUtilityTemp.LinearToSRgbPrecise(InTex0()); break;
+            case 7 : c = ColorUtilityTemp.LinearToGamma(InTex0(), 2.2f); break;
+            case 8 : c = ColorUtilityTemp.LinearToOklab(InTex0()); break;
+
+            //OKLAB
+            case 9 : c = ColorUtilityTemp.OklabToLinear(InTex0()); break;
+            case 10 : c = ColorUtilityTemp.LinearToSRgbPrecise(ColorUtilityTemp.OklabToLinear(InTex0())); break;
+            case 11 : c = ColorUtilityTemp.LinearToGamma(ColorUtilityTemp.OklabToLinear(InTex0()), 2.2f); break;
+
+        }
+
+        return c;
+    }
+};
