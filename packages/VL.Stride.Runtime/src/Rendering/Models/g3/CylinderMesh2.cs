@@ -90,7 +90,8 @@ namespace VL.Stride.Rendering.Models
                     Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                     Rings = Math.Max(Tessellation.Y + 1, 2),
                     NoSharedVertices = true,
-                    Clockwise = Clockwise
+                    Clockwise = Clockwise,
+                    AddSliceWhenOpen = true
                 };
             }
             else
@@ -105,7 +106,8 @@ namespace VL.Stride.Rendering.Models
                     Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                     Rings = Math.Max(Tessellation.Y + 1, 2),
                     NoSharedVertices = true,
-                    Clockwise = Clockwise
+                    Clockwise = Clockwise,
+                    AddSliceWhenOpen = true
                 };
             }
 
