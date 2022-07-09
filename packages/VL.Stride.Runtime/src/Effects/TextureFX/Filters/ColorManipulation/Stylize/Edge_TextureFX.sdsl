@@ -30,7 +30,7 @@ shader Edge_TextureFX : FilterBase
         float4 cy = q(uv, e.yy ,v) + q(uv, e.zy, v) + q(uv, e.xy, v) - q(uv, e.yx, v) - q(uv, e.zx, v) - q(uv, e.xx, v);
         
         float4 col = sqrt(cx*cx+cy*cy) * Brightness.Compute() * pow(2, rad* ts) / sqrt(saturate(rad) + .001);
-        col.a = Texture0.SampleLevel(LinearSampler, uv, 0).a;
+        col.a = tex0col.a;
 
         return col;
     }

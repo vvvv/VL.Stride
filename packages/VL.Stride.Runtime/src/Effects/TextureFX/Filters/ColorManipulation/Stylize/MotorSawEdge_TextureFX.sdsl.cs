@@ -6,18 +6,4 @@
 // and re-save the associated .sdfx.
 // </auto-generated>
 
-using System;
-using Stride.Core;
-using Stride.Rendering;
-using Stride.Graphics;
-using Stride.Shaders;
-using Stride.Core.Mathematics;
-using Buffer = Stride.Graphics.Buffer;
-
-namespace Stride.Rendering
-{
-    public static partial class MotorSawEdge_TextureFXKeys
-    {
-        public static readonly ValueParameterKey<int> Booster = ParameterKeys.NewValue<int>(256);
-    }
-}
+// Nothing to generate

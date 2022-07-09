@@ -19,7 +19,6 @@ namespace Stride.Rendering
     public static partial class CrossStitch_TextureFXKeys
     {
         public static readonly ValueParameterKey<Color4> Color = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,1.0f));
-        public static readonly ValueParameterKey<float> StitchSize = ParameterKeys.NewValue<float>(10.0f);
         public static readonly ValueParameterKey<bool> Invert = ParameterKeys.NewValue<bool>(false);
     }
 }
