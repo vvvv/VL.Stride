@@ -124,39 +124,6 @@ namespace VL.Stride.Rendering.Models
         }
 
         /// <summary>
-        /// Converts an IReadOnlyList of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection to an array of g3.VerticalGeneralizedCylinderGenerator.CircularSection
-        /// </summary>
-        /// <param name="sections">An IReadOnlyList of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection</param>
-        /// <returns>An equivalent array of g3.VerticalGeneralizedCylinderGenerator.CircularSection</returns>
-        public static MeshGenerator.CircularSection[] ToCircularSectionArray(IReadOnlyList<VerticalGeneralizedCylinderMesh.CircularSection> sections)
-        {
-            if (sections != null && sections.Count > 0)
-            {
-                var result = new MeshGenerator.CircularSection[sections.Count];
-
-                for (int i = 0; i < sections.Count; i++)
-                {
-                    result[i] = ToCircularSection(sections[i]);
-                }
-
-                return result;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Converts a VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection to a g3.VerticalGeneralizedCylinderGenerator.CircularSection
-        /// </summary>
-        /// <param name="section">An instance of an IReadOnlyList of VL.Stride.Rendering.Models.VerticalGeneralizedCylinderModel.CircularSection</param>
-        /// <returns>An equivalent instance of g3.VerticalGeneralizedCylinderGenerator.CircularSection</returns>
-        public static MeshGenerator.CircularSection ToCircularSection(VerticalGeneralizedCylinderMesh.CircularSection section)
-        {
-            if (section != null)
-                return new MeshGenerator.CircularSection(section.Radius, section.SectionY);
-            return new MeshGenerator.CircularSection(0, 0);
-        }
-
-        /// <summary>
         /// Calculates the approriate Y offset for a mesh with the specified height and anchor mode
         /// </summary>
         /// <param name="height">Mesh height</param>
