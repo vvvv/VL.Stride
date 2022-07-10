@@ -55,10 +55,40 @@ shader Edge_TextureFX : FilterBase, ShaderUtils
         return sqrt(cx * cx + cy * cy);
     }
 
+    float4 Charcoal(float v, float2 uv)
+    {
+	    //float2 uv = streams.TexCoord;
+		float strength = 1.0;// Strength.Compute();
+
+	    float a = strength / ViewSize.x;
+	    float b = strength / ViewSize.y;
+
+        float4 col = Texture0.SampleLevel(LinearSampler, uv, v);
+	    float4 c1 = col;
+	    float4 c2 = Texture0.SampleLevel(LinearSampler, uv + float2(a, 0), v);
+	    float4 c3 = Texture0.SampleLevel(LinearSampler, uv + float2(0, b), v);
+
+	    float f = 0;
+
+	    f += abs(c1.x - c2.x);
+	    f += abs(c1.y - c2.y);
+	    f += abs(c1.z - c2.z); 
+	    f += abs(c1.x - c3.x);
+	    f += abs(c1.y - c3.y);
+	    f += abs(c1.z - c3.z);
+	    f -= 0.1;  
+	    f = saturate(f);
+
+	    c1.rgb = (1 - f) * f;// BackgroundColor.rgb * (1 - f) + EdgeColor.rgb * f;
+
+	    return c1 * col * 10;
+    }
+
+
     float4 Filter(float4 tex0col)
     {
         float rad = max(Radius.Compute(), 0) + 0.01;
-        float v = log2(rad);
+        float v = Lod(ViewSize) * Radius.Compute();//log2(rad);
         float ts = max(Texture0TexelSize.x, Texture0TexelSize.y);
         float3 e = float3(1, -1, 0) * rad * ts;
 
@@ -69,6 +99,7 @@ shader Edge_TextureFX : FilterBase, ShaderUtils
             case 0 : col = SobelEdge(v, streams.TexCoord, e); break;
             case 1 : col = MotorSawEdge(v, streams.TexCoord, e); break;
             case 2 : col = AieKickEdge(v, streams.TexCoord); break;
+            case 3 : col = Charcoal(v, streams.TexCoord); break;
         }
 
         col *= (Brightness.Compute() + 1.0) * pow(2, rad* ts) / sqrt(saturate(rad) + .001);

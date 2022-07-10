@@ -5,8 +5,7 @@
 [Summary("Applies a dithering effect")]
 shader Dither_TextureFX : FilterBase
 {
-    //float Threshhold = 6.5f;
-    compose ComputeFloat Threshhold;
+    compose ComputeFloat Threshold;
 
     //BAYER
     float FindClosest (int x, int y, float c0)
@@ -20,29 +19,29 @@ shader Dither_TextureFX : FilterBase
         );
     
         float limit = 0.0;
-        float a = Threshhold.Compute() * 10;
+        float a = Threshold.Compute() * 10;
 
         if(x < 4)
         {
             if(y >= 4)
             {
-                limit = (dither[x][y-4] + 3.0)/a;
+                limit = (dither[x][y-4] + 3.0) / a;
             }
             else
             {
-                limit = (dither[x][y])/a;
+                limit = (dither[x][y]) / a;
             }
         }   
     
-        if(x>=4)
+        if(x >= 4)
         {
             if(y>=4)
             {
-                limit = (dither[x-4][y-4] + 0.0)/a;
+                limit = (dither[x-4][y-4] + 0.0) / a;
             }
             else
             {
-                limit = (dither[x-4][y] + 0.0)/a;
+                limit = (dither[x-4][y] + 0.0) / a;
             }
         }
     
@@ -56,27 +55,71 @@ shader Dither_TextureFX : FilterBase
         }
     }   
 
+    float4 Bayer(float4 col, float2 ditherXY)
+    {
+        float2 uv = streams.TexCoord;
+
+        int x = int((uv.x * ViewSize.x) % ditherXY.x);
+        int y = int((uv.y * ViewSize.y) % ditherXY.y);
+    
+        float4 finalCol;
+
+        finalCol.r = FindClosest(x, y, col.r);
+        finalCol.g = FindClosest(x, y, col.g);
+        finalCol.b = FindClosest(x, y, col.b);
+        finalCol.a = col.a; 
+
+        return finalCol;
+    }
+
+
+    static const int4x4 psx_dither_table = float4x4
+    (
+	    0,  8,  2, 10,
+	    12, 4, 14,  6,
+	    3, 11,  1,  9,
+	    15, 7, 13,  5
+    );
+
+
+    //https://github.com/Matsilagi/RSJankShaders/blob/main/Shaders/ditherps1_new.fx
+    float3 DitherCrunch(float3 col, int2 p)
+    {
+	    col *= 255.0; //extrapolate 16bit color float to 16bit integer space
+
+		int dither = psx_dither_table[p.x % 4][p.y % 4] ;
+		col += (dither / 2.0 - 4.0)/ Threshold.Compute() * 10; //dithering process as described in PSYDEV SDK documentation
+
+	    col = lerp((uint3(col) & 0xf8), 0xf8, step(0xf8,col));
+	    //truncate to 5bpc precision via bitwise AND operator, and limit value max to prevent wrapping.
+	    //PS1 colors in default color mode have a maximum integer value of 248 (0xf8)
+	    col /= 255; //bring color back to floating point number space
+	    return col;
+    }
 
     compose ComputeFloat2 DitherXY;
 
+    [EnumType("VL.Stride.Effects.Common.Dither")]
+    uint Type;
+
     float4 Filter(float4 tex0col)
     {
+        float2 ditherXY = DitherXY.Compute();
 
-        float2 uv = streams.TexCoord;
-        float2 R = ViewSize;
-        
-        float2 ditherxy = DitherXY.Compute();
-        int x = int((uv.x * R.x)%ditherxy.x);
-        int y = int((uv.y * R.y)%ditherxy.y);
-    
-        float4 finalCol;
-    
-        
-        finalCol.r = FindClosest(x, y, tex0col.r);
-        finalCol.g = FindClosest(x, y, tex0col.g);
-        finalCol.b = FindClosest(x, y, tex0col.b);
-        finalCol.a = tex0col.a; 
+        float3 col;
 
-        return finalCol;
+        float2 SizeXY;
+        Texture0.GetDimensions(SizeXY.x, SizeXY.y);
+        int2 scp = int2(streams.TexCoord * SizeXY * ditherXY);
+
+        float threshold = Threshold.Compute();
+
+        switch (Type)
+        {
+            case 0 : col = Bayer(tex0col, ditherXY).xyz; break;
+            case 1 : col = DitherCrunch(tex0col.xyz, scp); break;
+        }
+
+        return float4(col, tex0col.a);
     }
 };

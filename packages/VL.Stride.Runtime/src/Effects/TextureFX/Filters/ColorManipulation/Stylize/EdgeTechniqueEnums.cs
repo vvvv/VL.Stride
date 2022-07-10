@@ -8,5 +8,6 @@
         Sobel,
         MotorSaw,
         Aiekick,
+        Charcoal,
     };
 }
