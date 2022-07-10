@@ -18,7 +18,7 @@ namespace Stride.Rendering
 {
     public static partial class Charcoal_TextureFXKeys
     {
-        public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0,0.0,0.0,1.0));
-        public static readonly ValueParameterKey<Color4> EdgeColor = ParameterKeys.NewValue<Color4>(new Color4(1.0,1.0,1.0,1.0));
+        public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,1.0f));
+        public static readonly ValueParameterKey<Color4> EdgeColor = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
     }
 }

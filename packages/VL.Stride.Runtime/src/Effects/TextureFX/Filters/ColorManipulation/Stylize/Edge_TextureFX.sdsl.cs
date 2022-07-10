@@ -6,4 +6,21 @@
 // and re-save the associated .sdfx.
 // </auto-generated>
 
-// Nothing to generate
+using System;
+using Stride.Core;
+using Stride.Rendering;
+using Stride.Graphics;
+using Stride.Shaders;
+using Stride.Core.Mathematics;
+using Buffer = Stride.Graphics.Buffer;
+
+namespace Stride.Rendering
+{
+    public static partial class Edge_TextureFXKeys
+    {
+        public static readonly ValueParameterKey<Color4> EdgeColor = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
+        public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,1.0f));
+        public static readonly ValueParameterKey<uint> Type = ParameterKeys.NewValue<uint>();
+        public static readonly ValueParameterKey<bool> Desaturate = ParameterKeys.NewValue<bool>();
+    }
+}

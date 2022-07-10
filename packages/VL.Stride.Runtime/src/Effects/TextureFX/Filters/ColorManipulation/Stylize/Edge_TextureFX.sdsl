@@ -4,34 +4,81 @@
 [Category("Filter")]
 [Summary("Applies edge detection")]
 [WantsMips("Texture0")]
-shader Edge_TextureFX : FilterBase
+
+shader Edge_TextureFX : FilterBase, ShaderUtils
 {
     [Default(1.0f)]
     compose ComputeFloat Brightness;
 
     [Default(1.0f)]
+    compose ComputeFloat Contrast;
+
+    [Default(1.0f)]
     compose ComputeFloat Radius;
+
+    [Color]
+    float4 EdgeColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    [Color]
+    float4 BackgroundColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
+    [EnumType("VL.Stride.Effects.Common.Edge")]
+    uint Type;
+
+    bool Desaturate;
 
     float4 q(float2 uv, float2 off, float v)
     {
         return Texture0.SampleLevel(Sampler0, uv + off, v);
     }
 
-    float4 Filter(float4 tex0col)
+    //by aiekick https://www.shadertoy.com/view/MdGGRt
+    float4 AieKickEdge(float v, float2 uv)
     {
-        float2 uv = streams.TexCoord;
-        
-        float rad = max(Radius.Compute(), 0);
-        float ts = max(Texture0TexelSize.x, Texture0TexelSize.y);
-        float3 e = float3(1, -1, 0) * rad * ts;
-        float v = log2(rad);
+        float4 col = Texture0.SampleLevel(LinearSampler, uv, v);
+	    return col * length(fwidth(col)) * 5;
+    }
 
+    float4 MotorSawEdge(float v, float2 uv, float3 e)
+    {
         float4 cx = q(uv, e.xy, v) + q(uv, e.xz, v) + q(uv, e.xx, v) - q(uv, e.yy, v) - q(uv, e.yz ,v) - q(uv, e.yx, v);
         float4 cy = q(uv, e.yy ,v) + q(uv, e.zy, v) + q(uv, e.xy, v) - q(uv, e.yx, v) - q(uv, e.zx, v) - q(uv, e.xx, v);
-        
-        float4 col = sqrt(cx*cx+cy*cy) * Brightness.Compute() * pow(2, rad* ts) / sqrt(saturate(rad) + .001);
+
+        return (q(uv, float2(0, 0), v) * 5 - q(uv, float2(0.001, 0.001), v) - q(uv, e.xz, v) - q(uv, e.xx, v) - q(uv, e.yy, v) - q(uv, e.yz ,v)) * 3;
+    }
+
+    float4 SobelEdge(float v, float2 uv, float3 e)
+    {
+        float4 cx = q(uv, e.xy, v) + q(uv, e.xz, v) + q(uv, e.xx, v) - q(uv, e.yy, v) - q(uv, e.yz ,v) - q(uv, e.yx, v);
+        float4 cy = q(uv, e.yy ,v) + q(uv, e.zy, v) + q(uv, e.xy, v) - q(uv, e.yx, v) - q(uv, e.zx, v) - q(uv, e.xx, v);
+
+        return sqrt(cx * cx + cy * cy);
+    }
+
+    float4 Filter(float4 tex0col)
+    {
+        float rad = max(Radius.Compute(), 0) + 0.01;
+        float v = log2(rad);
+        float ts = max(Texture0TexelSize.x, Texture0TexelSize.y);
+        float3 e = float3(1, -1, 0) * rad * ts;
+
+        float4 col = float4(0.0, 0.0, 0.0, 0.0);
+
+        switch (Type)
+        {
+            case 0 : col = SobelEdge(v, streams.TexCoord, e); break;
+            case 1 : col = MotorSawEdge(v, streams.TexCoord, e); break;
+            case 2 : col = AieKickEdge(v, streams.TexCoord); break;
+        }
+
+        col *= (Brightness.Compute() + 1.0) * pow(2, rad* ts) / sqrt(saturate(rad) + .001);
+        col = (col - 0.5) * (Contrast.Compute() + 1.0) + 0.5;
+
+        float luma = GetLuminance(col);
         col.a = tex0col.a;
 
-        return col;
+        if(Desaturate) col.rgb = float3(luma, luma, luma);
+
+        return lerp(BackgroundColor, EdgeColor, col);
     }
 };

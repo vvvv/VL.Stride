@@ -14,16 +14,15 @@ shader Sharpen_TextureFX : FilterBase
     float4 Filter(float4 tex0col)
     {
         float2 uv = streams.TexCoord;
-        float2 R = ViewSize;
 
         float4 col = Texture0.SampleLevel(Sampler0, uv, 0);
     
-        float maxl = log2(max(R.x, R.y)) + 0.5;
+        float maxl = log2(max(ViewSize.x, ViewSize.y));// + 0.5;
         float4 sh = 0;
    
         sh.rgb += (Texture0.SampleLevel(Sampler0, uv, 0 + maxl * saturate(Radius)) 
                  - Texture0.SampleLevel(Sampler0, uv, 1 + maxl * saturate(Radius))) 
-                 * 128 * Amount/pow(2, Radius/max(R.x, R.y) * pow(2,maxl*Radius));
+                 * 128 * Amount/pow(2, Radius/max(ViewSize.x, ViewSize.y) * pow(2,maxl*Radius));
     
         sh.rgb = lerp(dot(sh.rgb, 1.0) / 3.0, sh.rgb, Saturation);
     
