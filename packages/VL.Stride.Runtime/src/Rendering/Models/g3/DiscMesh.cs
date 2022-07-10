@@ -57,8 +57,8 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new PuncturedDiscGenerator
             {
-                StartAngleDeg = FromAngle * 360,
-                EndAngleDeg = ToAngle * 360,
+                StartAngleDeg = (1 - ToAngle) * 360,
+                EndAngleDeg = (1 - FromAngle) * 360,
                 InnerRadius = InnerRadius,
                 OuterRadius = OuterRadius,
                 Slices = Math.Max(Tessellation, 2),
