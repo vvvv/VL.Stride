@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using VL.Core;
+using VL.Core.Diagnostics;
 using VL.Lib.Collections.TreePatching;
 using Session = VL.Lang.PublicAPI.Session;
 
@@ -36,7 +37,7 @@ namespace VL.Stride.Engine
                     {
                         foreach (var id in nodeContext.Path.Stack)
                         {
-                            Session.AddPersistentMessage(new VL.Lang.Message(id, Lang.MessageSeverity.Warning, "Entity should only be connected to one parent entity or scene."))
+                            Session.AddPersistentMessage(new Message(id, MessageSeverity.Warning, "Entity should only be connected to one parent entity or scene."))
                                 .DisposeBy(warnings);
                         }
                     }

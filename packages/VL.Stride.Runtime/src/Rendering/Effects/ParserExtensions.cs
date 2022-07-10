@@ -78,7 +78,7 @@ namespace VL.Stride.Rendering
         {
             if (attr.Parameters.Count > index)
             {
-                if (UserInputParsing.TryParseFloat(attr.Parameters[index].Text, out var value))
+                if (float.TryParse(attr.Parameters[index].Text, out var value))
                 {
                     return value;
                 }
@@ -90,7 +90,7 @@ namespace VL.Stride.Rendering
         {
             if (attr.Parameters.Count > index)
             {
-                if (UserInputParsing.TryParseInt(attr.Parameters[index].Text, out var value))
+                if (int.TryParse(attr.Parameters[index].Text, out var value))
                 {
                     return value;
                 }
@@ -117,7 +117,7 @@ namespace VL.Stride.Rendering
         {
             if (attr.Parameters.Count > index)
             {
-                if (UserInputParsing.TryParseUInt(attr.Parameters[index].Text, out var value))
+                if (uint.TryParse(attr.Parameters[index].Text, out var value))
                 {
                     return value;
                 }

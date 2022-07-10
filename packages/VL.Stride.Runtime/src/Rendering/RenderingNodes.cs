@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Reactive.Disposables;
 using VL.Core;
-using VL.Lang.Symbols;
 using VL.Lib.Basics.Resources;
 using VL.Lib.Mathematics;
 using VL.Stride.Rendering.ComputeEffect;
