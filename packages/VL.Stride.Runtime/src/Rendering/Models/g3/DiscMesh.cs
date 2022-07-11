@@ -55,14 +55,16 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the PuncturedDisc generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
+            bool closed = (1 - FromAngle) - (1 - ToAngle) == 1;
             var generator = new PuncturedDiscGenerator
             {
-                StartAngleDeg = FromAngle * 360,
-                EndAngleDeg = ToAngle * 360,
+                StartAngleDeg = (1 - ToAngle) * 360,
+                EndAngleDeg = (1 - FromAngle) * 360,
                 InnerRadius = InnerRadius,
                 OuterRadius = OuterRadius,
-                Slices = Math.Max(Tessellation, 2),
-                Clockwise = Clockwise
+                Slices = closed ? Math.Max(Tessellation, 2) : Math.Max(Tessellation + 1, 2),
+                Clockwise = Clockwise,
+                AddSliceWhenOpen = true
             };
 
             var meshGenerator = generator.Generate();

@@ -24,7 +24,7 @@ namespace VL.Stride.Rendering.Models
         /// IReadOnlyList of circular sections that make up the cylinder
         /// </summary>
         [DataMember(11)]
-        public IReadOnlyList<CircularSection> Sections { get; set; }
+        public IReadOnlyList<MeshGenerator.CircularSection> Sections { get; set; }
 
         /// <summary>
         /// Cylinder's tessellation (amount of radial slices to split the cylinder into). Higher values result in smoother surfaces
@@ -50,10 +50,12 @@ namespace VL.Stride.Rendering.Models
         /// <returns>A Stride GeometricMeshData<![CDATA[<VertexPositionNormalTexture>]]> equivalent to the VerticalGeneralizedCylinder generated with the public property values</returns>
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
+            MeshGenerator.CircularSection[] output;
+            Sections.TryGetArray(out output);
             var generator = new VerticalGeneralizedCylinderGenerator
             {
                 Capped = Capped,
-                Sections = Utils.ToCircularSectionArray(Sections),
+                Sections = output,
                 Slices = Math.Max(Tessellation, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
@@ -77,33 +79,6 @@ namespace VL.Stride.Rendering.Models
             }
 
             return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "VerticalGeneralizedCylinderMesh", UvScale, Utils.CalculateYOffset(maxHeight - minHeight, Anchor));
-        }
-
-        /// <summary>
-        /// Represents a circular section used to define a VerticalGeneralizedCylinderMesh.
-        /// </summary>
-        public class CircularSection
-        {
-            /// <summary>
-            /// Circular section's radius
-            /// </summary>
-            public float Radius { get; set; }
-
-            /// <summary>
-            /// Circular section's position in the Y axis
-            /// </summary>
-            public float SectionY { get; set; }
-
-            /// <summary>
-            /// Basic constructor for CircularSection
-            /// </summary>
-            /// <param name="radius">Circular section's radius</param>
-            /// <param name="sectionY">Circular section's position in the Y axis</param>
-            public CircularSection(float radius, float sectionY)
-            {
-                Radius = radius;
-                SectionY = sectionY;
-            }
         }
     }
 }

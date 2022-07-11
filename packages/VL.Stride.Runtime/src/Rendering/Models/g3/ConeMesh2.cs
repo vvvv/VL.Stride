@@ -78,7 +78,8 @@ namespace VL.Stride.Rendering.Models
                 Rings = Math.Max(Tessellation.Y + 1, 2),
                 LateralSlopeUVMode = LateralSlopeUVMode == LateralSlopeUVModes.TopProjected ? ConeGenerator.LateralSlopeUVModes.TopProjected : ConeGenerator.LateralSlopeUVModes.SideProjected,
                 NoSharedVertices = true,
-                Clockwise = Clockwise
+                Clockwise = Clockwise,
+                AddSliceWhenOpen = true
             };
 
             var meshGenerator = generator.Generate();
