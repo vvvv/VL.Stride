@@ -45,9 +45,7 @@ namespace VL.Stride.Rendering.Models
                 Clockwise = Clockwise
             };
 
-            var meshGenerator = generator.Generate();
-
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxMesh2", UvScale, Utils.CalculateYOffset(1f, Anchor) + 0.5f);//GridBox's vertical origin in g3 is offset 0.5 compared to other meshes
+            return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "BoxMesh2", UvScale, Utils.CalculateYOffset(1f, Anchor) + 0.5f);//GridBox's vertical origin in g3 is offset 0.5 compared to other meshes
         }
     }
 }

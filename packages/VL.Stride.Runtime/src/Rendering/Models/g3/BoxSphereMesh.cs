@@ -49,10 +49,8 @@ namespace VL.Stride.Rendering.Models
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
             };
-
-            var meshGenerator = generator.Generate();
             
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxSphereMesh", UvScale, Utils.CalculateYOffset(2* Radius, Anchor) + 0.5f); //Shpere's vertical origin in g3 is offset 0.5 compared to other meshes
+            return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "BoxSphereMesh", UvScale, Utils.CalculateYOffset(2* Radius, Anchor) + 0.5f); //Shpere's vertical origin in g3 is offset 0.5 compared to other meshes
         }
     }
 }

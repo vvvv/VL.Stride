@@ -62,9 +62,7 @@ namespace VL.Stride.Rendering.Models
                     Clockwise = Clockwise
                 };
 
-                var meshGenerator = generator.Generate();
-
-                return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "TubeMesh", UvScale);
+                return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "TubeMesh", UvScale);
             }
             return new GeometricMeshData<VertexPositionNormalTexture>(new VertexPositionNormalTexture[0], new int[0], false) { Name = "TubeMesh" };
         }
