@@ -135,7 +135,7 @@ namespace VL.Stride.Rendering.Models
             {
                 case AnchorMode.Top:
                     return -height;
-                case AnchorMode.Center:
+                case AnchorMode.Middle:
                     return (height / -2f);
                 case AnchorMode.Bottom:
                 default:

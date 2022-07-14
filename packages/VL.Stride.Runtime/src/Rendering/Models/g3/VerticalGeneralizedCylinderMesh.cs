@@ -36,7 +36,7 @@ namespace VL.Stride.Rendering.Models
         /// Cylinder's vertical anchor position
         /// </summary>
         [DataMember(13)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         [DataMember(14)]
         public bool SharedVertices { get; set; } = false;

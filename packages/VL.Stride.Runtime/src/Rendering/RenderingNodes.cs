@@ -161,7 +161,7 @@ namespace VL.Stride.Rendering
             */
             yield return factory.NewMeshNode((Models.BoxMesh2 x) => (x.Tessellation, x.Anchor, /*x.SharedVertices,*/ x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.BoxMesh2.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 2)
-                .AddCachedInput(nameof(Models.BoxMesh2.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Center)
+                .AddCachedInput(nameof(Models.BoxMesh2.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Middle)
                 //.AddCachedInput(nameof(Models.BoxMesh2.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddCachedInput(nameof(Models.BoxMesh2.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
@@ -169,7 +169,7 @@ namespace VL.Stride.Rendering
             yield return factory.NewMeshNode((Models.BoxSphereMesh x) => (x.Radius, x.Tessellation, x.Anchor, /*x.SharedVertices,*/ x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 8)
-                .AddCachedInput(nameof(Models.BoxSphereMesh.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Center)
+                .AddCachedInput(nameof(Models.BoxSphereMesh.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Middle)
                 //.AddCachedInput(nameof(Models.BoxSphereMesh.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
@@ -181,7 +181,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.ConeMesh2.Height), x => x.Height, (x, v) => x.Height = v, 1f)
                 .AddCachedInput(nameof(Models.ConeMesh2.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, new Int2(16, 2))
                 .AddCachedInput(nameof(Models.ConeMesh2.LateralSlopeUVMode), x => x.LateralSlopeUVMode, (x, v) => x.LateralSlopeUVMode = v, Models.LateralSlopeUVModes.SideProjected)
-                .AddCachedInput(nameof(Models.ConeMesh2.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Center)
+                .AddCachedInput(nameof(Models.ConeMesh2.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Middle)
                 //.AddCachedInput(nameof(Models.ConeMesh2.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddCachedInput(nameof(Models.ConeMesh2.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
@@ -194,7 +194,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.CylinderMesh2.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
                 .AddCachedInput(nameof(Models.CylinderMesh2.Height), x => x.Height, (x, v) => x.Height = v, 1f)
                 .AddCachedInput(nameof(Models.CylinderMesh2.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, new Int2(16, 2))
-                .AddCachedInput(nameof(Models.CylinderMesh2.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Center)
+                .AddCachedInput(nameof(Models.CylinderMesh2.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Middle)
                 //.AddCachedInput(nameof(Models.CylinderMesh2.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddCachedInput(nameof(Models.CylinderMesh2.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();

@@ -60,7 +60,7 @@ namespace VL.Stride.Rendering.Models
         /// Cylinder's vertical anchor position
         /// </summary>
         [DataMember(17)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         /* TODO: Implement UV/Normals properly and expose
         [DataMember(18)]

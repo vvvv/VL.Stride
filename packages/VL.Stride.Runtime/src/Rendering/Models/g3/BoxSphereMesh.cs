@@ -28,7 +28,7 @@ namespace VL.Stride.Rendering.Models
         /// Sphere's vertical anchor position
         /// </summary>
         [DataMember(12)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         [DataMember(13)]
         public bool SharedVertices { get; set; } = false;

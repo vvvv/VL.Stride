@@ -23,7 +23,7 @@ namespace VL.Stride.Rendering.Models
         /// Box's vertical anchor position
         /// </summary>
         [DataMember(11)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         [DataMember(12)]
         public bool SharedVertices { get; set; } = false;

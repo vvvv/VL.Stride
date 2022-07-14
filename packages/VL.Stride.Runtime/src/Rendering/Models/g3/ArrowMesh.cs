@@ -53,7 +53,7 @@ namespace VL.Stride.Rendering.Models
         /// Arrow's vertical anchor position
         /// </summary>
         [DataMember(16)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         [DataMember(17)]
         public bool SharedVertices { get; set; } = false;

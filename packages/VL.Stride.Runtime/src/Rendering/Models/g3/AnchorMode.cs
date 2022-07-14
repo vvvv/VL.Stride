@@ -3,7 +3,7 @@
     public enum AnchorMode
     {
         Top,
-        Center,
+        Middle,
         Bottom
     }
 }
