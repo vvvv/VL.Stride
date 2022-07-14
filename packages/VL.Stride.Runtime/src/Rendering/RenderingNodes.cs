@@ -154,7 +154,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.ArrowMesh.HeadRadius), x => x.HeadRadius, (x, v) => x.HeadRadius = v, 0.3333f)
                 .AddCachedInput(nameof(Models.ArrowMesh.TipRadius), x => x.TipRadius, (x, v) => x.TipRadius = v, 0f)
                 .AddCachedInput(nameof(Models.ArrowMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
-                .AddCachedInput(nameof(Models.ArrowMesh.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Center)
+                .AddCachedInput(nameof(Models.ArrowMesh.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Middle)
                 .AddCachedInput(nameof(Models.ArrowMesh.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddCachedInput(nameof(Models.ArrowMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
@@ -230,7 +230,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.Capped), x => x.Capped, (x, v) => x.Capped = v, true)
                 .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.Sections), x => x.Sections, (x, v) => x.Sections = v)
                 .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
-                .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Center)
+                .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Middle)
                 .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
