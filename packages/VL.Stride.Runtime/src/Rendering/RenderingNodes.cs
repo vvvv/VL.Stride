@@ -208,12 +208,12 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.DiscMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.RoundRectMesh x) => (x.CornerSteps, x.Size, x.Radius, x.SharpCorners, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
-                .AddCachedInput(nameof(Models.RoundRectMesh.CornerSteps), x => x.CornerSteps, (x, v) => x.CornerSteps = v, 4)
-                .AddCachedInput(nameof(Models.RoundRectMesh.Size), x => x.Size, (x, v) => x.Size = v, Vector2.One)
-                .AddCachedInput(nameof(Models.RoundRectMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.25f)
-                .AddCachedInput(nameof(Models.RoundRectMesh.SharpCorners), x => x.SharpCorners, (x, v) => x.SharpCorners = v, Models.RoundRectMesh.SharpCorner.None)
-                .AddCachedInput(nameof(Models.RoundRectMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
+            yield return factory.NewMeshNode((Models.RoundRectangleMesh x) => (x.CornerSteps, x.Size, x.Radius, x.SharpCorners, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
+                .AddCachedInput(nameof(Models.RoundRectangleMesh.CornerSteps), x => x.CornerSteps, (x, v) => x.CornerSteps = v, 4)
+                .AddCachedInput(nameof(Models.RoundRectangleMesh.Size), x => x.Size, (x, v) => x.Size = v, Vector2.One)
+                .AddCachedInput(nameof(Models.RoundRectangleMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.25f)
+                .AddCachedInput(nameof(Models.RoundRectangleMesh.SharpCorners), x => x.SharpCorners, (x, v) => x.SharpCorners = v, Models.RoundRectangleMesh.SharpCorner.None)
+                .AddCachedInput(nameof(Models.RoundRectangleMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
 
             /* Leaving out for first iteration of this PR
