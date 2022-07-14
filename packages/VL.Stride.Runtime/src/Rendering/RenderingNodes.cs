@@ -147,7 +147,7 @@ namespace VL.Stride.Rendering
 
             #region g3 Primitives
             /* Leaving out for first iteration of this PR
-            yield return factory.NewMeshNode((Models.ArrowMesh x) => (x.StickLength, x.StickRadius, x.HeadLength, x.HeadRadius, x.TipRadius, x.Tessellation, x.Anchor, x.SharedVertices, x.Clockwise))
+            yield return factory.NewMeshNode((Models.ArrowMesh x) => (x.StickLength, x.StickRadius, x.HeadLength, x.HeadRadius, x.TipRadius, x.Tessellation, x.Anchor, x.SharedVertices, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.ArrowMesh.StickLength), x => x.StickLength, (x, v) => x.StickLength = v, 1f)
                 .AddCachedInput(nameof(Models.ArrowMesh.StickRadius), x => x.StickRadius, (x, v) => x.StickRadius = v, 0.125f)
                 .AddCachedInput(nameof(Models.ArrowMesh.HeadLength), x => x.HeadLength, (x, v) => x.HeadLength = v, 0.5f)
@@ -159,14 +159,14 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.ArrowMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
             */
-            yield return factory.NewMeshNode((Models.BoxMesh2 x) => (x.Tessellation, x.Anchor, x.SharedVertices, x.Clockwise))
+            yield return factory.NewMeshNode((Models.BoxMesh2 x) => (x.Tessellation, x.Anchor, x.SharedVertices, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.BoxMesh2.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 2)
                 .AddCachedInput(nameof(Models.BoxMesh2.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Center)
                 .AddCachedInput(nameof(Models.BoxMesh2.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddCachedInput(nameof(Models.BoxMesh2.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
             
-            yield return factory.NewMeshNode((Models.BoxSphereMesh x) => (x.Radius, x.Tessellation, x.Anchor, x.SharedVertices, x.Clockwise))
+            yield return factory.NewMeshNode((Models.BoxSphereMesh x) => (x.Radius, x.Tessellation, x.Anchor, x.SharedVertices, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 8)
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Center)
@@ -174,7 +174,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.ConeMesh2 x) => (x.Radius, x.FromAngle, x.ToAngle, x.Height, x.Tessellation, x.LateralSlopeUVMode, x.Anchor, /*x.SharedVertices,*/ x.Clockwise))
+            yield return factory.NewMeshNode((Models.ConeMesh2 x) => (x.Radius, x.FromAngle, x.ToAngle, x.Height, x.Tessellation, x.LateralSlopeUVMode, x.Anchor, /*x.SharedVertices,*/ x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.ConeMesh2.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
                 .AddCachedInput(nameof(Models.ConeMesh2.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
                 .AddCachedInput(nameof(Models.ConeMesh2.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
@@ -186,7 +186,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.ConeMesh2.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.CylinderMesh2 x) => (x.Capped, x.BaseRadius, x.TopRadius, x.FromAngle, x.ToAngle, x.Height, x.Tessellation, x.Anchor, /*x.SharedVertices,*/ x.Clockwise))
+            yield return factory.NewMeshNode((Models.CylinderMesh2 x) => (x.Capped, x.BaseRadius, x.TopRadius, x.FromAngle, x.ToAngle, x.Height, x.Tessellation, x.Anchor, /*x.SharedVertices,*/ x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.CylinderMesh2.Capped), x => x.Capped, (x, v) => x.Capped = v, true)
                 .AddCachedInput(nameof(Models.CylinderMesh2.BaseRadius), x => x.BaseRadius, (x, v) => x.BaseRadius = v, 0.5f)
                 .AddCachedInput(nameof(Models.CylinderMesh2.TopRadius), x => x.TopRadius, (x, v) => x.TopRadius = v, 0.75f)
@@ -199,7 +199,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.CylinderMesh2.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.DiscMesh x) => (x.OuterRadius, x.InnerRadius, x.FromAngle, x.ToAngle, x.Tessellation, x.Clockwise))
+            yield return factory.NewMeshNode((Models.DiscMesh x) => (x.OuterRadius, x.InnerRadius, x.FromAngle, x.ToAngle, x.Tessellation, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.DiscMesh.OuterRadius), x => x.OuterRadius, (x, v) => x.OuterRadius = v, 1f)
                 .AddCachedInput(nameof(Models.DiscMesh.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.5f)
                 .AddCachedInput(nameof(Models.DiscMesh.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
@@ -208,7 +208,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.DiscMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.RoundRectMesh x) => (x.CornerSteps, x.Size, x.Radius, x.SharpCorners, x.Clockwise))
+            yield return factory.NewMeshNode((Models.RoundRectMesh x) => (x.CornerSteps, x.Size, x.Radius, x.SharpCorners, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.RoundRectMesh.CornerSteps), x => x.CornerSteps, (x, v) => x.CornerSteps = v, 4)
                 .AddCachedInput(nameof(Models.RoundRectMesh.Size), x => x.Size, (x, v) => x.Size = v, Vector2.One)
                 .AddCachedInput(nameof(Models.RoundRectMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.25f)
@@ -217,7 +217,7 @@ namespace VL.Stride.Rendering
                 .AddDefaultPins();
 
             /* Leaving out for first iteration of this PR
-            yield return factory.NewMeshNode((Models.TubeMesh x) => (x.Path, x.Closed, x.Shape, x.Capped, x.SharedVertices, x.Clockwise))
+            yield return factory.NewMeshNode((Models.TubeMesh x) => (x.Path, x.Closed, x.Shape, x.Capped, x.SharedVertices, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.TubeMesh.Path), x => x.Path, (x, v) => x.Path = v)
                 .AddCachedInput(nameof(Models.TubeMesh.Closed), x => x.Closed, (x, v) => x.Closed = v,false)
                 .AddCachedInput(nameof(Models.TubeMesh.Shape), x => x.Shape, (x, v) => x.Shape = v)
@@ -226,7 +226,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.TubeMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, true, null, null, false)
                 .AddDefaultPins();
             
-            yield return factory.NewMeshNode((Models.VerticalGeneralizedCylinderMesh x) => (x.Capped, x.Sections, x.Tessellation, x.Anchor, x.SharedVertices, x.Clockwise))
+            yield return factory.NewMeshNode((Models.VerticalGeneralizedCylinderMesh x) => (x.Capped, x.Sections, x.Tessellation, x.Anchor, x.SharedVertices, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.Capped), x => x.Capped, (x, v) => x.Capped = v, true)
                 .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.Sections), x => x.Sections, (x, v) => x.Sections = v)
                 .AddCachedInput(nameof(Models.VerticalGeneralizedCylinderMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
@@ -251,12 +251,12 @@ namespace VL.Stride.Rendering
                 .AddInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v);
         }
 
-        static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey, string name = null)
+        static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey, string category = "Stride.Models.Meshes", string name = null)
            where TProceduralModel : PrimitiveProceduralModelBase, new()
         {
             return new CustomNodeDesc<TProceduralModel>(factory,
                 name: name ?? typeof(TProceduralModel).Name.Replace("ProceduralModel", "Mesh"),
-                category: "Stride.Models.Meshes",
+                category: category,
                 copyOnWrite: false,
                 hasStateOutput: false,
                 ctor: nodeContext =>
