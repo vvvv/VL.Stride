@@ -2,6 +2,7 @@
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering;
+using Stride.Shaders;
 using System;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -12,17 +13,15 @@ namespace VL.Stride.Rendering
 {
     public class CustomDrawEffect : IEffect, IDisposable
     {
-        public readonly DynamicEffectInstance EffectInstance;
+        public readonly EffectInstance EffectInstance;
         readonly PerFrameParameters[] perFrameParams;
         readonly PerViewParameters[] perViewParams;
         readonly PerDrawParameters[] perDrawParams;
         readonly TexturingParameters[] texturingParams;
 
-        public CustomDrawEffect(string effectName, IServiceRegistry serviceRegistry, GraphicsDevice graphicsDevice, ParameterCollection parameters = default)
+        public CustomDrawEffect(EffectInstance effectinstance, GraphicsDevice graphicsDevice)
         {
-            EffectInstance = new DynamicEffectInstance(effectName, parameters);
-            EffectInstance.Initialize(serviceRegistry);
-            EffectInstance.UpdateEffect(graphicsDevice);
+            EffectInstance = effectinstance;
 
             perFrameParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerFrameMap).ToArray();
             perViewParams = EffectInstance.Parameters.GetWellKnownParameters(WellKnownParameters.PerViewMap).ToArray();

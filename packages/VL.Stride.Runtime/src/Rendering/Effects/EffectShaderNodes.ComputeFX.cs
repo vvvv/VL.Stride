@@ -30,9 +30,8 @@ namespace VL.Stride.Rendering
                     _parameters.Set(ComputeShaderBaseKeys.ThreadGroupCountGlobal, Int3.One);
                     _parameters.Set(ComputeEffectShaderKeys.ThreadNumbers, Int3.One);
 
-                    BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource, _parameters);
-
-                    var (_effect, _messages) = CreateEffectInstance("ComputeFXEffect", shaderMetadata, serviceRegistry, graphicsDevice, _parameters, baseShaderName: shaderName);
+                    var (_effect, _messages, shaderMixinSource) = 
+                        CreateEffectInstance("ComputeFXEffect", shaderName, shaderMetadata, serviceRegistry, graphicsDevice, _parameters);
 
                     var _dispatcherInput = new PinDescription<IComputeEffectDispatcher>("Dispatcher");
                     var _threadNumbersInput = new PinDescription<Int3>("Thread Group Size", Int3.One);
