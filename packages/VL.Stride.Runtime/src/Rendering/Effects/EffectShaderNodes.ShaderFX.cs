@@ -28,8 +28,8 @@ namespace VL.Stride.Rendering
                 init: buildContext =>
                 {
                     var outputType = shaderMetadata.GetShaderFXOutputType(out var innerType);
-                    var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
-                    var (_effect, _messages) = CreateEffectInstance("ShaderFXEffect", shaderMetadata, serviceRegistry, graphicsDevice, mixinParams, baseShaderName: shaderName);
+                    var (_effect, _messages, _) = 
+                        CreateEffectInstance("ShaderFXEffect", shaderName, shaderMetadata, serviceRegistry, graphicsDevice);
 
                     var _inputs = new List<IVLPinDescription>();
                     var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", outputType) };
