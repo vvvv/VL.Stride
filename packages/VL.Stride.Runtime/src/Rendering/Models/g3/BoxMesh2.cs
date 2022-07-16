@@ -40,7 +40,7 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new GridBox3Generator
             {
-                EdgeVertices = Math.Max(Tessellation, 2),
+                EdgeVertices = Math.Max(Tessellation + 1, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
             };

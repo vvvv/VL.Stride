@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -44,7 +45,7 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new Sphere3Generator_NormalizedCube()
             {
-                EdgeVertices = Tessellation,
+                EdgeVertices = Math.Max(Tessellation + 1, 2),
                 Radius = Radius,
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
