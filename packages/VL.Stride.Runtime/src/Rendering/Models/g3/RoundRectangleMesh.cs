@@ -54,7 +54,7 @@ namespace VL.Stride.Rendering.Models
                 Height = Size.Y,
                 Radius = Radius,
                 SharpCorners = Utils.ToCorner(SharpCorners),
-                Clockwise = Clockwise
+                Clockwise = !Clockwise
             };
 
             return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "RoundRectMesh", UvScale);

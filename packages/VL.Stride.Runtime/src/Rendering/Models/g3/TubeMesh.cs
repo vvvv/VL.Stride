@@ -59,7 +59,7 @@ namespace VL.Stride.Rendering.Models
                 {
                     Capped = Capped,
                     NoSharedVertices = !SharedVertices,
-                    Clockwise = Clockwise
+                    Clockwise = !Clockwise
                 };
 
                 return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "TubeMesh", UvScale);

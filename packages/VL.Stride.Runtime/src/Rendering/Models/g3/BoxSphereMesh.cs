@@ -48,7 +48,7 @@ namespace VL.Stride.Rendering.Models
                 EdgeVertices = Math.Max(Tessellation + 1, 2),
                 Radius = Radius,
                 NoSharedVertices = !SharedVertices,
-                Clockwise = Clockwise
+                Clockwise = !Clockwise
             };
             
             return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "BoxSphereMesh", UvScale, Utils.CalculateYOffset(2* Radius, Anchor) + 0.5f); //Shpere's vertical origin in g3 is offset 0.5 compared to other meshes

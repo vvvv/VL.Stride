@@ -63,7 +63,7 @@ namespace VL.Stride.Rendering.Models
                 InnerRadius = InnerRadius,
                 OuterRadius = OuterRadius,
                 Slices = closed ? Math.Max(Tessellation, 2) : Math.Max(Tessellation + 1, 2),
-                Clockwise = Clockwise,
+                Clockwise = !Clockwise,
                 AddSliceWhenOpen = true
             };
 

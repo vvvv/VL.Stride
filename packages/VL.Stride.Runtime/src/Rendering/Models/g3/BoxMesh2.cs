@@ -50,7 +50,7 @@ namespace VL.Stride.Rendering.Models
                 Box = new Box3d(new Vector3d(0, 0, 0), new Vector3d(Size.X / 2, Size.Y / 2, Size.Z / 2)),
                 EdgeVertices = Math.Max(Tessellation + 1, 2),
                 NoSharedVertices = !SharedVertices,
-                Clockwise = Clockwise
+                Clockwise = !Clockwise
             };
 
             return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "BoxMesh2", UvScale, Utils.CalculateYOffset(1f, Anchor) + 0.5f);//GridBox's vertical origin in g3 is offset 0.5 compared to other meshes
