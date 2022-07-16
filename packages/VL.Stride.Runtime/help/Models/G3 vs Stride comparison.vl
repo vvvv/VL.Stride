@@ -537,7 +537,8 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessNode" Name="BoxMesh2" />
             </p:NodeReference>
-            <Pin Id="CeTIpOLSxQGNMsNwn5VbPD" Name="Tessellation" Kind="InputPin" DefaultValue="11" />
+            <Pin Id="MSaIqVrJevmL8vlDDSgGqi" Name="Size" Kind="InputPin" />
+            <Pin Id="CeTIpOLSxQGNMsNwn5VbPD" Name="Tessellation" Kind="InputPin" />
             <Pin Id="PsDmpMCCDegLtdVAZrhUy7" Name="Anchor" Kind="InputPin" />
             <Pin Id="SR1sZ0I2dNbPdfbtAX5VEB" Name="Scale" Kind="InputPin" />
             <Pin Id="NET2HeLhXJWO55Hyff9IYE" Name="Uv Scale" Kind="InputPin" />
@@ -633,11 +634,6 @@
             <Pin Id="Nv7cyG5oEdlNbOnj6kK3qf" Name="Normals Scalar" Kind="InputPin" />
             <Pin Id="STdTeNqhvOoMRpzH8xpUhr" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="JVMlH76eqdCOfWCl8AOu9u" Comment="Tessellation" Bounds="1510,285,35,15" ShowValueBox="true" isIOBox="true" Value="2">
-            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
-              <Choice Kind="TypeFlag" Name="Integer32" />
-            </p:TypeAnnotation>
-          </Pad>
           <Node Bounds="1793,761,145,19" Id="IZsMkwkX804LON9YD6CnXr">
             <p:NodeReference LastCategoryFullName="Stride.Models" LastSymbolSource="VL.Stride.Engine.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
@@ -812,7 +808,7 @@
               <Choice Kind="TypeFlag" Name="LateralSlopeUVModes" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="NPUlGRMDb7GPGPGAoDq0n4" Comment="Anchor" Bounds="1531,317,61,15" ShowValueBox="true" isIOBox="true" Value="Middle">
+          <Pad Id="NPUlGRMDb7GPGPGAoDq0n4" Comment="Anchor" Bounds="1551,317,61,15" ShowValueBox="true" isIOBox="true" Value="Middle">
             <p:TypeAnnotation LastCategoryFullName="VL.Stride.Rendering.Models" LastSymbolSource="VL.Stride.Runtime.dll">
               <Choice Kind="TypeFlag" Name="AnchorMode" />
             </p:TypeAnnotation>
@@ -822,7 +818,7 @@
               <Choice Kind="TypeFlag" Name="Vector3" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="Lg1KFtAZggwLknbpYMSL7F" Comment="Draw Normals" Bounds="549,618,35,35" ShowValueBox="true" isIOBox="true" Value="True">
+          <Pad Id="Lg1KFtAZggwLknbpYMSL7F" Comment="Draw Normals" Bounds="549,618,35,35" ShowValueBox="true" isIOBox="true" Value="False">
             <p:TypeAnnotation>
               <Choice Kind="ImmutableTypeFlag" Name="Boolean" />
               <FullNameCategoryReference ID="Primitive" />
@@ -830,6 +826,11 @@
             <p:ValueBoxSettings>
               <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Toggle</p:buttonmode>
             </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="R4PIFteIE1gM3zb3BiM7UY" Comment="Tessellation" Bounds="1531,281,35,15" ShowValueBox="true" isIOBox="true" Value="2">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastSymbolSource="CoreLibBasics.vl">
+              <Choice Kind="TypeFlag" Name="Integer32" />
+            </p:TypeAnnotation>
           </Pad>
         </Canvas>
         <Patch Id="RYZ03eHPbcZNnQKm4DV9n1" Name="Create" />
@@ -858,7 +859,6 @@
         <Link Id="UKoiJMyelXsOrApZGLDmZa" Ids="DRVsfRccWzUMRspL6Zwj0b,DhR47mqRl0EMxxeP5njmRq" />
         <Link Id="B274SushT8AOcTJrsUlyAk" Ids="CVsY3tdfY9mL4vUvNoCxtR,RwXpj8Rsiy0PUkxhnoxPNI" />
         <Link Id="GW58b9x0hh8NFLIbdqYuUR" Ids="BuJYVWSkD4nLaev5uIGBYo,T0ViZI4ap0aLi8v938sW5v" />
-        <Link Id="L9d0EGkDFX9QLEZnRGgJGw" Ids="JVMlH76eqdCOfWCl8AOu9u,CeTIpOLSxQGNMsNwn5VbPD" />
         <Link Id="BEsbpu2L0WYOTgj5SR0hwr" Ids="HFjd8yV8NSGNg2zXV6BN1v,OOQjOVz10jaPgMFpeXXj9d" />
         <Link Id="OHWNmpJ88DNMQKAiQMvQop" Ids="KTk2JpTYWmwNGDQbJnHesc,PT9ZQqjxnoVLgJAs9HvHvW" />
         <Link Id="RmDjqiciTz2NWq6KCtu5RY" Ids="QZusal3LSlZLybZrf2fZa5,KNYpY3NdAkJPzhEaKvH1np" />
@@ -895,13 +895,14 @@
         <Link Id="S2FXbBzRMy7OFnJkIRIyBp" Ids="CVsY3tdfY9mL4vUvNoCxtR,HEyLP72ctJCNoiinbKhcqz" />
         <Link Id="F5CR4ywIfsiLraYIlcIJi5" Ids="BuJYVWSkD4nLaev5uIGBYo,Rr0NJKwNlKuNfMnj47DY5N" />
         <Link Id="LczpRtKsELvPXN0KYnI0Jd" Ids="SiEl3cknXuCNCrm8qLizHQ,RXvBS3cXlW6OJ42BgBuSbD" />
-        <Link Id="UBoslFcVwojMUBXobs22m1" Ids="SiEl3cknXuCNCrm8qLizHQ,SR1sZ0I2dNbPdfbtAX5VEB" />
         <Link Id="Q6rj9vLihyqMCVsXj5uYrt" Ids="Lg1KFtAZggwLknbpYMSL7F,Tt6nxdPW9pCNOrU2n9oUXd" />
         <Link Id="MWkIYNfbtyCMZ04qDY5AE9" Ids="Lg1KFtAZggwLknbpYMSL7F,Bq4IX7gFvy1OKpozQg8yuG" />
         <Link Id="K1AhXPsorPYOvogk3a7txW" Ids="Lg1KFtAZggwLknbpYMSL7F,CPVV5e7pOnvPKvQ36KZxGV" />
         <Link Id="HgbHkqbPyxmK9aPQn9bPAH" Ids="Lg1KFtAZggwLknbpYMSL7F,SiOnxvoImnZNcWCa5qEu46" />
         <Link Id="BKaWQdn0EhHMuIul1T5l24" Ids="Lg1KFtAZggwLknbpYMSL7F,VUNWfcNuxs3LybODCoNfd0" />
         <Link Id="PplpmS9eF8ROVvp5mXvCGv" Ids="Lg1KFtAZggwLknbpYMSL7F,Re2Jm8gPLhTPmzRnbyPRYf" />
+        <Link Id="Rnmdj4wYl6uN7E1pyT8K7P" Ids="SiEl3cknXuCNCrm8qLizHQ,MSaIqVrJevmL8vlDDSgGqi" />
+        <Link Id="GhXHBaS1bs2PbfogJys10z" Ids="R4PIFteIE1gM3zb3BiM7UY,CeTIpOLSxQGNMsNwn5VbPD" />
       </Patch>
     </Node>
   </Patch>
