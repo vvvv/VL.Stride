@@ -1,5 +1,6 @@
 ﻿using g3;
 using Stride.Core;
+using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
 using System;
@@ -13,6 +14,12 @@ namespace VL.Stride.Rendering.Models
     [Display("BoxMesh2")] // This name shows up in the procedural model dropdown list
     public class BoxMesh2 : PrimitiveProceduralModelBase
     {
+        /// <summary>
+        /// Box's tessellation (amount of vertices per edge)
+        /// </summary>
+        [DataMember(10)]
+        public Vector3 Size { get; set; } = Vector3.One;
+
         /// <summary>
         /// Box's tessellation (amount of vertices per edge)
         /// </summary>
@@ -40,6 +47,7 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new GridBox3Generator
             {
+                Box = new Box3d(new Vector3d(0, 0, 0), new Vector3d(Size.X/2, Size.Y/2, Size.Z/2)),
                 EdgeVertices = Math.Max(Tessellation + 1, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
