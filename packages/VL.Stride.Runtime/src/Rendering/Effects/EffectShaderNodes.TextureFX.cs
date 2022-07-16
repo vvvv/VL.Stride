@@ -32,10 +32,8 @@ namespace VL.Stride.Rendering
                 invalidated: changes,
                 init: buildContext =>
                 {
-
-                    var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out var shaderMixinSource);
-
-                    var (_effect, _messages) = CreateEffectInstance("TextureFXEffect", shaderMetadata, serviceRegistry, graphicsDevice, mixinParams, baseShaderName: shaderName);
+                    var (_effect, _messages, shaderMixinSource) = 
+                        CreateEffectInstance("TextureFXEffect", shaderName, shaderMetadata, serviceRegistry, graphicsDevice);
 
                     var _inputs = new List<IVLPinDescription>();
                     var _outputs = new List<IVLPinDescription>() { buildContext.Pin("Output", typeof(ImageEffectShader)) };

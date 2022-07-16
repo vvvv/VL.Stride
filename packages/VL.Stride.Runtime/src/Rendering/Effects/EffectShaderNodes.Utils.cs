@@ -64,14 +64,23 @@ namespace VL.Stride.Rendering
             return false;
         }
 
-        static (DynamicEffectInstance effect, ImmutableArray<Message> messages) CreateEffectInstance(string effectName, ShaderMetadata shaderMetadata, IServiceRegistry serviceRegistry, GraphicsDevice graphicsDevice, ParameterCollection parameters = null, string baseShaderName = null)
+        static (EffectInstance effect, ImmutableArray<Message> messages, ShaderMixinSource shaderMixinSource) CreateEffectInstance(string effectName, string shaderName,
+            ShaderMetadata shaderMetadata, IServiceRegistry serviceRegistry, GraphicsDevice graphicsDevice, ParameterCollection parameterCollection = null, EffectBytecode effectBytecode = null)
         {
             var messages = ImmutableArray<Message>.Empty;
-
-            var effect = new DynamicEffectInstance(effectName, parameters);
+            EffectInstance effect = default;
+            ShaderMixinSource shaderMixinSource = default;
             try
             {
-                effect.Initialize(serviceRegistry);
+                if (effectBytecode != null)
+                    effect = new EffectInstance(new Effect(graphicsDevice, effectBytecode) { Name = effectName });
+                else
+                {
+                    var mixinParams = BuildBaseMixin(shaderName, shaderMetadata, graphicsDevice, out shaderMixinSource, parameterCollection);
+                    effect = new DynamicEffectInstance(effectName, mixinParams);
+                    (effect as DynamicEffectInstance).Initialize(serviceRegistry);
+                }
+
                 effect.UpdateEffect(graphicsDevice);
             }
             catch (InvalidOperationException e)
@@ -79,10 +88,10 @@ namespace VL.Stride.Rendering
                 messages = messages.Add(new Message(MessageType.Error, e.Message));
             }
 
-            return (effect, messages);
+            return (effect, messages, shaderMixinSource);
         }
 
-        static IEnumerable<ParameterKeyInfo> GetParameters(DynamicEffectInstance effectInstance)
+        static IEnumerable<ParameterKeyInfo> GetParameters(EffectInstance effectInstance)
         {
             var byteCode = effectInstance.Effect?.Bytecode;
             if (byteCode is null)
