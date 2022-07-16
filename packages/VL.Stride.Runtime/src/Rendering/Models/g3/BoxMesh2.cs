@@ -47,7 +47,7 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new GridBox3Generator
             {
-                Box = new Box3d(new Vector3d(0, 0, 0), new Vector3d(Size.X/2, Size.Y/2, Size.Z/2)),
+                Box = new Box3d(new Vector3d(0, 0, 0), new Vector3d(Size.X / 2, Size.Y / 2, Size.Z / 2)),
                 EdgeVertices = Math.Max(Tessellation + 1, 2),
                 NoSharedVertices = !SharedVertices,
                 Clockwise = Clockwise
