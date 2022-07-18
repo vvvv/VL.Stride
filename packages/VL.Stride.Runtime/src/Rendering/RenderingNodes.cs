@@ -201,8 +201,8 @@ namespace VL.Stride.Rendering
                 .AddDefaultPins();
 
             yield return factory.NewMeshNode((Models.DiscMesh x) => (x.OuterRadius, x.InnerRadius, x.FromAngle, x.ToAngle, x.Tessellation, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
-                .AddCachedInput(nameof(Models.DiscMesh.OuterRadius), x => x.OuterRadius, (x, v) => x.OuterRadius = v, 1f)
-                .AddCachedInput(nameof(Models.DiscMesh.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.5f)
+                .AddCachedInput(nameof(Models.DiscMesh.OuterRadius), x => x.OuterRadius, (x, v) => x.OuterRadius = v, 0.5f)
+                .AddCachedInput(nameof(Models.DiscMesh.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.25f)
                 .AddCachedInput(nameof(Models.DiscMesh.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
                 .AddCachedInput(nameof(Models.DiscMesh.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
                 .AddCachedInput(nameof(Models.DiscMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)

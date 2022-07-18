@@ -17,13 +17,13 @@ namespace VL.Stride.Rendering.Models
         /// Disc's outer radius
         /// </summary>
         [DataMember(10)]
-        public float OuterRadius { get; set; } = 1f;
+        public float OuterRadius { get; set; } = 0.5f;
 
         /// <summary>
         /// Disc's inner radius
         /// </summary>
         [DataMember(11)]
-        public float InnerRadius { get; set; } = 0.5f;
+        public float InnerRadius { get; set; } = 0.25f;
 
         /// <summary>
         /// Disc's initial angle in cycles 
