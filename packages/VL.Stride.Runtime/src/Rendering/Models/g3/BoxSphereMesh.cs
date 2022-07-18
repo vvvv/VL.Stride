@@ -23,7 +23,7 @@ namespace VL.Stride.Rendering.Models
         /// Sphere's tessellation (amount of vertices). Higher values result in smoother surfaces
         /// </summary>
         [DataMember(11)]
-        public int Tessellation { get; set; } = 8;
+        public int Tessellation { get; set; } = 16;
 
         /// <summary>
         /// Sphere's vertical anchor position
