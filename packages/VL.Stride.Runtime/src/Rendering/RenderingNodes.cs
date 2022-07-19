@@ -169,7 +169,7 @@ namespace VL.Stride.Rendering
             
             yield return factory.NewMeshNode((Models.BoxSphereMesh x) => (x.Radius, x.Tessellation, x.Anchor, /*x.SharedVertices,*/ x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
-                .AddCachedInput(nameof(Models.BoxSphereMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
+                .AddCachedInput(nameof(Models.BoxSphereMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 8)
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Middle)
                 //.AddCachedInput(nameof(Models.BoxSphereMesh.SharedVertices), x => x.SharedVertices, (x, v) => x.SharedVertices = v, false)
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
