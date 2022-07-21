@@ -24,7 +24,7 @@ namespace VL.Stride.Rendering.Models
         /// Box's tessellation (amount of vertices per edge)
         /// </summary>
         [DataMember(10)]
-        public int Tessellation { get; set; } = 2;
+        public int Tessellation { get; set; } = 1;
 
         /// <summary>
         /// Box's vertical anchor position

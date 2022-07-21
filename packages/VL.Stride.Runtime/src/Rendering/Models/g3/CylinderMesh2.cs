@@ -54,7 +54,7 @@ namespace VL.Stride.Rendering.Models
         /// Cylinder's tessellation (amount of radial and of vertical slices to split the cylinder into). Higher values result in smoother surfaces
         /// </summary>
         [DataMember(16)]
-        public Int2 Tessellation { get; set; } = new Int2(16, 2);
+        public Int2 Tessellation { get; set; } = new Int2(16, 1);
 
         /// <summary>
         /// Cylinder's vertical anchor position
