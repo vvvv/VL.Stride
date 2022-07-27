@@ -16,13 +16,15 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public static partial class SimplexNoise_TextureFXKeys
+    public static partial class Simplex_Internal_TextureFXKeys
     {
         public static readonly ValueParameterKey<float> Time = ParameterKeys.NewValue<float>();
         public static readonly ValueParameterKey<int> frequencyCount = ParameterKeys.NewValue<int>();
         public static readonly ValueParameterKey<int> offsetCount = ParameterKeys.NewValue<int>();
         public static readonly ValueParameterKey<int> strengthCount = ParameterKeys.NewValue<int>();
         public static readonly ValueParameterKey<int> maxCount = ParameterKeys.NewValue<int>();
+        public static readonly ValueParameterKey<Color4> BackgroundColor = ParameterKeys.NewValue<Color4>(new Color4(0.0f,0.0f,0.0f,1.0f));
+        public static readonly ValueParameterKey<Color4> SimplexColor = ParameterKeys.NewValue<Color4>(new Color4(1.0f,1.0f,1.0f,1.0f));
         public static readonly ObjectParameterKey<Buffer> frequencyBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> offsetBuffer = ParameterKeys.NewObject<Buffer>();
         public static readonly ObjectParameterKey<Buffer> strengthBuffer = ParameterKeys.NewObject<Buffer>();

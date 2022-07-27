@@ -95,7 +95,10 @@ Remark about those offsets from the original author:
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-shader SimplexNoise_TextureFX : TextureFX
+[TextureSource]
+[Category("Source")]
+[Summary("")]
+shader Simplex_Internal_TextureFX : TextureFX
 {
     // 1 / 289
     #define NOISE_SIMPLEX_1_DIV_289 0.00346020761245674740484429065744f
@@ -483,6 +486,12 @@ shader SimplexNoise_TextureFX : TextureFX
     int strengthCount;
     int maxCount;
 
+    [Color]
+    float4 BackgroundColor= float4(0.0, 0.0, 0.0, 1.0);
+
+    [Color]
+    float4 SimplexColor = float4(1.0, 1.0, 1.0, 1.0);
+
     Buffer<float3> frequencyBuffer;
     Buffer<float3> offsetBuffer;
     Buffer<float> strengthBuffer;
@@ -498,7 +507,7 @@ shader SimplexNoise_TextureFX : TextureFX
             ns += snoise((float3(uv, Time) + float3(offsetBuffer[i%offsetCount])) * frequencyBuffer[i%frequencyCount]) * strengthBuffer[i%strengthCount];
         }
 
-        return ns;
+       return lerp(BackgroundColor, SimplexColor, ns);
     }
 
 };
