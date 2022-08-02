@@ -57,7 +57,7 @@ namespace VL.Stride.Rendering.Models
                 Clockwise = !Clockwise
             };
 
-            return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "RoundRectMesh", UvScale);
+            return Utils.ToGeometricMeshData(generator.Generate(), "RoundRectMesh", UvScale);
         }
 
         /// <summary>

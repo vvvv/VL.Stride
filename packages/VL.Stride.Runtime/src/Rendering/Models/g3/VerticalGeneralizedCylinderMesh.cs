@@ -76,7 +76,7 @@ namespace VL.Stride.Rendering.Models
                 }
             }
 
-            return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "VerticalGeneralizedCylinderMesh", UvScale, Utils.CalculateYOffset(maxHeight - minHeight, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "VerticalGeneralizedCylinderMesh", UvScale, Utils.CalculateYOffset(maxHeight - minHeight, Anchor));
         }
     }
 }

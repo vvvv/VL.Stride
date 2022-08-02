@@ -111,7 +111,7 @@ namespace VL.Stride.Rendering.Models
                 };
             }
 
-            return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "CylinderMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "CylinderMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 }

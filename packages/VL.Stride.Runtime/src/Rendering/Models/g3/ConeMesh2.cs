@@ -82,7 +82,7 @@ namespace VL.Stride.Rendering.Models
                 AddSliceWhenOpen = true
             };
 
-            return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "ConeMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "ConeMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 

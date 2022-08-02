@@ -80,7 +80,7 @@ namespace VL.Stride.Rendering.Models
                 Clockwise = Clockwise
             };
 
-            return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "ArrowMesh", UvScale, Utils.CalculateYOffset(HeadLength + StickLength, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "ArrowMesh", UvScale, Utils.CalculateYOffset(HeadLength + StickLength, Anchor));
         }
     }
 }

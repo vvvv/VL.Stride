@@ -67,7 +67,7 @@ namespace VL.Stride.Rendering.Models
                 AddSliceWhenOpen = true
             };
 
-            return Utils.ToGeometricMeshData(generator.Generate().MakeDMesh(), "DiscMesh", UvScale);
+            return Utils.ToGeometricMeshData(generator.Generate(), "DiscMesh", UvScale);
         }
     }
 }
