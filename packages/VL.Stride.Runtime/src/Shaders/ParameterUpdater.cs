@@ -12,7 +12,7 @@ namespace VL.Stride.Shaders.ShaderFX
     /// </summary>
     /// <typeparam name="TValue">The type of the parameter value</typeparam>
     /// <typeparam name="TKey">The type of the parameter key</typeparam>
-    abstract class ParameterUpdater<TValue, TKey>
+    public abstract class ParameterUpdater<TValue, TKey>
         where TKey : ParameterKey
     {
         private static readonly EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
@@ -94,7 +94,7 @@ namespace VL.Stride.Shaders.ShaderFX
         protected abstract void Upload(ParameterCollection parameters, TKey key, ref TValue value);
     }
 
-    sealed class ValueParameterUpdater<T> : ParameterUpdater<T, ValueParameterKey<T>>
+    public sealed class ValueParameterUpdater<T> : ParameterUpdater<T, ValueParameterKey<T>>
         where T : struct
     {
         public ValueParameterUpdater(ParameterCollection parameters = null, ValueParameterKey<T> key = null) : base(parameters, key)
@@ -108,7 +108,7 @@ namespace VL.Stride.Shaders.ShaderFX
         }
     }
 
-    sealed class ArrayParameterUpdater<T> : ParameterUpdater<T[], ValueParameterKey<T>>
+    public sealed class ArrayParameterUpdater<T> : ParameterUpdater<T[], ValueParameterKey<T>>
         where T : struct
     {
         public ArrayParameterUpdater(ParameterCollection parameters = null, ValueParameterKey<T> key = null) : base(parameters, key)
@@ -123,7 +123,7 @@ namespace VL.Stride.Shaders.ShaderFX
         }
     }
 
-    sealed class ObjectParameterUpdater<T> : ParameterUpdater<T, ObjectParameterKey<T>>
+    public sealed class ObjectParameterUpdater<T> : ParameterUpdater<T, ObjectParameterKey<T>>
         where T : class
     {
         public ObjectParameterUpdater(ParameterCollection parameters = null, ObjectParameterKey<T> key = null) : base(parameters, key)
@@ -137,7 +137,7 @@ namespace VL.Stride.Shaders.ShaderFX
         }
     }
 
-    sealed class PermutationParameterUpdater<T> : ParameterUpdater<T, PermutationParameterKey<T>>
+    public sealed class PermutationParameterUpdater<T> : ParameterUpdater<T, PermutationParameterKey<T>>
     {
         public PermutationParameterUpdater(ParameterCollection parameters = null, PermutationParameterKey<T> key = null) : base(parameters, key)
         {
