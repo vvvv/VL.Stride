@@ -54,13 +54,13 @@ namespace VL.Stride.Rendering.Models
         /// Cylinder's tessellation (amount of radial and of vertical slices to split the cylinder into). Higher values result in smoother surfaces
         /// </summary>
         [DataMember(16)]
-        public Int2 Tessellation { get; set; } = new Int2(16, 2);
+        public Int2 Tessellation { get; set; } = new Int2(16, 1);
 
         /// <summary>
         /// Cylinder's vertical anchor position
         /// </summary>
         [DataMember(17)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         /* TODO: Implement UV/Normals properly and expose
         [DataMember(18)]
@@ -111,9 +111,7 @@ namespace VL.Stride.Rendering.Models
                 };
             }
 
-            var meshGenerator = generator.Generate();
-
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "CylinderMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "CylinderMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 }

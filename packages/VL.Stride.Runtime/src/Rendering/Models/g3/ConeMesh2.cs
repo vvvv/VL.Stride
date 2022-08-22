@@ -42,7 +42,7 @@ namespace VL.Stride.Rendering.Models
         /// Cone's tessellation (amount of radial and of vertical slices to split the cone into). Higher values result in smoother surfaces
         /// </summary>
         [DataMember(14)]
-        public Int2 Tessellation { get; set; } = new Int2(16, 2);
+        public Int2 Tessellation { get; set; } = new Int2(16, 1);
 
         [DataMember(15)]
         public LateralSlopeUVModes LateralSlopeUVMode { get; set; } = LateralSlopeUVModes.SideProjected;
@@ -51,7 +51,7 @@ namespace VL.Stride.Rendering.Models
         /// Cone's vertical anchor position
         /// </summary>
         [DataMember(16)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         /* TODO: Implement UV/Normals properly and expose
         [DataMember(17)]
@@ -82,9 +82,7 @@ namespace VL.Stride.Rendering.Models
                 AddSliceWhenOpen = true
             };
 
-            var meshGenerator = generator.Generate();
-
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ConeMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "ConeMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 

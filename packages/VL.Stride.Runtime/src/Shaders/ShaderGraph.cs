@@ -236,7 +236,7 @@ namespace VL.Stride.Shaders.ShaderFX
             return context;
         }
 
-        internal static bool TryGetSubscriptions(this ShaderGeneratorContext context, out CompositeDisposable subscriptions)
+        public static bool TryGetSubscriptions(this ShaderGeneratorContext context, out CompositeDisposable subscriptions)
         {
             return context.Tags.TryGetValue(GraphSubscriptions, out subscriptions);
         }

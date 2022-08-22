@@ -53,7 +53,7 @@ namespace VL.Stride.Rendering.Models
         /// Arrow's vertical anchor position
         /// </summary>
         [DataMember(16)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         [DataMember(17)]
         public bool SharedVertices { get; set; } = false;
@@ -80,9 +80,7 @@ namespace VL.Stride.Rendering.Models
                 Clockwise = Clockwise
             };
 
-            var meshGenerator = generator.Generate();
-
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "ArrowMesh", UvScale, Utils.CalculateYOffset(HeadLength + StickLength, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "ArrowMesh", UvScale, Utils.CalculateYOffset(HeadLength + StickLength, Anchor));
         }
     }
 }

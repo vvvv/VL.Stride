@@ -36,7 +36,7 @@ namespace VL.Stride.Rendering.Models
         /// Cylinder's vertical anchor position
         /// </summary>
         [DataMember(13)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         [DataMember(14)]
         public bool SharedVertices { get; set; } = false;
@@ -61,8 +61,6 @@ namespace VL.Stride.Rendering.Models
                 Clockwise = Clockwise
             };
 
-            var meshGenerator = generator.Generate();
-
             float minHeight = 0f;
             float maxHeight = 0f;
             foreach (var s in Sections)
@@ -78,7 +76,7 @@ namespace VL.Stride.Rendering.Models
                 }
             }
 
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "VerticalGeneralizedCylinderMesh", UvScale, Utils.CalculateYOffset(maxHeight - minHeight, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "VerticalGeneralizedCylinderMesh", UvScale, Utils.CalculateYOffset(maxHeight - minHeight, Anchor));
         }
     }
 }

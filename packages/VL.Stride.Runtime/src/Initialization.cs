@@ -82,7 +82,7 @@ namespace VL.Stride.Core
             RegisterStaticNodeFactory(factory, name, (_, nodeFactory) => NodeBuilding.NewFactoryImpl(init(nodeFactory).ToImmutableArray()));
         }
 
-        void RegisterStaticNodeFactory(IVLFactory factory, string name, Func<ServiceRegistry, IVLNodeDescriptionFactory, NodeBuilding.FactoryImpl> init)
+        public static void RegisterStaticNodeFactory(IVLFactory factory, string name, Func<ServiceRegistry, IVLNodeDescriptionFactory, NodeBuilding.FactoryImpl> init)
         {
             lock (serviceCache)
             {

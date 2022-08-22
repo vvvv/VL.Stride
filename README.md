@@ -1,6 +1,6 @@
 # VL.Stride
 
-[Stride 3d Engine](http://stride3d.net) for VL.
+[Stride 3d Engine](http://stride3d.net) ([repo](https://github.com/stride3d/stride)) for VL.
 
 Try it with vvvv, the visual live-programming environment for .NET  
 Download: http://visualprogramming.net

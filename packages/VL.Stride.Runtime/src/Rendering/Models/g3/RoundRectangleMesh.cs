@@ -9,31 +9,31 @@ namespace VL.Stride.Rendering.Models
     /// <summary>
     /// Generates a Rounded Rectangle mesh
     /// </summary>
-    [DataContract("RoundRectMesh")]
-    [Display("RoundRectMesh")] // This name shows up in the procedural model dropdown list
-    public class RoundRectMesh : PrimitiveProceduralModelBase
+    [DataContract("RoundRectangleMesh")]
+    [Display("RoundRectangleMesh")] // This name shows up in the procedural model dropdown list
+    public class RoundRectangleMesh : PrimitiveProceduralModelBase
     {
         /// <summary>
-        /// RoundRect's amount of steps per corner
+        /// RoundRectangle's amount of steps per corner
         /// </summary>
         [DataMember(10)]
         public int CornerSteps { get; set; } = 4;
 
         /// <summary>
-        /// RoundRect's size as a 2D vector
+        /// RoundRectangle's size as a 2D vector
         /// </summary>
         [DataMember(11)]
         public Vector2 Size { get; set; } = Vector2.One;
 
 
         /// <summary>
-        /// RoundRect's corner radius
+        /// RoundRectangle's corner radius
         /// </summary>
         [DataMember(12)]
         public float Radius { get; set; } = 0.25f;
 
         /// <summary>
-        /// RoundRect's configurable sharp corners. Use the Corner enum's OR operator to configure multiple sharp corners at once
+        /// RoundRectangle's configurable sharp corners. Use the SharpCorner enum's OR operator to configure multiple sharp corners at once
         /// </summary>
         [DataMember(13)]
         public SharpCorner SharpCorners { get; set; } = SharpCorner.None;
@@ -54,17 +54,16 @@ namespace VL.Stride.Rendering.Models
                 Height = Size.Y,
                 Radius = Radius,
                 SharpCorners = Utils.ToCorner(SharpCorners),
-                Clockwise = Clockwise
+                Clockwise = !Clockwise
             };
 
-            var meshGenerator = generator.Generate();
-
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "RoundRectMesh", UvScale);
+            return Utils.ToGeometricMeshData(generator.Generate(), "RoundRectMesh", UvScale);
         }
 
         /// <summary>
-        /// Enum to address the individual corner of a RoundRectModel. Top-bottom and Left-right are inverted in respect to Stride (mesh is looking down) hence the order/value change
+        /// Enum to address the individual corner of a RoundRectModel
         /// </summary>
+        /// Top-bottom and Left-right are inverted in respect to Stride (mesh is looking down) hence the order/value change
         public enum SharpCorner
         {
             None = 0,

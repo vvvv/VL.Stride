@@ -11,44 +11,28 @@ namespace VL.Stride.Rendering.Models
     public static class Utils
     {
         /// <summary>
-        /// Uses DMesh3's vertex, normal and UV data to generate a stride equivalent
-        /// </summary>
-        /// <param name="g3Mesh">A g3 DMesh3 instance</param>
-        /// <param name="name">The model name</param>
-        /// <param name="UVScale">UV scale factor as a Vector2</param>
-        /// <returns>An equivalent Stride GeometricMeshData</returns>
-        public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(DMesh3 g3Mesh, string name, Vector2 UVScale, float yOffset = 0f)
-        {
-            if (g3Mesh is null)
-                return null;
-
-            return ToGeometricMeshData(new SimpleMesh(g3Mesh), name, UVScale, yOffset);
-        }
-
-        /// <summary>
         /// Uses SimpleMesh's vertex, normal and UV data to generate a stride equivalent
         /// </summary>
-        /// <param name="g3Mesh">A g3 SimpleMesh instance</param>
+        /// <param name="meshGenerator">A g3 SimpleMesh instance</param>
         /// <param name="name">The model name</param>
         /// <param name="UVScale">UV scale factor as a Vector2</param>
         /// <returns>An equivalent Stride GeometricMeshData</returns>
-        public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(SimpleMesh g3Mesh, string name, Vector2 UVScale, float yOffset = 0f)
+        public static GeometricMeshData<VertexPositionNormalTexture> ToGeometricMeshData(MeshGenerator meshGenerator, string name, Vector2 UVScale, float yOffset = 0f)
         {
-            if (g3Mesh is null || g3Mesh.VertexCount == 0)
+            if (meshGenerator is null || meshGenerator.vertices.Count == 0)
                 return null;
 
-            var vertexCount = g3Mesh.VertexCount;
+            var vertexCount = meshGenerator.vertices.Count;
             var vertices = new VertexPositionNormalTexture[vertexCount];
 
             for (int i = 0; i < vertexCount; i++)
             {
-                var vi = g3Mesh.GetVertexAll(i);
-                var normal = new Vector3(vi.n.x, vi.n.y, vi.n.z);
-                var uv = new Vector2(vi.uv.x, 1 - vi.uv.y) * UVScale;
-                vertices[i] = new VertexPositionNormalTexture(new Vector3((float)vi.v.x, (float)vi.v.y + yOffset, (float)vi.v.z), normal, uv);
+                var normal = new Vector3(meshGenerator.normals[i].x, meshGenerator.normals[i].y, meshGenerator.normals[i].z);
+                var uv = new Vector2(meshGenerator.uv[i].x, 1 - meshGenerator.uv[i].y) * UVScale;
+                vertices[i] = new VertexPositionNormalTexture(new Vector3((float)meshGenerator.vertices[i].x, (float)meshGenerator.vertices[i].y + yOffset, (float)meshGenerator.vertices[i].z), normal, uv);
             }
 
-            return new GeometricMeshData<VertexPositionNormalTexture>(vertices, g3Mesh.Triangles.ToArray(), isLeftHanded: true) { Name = name };
+            return new GeometricMeshData<VertexPositionNormalTexture>(vertices, meshGenerator.triangles.array, isLeftHanded: true) { Name = name };
         }
 
         /// <summary>
@@ -118,7 +102,7 @@ namespace VL.Stride.Rendering.Models
         /// </summary>
         /// <param name="corner">A VL.Stride.Rendering.Models.RoundRectModel.Corner</param>
         /// <returns>A g3.RoundRectGenerator.Corner</returns>
-        public static RoundRectGenerator.Corner ToCorner(RoundRectMesh.SharpCorner corner)
+        public static RoundRectGenerator.Corner ToCorner(RoundRectangleMesh.SharpCorner corner)
         {
             return (RoundRectGenerator.Corner)((byte)corner);
         }
@@ -135,7 +119,7 @@ namespace VL.Stride.Rendering.Models
             {
                 case AnchorMode.Top:
                     return -height;
-                case AnchorMode.Center:
+                case AnchorMode.Middle:
                     return (height / -2f);
                 case AnchorMode.Bottom:
                 default:

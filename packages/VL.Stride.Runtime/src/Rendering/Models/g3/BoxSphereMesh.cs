@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
+using System;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -28,7 +29,7 @@ namespace VL.Stride.Rendering.Models
         /// Sphere's vertical anchor position
         /// </summary>
         [DataMember(12)]
-        public AnchorMode Anchor { get; set; } = AnchorMode.Center;
+        public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         [DataMember(13)]
         public bool SharedVertices { get; set; } = false;
@@ -44,15 +45,13 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new Sphere3Generator_NormalizedCube()
             {
-                EdgeVertices = Tessellation,
+                EdgeVertices = Math.Max(Tessellation + 1, 2),
                 Radius = Radius,
                 NoSharedVertices = !SharedVertices,
-                Clockwise = Clockwise
+                Clockwise = !Clockwise
             };
-
-            var meshGenerator = generator.Generate();
             
-            return Utils.ToGeometricMeshData(meshGenerator.Generate().MakeDMesh(), "BoxSphereMesh", UvScale, Utils.CalculateYOffset(2* Radius, Anchor) + 0.5f); //Shpere's vertical origin in g3 is offset 0.5 compared to other meshes
+            return Utils.ToGeometricMeshData(generator.Generate(), "BoxSphereMesh", UvScale, Utils.CalculateYOffset(2* Radius, Anchor) + 0.5f); //Shpere's vertical origin in g3 is offset 0.5 compared to other meshes
         }
     }
 }
