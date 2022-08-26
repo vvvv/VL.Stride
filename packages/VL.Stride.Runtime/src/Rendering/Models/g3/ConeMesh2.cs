@@ -15,28 +15,28 @@ namespace VL.Stride.Rendering.Models
     public class ConeMesh2 : PrimitiveProceduralModelBase
     {
         /// <summary>
-        /// Cone's radius
+        /// Cone's height
         /// </summary>
         [DataMember(10)]
+        public float Height { get; set; } = 1;
+
+        /// <summary>
+        /// Cone's radius
+        /// </summary>
+        [DataMember(11)]
         public float Radius { get; set; } = 0.5f;
 
         /// <summary>
         /// Cone's initial angle in cycles 
         /// </summary>
-        [DataMember(11)]
+        [DataMember(12)]
         public float FromAngle { get; set; } = 0f;
 
         /// <summary>
         /// Cone's final angle in cycles
         /// </summary>
-        [DataMember(12)]
-        public float ToAngle { get; set; } = 1f;
-
-        /// <summary>
-        /// Cone's height
-        /// </summary>
         [DataMember(13)]
-        public float Height { get; set; } = 1;
+        public float ToAngle { get; set; } = 1f;
 
         /// <summary>
         /// Cone's tessellation (amount of radial and of vertical slices to split the cone into). Higher values result in smoother surfaces
@@ -44,21 +44,21 @@ namespace VL.Stride.Rendering.Models
         [DataMember(14)]
         public Int2 Tessellation { get; set; } = new Int2(16, 1);
 
-        [DataMember(15)]
-        public LateralSlopeUVModes LateralSlopeUVMode { get; set; } = LateralSlopeUVModes.SideProjected;
-
         /// <summary>
         /// Cone's vertical anchor position
         /// </summary>
-        [DataMember(16)]
+        [DataMember(15)]
         public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
+
+        [DataMember(16)]
+        public LateralSlopeUVModes LateralSlopeUVMode { get; set; } = LateralSlopeUVModes.SideProjected;
 
         /* TODO: Implement UV/Normals properly and expose
         [DataMember(17)]
         public bool SharedVertices { get; set; } = false;
         */
 
-        [DataMember(18)]
+        [DataMember(17)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>

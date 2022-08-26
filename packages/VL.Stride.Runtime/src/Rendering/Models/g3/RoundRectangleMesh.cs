@@ -14,29 +14,28 @@ namespace VL.Stride.Rendering.Models
     public class RoundRectangleMesh : PrimitiveProceduralModelBase
     {
         /// <summary>
-        /// RoundRectangle's amount of steps per corner
-        /// </summary>
-        [DataMember(10)]
-        public int CornerSteps { get; set; } = 4;
-
-        /// <summary>
         /// RoundRectangle's size as a 2D vector
         /// </summary>
-        [DataMember(11)]
+        [DataMember(10)]
         public Vector2 Size { get; set; } = Vector2.One;
-
 
         /// <summary>
         /// RoundRectangle's corner radius
         /// </summary>
-        [DataMember(12)]
+        [DataMember(11)]
         public float Radius { get; set; } = 0.25f;
 
         /// <summary>
         /// RoundRectangle's configurable sharp corners. Use the SharpCorner enum's OR operator to configure multiple sharp corners at once
         /// </summary>
-        [DataMember(13)]
+        [DataMember(12)]
         public SharpCorner SharpCorners { get; set; } = SharpCorner.None;
+
+        /// <summary>
+        /// RoundRectangle's amount of steps per corner
+        /// </summary>
+        [DataMember(13)]
+        public int CornerTessellation { get; set; } = 4;
 
         [DataMember(14)]
         public bool Clockwise { get; set; } = false;
@@ -49,7 +48,7 @@ namespace VL.Stride.Rendering.Models
         {
             var generator = new RoundRectGenerator
             {
-                CornerSteps = CornerSteps,
+                CornerSteps = CornerTessellation,
                 Width = Size.X,
                 Height = Size.Y,
                 Radius = Radius,

@@ -15,10 +15,10 @@ namespace VL.Stride.Rendering.Models
     public class CylinderMesh2 : PrimitiveProceduralModelBase
     {
         /// <summary>
-        /// Boolean value indicating if the cylinder should have caps
+        /// Cylinder's height
         /// </summary>
         [DataMember(10)]
-        public bool Capped { get; set; } = true;
+        public float Height { get; set; } = 1;
 
         /// <summary>
         /// Cylinder's base radius
@@ -45,10 +45,10 @@ namespace VL.Stride.Rendering.Models
         public float ToAngle { get; set; } = 1f;
 
         /// <summary>
-        /// Cylinder's height
+        /// Boolean value indicating if the cylinder should have caps
         /// </summary>
         [DataMember(15)]
-        public float Height { get; set; } = 1;
+        public bool Capped { get; set; } = true;
 
         /// <summary>
         /// Cylinder's tessellation (amount of radial and of vertical slices to split the cylinder into). Higher values result in smoother surfaces
@@ -67,7 +67,7 @@ namespace VL.Stride.Rendering.Models
         public bool SharedVertices { get; set; } = false;
         */
 
-        [DataMember(19)]
+        [DataMember(18)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
