@@ -38,9 +38,16 @@ namespace VL.Stride.Rendering.Models
         public float ToAngle { get; set; } = 1f;
 
         /// <summary>
-        /// Disc's tessellation (amount of radial slices to split the cylinder into). Higher values result in smoother surfaces
+        /// Disc's axis to use as the Up vector
         /// </summary>
         [DataMember(14)]
+        public NormalDirection Normal = NormalDirection.UpY;
+
+
+        /// <summary>
+        /// Disc's tessellation (amount of radial slices to split the cylinder into). Higher values result in smoother surfaces
+        /// </summary>
+        [DataMember(16)]
         public int Tessellation { get; set; } = 16;
 
         /// <summary>
@@ -56,6 +63,24 @@ namespace VL.Stride.Rendering.Models
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
             bool closed = (1 - FromAngle) - (1 - ToAngle) == 1;
+            g3.NormalDirection normal;
+            bool clockwise = Clockwise;
+            
+            switch (Normal)
+            {
+                default:
+                case NormalDirection.UpY: 
+                    normal = g3.NormalDirection.UpY;
+                    clockwise = !Clockwise; //TODO: unsure why this is the case but this seems to work. Needs review
+                    break;
+                case NormalDirection.UpZ: 
+                    normal = g3.NormalDirection.UpZ; 
+                    break;
+                case NormalDirection.UpX: 
+                    normal = g3.NormalDirection.UpX; 
+                    break;
+            }
+
             var generator = new PuncturedDiscGenerator
             {
                 StartAngleDeg = (1 - ToAngle) * 360,
@@ -63,7 +88,9 @@ namespace VL.Stride.Rendering.Models
                 InnerRadius = InnerRadius,
                 OuterRadius = OuterRadius,
                 Slices = closed ? Math.Max(Tessellation, 2) : Math.Max(Tessellation + 1, 2),
-                Clockwise = !Clockwise,
+                Clockwise = clockwise,
+                TextureSpace = TextureSpace.DirectX,
+                Normal = normal,
                 AddSliceWhenOpen = true
             };
 

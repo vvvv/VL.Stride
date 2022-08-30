@@ -205,6 +205,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.DiscMesh.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.25f)
                 .AddCachedInput(nameof(Models.DiscMesh.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
                 .AddCachedInput(nameof(Models.DiscMesh.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
+                .AddCachedInput(nameof(Models.DiscMesh.Normal), x => x.Normal, (x, v) => x.Normal = v, NormalDirection.UpY)
                 .AddCachedInput(nameof(Models.DiscMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
                 .AddCachedInput(nameof(Models.DiscMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
