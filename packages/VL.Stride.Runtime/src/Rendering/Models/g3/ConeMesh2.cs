@@ -51,7 +51,7 @@ namespace VL.Stride.Rendering.Models
         public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         [DataMember(16)]
-        public LateralSlopeUVModes LateralSlopeUVMode { get; set; } = LateralSlopeUVModes.SideProjected;
+        public SlopeUVMode SlopeUVMode { get; set; } = SlopeUVMode.SideProjected;
 
         /* TODO: Implement UV/Normals properly and expose
         [DataMember(17)]
@@ -76,7 +76,7 @@ namespace VL.Stride.Rendering.Models
                 Height = Height,
                 Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                 Rings = Math.Max(Tessellation.Y + 1, 2),
-                LateralSlopeUVMode = LateralSlopeUVMode == LateralSlopeUVModes.TopProjected ? ConeGenerator.LateralSlopeUVModes.TopProjected : ConeGenerator.LateralSlopeUVModes.SideProjected,
+                SlopeUVMode = SlopeUVMode == SlopeUVMode.OnShape ? g3.SlopeUVMode.OnShape : g3.SlopeUVMode.SideProjected,
                 NoSharedVertices = true,
                 Clockwise = Clockwise,
                 AddSliceWhenOpen = true
@@ -86,9 +86,9 @@ namespace VL.Stride.Rendering.Models
         }
     }
 
-    public enum LateralSlopeUVModes
+    public enum SlopeUVMode
     {
-        TopProjected,
+        OnShape,
         SideProjected
     }
 }
