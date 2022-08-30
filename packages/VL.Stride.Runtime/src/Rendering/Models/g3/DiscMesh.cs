@@ -75,16 +75,9 @@ namespace VL.Stride.Rendering.Models
             switch (Normal)
             {
                 default:
-                case NormalDirection.UpY: 
-                    normal = g3.NormalDirection.UpY;
-                    clockwise = !Clockwise; //TODO: unsure why this is the case but this seems to work. Needs review
-                    break;
-                case NormalDirection.UpZ: 
-                    normal = g3.NormalDirection.UpZ; 
-                    break;
-                case NormalDirection.UpX: 
-                    normal = g3.NormalDirection.UpX; 
-                    break;
+                case NormalDirection.UpY: normal = g3.NormalDirection.UpY; break;
+                case NormalDirection.UpZ: normal = g3.NormalDirection.UpZ; break;
+                case NormalDirection.UpX: normal = g3.NormalDirection.UpX; break;
             }
 
             var generator = new PuncturedDiscGenerator
@@ -94,7 +87,7 @@ namespace VL.Stride.Rendering.Models
                 InnerRadius = InnerRadius,
                 OuterRadius = OuterRadius,
                 Slices = closed ? Math.Max(Tessellation, 2) : Math.Max(Tessellation + 1, 2),
-                Clockwise = clockwise,
+                Clockwise = !Clockwise,
                 TextureSpace = TextureSpace.DirectX,
                 Normal = normal,
                 GenerateBackFace = GenerateBackFace,
