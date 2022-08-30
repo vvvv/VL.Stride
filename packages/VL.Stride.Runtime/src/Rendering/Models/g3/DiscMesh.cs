@@ -44,6 +44,11 @@ namespace VL.Stride.Rendering.Models
         [DataMember(14)]
         public NormalDirection Normal = NormalDirection.UpY;
 
+        /// <summary>
+        /// Determines if disc's back face should be generated or not
+        /// </summary>
+        [DataMember(15)]
+        public bool GenerateBackFace = true;
 
         /// <summary>
         /// Disc's tessellation (amount of radial slices to split the cylinder into). Higher values result in smoother surfaces
@@ -54,7 +59,7 @@ namespace VL.Stride.Rendering.Models
         /// <summary>
         /// 
         /// </summary>
-        [DataMember(15)]
+        [DataMember(17)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -92,6 +97,7 @@ namespace VL.Stride.Rendering.Models
                 Clockwise = clockwise,
                 TextureSpace = TextureSpace.DirectX,
                 Normal = normal,
+                GenerateBackFace = GenerateBackFace,
                 AddSliceWhenOpen = true
             };
 

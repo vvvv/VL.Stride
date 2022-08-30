@@ -200,12 +200,13 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.CylinderMesh2.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.DiscMesh x) => (x.OuterRadius, x.InnerRadius, x.FromAngle, x.ToAngle, x.Tessellation, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
+            yield return factory.NewMeshNode((Models.DiscMesh x) => (x.OuterRadius, x.InnerRadius, x.FromAngle, x.ToAngle, x.Normal, x.GenerateBackFace, x.Tessellation, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.DiscMesh.OuterRadius), x => x.OuterRadius, (x, v) => x.OuterRadius = v, 0.5f)
                 .AddCachedInput(nameof(Models.DiscMesh.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.25f)
                 .AddCachedInput(nameof(Models.DiscMesh.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
                 .AddCachedInput(nameof(Models.DiscMesh.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
                 .AddCachedInput(nameof(Models.DiscMesh.Normal), x => x.Normal, (x, v) => x.Normal = v, NormalDirection.UpY)
+                .AddCachedInput(nameof(Models.DiscMesh.GenerateBackFace), x => x.GenerateBackFace, (x, v) => x.GenerateBackFace = v, true)
                 .AddCachedInput(nameof(Models.DiscMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
                 .AddCachedInput(nameof(Models.DiscMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
