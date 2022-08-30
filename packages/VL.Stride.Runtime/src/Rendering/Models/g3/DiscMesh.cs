@@ -3,6 +3,7 @@ using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
 using System;
+using NormalDirection = Stride.Graphics.GeometricPrimitives.NormalDirection;
 
 namespace VL.Stride.Rendering.Models
 {
