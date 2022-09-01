@@ -42,7 +42,7 @@ namespace VL.Stride.Rendering.Models
         /// Disc's axis to use as the Up vector
         /// </summary>
         [DataMember(14)]
-        public NormalDirection Normal = NormalDirection.UpY;
+        public NormalDirection Normal = NormalDirection.UpZ;
 
         /// <summary>
         /// Determines if disc's back face should be generated or not
