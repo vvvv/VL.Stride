@@ -211,7 +211,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.DiscMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.RoundRectangleMesh x) => (x.Size, x.Radius, x.SharpCorners, x.CornerTessellation, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
+            yield return factory.NewMeshNode((Models.RoundRectangleMesh x) => (x.Size, x.Radius, x.SharpCorners, x.Normal, x.CornerTessellation, x.Clockwise), category: "Stride.Models.Meshes.Experimental")
                 .AddCachedInput(nameof(Models.RoundRectangleMesh.Size), x => x.Size, (x, v) => x.Size = v, Vector2.One)
                 .AddCachedInput(nameof(Models.RoundRectangleMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.25f)
                 .AddCachedInput(nameof(Models.RoundRectangleMesh.SharpCorners), x => x.SharpCorners, (x, v) => x.SharpCorners = v, Models.RoundRectangleMesh.SharpCorner.None)
