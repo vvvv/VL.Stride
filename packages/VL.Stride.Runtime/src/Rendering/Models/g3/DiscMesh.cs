@@ -70,8 +70,7 @@ namespace VL.Stride.Rendering.Models
         {
             bool closed = (1 - FromAngle) - (1 - ToAngle) == 1;
             g3.NormalDirection normal;
-            bool clockwise = Clockwise;
-            
+
             switch (Normal)
             {
                 default:
