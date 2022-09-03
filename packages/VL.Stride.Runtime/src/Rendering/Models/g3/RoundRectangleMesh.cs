@@ -32,23 +32,24 @@ namespace VL.Stride.Rendering.Models
         [DataMember(12)]
         public SharpCorner SharpCorners { get; set; } = SharpCorner.None;
 
+
+        /// <summary>
+        /// RoundRectangle's amount of steps per corner
+        /// </summary>
+        [DataMember(13)]
+        public int CornerTessellation { get; set; } = 4;
+
         /// <summary>
         /// RoundRectangle's axis to use as the Up vector
         /// </summary>
-        [DataMember(13)]
+        [DataMember(14)]
         public NormalDirection Normal = NormalDirection.UpZ;
 
         /// <summary>
         /// Determines if roundRectangle's back face should be generated or not
         /// </summary>
-        [DataMember(14)]
-        public bool GenerateBackFace = true;
-
-        /// <summary>
-        /// RoundRectangle's amount of steps per corner
-        /// </summary>
         [DataMember(15)]
-        public int CornerTessellation { get; set; } = 4;
+        public bool GenerateBackFace = true;
 
         [DataMember(16)]
         public bool Clockwise { get; set; } = false;

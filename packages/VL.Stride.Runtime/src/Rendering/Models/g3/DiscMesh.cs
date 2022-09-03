@@ -39,22 +39,22 @@ namespace VL.Stride.Rendering.Models
         public float ToAngle { get; set; } = 1f;
 
         /// <summary>
-        /// Disc's axis to use as the Up vector
+        /// Disc's tessellation (amount of radial slices to split the cylinder into). Higher values result in smoother surfaces
         /// </summary>
         [DataMember(14)]
+        public int Tessellation { get; set; } = 16;
+
+        /// <summary>
+        /// Disc's axis to use as the Up vector
+        /// </summary>
+        [DataMember(15)]
         public NormalDirection Normal = NormalDirection.UpZ;
 
         /// <summary>
         /// Determines if disc's back face should be generated or not
         /// </summary>
-        [DataMember(15)]
-        public bool GenerateBackFace = true;
-
-        /// <summary>
-        /// Disc's tessellation (amount of radial slices to split the cylinder into). Higher values result in smoother surfaces
-        /// </summary>
         [DataMember(16)]
-        public int Tessellation { get; set; } = 16;
+        public bool GenerateBackFace = true;
 
         /// <summary>
         /// 
