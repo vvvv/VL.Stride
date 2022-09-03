@@ -10,9 +10,9 @@ namespace VL.Stride.Rendering.Models
     /// <summary>
     /// Generates a Cone mesh
     /// </summary>
-    [DataContract("ConeMesh2")]
-    [Display("ConeMesh2")] // This name shows up in the procedural model dropdown list
-    public class ConeMesh2 : PrimitiveProceduralModelBase
+    [DataContract("ConeMesh")]
+    [Display("ConeMesh")] // This name shows up in the procedural model dropdown list
+    public class ConeMesh : PrimitiveProceduralModelBase
     {
         /// <summary>
         /// Cone's height
@@ -82,7 +82,7 @@ namespace VL.Stride.Rendering.Models
                 AddSliceWhenOpen = true
             };
 
-            return Utils.ToGeometricMeshData(generator.Generate(), "ConeMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "ConeMesh", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 

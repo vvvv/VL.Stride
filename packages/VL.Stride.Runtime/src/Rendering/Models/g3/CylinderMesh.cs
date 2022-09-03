@@ -10,9 +10,9 @@ namespace VL.Stride.Rendering.Models
     /// <summary>
     /// Generates a Cylinder mesh
     /// </summary>
-    [DataContract("CylinderMesh2")]
-    [Display("CylinderMesh2")] // This name shows up in the procedural model dropdown list
-    public class CylinderMesh2 : PrimitiveProceduralModelBase
+    [DataContract("CylinderMesh")]
+    [Display("CylinderMesh")] // This name shows up in the procedural model dropdown list
+    public class CylinderMesh : PrimitiveProceduralModelBase
     {
         /// <summary>
         /// Cylinder's height
@@ -111,7 +111,7 @@ namespace VL.Stride.Rendering.Models
                 };
             }
 
-            return Utils.ToGeometricMeshData(generator.Generate(), "CylinderMesh2", UvScale, Utils.CalculateYOffset(Height, Anchor));
+            return Utils.ToGeometricMeshData(generator.Generate(), "CylinderMesh", UvScale, Utils.CalculateYOffset(Height, Anchor));
         }
     }
 }

@@ -10,9 +10,9 @@ namespace VL.Stride.Rendering.Models
     /// <summary>
     /// Generates a Box mesh
     /// </summary>
-    [DataContract("BoxMesh2")]
-    [Display("BoxMesh2")] // This name shows up in the procedural model dropdown list
-    public class BoxMesh2 : PrimitiveProceduralModelBase
+    [DataContract("BoxMesh")]
+    [Display("BoxMesh")] // This name shows up in the procedural model dropdown list
+    public class BoxMesh : PrimitiveProceduralModelBase
     {
         /// <summary>
         /// Box's tessellation (amount of vertices per edge)
@@ -53,7 +53,7 @@ namespace VL.Stride.Rendering.Models
                 Clockwise = !Clockwise
             };
 
-            return Utils.ToGeometricMeshData(generator.Generate(), "BoxMesh2", UvScale, Utils.CalculateYOffset(1f, Anchor) + 0.5f);//GridBox's vertical origin in g3 is offset 0.5 compared to other meshes
+            return Utils.ToGeometricMeshData(generator.Generate(), "BoxMesh", UvScale, Utils.CalculateYOffset(1f, Anchor) + 0.5f);//GridBox's vertical origin in g3 is offset 0.5 compared to other meshes
         }
     }
 }
