@@ -216,7 +216,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.RoundRectangleMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.25f)
                 .AddCachedInput(nameof(Models.RoundRectangleMesh.SharpCorners), x => x.SharpCorners, (x, v) => x.SharpCorners = v, Models.RoundRectangleMesh.SharpCorner.None)
                 .AddCachedInput(nameof(Models.RoundRectangleMesh.Normal), x => x.Normal, (x, v) => x.Normal = v, NormalDirection.UpZ)
-                .AddCachedInput(nameof(Models.RoundRectangleMesh.GenerateBackFace), x => x.GenerateBackFace, (x, v) => x.GenerateBackFace = v, false)// TODO: change default to true
+                .AddCachedInput(nameof(Models.RoundRectangleMesh.GenerateBackFace), x => x.GenerateBackFace, (x, v) => x.GenerateBackFace = v, true)
                 .AddCachedInput(nameof(Models.RoundRectangleMesh.CornerTessellation), x => x.CornerTessellation, (x, v) => x.CornerTessellation = v, 4)
                 .AddCachedInput(nameof(Models.RoundRectangleMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
