@@ -39,12 +39,18 @@ namespace VL.Stride.Rendering.Models
         public NormalDirection Normal = NormalDirection.UpZ;
 
         /// <summary>
-        /// RoundRectangle's amount of steps per corner
+        /// Determines if roundRectangle's back face should be generated or not
         /// </summary>
         [DataMember(14)]
+        public bool GenerateBackFace = true;
+
+        /// <summary>
+        /// RoundRectangle's amount of steps per corner
+        /// </summary>
+        [DataMember(15)]
         public int CornerTessellation { get; set; } = 4;
 
-        [DataMember(15)]
+        [DataMember(16)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -72,6 +78,7 @@ namespace VL.Stride.Rendering.Models
                 SharpCorners = Utils.ToCorner(SharpCorners),
                 TextureSpace = TextureSpace.DirectX,
                 Normal = normal,
+                GenerateBackFace = GenerateBackFace,
                 Clockwise = !Clockwise
             };
 
