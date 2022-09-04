@@ -3,6 +3,7 @@ using Stride.Core;
 using Stride.Graphics;
 using Stride.Rendering.ProceduralModels;
 using System;
+using NormalDirection = Stride.Graphics.GeometricPrimitives.NormalDirection;
 
 namespace VL.Stride.Rendering.Models
 {
@@ -44,9 +45,21 @@ namespace VL.Stride.Rendering.Models
         public int Tessellation { get; set; } = 16;
 
         /// <summary>
-        /// 
+        /// Disc's axis to use as the Up vector
         /// </summary>
         [DataMember(15)]
+        public NormalDirection Normal = NormalDirection.UpZ;
+
+        /// <summary>
+        /// Determines if disc's back face should be generated or not
+        /// </summary>
+        [DataMember(16)]
+        public bool GenerateBackFace = true;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember(17)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -56,6 +69,16 @@ namespace VL.Stride.Rendering.Models
         protected override GeometricMeshData<VertexPositionNormalTexture> CreatePrimitiveMeshData()
         {
             bool closed = (1 - FromAngle) - (1 - ToAngle) == 1;
+            g3.NormalDirection normal;
+
+            switch (Normal)
+            {
+                default:
+                case NormalDirection.UpY: normal = g3.NormalDirection.UpY; break;
+                case NormalDirection.UpZ: normal = g3.NormalDirection.UpZ; break;
+                case NormalDirection.UpX: normal = g3.NormalDirection.UpX; break;
+            }
+
             var generator = new PuncturedDiscGenerator
             {
                 StartAngleDeg = (1 - ToAngle) * 360,
@@ -64,6 +87,9 @@ namespace VL.Stride.Rendering.Models
                 OuterRadius = OuterRadius,
                 Slices = closed ? Math.Max(Tessellation, 2) : Math.Max(Tessellation + 1, 2),
                 Clockwise = !Clockwise,
+                TextureSpace = TextureSpace.DirectX,
+                Normal = normal,
+                GenerateBackFace = GenerateBackFace,
                 AddSliceWhenOpen = true
             };
 
