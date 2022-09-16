@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>8.0</LangVersion>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeReferencedAssembliesInPackage</TargetsForTfmSpecificBuildOutput>
     
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PackageId>$(AssemblyName)</PackageId>
@@ -35,6 +36,12 @@
   </ItemGroup>
   <Target Name="IncludeStridePackageContent" BeforeTargets="InferPackageContents" DependsOnTargets="_StridePrepareAssetsForPack">
     <Message Importance="high" Text="Called Stride package targets" />
+  </Target>
+  <Target Name="IncludeReferencedAssembliesInPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <!-- Include assemblies from transitive package references https://github.com/NuGet/Home/issues/5103 -->
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' == 'vvvv.geometry3Sharp'" />
+    </ItemGroup>
   </Target>
   <ItemGroup Condition="'$(InPrivateRepo)' == 'true'">
     <ProjectReference Include="..\..\..\..\VL.Core\src\VL.Core.csproj" />
