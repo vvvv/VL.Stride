@@ -109,7 +109,7 @@ namespace VL.Stride
             Parallel.ForEach(nodes, definition =>
             {
                 var definitionSymbol = definition.GetSymbol() as IDefinitionSymbol;
-                Assert.IsNotNull(definitionSymbol, $"No symbol for {definition}.");
+                if (definitionSymbol is null) return; // Can be null for empty entry points
                 var errorMessages = definition.GetSymbolMessages().Where(m => m.Severity == MessageSeverity.Error);
                 Assert.That(errorMessages.None(), () => $"{definition}: {string.Join(Environment.NewLine, errorMessages)}");
                 Assert.IsFalse(definitionSymbol.IsUnused, $"The symbol of {definition} is marked as unused.");
