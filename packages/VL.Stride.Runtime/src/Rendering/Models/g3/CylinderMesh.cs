@@ -51,15 +51,21 @@ namespace VL.Stride.Rendering.Models
         public bool Capped { get; set; } = true;
 
         /// <summary>
-        /// Cylinder's tessellation (amount of radial and of vertical slices to split the cylinder into). Higher values result in smoother surfaces
+        /// Boolean value indicating if the cylinder should have caps
         /// </summary>
         [DataMember(16)]
+        public bool GenerateBackFace { get; set; } = false;
+
+        /// <summary>
+        /// Cylinder's tessellation (amount of radial and of vertical slices to split the cylinder into). Higher values result in smoother surfaces
+        /// </summary>
+        [DataMember(17)]
         public Int2 Tessellation { get; set; } = new Int2(16, 1);
 
         /// <summary>
         /// Cylinder's vertical anchor position
         /// </summary>
-        [DataMember(17)]
+        [DataMember(18)]
         public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
         /* TODO: Implement UV/Normals properly and expose
@@ -67,7 +73,7 @@ namespace VL.Stride.Rendering.Models
         public bool SharedVertices { get; set; } = false;
         */
 
-        [DataMember(18)]
+        [DataMember(19)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -103,6 +109,7 @@ namespace VL.Stride.Rendering.Models
                     StartAngleDeg = (1 - ToAngle) * 360,
                     EndAngleDeg = (1 - FromAngle) * 360,
                     Height = Height,
+                    GenerateBackFace = GenerateBackFace,
                     Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                     Rings = Math.Max(Tessellation.Y + 1, 2),
                     NoSharedVertices = true,
