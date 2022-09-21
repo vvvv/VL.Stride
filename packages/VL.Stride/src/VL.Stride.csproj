@@ -29,7 +29,7 @@
     <DownloadFile SourceUrl="$(VLZipUrl)" DestinationFolder="$(IntermediateOutputPath)">
       <Output TaskParameter="DownloadedFile" ItemName="_VLZipFile_" />
     </DownloadFile>
-    <Unzip SourceFiles="@(_VLZipFile_)" DestinationFolder="$(VVVV_BinPath).." OverwriteReadOnlyFiles="true" />
+    <Unzip SourceFiles="@(_VLZipFile_)" DestinationFolder="$(VVVV_BinPath)" OverwriteReadOnlyFiles="true" />
     <Error Text="'$(VVVVExePath)' does not exist. Make sure vvvv gamma ($(VLVersion)) is present at the specified path." Condition="!Exists('$(VVVVExePath)')" />
   </Target>
   
@@ -44,7 +44,7 @@
     <ProjectReference Include="..\..\..\..\..\vvvv50\VL.Lang\src\VL.Lang.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(InPrivateRepo)' != 'true'">
-    <PackageReference Include="VL.Lang" Version="$(VLVersion)" />
+    <PackageReference Include="VL.Lang" />
   </ItemGroup>
   
   <ItemGroup>
