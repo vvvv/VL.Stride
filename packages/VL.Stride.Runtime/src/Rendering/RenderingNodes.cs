@@ -178,11 +178,12 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.BoxSphereMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.ConeMesh x) => (x.Height, x.Radius, x.FromAngle, x.ToAngle, x.Tessellation, x.Anchor, x.SlopeUVMode, /*x.SharedVertices,*/ x.Clockwise))
+            yield return factory.NewMeshNode((Models.ConeMesh x) => (x.Height, x.Radius, x.FromAngle, x.ToAngle, x.Capped, x.Tessellation, x.Anchor, x.SlopeUVMode, /*x.SharedVertices,*/ x.Clockwise))
                 .AddCachedInput(nameof(Models.ConeMesh.Height), x => x.Height, (x, v) => x.Height = v, 1f)
                 .AddCachedInput(nameof(Models.ConeMesh.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
                 .AddCachedInput(nameof(Models.ConeMesh.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
                 .AddCachedInput(nameof(Models.ConeMesh.ToAngle), x => x.ToAngle, (x, v) => x.ToAngle = v, 1f)
+                .AddCachedInput(nameof(Models.ConeMesh.Capped), x => x.Capped, (x, v) => x.Capped = v, true)
                 .AddCachedInput(nameof(Models.ConeMesh.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, new Int2(16, 1))
                 .AddCachedInput(nameof(Models.ConeMesh.Anchor), x => x.Anchor, (x, v) => x.Anchor = v, Models.AnchorMode.Middle)
                 .AddCachedInput(nameof(Models.ConeMesh.SlopeUVMode), x => x.SlopeUVMode, (x, v) => x.SlopeUVMode = v, Models.SlopeUVMode.SideProjected)

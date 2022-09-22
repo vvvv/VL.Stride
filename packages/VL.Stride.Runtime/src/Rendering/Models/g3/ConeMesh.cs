@@ -39,18 +39,24 @@ namespace VL.Stride.Rendering.Models
         public float ToAngle { get; set; } = 1f;
 
         /// <summary>
-        /// Cone's tessellation (amount of radial and of vertical slices to split the cone into). Higher values result in smoother surfaces
+        /// Boolean value indicating if the cone should have a bottom cap
         /// </summary>
         [DataMember(14)]
+        public bool Capped { get; set; } = true;
+
+        /// <summary>
+        /// Cone's tessellation (amount of radial and of vertical slices to split the cone into). Higher values result in smoother surfaces
+        /// </summary>
+        [DataMember(15)]
         public Int2 Tessellation { get; set; } = new Int2(16, 1);
 
         /// <summary>
         /// Cone's vertical anchor position
         /// </summary>
-        [DataMember(15)]
+        [DataMember(16)]
         public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
-        [DataMember(16)]
+        [DataMember(17)]
         public SlopeUVMode SlopeUVMode { get; set; } = SlopeUVMode.SideProjected;
 
         /* TODO: Implement UV/Normals properly and expose
@@ -58,7 +64,7 @@ namespace VL.Stride.Rendering.Models
         public bool SharedVertices { get; set; } = false;
         */
 
-        [DataMember(17)]
+        [DataMember(18)]
         public bool Clockwise { get; set; } = false;
 
         /// <summary>
@@ -74,6 +80,7 @@ namespace VL.Stride.Rendering.Models
                 EndAngleDeg = (1 - FromAngle) * 360,
                 StartAngleDeg = (1 - ToAngle) * 360,
                 Height = Height,
+                Capped = Capped,
                 Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                 Rings = Math.Max(Tessellation.Y + 1, 2),
                 SlopeUVMode = SlopeUVMode == SlopeUVMode.OnShape ? g3.SlopeUVMode.OnShape : g3.SlopeUVMode.SideProjected,
