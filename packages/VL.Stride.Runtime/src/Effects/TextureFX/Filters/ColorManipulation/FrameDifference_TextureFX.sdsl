@@ -12,7 +12,7 @@ shader FrameDifference_TextureFX : FilterBase
     {
         float4 pre = Texture0.SampleLevel(LinearSampler, streams.TexCoord, 0);
         float4 cur = Texture1.SampleLevel(LinearSampler, streams.TexCoord, 0);
-	    float4 c = (pre-cur) * pow(2, Boost);
+	    float4 c = (pre-cur) * pow(2, Boost.Compute());
 	    if(!Signed)c = abs(c);
 	    if(!Alpha)c.a = cur.a;
         return c;
