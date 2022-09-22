@@ -229,7 +229,7 @@ namespace VL.Stride.Rendering
                 var path = EffectUtils.GetPathOfSdslShader(effectName, fileProvider);
                 try
                 {
-                    Process.Start(path);
+                    Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
                     return true;
                 }
                 catch
