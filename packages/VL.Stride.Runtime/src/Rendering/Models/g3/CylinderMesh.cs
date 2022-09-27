@@ -51,7 +51,7 @@ namespace VL.Stride.Rendering.Models
         public bool Capped { get; set; } = true;
 
         /// <summary>
-        /// Boolean value indicating if the cylinder should have caps
+        /// Determines if the cylinder's back face should be generated or not
         /// </summary>
         [DataMember(16)]
         public bool GenerateBackFace { get; set; } = false;
