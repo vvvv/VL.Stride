@@ -45,18 +45,24 @@ namespace VL.Stride.Rendering.Models
         public bool Capped { get; set; } = true;
 
         /// <summary>
-        /// Cone's tessellation (amount of radial and of vertical slices to split the cone into). Higher values result in smoother surfaces
+        /// Determines if the cone's back face should be generated or not
         /// </summary>
         [DataMember(15)]
+        public bool GenerateBackFace { get; set; } = false;
+
+        /// <summary>
+        /// Cone's tessellation (amount of radial and of vertical slices to split the cone into). Higher values result in smoother surfaces
+        /// </summary>
+        [DataMember(16)]
         public Int2 Tessellation { get; set; } = new Int2(16, 1);
 
         /// <summary>
         /// Cone's vertical anchor position
         /// </summary>
-        [DataMember(16)]
+        [DataMember(17)]
         public AnchorMode Anchor { get; set; } = AnchorMode.Middle;
 
-        [DataMember(17)]
+        [DataMember(18)]
         public SlopeUVMode SlopeUVMode { get; set; } = SlopeUVMode.SideProjected;
 
         /* TODO: Implement UV/Normals properly and expose
@@ -81,6 +87,7 @@ namespace VL.Stride.Rendering.Models
                 StartAngleDeg = (1 - ToAngle) * 360,
                 Height = Height,
                 Capped = Capped,
+                GenerateBackFace = GenerateBackFace,
                 Slices = closed ? Math.Max(Tessellation.X, 2) : Math.Max(Tessellation.X + 1, 2),
                 Rings = Math.Max(Tessellation.Y + 1, 2),
                 SlopeUVMode = SlopeUVMode == SlopeUVMode.OnShape ? g3.SlopeUVMode.OnShape : g3.SlopeUVMode.SideProjected,
