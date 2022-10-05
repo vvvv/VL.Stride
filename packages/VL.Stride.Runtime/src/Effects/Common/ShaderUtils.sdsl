@@ -9,7 +9,6 @@ shader ShaderUtils
     static const float OneOverTwoPi =   0.15915494309189533576888376337251;
     static const float Epsilon =        0.0000000596; // as 5.96e-08 
 
-
     // SPRITES UTILS ==============================================================
  
     void CircleSpriteDiscard(float2 uv)
@@ -34,7 +33,6 @@ shader ShaderUtils
         float2(1,0)
     };
 
-
     // CULLING ==============================================================
 
     bool DotCulling(float3 pos, float3 eye, float3 viewDirection, float CullingThreshold)
@@ -50,7 +48,6 @@ shader ShaderUtils
         return dotValue;
     }
 
-
     // COLOR UTILS ==============================================================
 
     // Approximates luminance from an RGB value
@@ -58,16 +55,6 @@ shader ShaderUtils
     {
         return dot(color, float3(0.299f, 0.587f, 0.114f));
     }
-
-
-    // Returns the luminance of a !! linear !! rgb color
-    // many source shows different RGB value as the one above
-    //see this one as an example : https://github.com/tobspr/GLSL-Color-Spaces/blob/master/ColorSpaces.inc.glsl
-    float GetLuminance(float3 rgb) 
-    {
-        return dot(float3(0.212656f, 0.715158f, 0.072186f), rgb);
-    }
-
 
     float4 BitsToColor(float f)
     {
@@ -103,77 +90,6 @@ shader ShaderUtils
         float C = (1 - abs(2 * HSL.z - 1)) * HSL.y;
         return (RGB - 0.5) * C + HSL.z;
     }
-
-    float4 RGBToCMYK(float3 c)
-    {
-	    float w = max(max(c.r, c.g), c.b) ;
-	    return clamp(float4((w-c.rgb) / w, 1.0 - w ), 0.00000001, 1.0);
-    }
-
-    float3 CMYKToRGB(float4 c)
-    {
-	    return 1 - min(1, c.rgb * (1 - c.w) + c.w);
-    }
-
-
-    float3 RGBtoOKLAB(float3 c) 
-    {
-        float l = 0.4122214708f * c.r + 0.5363325363f * c.g + 0.0514459929f * c.b;
-	    float m = 0.2119034982f * c.r + 0.6806995451f * c.g + 0.1073969566f * c.b;
-	    float s = 0.0883024619f * c.r + 0.2817188376f * c.g + 0.6299787005f * c.b;
-
-        float l_ = pow(l, 1.0f/3.0f);// cbrtf(l);
-        float m_ = pow(m, 1.0f/3.0f); //cbrtf(m);
-        float s_ = pow(s, 1.0f/3.0f); //cbrtf(s);
-
-        return float3(
-            0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
-            1.9779984951f * l_ - 2.4285922050f * m_ + 0.4505937099f * s_,
-            0.0259040371f * l_ + 0.7827717662f * m_ - 0.8086757660f * s_
-        );
-    }
-
-    float3 OKLABtoRGB(float3 c) 
-    {
-        float l_ = c.x + 0.3963377774f * c.y + 0.2158037573f * c.z;
-        float m_ = c.x - 0.1055613458f * c.y - 0.0638541728f * c.z;
-        float s_ = c.x - 0.0894841775f * c.y - 1.2914855480f * c.z;
-
-        float l = l_*l_*l_;
-        float m = m_*m_*m_;
-        float s = s_*s_*s_;
-
-        return float3(
-		    +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
-		    -1.2684380046f * l + 2.6097574011f * m - 0.3413193965f * s,
-		    -0.0041960863f * l - 0.7034186147f * m + 1.7076147010f * s
-        );
-    }
-
-    float4 RGBtoYUV(float4 rgba) 
-    {
-        float4 yuva;
-        yuva.r = rgba.r * 0.2126 + 0.7152 * rgba.g + 0.0722 * rgba.b;
-        yuva.g = (rgba.b - yuva.r) / 1.8556;
-        yuva.b = (rgba.r - yuva.r) / 1.5748;
-        yuva.a = rgba.a;
-                
-        // Adjust to work on GPU
-        yuva.gb += 0.5;
-                
-        return yuva;
-    }
-
-    float4 YUVtoRGB(float4 yuva)
-    {
-        yuva.gb -= 0.5;
-        return float4(
-            yuva.r * 1 + yuva.g * 0 + yuva.b * 1.5748,
-            yuva.r * 1 + yuva.g * -0.187324 + yuva.b * -0.468124,
-            yuva.r * 1 + yuva.g * 1.8556 + yuva.b * 0,
-            yuva.a);
-    }
-
 
     /* previous RGBtoHSL */
     //float3 RGBtoHSV(in float3 RGB)
@@ -260,8 +176,6 @@ shader ShaderUtils
         return mul(float4(RGB, 1), RGBtoYUVMat).rgb;
     }
 
-
-
     float4 Lerp3(float4 backColor, float4 interColor, float4 frontColor, float mix)
     {
         mix += mix;
@@ -277,9 +191,9 @@ shader ShaderUtils
         return backPart + interPart + frontPart;
     }
 
-
     // VALUE UTILS ==============================================================
-
+   
+    
     float ScaleOffsetScale(float x, float3 sos)
     {
         return ((x * sos.x) + sos.y) * sos.z;
@@ -340,172 +254,10 @@ shader ShaderUtils
         return float2(x,y);
     }
 
-    //LOD
-    float Lod(float2 viewSize)
-    {
-        return log2(max(viewSize.x, viewSize.y));
-    }
-
-
     // TRANSFORM 2D ==============================================================
 
     float2 TransformUV(float2 uv, float4x4 transform)
     {
         return mul(float4((uv.xy * 2 - 1) * float2(1, -1) * 0.5, 0, 1), transform).xy * float2(1, -1) + 0.5;
-    }
-
-
-    ////////////////////////////////////////////////////////////////
-    //
-    //             Map Functions
-    //
-    ////////////////////////////////////////////////////////////////
-
-    float Map(float value, float InMin, float InMax, float OutMin, float OutMax)
-    {
-	    float range = InMax - InMin;
-	    float normalized = (value - InMin) / range;	
-	       return OutMin + normalized * (OutMax - OutMin);
-    }
-	
-
-    float MapClamp(float value, float InMin, float InMax, float OutMin, float OutMax)
-    {
-	    float range = InMax - InMin;
-	    float normalized = (value - InMin) / range;	
-	    float output = OutMin + normalized * (OutMax - OutMin);
-	    float minV = min(OutMin,OutMax);
-	    float maxV = max(OutMin, OutMax);
-	    output = min(max(output, minV), maxV);
-	    return output ;
-    }
-
-
-    float MapWrap(float value, float InMin, float InMax, float OutMin, float OutMax)
-    {
-	    float range = InMax - InMin;
-	    float normalized = (value - InMin) / range;	
-	    float output = OutMin + normalized * (OutMax - OutMin);
-        if (normalized < 0) normalized = 1 + normalized;
-	    return  OutMin + (normalized % 1) * (OutMax - OutMin);
-    }
-
-
-    float MapMirror(float value, float InMin, float InMax, float OutMin, float OutMax)
-    {
-	    float range = InMax - InMin;
-	    float normalized = (value - InMin) / range;	
-	    normalized = 1-2*abs(frac(normalized*.5)-.5);
-	    float output = OutMin + (normalized % 1) * (OutMax - OutMin);
-	    return output;
-    }
-
-
-    float2 Map(float2 value, float2 InMin, float2 InMax, float2 OutMin, float2 OutMax)
-    {
-	    float2 vec;
-	    vec.x = Map( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = Map( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    return vec;
-    }
-
-    float3 Map(float3 value, float3 InMin, float3 InMax, float3 OutMin, float3 OutMax)
-    {
-	    float3 vec;
-	    vec.x = Map( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = Map( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    vec.z = Map( value.z,  InMin.z,  InMax.z,  OutMin.z,  OutMax.z);
-	    return vec;
-    }
-
-    float4 Map(float4 value, float4 InMin, float4 InMax, float4 OutMin, float4 OutMax)
-    {
-	    float4 vec;
-	    vec.x = Map( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = Map( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    vec.z = Map( value.z,  InMin.z,  InMax.z,  OutMin.z,  OutMax.z);
-	    vec.w = Map( value.w,  InMin.w,  InMax.w,  OutMin.w,  OutMax.w);
-	    return vec;
-    }
-
-    float2 MapClamp(float2 value, float2 InMin, float2 InMax, float2 OutMin, float2 OutMax)
-    {
-	    float2 vec;
-	    vec.x = MapClamp( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = MapClamp( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    return vec;
-    }
-
-    float3 MapClamp(float3 value, float3 InMin, float3 InMax, float3 OutMin, float3 OutMax)
-    {
-	    float3 vec;
-	    vec.x = MapClamp( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = MapClamp( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    vec.z = MapClamp( value.z,  InMin.z,  InMax.z,  OutMin.z,  OutMax.z);
-	    return vec;
-    }
-
-    float4 MapClamp(float4 value, float4 InMin, float4 InMax, float4 OutMin, float4 OutMax)
-    {
-	    float4 vec;
-	    vec.x = MapClamp( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = MapClamp( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    vec.z = MapClamp( value.z,  InMin.z,  InMax.z,  OutMin.z,  OutMax.z);
-	    vec.w = MapClamp( value.w,  InMin.w,  InMax.w,  OutMin.w,  OutMax.w);
-	    return vec;
-    }
-
-    float2 MapWrap(float2 value, float2 InMin, float2 InMax, float2 OutMin, float2 OutMax)
-    {
-	    float2 vec;
-	    vec.x = MapWrap( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = MapWrap( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    return vec;
-    }
-
-    float3 MapWrap(float3 value, float3 InMin, float3 InMax, float3 OutMin, float3 OutMax)
-    {
-	    float3 vec;
-	    vec.x = MapWrap( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = MapWrap( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    vec.z = MapWrap( value.z,  InMin.z,  InMax.z,  OutMin.z,  OutMax.z);
-	    return vec;
-    }
-
-    float4 MapWrap(float4 value, float4 InMin, float4 InMax, float4 OutMin, float4 OutMax)
-    {
-	    float4 vec;
-	    vec.x = MapWrap( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = MapWrap( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    vec.z = MapWrap( value.z,  InMin.z,  InMax.z,  OutMin.z,  OutMax.z);
-	    vec.w = MapWrap( value.w,  InMin.w,  InMax.w,  OutMin.w,  OutMax.w);
-	    return vec;
-    }
-
-    float2 MapMirror(float2 value, float2 InMin, float2 InMax, float2 OutMin, float2 OutMax)
-    {
-	    float2 vec;
-	    vec.x = MapMirror( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = MapMirror( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    return vec;
-    }
-
-    float3 MapMirror(float3 value, float3 InMin, float3 InMax, float3 OutMin, float3 OutMax)
-    {
-	    float3 vec;
-	    vec.x = MapMirror( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = MapMirror( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    vec.z = MapMirror( value.z,  InMin.z,  InMax.z,  OutMin.z,  OutMax.z);
-	    return vec;
-    }
-
-    float4 MapMirror(float4 value, float4 InMin, float4 InMax, float4 OutMin, float4 OutMax)
-    {
-	    float4 vec;
-	    vec.x = MapMirror( value.x,  InMin.x,  InMax.x,  OutMin.x,  OutMax.x);
-	    vec.y = MapMirror( value.y,  InMin.y,  InMax.y,  OutMin.y,  OutMax.y);
-	    vec.z = MapMirror( value.z,  InMin.z,  InMax.z,  OutMin.z,  OutMax.z);
-	    vec.w = MapMirror( value.w,  InMin.w,  InMax.w,  OutMin.w,  OutMax.w);
-	    return vec;
     }
 };
