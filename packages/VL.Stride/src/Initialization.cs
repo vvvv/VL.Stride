@@ -82,8 +82,12 @@ namespace VL.Stride.Lib
                     game.GraphicsDevice.Presenter.PresentInterval = PresentInterval.Immediate;
 
                     var frameClock = Clocks.FrameClock;
+                    var serviceRegistry = ServiceRegistry.Current;
                     clockSubscription = frameClock.GetFrameFinished().Subscribe(ffm =>
                     {
+                        // Re-install the service registry since we're outside of the runtime instance scope here!
+                        using var _ = serviceRegistry.MakeCurrentIfNone();
+
                         try
                         {
                             game.ElapsedUserTime = ffm.LastInterval;
