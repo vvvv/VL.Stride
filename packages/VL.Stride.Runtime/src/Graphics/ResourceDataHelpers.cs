@@ -23,6 +23,20 @@ namespace VL.Stride.Graphics
         public void Unpin();
     }
 
+    public class DataPointerPinner : IMemoryPinner
+    {
+        public DataPointer DataPointer;
+
+        public unsafe IntPtr Pin()
+        {
+            return DataPointer.Pointer;
+        }
+
+        public void Unpin()
+        {
+        }
+    }
+
     public class ReadonlyMemoryPinner<T> : IMemoryPinner where T : struct
     {
         public ReadOnlyMemory<T> Memory;
@@ -95,6 +109,21 @@ namespace VL.Stride.Graphics
     public class MemoryDataProvider : IGraphicsDataProvider
     {
         public IMemoryPinner Pinner = new NonePinner();
+
+        public void SetDataPointer(DataPointer dataPointer, int offsetInBytes = 0, int sizeInBytes = 0, int elementSizeInBytes = 0, int rowSizeInBytes = 0, int sliceSizeInBytes = 0)
+        {
+            var pnr = Pinner as DataPointerPinner;
+            pnr ??= new DataPointerPinner();
+
+            pnr.DataPointer = dataPointer;
+            Pinner = pnr;
+
+            OffsetInBytes = offsetInBytes;
+            SizeInBytes = sizeInBytes > 0 ? Math.Min(sizeInBytes, dataPointer.Size) : dataPointer.Size;
+            ElementSizeInBytes = elementSizeInBytes;
+            RowSizeInBytes = rowSizeInBytes;
+            SliceSizeInBytes = sliceSizeInBytes;
+        }
 
         public void SetMemoryData<T>(ReadOnlyMemory<T> memory, int offsetInBytes = 0, int sizeInBytes = 0, int elementSizeInBytes = 0, int rowSizeInBytes = 0, int sliceSizeInBytes = 0) where T : struct
         {
