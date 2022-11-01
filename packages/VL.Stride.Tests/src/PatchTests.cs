@@ -132,7 +132,7 @@ namespace MyTests
             {
                 var definitionSymbol = definition.GetSymbol() as IDefinitionSymbol;
                 Assert.IsNotNull(definitionSymbol, $"No symbol for {definition}.");
-                var errorMessages = definition.GetSymbolMessages().Where(m => m.Severity == MessageSeverity.Error);
+                var errorMessages = definition.GetSymbolMessages().Where(m => m.Severity >= MessageSeverity.ErrorInside);
                 Assert.That(errorMessages.None(), () => $"{definition}: {string.Join(Environment.NewLine, errorMessages)}");
                 Assert.IsFalse(definitionSymbol.IsUnused, $"The symbol of {definition} is marked as unused.");
             });
