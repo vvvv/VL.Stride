@@ -86,10 +86,17 @@ namespace VL.Stride.Core
         {
             lock (serviceCache)
             {
-                // Keep Stride services per root container (which is usually the session)
-                var root = factory.GetService<CompositeDisposable>();
-                var strideServices = serviceCache.GetValue(root, CreateStrideServices);
+                var strideServices = GetGlobalStrideServices();
                 factory.RegisterNodeFactory(NodeBuilding.NewNodeFactory(factory, name, f => init(strideServices, f)));
+            }
+        }
+
+        public static ServiceRegistry GetGlobalStrideServices()
+        {
+            lock (serviceCache)
+            {
+                var root = VL.Core.ServiceRegistry.CurrentOrGlobal.GetService<CompositeDisposable>();
+                return serviceCache.GetValue(root, CreateStrideServices);
             }
         }
 

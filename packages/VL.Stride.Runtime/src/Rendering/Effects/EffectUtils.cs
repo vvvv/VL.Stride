@@ -19,10 +19,11 @@ using System.Diagnostics;
 using Stride.Core;
 using Stride.Shaders.Parser.Mixins;
 using VL.App;
+using System.Runtime.CompilerServices;
 
 namespace VL.Stride.Rendering
 {
-    static class EffectUtils
+    public static class EffectUtils
     {
         public static string GetPathOfSdslShader(string effectName, IVirtualFileProvider fileProvider, IVirtualFileProvider dbFileProvider = null)
         {
@@ -53,6 +54,15 @@ namespace VL.Stride.Rendering
                 return fp;
 
             return null;
+        }
+
+        // Called by shader wizard
+        public static bool TryGetShaderFilePath(string shaderName, out string filePath)
+        {
+            var strideServices = VL.Stride.Core.Initialization.GetGlobalStrideServices();
+            var effectSystem = strideServices.GetService<EffectSystem>();
+            filePath = GetPathOfSdslShader(shaderName, effectSystem.FileProvider);
+            return filePath != null;
         }
 
         //get shader source from data base, is there a more direct way?
@@ -109,7 +119,7 @@ namespace VL.Stride.Rendering
 
         static readonly Regex FCamelCasePattern = new Regex("[a-z][A-Z0-9]", RegexOptions.Compiled);
 
-        public static void SelectPin<TPin>(this IVLPin[] pins, IVLPinDescription description, ref TPin pin) where TPin : Pin
+        internal static void SelectPin<TPin>(this IVLPin[] pins, IVLPinDescription description, ref TPin pin) where TPin : Pin
         {
             pin = pins.OfType<TPin>().FirstOrDefault(p => p.Name == description.Name);
         }
