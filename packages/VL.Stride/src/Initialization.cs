@@ -129,7 +129,7 @@ namespace VL.Stride.Lib
                 return ResourceProvider.Return(game.Window, disposeAction: (window) =>
                 {
                     window.Visible = false;
-                }).ShareInParallel();
+                });
             });
         }
 

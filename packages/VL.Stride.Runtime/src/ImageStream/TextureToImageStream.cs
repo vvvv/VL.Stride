@@ -22,7 +22,6 @@ namespace VL.Stride.ImageStream
         private readonly ServiceRegistry serviceRegistry;
         private readonly CompositeDisposable subscriptions;
         private readonly SerialDisposable texturePoolSubscription;
-        private readonly SerialDisposable imageSubscription;
 
         public TextureToImageStream()
         {
@@ -30,7 +29,6 @@ namespace VL.Stride.ImageStream
             subscriptions = new CompositeDisposable()
             {
                 (texturePoolSubscription = new SerialDisposable()),
-                (imageSubscription = new SerialDisposable())
             };
         }
 
@@ -47,7 +45,6 @@ namespace VL.Stride.ImageStream
             if (texture is null)
             {
                 texturePoolSubscription.Disposable = null;
-                imageSubscription.Disposable = null;
                 return;
             }
 
@@ -81,10 +78,7 @@ namespace VL.Stride.ImageStream
                         Metadata = stagedMetadata
                     };
                     var image = new IntPtrImage(data.DataPointer, data.SlicePitch, imageInfo);
-                    var imageProvider = ResourceProvider.Return(image, ReleaseImage).ShareInParallel();
-
-                    // Subscribe to our own provider to ensure the image is returned if no one else is using it
-                    imageSubscription.Disposable = imageProvider.GetHandle();
+                    var imageProvider = ResourceProvider.Return(image, ReleaseImage);
 
                     // Push it downstream
                     imageStream.OnNext(imageProvider);
