@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using VL.Core;
 using VL.Lib.Basics.Imaging;
 using VL.Lib.Basics.Resources;
-
+using VL.Lib.Basics.Video;
 using StridePixelFormat = Stride.Graphics.PixelFormat;
 using VLPixelFormat = VL.Lib.Basics.Imaging.PixelFormat;
 
@@ -12,15 +12,18 @@ namespace VL.Stride.ImageStream
 {
     static class StrideUtils
     {
-        public static unsafe IResourceProvider<Texture> ToTexture(this IResourceProvider<IImage> imageProvider, GraphicsDevice graphicsDevice)
+        public static unsafe IResourceProvider<Texture> ToTexture(this IResourceProvider<VideoFrame> videoFrameProvider, GraphicsDevice graphicsDevice)
         {
-            return imageProvider.BindNew(image =>
+            return videoFrameProvider.BindNew(videoFrame =>
             {
-                var info = image.Info;
-                using var imageData = image.GetData();
-                using var memoryHandle = imageData.Bytes.Pin();
-                var description = TextureDescription.New2D(info.Width, info.Height, ToPixelFormat(info.Format), usage: GraphicsResourceUsage.Immutable);
-                return Texture.New(graphicsDevice, description, new DataBox(new IntPtr(memoryHandle.Pointer), info.ScanSize, info.ImageSize));
+                if (!videoFrame.TryGetMemory(out var memory))
+                    return null;
+
+                fixed (byte* data = memory.Span)
+                {
+                    var description = TextureDescription.New2D(videoFrame.Width, videoFrame.Height, ToPixelFormat(videoFrame.PixelFormat), usage: GraphicsResourceUsage.Immutable);
+                    return Texture.New(graphicsDevice, description, new DataBox(new IntPtr(data), videoFrame.RowLengthInBytes, videoFrame.LengthInBytes));
+                }
             });
         }
 

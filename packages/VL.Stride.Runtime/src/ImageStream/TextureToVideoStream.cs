@@ -1,29 +1,37 @@
-﻿using Stride.Graphics;
+﻿using CommunityToolkit.HighPerformance;
+using SharpDX.DXGI;
+using SharpFont;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
 using Stride.Rendering;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using VL.Core;
 using VL.Lib.Basics.Imaging;
 using VL.Lib.Basics.Resources;
+using VL.Lib.Basics.Video;
+using MapMode = Stride.Graphics.MapMode;
 using StridePixelFormat = Stride.Graphics.PixelFormat;
 using VLPixelFormat = VL.Lib.Basics.Imaging.PixelFormat;
 
 namespace VL.Stride.ImageStream
 {
-    public sealed class TextureToImageStream : RendererBase
+    public sealed class TextureToVideoStream : RendererBase
     {
         private readonly SynchronizationContext synchronizationContext = SynchronizationContext.Current;
         private readonly Queue<(Texture texture, string metadata)> textureDownloads = new Queue<(Texture texture, string metadata)>();
-        private readonly Subject<IResourceProvider<IImage>> imageStream = new Subject<IResourceProvider<IImage>>();
+        private readonly Subject<IResourceProvider<VideoFrame>> videoStream = new Subject<IResourceProvider<VideoFrame>>();
         private readonly ServiceRegistry serviceRegistry;
         private readonly CompositeDisposable subscriptions;
         private readonly SerialDisposable texturePoolSubscription;
 
-        public TextureToImageStream()
+        public TextureToVideoStream()
         {
             serviceRegistry = ServiceRegistry.Current;
             subscriptions = new CompositeDisposable()
@@ -36,7 +44,7 @@ namespace VL.Stride.ImageStream
 
         public string Metadata { get; set; }
 
-        public IObservable<IResourceProvider<IImage>> ImageStream => imageStream;
+        public IObservable<IResourceProvider<VideoFrame>> VideoStream => videoStream;
 
         /// <inheritdoc />
         protected override void DrawCore(RenderDrawContext context)
@@ -65,31 +73,27 @@ namespace VL.Stride.ImageStream
                 var (stagedTexture, stagedMetadata) = textureDownloads.Peek();
                 var doNotWait = textureDownloads.Count < 4;
                 var commandList = context.CommandList;
-                var mappedResource = commandList.MapSubresource(stagedTexture, 0, global::Stride.Graphics.MapMode.Read, doNotWait);
+                var mappedResource = commandList.MapSubresource(stagedTexture, 0, MapMode.Read, doNotWait);
                 var data = mappedResource.DataBox;
                 if (!data.IsEmpty)
                 {
                     // Dequeue
                     textureDownloads.Dequeue();
 
-                    // Setup the new image resource
-                    var imageInfo = new ImageInfo(stagedTexture.Width, stagedTexture.Height, ToPixelFormat(stagedTexture.Format), isPremultipliedAlpha: true, data.RowPitch, stagedTexture.Format.ToString())
-                    {
-                        Metadata = stagedMetadata
-                    };
-                    var image = new IntPtrImage(data.DataPointer, data.SlicePitch, imageInfo);
-                    var imageProvider = ResourceProvider.Return(image, ReleaseImage);
+                    var (memoryOwner, videoFrame) = CreateVideoFrame(stagedTexture, data, stagedMetadata);
+
+                    var videoFrameProvider = ResourceProvider.Return(videoFrame, ReleaseVideoFrame);
 
                     // Push it downstream
-                    imageStream.OnNext(imageProvider);
+                    videoStream.OnNext(videoFrameProvider);
 
-                    void ReleaseImage(IntPtrImage i)
+                    void ReleaseVideoFrame(VideoFrame videoFrame)
                     {
                         if (SynchronizationContext.Current != synchronizationContext)
-                            synchronizationContext.Post(x => ReleaseImage((IntPtrImage)x), i);
+                            synchronizationContext.Post(x => ReleaseVideoFrame((VideoFrame)x), videoFrame);
                         else
                         {
-                            i.Dispose();
+                            memoryOwner.Dispose();
                             if (!IsDisposed)
                                 commandList.UnmapSubresource(mappedResource);
                             texturePool.Return(stagedTexture);
@@ -97,27 +101,36 @@ namespace VL.Stride.ImageStream
                     }
                 }
             }
+        }
 
-            static VLPixelFormat ToPixelFormat(StridePixelFormat format)
+        static (IDisposable memoryOwner, VideoFrame videoFrame) CreateVideoFrame(Texture texture, DataBox data, string metadata)
+        {
+            switch (texture.Format)
             {
-                switch (format)
-                {
-                    case StridePixelFormat.R8_UNorm: return VLPixelFormat.R8;
-                    case StridePixelFormat.R16_UNorm: return VLPixelFormat.R16;
-                    case StridePixelFormat.R32_Float: return VLPixelFormat.R32F;
-                    case StridePixelFormat.R8G8B8A8_UNorm: return VLPixelFormat.R8G8B8A8;
-                    case StridePixelFormat.R8G8B8A8_UNorm_SRgb: return VLPixelFormat.R8G8B8A8;
-                    case StridePixelFormat.B8G8R8X8_UNorm: return VLPixelFormat.B8G8R8X8;
-                    case StridePixelFormat.B8G8R8X8_UNorm_SRgb: return VLPixelFormat.B8G8R8X8;
-                    case StridePixelFormat.B8G8R8A8_UNorm: return VLPixelFormat.B8G8R8A8;
-                    case StridePixelFormat.B8G8R8A8_UNorm_SRgb: return VLPixelFormat.B8G8R8A8;
-                    case StridePixelFormat.R16G16B16A16_Float: return VLPixelFormat.R16G16B16A16F;
-                    case StridePixelFormat.R32G32_Float: return VLPixelFormat.R32G32F;
-                    case StridePixelFormat.R32G32B32A32_Float: return VLPixelFormat.R32G32B32A32F;
-                    default:
-                        throw new Exception("Unsupported pixel format");
-                }
+                //case StridePixelFormat.R8_UNorm: return VLPixelFormat.R8;
+                //case StridePixelFormat.R16_UNorm: return VLPixelFormat.R16;
+                //case StridePixelFormat.R32_Float: return VLPixelFormat.R32F;
+                case StridePixelFormat.R8G8B8A8_UNorm: return CreateVideoFrame<RgbaPixel>(texture, data, metadata);
+                case StridePixelFormat.R8G8B8A8_UNorm_SRgb: return CreateVideoFrame<RgbaPixel>(texture, data, metadata);
+                case StridePixelFormat.B8G8R8X8_UNorm: return CreateVideoFrame<BgrxPixel>(texture, data, metadata);
+                case StridePixelFormat.B8G8R8X8_UNorm_SRgb: return CreateVideoFrame<BgrxPixel>(texture, data, metadata);
+                case StridePixelFormat.B8G8R8A8_UNorm: return CreateVideoFrame<BgraPixel>(texture, data, metadata);
+                case StridePixelFormat.B8G8R8A8_UNorm_SRgb: return CreateVideoFrame<BgraPixel>(texture, data, metadata);
+                //case StridePixelFormat.R16G16B16A16_Float: return VLPixelFormat.R16G16B16A16F;
+                //case StridePixelFormat.R32G32_Float: return VLPixelFormat.R32G32F;
+                //case StridePixelFormat.R32G32B32A32_Float: return VLPixelFormat.R32G32B32A32F;
+                default:
+                    throw new Exception("Unsupported pixel format");
             }
+        }
+
+        static (IMemoryOwner<T> memoryOwner, VideoFrame<T> videoFrame) CreateVideoFrame<T>(Texture texture, DataBox data, string metadata)
+            where T : unmanaged, IPixel
+        {
+            var memoryOwner = new UnmanagedMemoryManager<T>(data.DataPointer, data.SlicePitch);
+            var pitch = data.RowPitch - texture.Width * Unsafe.SizeOf<T>();
+            var videoFrame = new VideoFrame<T>(memoryOwner.Memory.AsMemory2D(0, texture.Height, texture.Width, pitch), metadata);
+            return (memoryOwner, videoFrame);
         }
 
         private TexturePool GetTexturePool(GraphicsDevice graphicsDevice, Texture texture)

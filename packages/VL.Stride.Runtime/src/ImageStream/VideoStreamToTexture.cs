@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using Stride.Core.Mathematics;
 using Stride.Graphics;
 using System;
 using System.Reactive.Disposables;
@@ -7,33 +8,34 @@ using System.Reflection.Metadata;
 using VL.Core;
 using VL.Lib.Basics.Imaging;
 using VL.Lib.Basics.Resources;
+using VL.Lib.Basics.Video;
 
 namespace VL.Stride.ImageStream
 {
-    public sealed class ImageStreamToTexture : IDisposable
+    public sealed class VideoStreamToTexture : IDisposable
     {
         private readonly SerialDisposable imageStreamSubscription = new SerialDisposable();
         private readonly SerialDisposable latestSubscription = new SerialDisposable();
         private readonly SerialDisposable currentSubscription = new SerialDisposable();
 
-        private IObservable<IResourceProvider<IImage>>? imageStream;
+        private IObservable<IResourceProvider<VideoFrame>>? videoStream;
         private IResourceProvider<Texture>? current, latest;
 
         private IResourceHandle<GraphicsDevice> graphicsDevice;
 
-        public ImageStreamToTexture()
+        public VideoStreamToTexture()
         {
             graphicsDevice = ServiceRegistry.Current.GetService<IResourceProvider<GraphicsDevice>>().GetHandle();
         }
 
-        public unsafe IObservable<IResourceProvider<IImage>>? ImageStream 
+        public unsafe IObservable<IResourceProvider<VideoFrame>>? VideoStream 
         {
-            get => imageStream;
+            get => videoStream;
             set
             {
-                if (value != imageStream)
+                if (value != videoStream)
                 {
-                    imageStream = value;
+                    videoStream = value;
 
                     imageStreamSubscription.Disposable = value?
                         .Do(provider =>
