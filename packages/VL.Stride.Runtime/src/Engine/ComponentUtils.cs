@@ -6,7 +6,6 @@ using System.Reactive.Disposables;
 using System.Runtime.CompilerServices;
 using VL.Core;
 using VL.Lib.Collections.TreePatching;
-using Session = VL.Lang.PublicAPI.Session;
 
 namespace VL.Stride.Engine
 {
@@ -39,7 +38,7 @@ namespace VL.Stride.Engine
                     {
                         foreach (var id in nodeContext.Path.Stack)
                         {
-                            Session.AddPersistentMessage(new VL.Lang.Message(id, Lang.MessageSeverity.Warning, "Component should only be connected to one Entity."))
+                            IVLRuntime.Current?.AddPersistentMessage(new VL.Lang.Message(id, Lang.MessageSeverity.Warning, "Component should only be connected to one Entity."))
                                 .DisposeBy(warnings);
                         }
                     }

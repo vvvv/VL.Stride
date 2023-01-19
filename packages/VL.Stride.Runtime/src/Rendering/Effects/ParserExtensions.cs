@@ -6,6 +6,7 @@ using Stride.Core.Mathematics;
 using Stride.Core.Shaders.Ast.Stride;
 using Stride.Core.Shaders.Ast;
 using System.Collections.Generic;
+using VL.Core;
 
 namespace VL.Stride.Rendering
 {
@@ -78,7 +79,7 @@ namespace VL.Stride.Rendering
         {
             if (attr.Parameters.Count > index)
             {
-                if (UserInputParsing.TryParseFloat(attr.Parameters[index].Text, out var value))
+                if (ParseUtils.TryParseFloat(attr.Parameters[index].Text, out var value))
                 {
                     return value;
                 }
@@ -90,7 +91,7 @@ namespace VL.Stride.Rendering
         {
             if (attr.Parameters.Count > index)
             {
-                if (UserInputParsing.TryParseInt(attr.Parameters[index].Text, out var value))
+                if (ParseUtils.TryParseInt(attr.Parameters[index].Text, out var value))
                 {
                     return value;
                 }
@@ -117,7 +118,7 @@ namespace VL.Stride.Rendering
         {
             if (attr.Parameters.Count > index)
             {
-                if (UserInputParsing.TryParseUInt(attr.Parameters[index].Text, out var value))
+                if (ParseUtils.TryParseUInt(attr.Parameters[index].Text, out var value))
                 {
                     return value;
                 }
