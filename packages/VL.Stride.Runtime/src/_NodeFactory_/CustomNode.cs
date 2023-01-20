@@ -2,6 +2,7 @@
 using Stride.Engine;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -78,7 +79,7 @@ namespace VL.Stride
         }
     }
 
-    class CustomNodeDesc<TInstance> : IVLNodeDescription, IInfo
+    class CustomNodeDesc<TInstance> : IVLNodeDescription, ITaggedInfo
         where TInstance : class
     {
         readonly List<CustomPinDesc> inputs = new List<CustomPinDesc>();
@@ -89,7 +90,8 @@ namespace VL.Stride
             string name = default, 
             string category = default, 
             bool copyOnWrite = true, 
-            bool hasStateOutput = true)
+            bool hasStateOutput = true,
+            ImmutableArray<string> tags = default)
         {
             Factory = factory;
             this.ctor = ctor;
@@ -97,6 +99,7 @@ namespace VL.Stride
             Name = name ?? typeof(TInstance).Name;
             Category = category ?? string.Empty;
             CopyOnWrite = copyOnWrite;
+            Tags = tags.IsDefault ? ImmutableArray<string>.Empty : tags;
 
             if (hasStateOutput)
                 AddOutput("Output", x => x);
@@ -121,6 +124,8 @@ namespace VL.Stride
         public string Summary => typeof(TInstance).GetSummary();
 
         public string Remarks => typeof(TInstance).GetRemarks();
+
+        public ImmutableArray<string> Tags { get; }
 
         public IObservable<object> Invalidated => Observable.Empty<object>();
 

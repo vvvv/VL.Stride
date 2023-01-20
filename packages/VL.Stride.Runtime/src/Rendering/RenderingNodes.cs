@@ -4,6 +4,7 @@ using Stride.Rendering;
 using Stride.Rendering.ProceduralModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Basics.Resources;
@@ -142,7 +143,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(TeapotProceduralModel.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((TorusProceduralModel x) => (x.Radius, x.Thickness, x.Tessellation))
+            yield return factory.NewMeshNode((TorusProceduralModel x) => (x.Radius, x.Thickness, x.Tessellation), tags: ImmutableArray.Create("donut"))
                 .AddCachedInput(nameof(TorusProceduralModel.Radius), x => x.Radius, (x, v) => x.Radius = v, 0.5f)
                 .AddCachedInput(nameof(TorusProceduralModel.Thickness), x => x.Thickness, (x, v) => x.Thickness = v, 0.25f)
                 .AddCachedInput(nameof(TorusProceduralModel.Tessellation), x => x.Tessellation, (x, v) => x.Tessellation = v, 16)
@@ -203,7 +204,7 @@ namespace VL.Stride.Rendering
                 .AddCachedInput(nameof(Models.CylinderMesh.Clockwise), x => x.Clockwise, (x, v) => x.Clockwise = v, false, null, null, false)
                 .AddDefaultPins();
 
-            yield return factory.NewMeshNode((Models.DiscMesh x) => (x.OuterRadius, x.InnerRadius, x.FromAngle, x.ToAngle, x.Normal, x.GenerateBackFace, x.Tessellation, x.Clockwise))
+            yield return factory.NewMeshNode((Models.DiscMesh x) => (x.OuterRadius, x.InnerRadius, x.FromAngle, x.ToAngle, x.Normal, x.GenerateBackFace, x.Tessellation, x.Clockwise), tags: ImmutableArray.Create("circle", "segment"))
                 .AddCachedInput(nameof(Models.DiscMesh.OuterRadius), x => x.OuterRadius, (x, v) => x.OuterRadius = v, 0.5f)
                 .AddCachedInput(nameof(Models.DiscMesh.InnerRadius), x => x.InnerRadius, (x, v) => x.InnerRadius = v, 0.25f)
                 .AddCachedInput(nameof(Models.DiscMesh.FromAngle), x => x.FromAngle, (x, v) => x.FromAngle = v, 0f)
@@ -259,7 +260,7 @@ namespace VL.Stride.Rendering
                 .AddInput(nameof(RendererBase.Input), x => x.Input, (x, v) => x.Input = v);
         }
 
-        static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey, string category = "Stride.Models.Meshes", string name = null)
+        static CustomNodeDesc<TProceduralModel> NewMeshNode<TProceduralModel, TKey>(this IVLNodeDescriptionFactory factory, Func<TProceduralModel, TKey> getKey, string category = "Stride.Models.Meshes", string name = null, ImmutableArray<string> tags = default)
            where TProceduralModel : PrimitiveProceduralModelBase, new()
         {
             return new CustomNodeDesc<TProceduralModel>(factory,
@@ -271,7 +272,8 @@ namespace VL.Stride.Rendering
                 {
                     var generator = new TProceduralModel();
                     return (generator, default);
-                })
+                }, 
+                tags:tags)
                 .AddCachedOutput<Mesh>("Output", lifetime =>
                 {
                     var disposable = new SerialDisposable();
