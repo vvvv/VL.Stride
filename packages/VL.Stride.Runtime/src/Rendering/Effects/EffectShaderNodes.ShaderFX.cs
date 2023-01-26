@@ -17,7 +17,7 @@ namespace VL.Stride.Rendering
 {
     static partial class EffectShaderNodes
     {
-        static IVLNodeDescription NewShaderFXNode(this IVLNodeDescriptionFactory factory, NameAndVersion name, string shaderName, ShaderMetadata shaderMetadata, IObservable<object> changes, Func<bool> openEditor, IServiceRegistry serviceRegistry, GraphicsDevice graphicsDevice)
+        static IVLNodeDescription NewShaderFXNode(this IVLNodeDescriptionFactory factory, NameAndVersion name, string shaderName, ShaderMetadata shaderMetadata, IObservable<object> changes, Func<string> getFilePath, IServiceRegistry serviceRegistry, GraphicsDevice graphicsDevice)
         {
             return factory.NewNodeDescription(
                 name: name,
@@ -85,6 +85,7 @@ namespace VL.Stride.Rendering
                         messages: _messages,
                         summary: shaderMetadata.Summary,
                         remarks: shaderMetadata.Remarks,
+                        filePath: getFilePath.Invoke(),
                         newNode: nodeBuildContext =>
                         {
                             var gameHandle = ServiceRegistry.Current.GetGameHandle();
@@ -113,7 +114,7 @@ namespace VL.Stride.Rendering
                                     gameHandle.Dispose();
                                 });
                         },
-                        openEditor: openEditor
+                        openEditor: () => OpenEditor(getFilePath)
                     );
                 });
         }
