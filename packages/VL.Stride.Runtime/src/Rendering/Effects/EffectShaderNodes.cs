@@ -132,7 +132,7 @@ namespace VL.Stride.Rendering
                         effectName, 
                         shaderMetadata, 
                         TrackChanges(effectName, shaderMetadata),
-                        () => OpenEditor(effectName),
+                        () => GetFilePath(effectName),
                         serviceRegistry,
                         graphicsDevice);
                     //DrawFX node
@@ -148,7 +148,7 @@ namespace VL.Stride.Rendering
                         effectName, 
                         shaderMetadata,
                         TrackChanges(effectName, shaderMetadata),
-                        () => OpenEditor(effectName),
+                        () => GetFilePath(effectName),
                         serviceRegistry,
                         graphicsDevice);
 
@@ -168,7 +168,7 @@ namespace VL.Stride.Rendering
                         effectName, 
                         shaderMetadata, 
                         TrackChanges(effectName, shaderMetadata),
-                        () => OpenEditor(effectName),
+                        () => GetFilePath(effectName),
                         serviceRegistry,
                         graphicsDevice);
                     //ComputeFX node
@@ -185,7 +185,7 @@ namespace VL.Stride.Rendering
                         effectName, 
                         shaderMetadata, 
                         TrackChanges(effectName, shaderMetadata), 
-                        () => OpenEditor(effectName),
+                        () => GetFilePath(effectName),
                         serviceRegistry,
                         graphicsDevice);
                 }
@@ -224,19 +224,7 @@ namespace VL.Stride.Rendering
                 return invalidated;
             }
 
-            bool OpenEditor(string effectName)
-            {
-                var path = EffectUtils.GetPathOfSdslShader(effectName, fileProvider);
-                try
-                {
-                    Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
+            string GetFilePath(string effectName) => EffectUtils.GetPathOfSdslShader(effectName, fileProvider);
         }
     }
 }
