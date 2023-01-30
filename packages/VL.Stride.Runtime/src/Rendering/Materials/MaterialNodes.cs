@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Basics.Resources;
+using VL.Lib.Collections;
 
 namespace VL.Stride.Rendering.Materials
 {
@@ -139,6 +140,17 @@ namespace VL.Stride.Rendering.Materials
                 .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.VertexAddition), x => x.VertexAddition, (x, v) => x.VertexAddition = v, isVisible: false, summary: "Connected shader must inherit from IMaterialSurface")
                 .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.PixelAddition), x => x.PixelAddition, (x, v) => x.PixelAddition = v, isVisible: false, summary: "Connected shader must inherit from IMaterialSurface")
                 .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.Cutoff), x => x.Cutoff, (x, v) => x.Cutoff = v, summary: "Sets the transparency feature of the material to Cutoff, needed when writing into depth in the pixel shader")
+                .AddCachedOutput("Output", x => x.ToMaterial());
+
+            yield return nodeFactory.NewNode(
+                name: "MaterialExtensionTessellation",
+                category: materialAdvancedCategory,
+                ctor: ctx => new MaterialTessellationBuilderFromMaterial(ctx),
+                copyOnWrite: false,
+                hasStateOutput: false)
+                .AddOptimizedInput(nameof(MaterialTessellationBuilderFromMaterial.Material), x => x.Material, (x, v) => x.Material = v)
+                .AddOptimizedInput(nameof(MaterialTessellationBuilderFromMaterial.MaterialExtension), x => x.MaterialExtension, (x, v) => x.MaterialExtension = v)
+                .AddOptimizedInput(nameof(MaterialTessellationBuilderFromMaterial.MaterialTessellationStreams), x => x.MaterialTessellationStreams, (x, v) => x.MaterialTessellationStreams = v)
                 .AddCachedOutput("Output", x => x.ToMaterial());
         }
 
@@ -345,6 +357,74 @@ namespace VL.Stride.Rendering.Materials
                     // reset attributes
                     descriptor.Attributes.Emissive = origEmissive;
                     descriptor.Attributes.Transparency = origTransparency;
+                }
+            }
+
+            return Material;
+        }
+    }
+
+    /// <summary>
+    /// A material defines the appearance of a 3D model surface and how it reacts to light.
+    /// </summary>
+    internal class MaterialTessellationBuilderFromMaterial : IDisposable
+    {
+        readonly MaterialBuilderFromDescriptor builder;
+        readonly MaterialDescriptor defaultDescriptor;
+
+        public MaterialTessellationBuilderFromMaterial(NodeContext nodeContext)
+        {
+            builder = new MaterialBuilderFromDescriptor(nodeContext);
+            defaultDescriptor = new MaterialDescriptor()
+            {
+                Attributes =
+                {
+                    Diffuse = new MaterialDiffuseMapFeature(new ComputeTextureColor()),
+                    DiffuseModel = new MaterialDiffuseLambertModelFeature(),
+                },
+            };
+        }
+
+        public void Dispose()
+        {
+            builder.Dispose();
+        }
+
+        readonly VLMaterialTessellationFeature tesselationFeature = new VLMaterialTessellationFeature();
+
+        /// <summary>
+        /// The material descriptor.
+        /// </summary>
+        public Material Material { get; set; }
+        public IComputeNode MaterialExtension { get; set; }
+        public Spread<string> MaterialTessellationStreams { get; set; }
+
+        public Material ToMaterial()
+        {
+            var descriptor = Material?.Descriptor ?? defaultDescriptor;
+            if (descriptor != null)
+            {
+                var origTesselation = descriptor.Attributes.Tessellation;
+
+                try
+                {
+                    tesselationFeature.MaterialExtension = MaterialExtension;
+
+                    // add tessellation streams
+                    tesselationFeature.MaterialTessellationStreams = MaterialTessellationStreams;
+
+
+                    // set new attributes
+                    descriptor.Attributes.Tessellation = tesselationFeature;
+
+                    builder.Descriptor = descriptor;
+
+                    return builder.ToMaterial();
+                }
+                finally
+                {
+                    // reset attributes
+                    descriptor.Attributes.Tessellation = origTesselation;
                 }
             }
 

@@ -1,0 +1,51 @@
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+/// <summary>
+/// Defines streams for object space and world space position.
+/// </summary>
+shader BSplineStream : IStreamInitializer
+{
+    // The tesselation atribute 
+    stage stream int    TessLength  = 16;
+    stage stream int    TessWidth   = 8;
+    stage stream int    TessCap     = 1;
+    stage stream int    TessRibbon  = 0;
+    stage stream float  TubeWidth   = 1;
+    
+
+    // The position attributes
+    stage stream float3 Pos0    : CP_POS0; 
+    stage stream float3 Pos1    : CP_POS1; 
+    stage stream float3 Pos2    : CP_POS2; 
+    stage stream float3 Pos3    : CP_POS3; 
+
+    // The Up-Vector attributes
+    stage stream float3 Up0     : CP_UP0;
+    stage stream float3 Up1     : CP_UP1;
+    stage stream float3 Up2     : CP_UP2;
+    stage stream float3 Up3     : CP_UP3;
+
+    // The Width and Height attributes
+    stage stream float2 WH0     : CP_WH0;
+    stage stream float2 WH1     : CP_WH1;
+    stage stream float2 WH2     : CP_WH2;
+    stage stream float2 WH3     : CP_WH3;
+
+    // The Color attributes
+    stage stream float2 COL0    : CP_COL0;
+    stage stream float2 COL1    : CP_COL1;
+    stage stream float2 COL2    : CP_COL2;
+    stage stream float2 COL3    : CP_COL3;
+
+    // The Caps  attributes
+    stage stream int    FrontCap: CP_FRONT;
+    stage stream int    EndCap  : CP_END;  
+
+    override void ResetStream()
+    {
+        base.ResetStream();
+
+        streams.TessLength = 16.0f;
+        streams.TessWidth = 8.0f;
+    }
+};
