@@ -79,7 +79,7 @@ namespace VL.Stride.Rendering
                     if (needsWorld)
                         _inputs.Add(new ParameterPinDescription(usedNames, TransformationKeys.World));
 
-                    return buildContext.NewNode(
+                    return buildContext.Node(
                         inputs: _inputs,
                         outputs: _outputs,
                         messages: _messages,

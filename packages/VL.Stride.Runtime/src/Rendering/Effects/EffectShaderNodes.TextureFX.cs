@@ -128,7 +128,7 @@ namespace VL.Stride.Rendering
                         });
                     _inputs.Add(_enabledInput = new PinDescription<bool>("Enabled", defaultValue: true));
 
-                    return buildContext.NewNode(
+                    return buildContext.Node(
                         inputs: _inputs,
                         outputs: _outputs,
                         messages: _messages,
@@ -268,7 +268,7 @@ namespace VL.Stride.Rendering
                     }
 
 
-                    return buildContext.NewNode(
+                    return buildContext.Node(
                         inputs: _inputs,
                         outputs: new[] { buildContext.Pin("Output", typeof(Texture)) },
                         messages: shaderDescription.Messages,

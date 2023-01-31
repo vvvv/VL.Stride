@@ -88,7 +88,7 @@ namespace VL.Stride.Rendering
 
             _inputs.Add(_parameterSetterInput);
 
-            return buildContext.NewNode(
+            return buildContext.Node(
                 inputs: _inputs,
                 outputs: _outputs,
                 messages: messages,
