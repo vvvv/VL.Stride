@@ -3,10 +3,10 @@
 using Stride.Core.Mathematics;
 using System.Runtime.InteropServices;
 
-namespace BSplineExtension
+namespace BezierSegment
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct BSplineStruct 
+    public struct BezierTubeSegmentStruct 
     {
         public Vector3 Pos0;    //12
         public Vector3 Pos1;    //12
@@ -33,7 +33,7 @@ namespace BSplineExtension
                                         //200
 
 
-        public BSplineStruct(
+        public BezierTubeSegmentStruct(
             Vector3 Pos0, Vector3 Pos1, Vector3 Pos2, Vector3 Pos3,
             Vector3 Up0, Vector3 Up1, Vector3 Up2, Vector3 Up3,
             Vector2 WH0, Vector2 WH1, Vector2 WH2, Vector2 WH3,

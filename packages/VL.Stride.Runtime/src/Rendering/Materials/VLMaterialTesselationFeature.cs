@@ -21,7 +21,7 @@ namespace VL.Stride.Rendering.Materials
         
         public IMaterialTessellationFeature MaterialTessellationFeature { get; set; }
 
-        public Spread<string> MaterialTessellationStreams { get; set; }
+        public string MaterialTessellationStream { get; set; }
 
         public bool Enabled { get; set; } = true;
 
@@ -47,13 +47,9 @@ namespace VL.Stride.Rendering.Materials
             if (enableExtension)
             {   
                 // reset the tessellation stream at the beginning of the stage
-                // context.AddStreamInitializer(MaterialShaderStage.Domain, "MaterialTessellationStream");
+                //context.AddStreamInitializer(MaterialShaderStage.Domain, "MaterialTessellationStream");
+                context.AddStreamInitializer(MaterialShaderStage.Domain, MaterialTessellationStream);
 
-                foreach (var stream in MaterialTessellationStreams)
-                {
-                    //context.AddStreamInitializer(MaterialShaderStage.Domain, "MaterialTessellationStream");
-                    context.AddStreamInitializer(MaterialShaderStage.Domain, stream);
-                }
 
                 var ext = MaterialExtension;
                 

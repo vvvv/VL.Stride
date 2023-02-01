@@ -1,9 +1,7 @@
-// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 /// <summary>
-/// Defines streams for object space and world space position.
+/// Defines streams for BezierTubeSegment in world space position.
 /// </summary>
-shader BSplineStream : IStreamInitializer
+shader BezierTubeSegmentStream :  IStreamInitializer
 {
     // The tesselation atribute 
     stage stream int    TessLength  = 16;
@@ -11,6 +9,9 @@ shader BSplineStream : IStreamInitializer
     stage stream int    TessCap     = 1;
     stage stream int    TessRibbon  = 0;
     stage stream float  TubeWidth   = 1;
+
+    //
+    stage stream float4 OutCol  : COLOR;
     
 
     // The position attributes
@@ -32,10 +33,10 @@ shader BSplineStream : IStreamInitializer
     stage stream float2 WH3     : CP_WH3;
 
     // The Color attributes
-    stage stream float2 COL0    : CP_COL0;
-    stage stream float2 COL1    : CP_COL1;
-    stage stream float2 COL2    : CP_COL2;
-    stage stream float2 COL3    : CP_COL3;
+    stage stream float4 COL0    : CP_COL0;
+    stage stream float4 COL1    : CP_COL1;
+    stage stream float4 COL2    : CP_COL2;
+    stage stream float4 COL3    : CP_COL3;
 
     // The Caps  attributes
     stage stream int    FrontCap: CP_FRONT;
