@@ -1,17 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using VL.Core;
 
 namespace VL.Stride
 {
-    class StrideNode : VLObject
+    class StrideNode : VLNodeBase
     {
         public bool needsUpdate;
 
-        public StrideNode(NodeContext nodeContext)
-            : base(nodeContext)
+        public StrideNode(NodeContext nodeContext) : base(nodeContext)
         {
-
         }
     }
 
@@ -25,7 +24,6 @@ namespace VL.Stride
         public StrideNode(NodeContext nodeContext, StrideNodeDesc<TInstance> description)
             : base(nodeContext)
         {
-            Context = nodeContext;
             nodeDescription = description;
 
             inputs = description.Inputs.OfType<PinDescription>().Select(d => d.CreatePin<TInstance>(this)).ToArray();

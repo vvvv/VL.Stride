@@ -584,13 +584,14 @@ namespace VL.Stride
             }
         }
 
-        class Node : VLObject, IVLNode
+        class Node : VLNodeBase, IVLNode
         {
             public Action updateAction;
             public Action disposeAction;
             public bool needsUpdate = true;
 
-            public Node(NodeContext nodeContext) : base(nodeContext)
+            public Node(NodeContext nodeContext)
+                : base(nodeContext)
             {
             }
 
