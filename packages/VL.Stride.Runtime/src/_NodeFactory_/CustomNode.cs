@@ -584,7 +584,7 @@ namespace VL.Stride
             }
         }
 
-        class Node : VLNodeBase, IVLNode
+        class Node : FactoryBasedVLNode, IVLNode
         {
             public Action updateAction;
             public Action disposeAction;

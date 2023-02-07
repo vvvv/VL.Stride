@@ -5,7 +5,7 @@ using VL.Core;
 
 namespace VL.Stride
 {
-    class StrideNode : VLNodeBase
+    class StrideNode : FactoryBasedVLNode
     {
         public bool needsUpdate;
 
