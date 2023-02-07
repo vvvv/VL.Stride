@@ -10,9 +10,9 @@ namespace VL.Stride.Rendering.Materials
     /// <summary>
     /// Material for flat (dicing) tessellation.    
     /// </summary>
-    [DataContract("MaterialTessellation_ShaderFX")]
-    [Display("Tessellation_ShaderFX")]
-    public class MaterialTessellationShaderFXFeature : MaterialTessellationBaseFeature
+    [DataContract("MaterialCustomTessellation")]
+    [Display("CustomTessellation")]
+    public class MaterialCustomTessellationFeature : MaterialTessellationBaseFeature
     {
         /// <summary>
         /// Gets or sets MaterialTessellationStream.
@@ -21,8 +21,8 @@ namespace VL.Stride.Rendering.Materials
         /// This is the name of the stream that will be arive in HSMain, HSConstantMain and DSMain.
         /// </userdoc>
         [DataMember(30)]
-        [Display("MaterialTessellationStreams")]
-        public string MaterialTessellationStream { get; set; }
+        [Display("TessellationStreams")]
+        public string TessellationStream { get; set; }
 
         /// <summary>
         /// Gets or sets MaterialTessellationStream.
@@ -41,7 +41,7 @@ namespace VL.Stride.Rendering.Materials
                 return;
 
             // reset the tessellation stream at the beginning of the stage
-            context.AddStreamInitializer(MaterialShaderStage.Domain, MaterialTessellationStream);
+            context.AddStreamInitializer(MaterialShaderStage.Domain, TessellationStream);
 
 
             // set the tessellation method used enumeration
@@ -70,6 +70,7 @@ namespace VL.Stride.Rendering.Materials
                         cp?.GenerateAndSetShaderSource(context, baseKeys);
                     }
                 }
+                
 
                 var shaderSource = TessellationShader.GenerateShaderSource(context, new MaterialComputeColorKeys(MaterialKeys.DiffuseMap, MaterialKeys.DiffuseValue, Color.White));
 
