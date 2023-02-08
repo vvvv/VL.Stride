@@ -1,4 +1,5 @@
-﻿using Stride.Core.Mathematics;
+﻿using Silk.NET.SDL;
+using Stride.Core.Mathematics;
 using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using VL.Core;
 using VL.Lib.Basics.Resources;
+using VL.Lib.Collections;
 
 namespace VL.Stride.Rendering.Materials
 {
@@ -136,10 +138,22 @@ namespace VL.Stride.Rendering.Materials
                 hasStateOutput: false)
                 .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.Material), x => x.Material, (x, v) => x.Material = v)
                 .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.MaterialExtension), x => x.MaterialExtension, (x, v) => x.MaterialExtension = v)
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.TessellationExtension), x => x.TessellationExtension, (x, v) => x.TessellationExtension = v, summary: "Connected shader will be on Domain Stage, so you can use Tessellation (HSMain, HSConstantMain and DSMain)")
+                .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.TessellationStream), x => x.TessellationStream, (x, v) => x.TessellationStream = v, summary: "Name of the stream that will be reachable on Domain Stage")
                 .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.VertexAddition), x => x.VertexAddition, (x, v) => x.VertexAddition = v, isVisible: false, summary: "Connected shader must inherit from IMaterialSurface")
                 .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.PixelAddition), x => x.PixelAddition, (x, v) => x.PixelAddition = v, isVisible: false, summary: "Connected shader must inherit from IMaterialSurface")
                 .AddOptimizedInput(nameof(MaterialBuilderFromMaterial.Cutoff), x => x.Cutoff, (x, v) => x.Cutoff = v, summary: "Sets the transparency feature of the material to Cutoff, needed when writing into depth in the pixel shader")
                 .AddCachedOutput("Output", x => x.ToMaterial());
+
+            yield return nodeFactory.NewNode(
+                name: "CustomTessellation",
+                category: materialAdvancedCategory,
+                ctor: ctx => new MaterialCustomTessellationFeature(),
+                copyOnWrite: false,
+                hasStateOutput: false)
+                .AddOptimizedInput(nameof(MaterialCustomTessellationFeature.TessellationShader), x => x.TessellationShader, (x, v) => x.TessellationShader = v)
+                .AddCachedInput(nameof(MaterialCustomTessellationFeature.TessellationStream), x => x.TessellationStream, (x, v) => x.TessellationStream = v)
+                .AddCachedOutput("Output", x => x);
         }
 
         static StrideNodeDesc<T> NewMaterialNode<T>(this IVLNodeDescriptionFactory nodeFactory, string name, string category)
@@ -305,6 +319,7 @@ namespace VL.Stride.Rendering.Materials
 
         readonly IMaterialTransparencyFeature transparencyFeature = new MaterialTransparencyCutoffFeature();
         readonly VLMaterialEmissiveFeature emissiveFeature = new VLMaterialEmissiveFeature();
+        readonly VLMaterialTessellationFeature tesselationFeature = new VLMaterialTessellationFeature();
 
         /// <summary>
         /// The material descriptor.
@@ -312,6 +327,8 @@ namespace VL.Stride.Rendering.Materials
         public Material Material { get; set; }
         public bool Cutoff { get; set; }
         public IComputeNode MaterialExtension { get; set; }
+        public IComputeNode TessellationExtension { get; set; }
+        public string TessellationStream { get; set; }
         public IComputeNode VertexAddition { get; set; }
         public IComputeNode PixelAddition { get; set; }
 
@@ -322,6 +339,7 @@ namespace VL.Stride.Rendering.Materials
             {
                 var origEmissive = descriptor.Attributes.Emissive;
                 var origTransparency = descriptor.Attributes.Transparency;
+                var origTesselation = descriptor.Attributes.Tessellation;
 
                 try
                 {
@@ -336,6 +354,15 @@ namespace VL.Stride.Rendering.Materials
                     if (Cutoff)
                         descriptor.Attributes.Transparency = transparencyFeature;
 
+                    // Tesselation feature
+                    tesselationFeature.MaterialTessellationFeature = origTesselation;
+                    tesselationFeature.MaterialExtension = TessellationExtension;
+
+                    // add tessellation streams
+                    tesselationFeature.MaterialTessellationStream = TessellationStream;
+                    // set new attributes
+                    descriptor.Attributes.Tessellation = tesselationFeature;
+
                     builder.Descriptor = descriptor;
 
                     return builder.ToMaterial();
@@ -345,6 +372,7 @@ namespace VL.Stride.Rendering.Materials
                     // reset attributes
                     descriptor.Attributes.Emissive = origEmissive;
                     descriptor.Attributes.Transparency = origTransparency;
+                    descriptor.Attributes.Tessellation = origTesselation;
                 }
             }
 
