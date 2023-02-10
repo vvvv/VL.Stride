@@ -65,15 +65,20 @@ namespace VL.Stride.Windows
                 switch (e.EventType)
                 {
                     case PointerEventType.Pressed:
-                        Layer.Notify(new TouchNotification(TouchNotificationKind.TouchDown, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, default, default, default, modifiers, this), callerInfo);
+                        // Stride simulates touch events when using the mouse. We don't want these made-up events here.
+                        if (e.Device is not IMouseDevice)
+                            Layer.Notify(new TouchNotification(TouchNotificationKind.TouchDown, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, default, default, default, modifiers, this), callerInfo);
                         break;
                     case PointerEventType.Moved:
-                        Layer.Notify(new MouseMoveNotification(e.AbsolutePosition, pointerDevice.SurfaceSize, modifiers, this), callerInfo);
-
-                        Layer.Notify(new TouchNotification(TouchNotificationKind.TouchMove, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, default, default, default, modifiers, this), callerInfo);
+                        if (e.Device is IMouseDevice)
+                            Layer.Notify(new MouseMoveNotification(e.AbsolutePosition, pointerDevice.SurfaceSize, modifiers, this), callerInfo);
+                        else
+                            Layer.Notify(new TouchNotification(TouchNotificationKind.TouchMove, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, default, default, default, modifiers, this), callerInfo);
                         break;
                     case PointerEventType.Released:
-                        Layer.Notify(new TouchNotification(TouchNotificationKind.TouchUp, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, default, default, default, modifiers, this), callerInfo);
+                        // Stride simulates touch events when using the mouse. We don't want these made-up events here.
+                        if (e.Device is not IMouseDevice)
+                            Layer.Notify(new TouchNotification(TouchNotificationKind.TouchUp, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, default, default, default, modifiers, this), callerInfo);
                         break;
                     case PointerEventType.Canceled:
                         break;
