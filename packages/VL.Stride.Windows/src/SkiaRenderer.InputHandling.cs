@@ -60,6 +60,12 @@ namespace VL.Stride.Windows
                 if (e.Device.Source != inputSource || Layer is null)
                     return;
 
+                // Stride uses the "pointer" abstraction. Mouse and touch are treated the same way. For a mouse down we'll receive a pointer pressed as well.
+                // One could program against that API and thereby would support both input devices.
+                // Our Skia renderer on the other hand uses the Windows default, it first sends touch messages and if they're not handled by the app
+                // it will generate mouse (& gesture) messages (https://learn.microsoft.com/en-us/windows/win32/inputmsg/wm-pointerdown).
+                // We currently don't support the pointer abstraction, we therefor must tweak the Stride abstraction a little to follow the normal Windows behaviour.
+
                 var pointerDevice = e.Device as IPointerDevice;
                 var modifiers = GetModifierKeys(inputSource);
                 switch (e.EventType)
@@ -67,18 +73,33 @@ namespace VL.Stride.Windows
                     case PointerEventType.Pressed:
                         // Stride simulates touch events when using the mouse. We don't want these made-up events here.
                         if (e.Device is not IMouseDevice)
-                            Layer.Notify(new TouchNotification(TouchNotificationKind.TouchDown, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, default, default, default, modifiers, this), callerInfo);
+                        {
+                            var n = new TouchNotification(TouchNotificationKind.TouchDown, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, primary: e.PointerId == 0, default, default, modifiers, this);
+                            Layer.Notify(n, callerInfo);
+                            if (!n.Handled)
+                                Layer.Notify(new MouseDownNotification(e.Position * pointerDevice.SurfaceSize, pointerDevice.SurfaceSize, MouseButtons.Left, modifiers, this), callerInfo);
+                        }
                         break;
                     case PointerEventType.Moved:
                         if (e.Device is IMouseDevice)
                             Layer.Notify(new MouseMoveNotification(e.AbsolutePosition, pointerDevice.SurfaceSize, modifiers, this), callerInfo);
                         else
-                            Layer.Notify(new TouchNotification(TouchNotificationKind.TouchMove, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, default, default, default, modifiers, this), callerInfo);
+                        {
+                            var n = new TouchNotification(TouchNotificationKind.TouchMove, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, primary: e.PointerId == 0, default, default, modifiers, this);
+                            Layer.Notify(n, callerInfo);
+                            if (!n.Handled)
+                                Layer.Notify(new MouseMoveNotification(e.Position * pointerDevice.SurfaceSize, pointerDevice.SurfaceSize, modifiers, this), callerInfo);
+                        }
                         break;
                     case PointerEventType.Released:
                         // Stride simulates touch events when using the mouse. We don't want these made-up events here.
                         if (e.Device is not IMouseDevice)
-                            Layer.Notify(new TouchNotification(TouchNotificationKind.TouchUp, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, default, default, default, modifiers, this), callerInfo);
+                        {
+                            var n = new TouchNotification(TouchNotificationKind.TouchUp, e.AbsolutePosition, pointerDevice.SurfaceSize, e.PointerId, primary: e.PointerId == 0, default, default, modifiers, this);
+                            Layer.Notify(n, callerInfo);
+                            if (!n.Handled)
+                                Layer.Notify(new MouseUpNotification(e.Position * pointerDevice.SurfaceSize, pointerDevice.SurfaceSize, MouseButtons.Left, modifiers, this), callerInfo);
+                        }
                         break;
                     case PointerEventType.Canceled:
                         break;
