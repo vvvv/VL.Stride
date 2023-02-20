@@ -1,3 +1,8 @@
+ARCHIVED: we moved to https://github.com/vvvv/VL.StandardLibs
+
+
+
+
 # VL.Stride
 
 [Stride 3d Engine](http://stride3d.net) ([repo](https://github.com/stride3d/stride)) for VL.
