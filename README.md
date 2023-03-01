@@ -1,7 +1,5 @@
-ARCHIVED: we moved to https://github.com/vvvv/VL.StandardLibs
-
-
-
+# Archived!
+This repo moved into [VL.StandardLibs](https://github.com/vvvv/VL.StandardLibs).
 
 # VL.Stride
 
