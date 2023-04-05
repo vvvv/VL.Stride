@@ -9,6 +9,7 @@ using Buffer = Stride.Graphics.Buffer;
 using StridePixelFormat = Stride.Graphics.PixelFormat;
 using VLPixelFormat = VL.Lib.Basics.Imaging.PixelFormat;
 using Stride.Core;
+using System.Buffers;
 
 namespace VL.Stride.Graphics
 {
@@ -94,9 +95,27 @@ namespace VL.Stride.Graphics
             using var src = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.SequentialScan);
             var ptr = Utilities.AllocateMemory((int)src.Length);
             using var dst = new UnmanagedMemoryStream((byte*)ptr.ToPointer(), 0, (int)src.Length, FileAccess.ReadWrite);
-            src.CopyTo(dst, bufferSize);
+            CopyToWithoutLOHAlloc(src, dst, bufferSize);
             using var image = Image.Load(ptr, (int)dst.Length, makeACopy: false, loadAsSRGB: loadAsSRGB);
             return Texture.New(device, image, textureFlags, usage);
+
+            // Workaround for .NET framework
+            static void CopyToWithoutLOHAlloc(Stream src, Stream dst, int bufferSize)
+            {
+                byte[] buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+                try
+                {
+                    int bytesRead;
+                    while ((bytesRead = src.Read(buffer, 0, buffer.Length)) != 0)
+                    {
+                        dst.Write(buffer, 0, bytesRead);
+                    }
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
+            }
         }
 
         // TODO: Can be deleted once backported (Stride commit 92512973841694bcfe96bcee23bf3b94ef75b4d4)
