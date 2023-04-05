@@ -15,6 +15,9 @@ namespace VL.Stride.Graphics
 {
     public static class TextureExtensions
     {
+        const int bufferSize = 1024 * 1024 * 8;
+
+        private static readonly ArrayPool<byte> arrayPool = ArrayPool<byte>.Create(bufferSize, 50);
 
         public static bool TryToTypeless(this StridePixelFormat format, out StridePixelFormat typelessFormat)
         {
@@ -91,7 +94,6 @@ namespace VL.Stride.Graphics
         /// </summary>
         public static unsafe Texture Load(GraphicsDevice device, string file, TextureFlags textureFlags = TextureFlags.ShaderResource, GraphicsResourceUsage usage = GraphicsResourceUsage.Immutable, bool loadAsSRGB = false)
         {
-            const int bufferSize = 1024 * 1024 * 8;
             using var src = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.SequentialScan);
             var ptr = Utilities.AllocateMemory((int)src.Length);
             using var dst = new UnmanagedMemoryStream((byte*)ptr.ToPointer(), 0, (int)src.Length, FileAccess.ReadWrite);
@@ -102,7 +104,7 @@ namespace VL.Stride.Graphics
             // Workaround for .NET framework
             static void CopyToWithoutLOHAlloc(Stream src, Stream dst, int bufferSize)
             {
-                byte[] buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+                byte[] buffer = arrayPool.Rent(bufferSize);
                 try
                 {
                     int bytesRead;
@@ -113,7 +115,7 @@ namespace VL.Stride.Graphics
                 }
                 finally
                 {
-                    ArrayPool<byte>.Shared.Return(buffer);
+                    arrayPool.Return(buffer);
                 }
             }
         }
