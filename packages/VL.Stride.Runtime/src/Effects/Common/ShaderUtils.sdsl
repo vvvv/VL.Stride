@@ -253,4 +253,11 @@ shader ShaderUtils
         float y = cos(a) * pt.y - sin(a) * pt.x;
         return float2(x,y);
     }
+
+    // TRANSFORM 2D ==============================================================
+
+    float2 TransformUV(float2 uv, float4x4 transform)
+    {
+        return mul(float4((uv.xy * 2 - 1) * float2(1, -1) * 0.5, 0, 1), transform).xy * float2(1, -1) + 0.5;
+    }
 };
